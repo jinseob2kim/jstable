@@ -8,5 +8,5 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-Imports: geepack
+Imports: geepack, lme4, stats
 URL: https://github.com/jinseob2kim/jstable
