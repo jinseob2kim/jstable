@@ -1,4 +1,10 @@
 # jstable
+[![GitHub issues](https://img.shields.io/github/issues/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/issues)
+[![GitHub forks](https://img.shields.io/github/forks/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/network)
+[![GitHub stars](https://img.shields.io/github/stars/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/stargazers)
+[![GitHub license](https://img.shields.io/github/license/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/blob/master/LICENSE)
+[![GitHub last commit](https://img.shields.io/github/last-commit/google/skia.svg)](https://github.com/jinseob2kim/jstable)
+
 Research tables from GEE, GLMM results
 
 ## Install
