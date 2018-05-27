@@ -69,8 +69,8 @@ lmer.display = function(lmerMod.obj, dec = 2, ci.ranef = F){
     rownames(ranef.out) = ranef[,1]
   }
   ranef.na = rbind(rep(NA, 4), ranef.out)
+  rownames(ranef.na)[1] = "Random effects"
   
-  no.grp = sl$ngrps
   mdata = lmerMod.obj@frame
   forms = as.character(sl$call[[2]])
   y = forms[2]
@@ -92,7 +92,35 @@ lmer.display = function(lmerMod.obj, dec = 2, ci.ranef = F){
   family.label = colnames(fix.all)[1]
   colnames(fix.all) = c(paste("crude ", family.label, ".(95%CI)",sep = ""), "crude P value", paste("adj. ", family.label, ".(95%CI)",sep = ""), "adj. P value")
   colnames(ranef.na) = colnames(fix.all)
-  tb.df = as.data.frame(rbind(fix.all, ranef.na))
-  lapply(c(2,4), function(x){tb.df[, x] <- as.numeric(as.vector(tb.df[, x]))})
-  return(tb.df)
+  
+  ## rownames
+  fix.all.list = lapply(xf, function(x){fix.all[grepl(x, rownames(fix.all)),]})      
+  varnum.mfac = which(lapply(fix.all.list, length) > 4)
+  lapply(varnum.mfac, function(x){fix.all.list[[x]] <<- rbind(rep(NA, 4), fix.all.list[[x]])})
+  fix.all.unlist = Reduce(rbind, fix.all.list)
+  
+  rn.list = lapply(xf, function(x){rownames(fix.all)[grepl(x, rownames(fix.all))]})
+  varnum.2fac = which(lapply(xf, function(x){length(sapply(mdata, levels)[[x]])}) == 2)
+  lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep="")})
+  lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xf[x],": ref.=", levels(mdata[, xf[x]])[1], sep=""), gsub(xf[x],"   ", rn.list[[x]]))})
+  rownames(fix.all.unlist) = unlist(rn.list)
+  tb.df = as.data.frame(rbind(fix.all.unlist, ranef.na))
+  
+  
+  ## metric
+  no.grp = sl$ngrps
+  no.obs = nrow(mdata)
+  ll = round(sl$logLik[[1]], dec)
+  aic = round(sl$AICtab, dec)[1]
+  met = c(NA, no.grp, no.obs, ll, aic)
+  met.mat = cbind(met, matrix(NA, length(met), 3))
+  rownames(met.mat) = c("Metrics", paste("No. of groups (", rownames(met.mat)[2:(length(no.grp) + 1)], ")", sep=""), "No. of observations", "Log-likelihood", "AIC value")
+  met.mat[, 1] = as.character(met.mat[, 1])
+  colnames(met.mat) = colnames(tb.df)
+  tb.lmerMod = rbind(tb.df, met.mat)
+  lapply(c(2,4), function(x){tb.lmerMod[, x] <<- as.numeric(as.vector(tb.lmerMod[, x]))})
+  
+  ## caption
+  cap.lmerMod = paste(sl$methTitle, " : ", y," ~ ", forms[3], sep="")
+  return(list(table = tb.lmerMod, caption = cap.lmerMod))
 }
