@@ -2,6 +2,10 @@
 
 export(geeglm.display)
 export(lmer.display)
+export(opt.data)
+export(opt.roc)
+export(opt.tb1)
+export(opt.tbreg)
 importFrom(geepack,geeglm)
 importFrom(lme4,confint.merMod)
 importFrom(lme4,glmer)
