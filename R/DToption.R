@@ -51,7 +51,7 @@ opt.data = function(fname){
 
 opt.tb1 = function(fname){
   return(
-    list(dom = '<lf<rt>Bip>', lengthMenu = list(c(10, 25, -1), c('10', '25', 'All')), pageLength = 25, ordering=F,
+    list(dom = '<f<rt>Bi>', ordering=F, pageLength = -1,
          buttons = list('copy', 
                         'print', 
                         list(extend = 'collection', 
@@ -60,7 +60,8 @@ opt.tb1 = function(fname){
                                             list(extend = 'pdf', filename= fname)
                              ), 
                              text = 'Download')
-         )
+         ),
+         scrollY = "1000px"
     )
   )
 }
