@@ -21,7 +21,7 @@
 #' @rdname geeUni
 #' @importFrom geepack geeglm 
 #' @importFrom stats as.formula
-
+#' @export
 
 
 geeUni = function(y, x, data, id.vec, family, cor.type = "exchangeable"){
@@ -52,7 +52,7 @@ geeUni = function(y, x, data, id.vec, family, cor.type = "exchangeable"){
 #'  }
 #' }
 #' @rdname geeExp
- 
+#' @export
 
 
 geeExp = function(gee.coef, family ="binomial", dec){
@@ -87,7 +87,7 @@ geeExp = function(gee.coef, family ="binomial", dec){
 #'  geeglm.display(gee01)
 #'  }
 #' }
-#' @rdname gee.display
+#' @rdname geeglm.display
 #' @export 
 
 geeglm.display = function(geeglm.obj, decimal = 2){
