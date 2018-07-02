@@ -10,7 +10,7 @@ opt.tbreg(fname)
 \item{fname}{File name to download}
 }
 \value{
-datatable object
+datatable option object
 }
 \description{
 DT::datatable option for glm, gee(geepack packge), lmer/glmer(lme4 package)

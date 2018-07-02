@@ -2,7 +2,7 @@
 #' @title datable option for data(DT package)
 #' @description DT::datatable option for data
 #' @param fname File name to download
-#' @return datatable object
+#' @return datatable option object
 #' @details DETAILS
 #' @examples 
 #' \dontrun{
@@ -35,7 +35,7 @@ opt.data = function(fname){
 #' @title datable option for table 1(DT package)
 #' @description DT::datatable option for table 1
 #' @param fname File name to download
-#' @return datatable object
+#' @return datatable option object
 #' @details DETAILS
 #' @examples 
 #' \dontrun{
@@ -71,7 +71,7 @@ opt.tb1 = function(fname){
 #' @title datable option for regression table(DT package)
 #' @description DT::datatable option for glm, gee(geepack packge), lmer/glmer(lme4 package)
 #' @param fname File name to download
-#' @return datatable object
+#' @return datatable option object
 #' @details DETAILS
 #' @examples 
 #' \dontrun{
@@ -104,7 +104,7 @@ opt.tbreg = function(fname){
 #' @title datable option for ROC result(DT package)
 #' @description DT::datatable option for ROC result
 #' @param fname File name to download
-#' @return datatable object
+#' @return datatable option object
 #' @details DETAILS
 #' @examples 
 #' \dontrun{
@@ -121,6 +121,41 @@ opt.tbreg = function(fname){
 opt.roc = function(fname){
   return(
     list(dom = '<<rt>Bip>', ordering=F,
+         buttons = list('copy', 
+                        'print', 
+                        list(extend = 'collection', 
+                             buttons = list(list(extend = 'csv', filename= fname),
+                                            list(extend = 'excel', filename= fname), 
+                                            list(extend = 'pdf', filename= fname)
+                             ), 
+                             text = 'Download')
+         )
+    )
+  )
+}
+
+
+
+#' @title datable option for simple download(DT package)
+#' @description Simple download DT::datatable option - No filter, No page
+#' @param fname File name to download
+#' @return datatable option object
+#' @details DETAILS
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  datatable(NIInput()[["stat"]], rownames=T, extension= "Buttons", caption = "Outcome: statistics",
+#'  options = c(opt.simpledown("Outcome_absent"), 
+#'  list(scrollX = TRUE)
+#'  ))
+#'  }
+#' }
+#' @rdname opt.simpledown
+#' @export 
+
+opt.simpledown = function(fname){
+  return(
+    list(dom = '<<rt>B>', ordering=F, pageLength = -1,
          buttons = list('copy', 
                         'print', 
                         list(extend = 'collection', 

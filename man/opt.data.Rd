@@ -10,7 +10,7 @@ opt.data(fname)
 \item{fname}{File name to download}
 }
 \value{
-datatable object
+datatable option object
 }
 \description{
 DT::datatable option for data
