@@ -74,7 +74,8 @@ CreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, test =
     #cap.tb1 = paste("Table 1: Stratified by ", labeldata[variable == strata, var_label][1], sep="")
     
   }
-  sig = ifelse(ptb1[,"p"] == "<0.001", 0, as.numeric(as.vector(ptb1[,"p"])))
+  sig = ifelse(ptb1[,"p"] == "<0.001", "0", ptb1[,"p"])
+  sig = as.numeric(as.vector(sig))
   sig = ifelse(sig <= 0.05, "**", "")
   ptb1 = cbind(ptb1, sig)
   return(ptb1)
