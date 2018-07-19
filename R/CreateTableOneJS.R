@@ -111,6 +111,7 @@ CreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, test =
 #' @param contDigits Number of digits to print for continuous variables. Default 2.
 #' @param pDigits Number of digits to print for p-values (also used for standardized mean differences), Default: 3
 #' @param labeldata labeldata to use, Default: NULL
+#' @param psub show sub-group p-values, Default: F
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
@@ -133,7 +134,7 @@ CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVar
                             testNormal = oneway.test, argsNormal = list(var.equal = F),
                             testNonNormal = kruskal.test, argsNonNormal = list(NULL), 
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, exact = NULL, nonnormal = NULL, 
-                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL){
+                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T){
   
   #if (Labels & !is.null(labeldata)){
   #  var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
@@ -178,7 +179,7 @@ CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVar
       
     }
     return(list(table = ptb1, caption = cap.tb1))
-  } else {
+  } else if (psub ==T){
     data.strata =  lapply(levels(data[[strata]]), function(x){data[data[[strata]] == x, ]})
     ptb1.list = lapply(data.strata, CreateTableOne2,
                        vars =vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test, 
@@ -198,6 +199,38 @@ CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVar
     }
     
     return(list(table = ptb1.2group, caption = cap.tb1))
+  } else{
+    res= CreateTableOne(vars = vars, strata = c(strata2, strata), data = data, factorVars = factorVars, includeNA = F, test = T,
+                        testApprox = chisq.test, argsApprox = list(correct = TRUE),
+                        testExact = fisher.test, argsExact = list(workspace = 2 * 10^5),
+                        testNormal = oneway.test, argsNormal = list(var.equal = F),
+                        testNonNormal = kruskal.test, argsNonNormal = list(NULL)) 
+    ptb1= print(res, 
+                showAllLevels=T,
+                printToggle=F, quote=F, smd = smd, varLabels = T, exact = exact, nonnormal = nonnormal,
+                catDigits = catDigits, contDigits = contDigits, pDigits = pDigits)
+    
+    rownames(ptb1) = gsub("(mean (sd))", "", rownames(ptb1), fixed=T)
+    sig = ifelse(ptb1[,"p"] == "<0.001", "0", ptb1[,"p"])
+    sig = as.numeric(as.vector(sig))
+    sig = ifelse(sig <= 0.05, "**", "")
+    ptb1 = cbind(ptb1, sig)
+    cap.tb1 = paste("Table 1: Stratified by ", strata, " and ",strata2,  sep="")
+    
+    # Column name
+    if (Labels & !is.null(labeldata)){
+      val_combination = CJ(labeldata[variable == strata, val_label], labeldata[variable == strata2, val_label])
+      colname.group_var = val_combination[, paste(V1, ":", V2, sep="")] 
+      colname.group_index = paste(labeldata[variable == strata, var_label][1], ":", labeldata[variable == strata2, var_label][1], sep = "")
+      colnames(ptb1)[1:(length(colname.group_var)+1)] = c(colname.group_index, colname.group_var)
+      # caption
+      cap.tb1 = paste("Table 1: Stratified by ", labeldata[variable == strata, var_label][1], " and ", labeldata[variable == strata2, var_label][1],  sep="")
+      # val_label
+      vals.tb1 = c(NA, unlist(sapply(vars, function(v){labeldata[variable == v, val_label]})))
+      ptb1[,1] = vals.tb1
+    }
+    return(list(table = ptb1, caption = cap.tb1))
+    
   }
   
 } 

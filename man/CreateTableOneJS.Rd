@@ -11,7 +11,8 @@ CreateTableOneJS(vars, strata = NULL, strata2 = NULL, data,
   argsNormal = list(var.equal = F), testNonNormal = kruskal.test,
   argsNonNormal = list(NULL), showAllLevels = T, printToggle = F,
   quote = F, smd = F, Labels = F, exact = NULL, nonnormal = NULL,
-  catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL)
+  catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL,
+  psub = T)
 }
 \arguments{
 \item{vars}{Variables to be summarized given as a character vector. Factors are handled as categorical variables, whereas numeric variables are handled as continuous variables. If empty, all variables in the data frame specified in the data argument are used.}
@@ -65,6 +66,8 @@ CreateTableOneJS(vars, strata = NULL, strata2 = NULL, data,
 \item{pDigits}{Number of digits to print for p-values (also used for standardized mean differences), Default: 3}
 
 \item{labeldata}{labeldata to use, Default: NULL}
+
+\item{psub}{show sub-group p-values, Default: F}
 }
 \value{
 A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
