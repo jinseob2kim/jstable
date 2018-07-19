@@ -139,6 +139,7 @@ CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVar
   #  var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
   #  vals.tb1 = c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
   #}
+  data = data
   
   if (is.null(strata)){
     if (Labels & !is.null(labeldata)){
