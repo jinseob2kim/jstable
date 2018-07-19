@@ -39,7 +39,7 @@
 #' @rdname CreateTableOne2
 #' @importFrom data.table data.table :=
 #' @importFrom tableone CreateTableOne 
-#' @importFrom labelled var_label
+#' @importFrom labelled var_label var_label<-
 #' @importFrom stats chisq.test fisher.test kruskal.test oneway.test
 #' @export 
 
@@ -52,8 +52,8 @@ CreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, test =
                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL){
   
   if (Labels & !is.null(labeldata)){
-    var_label(data) = sapply(names(data), function(v){labeldata[variable == v, var_label][1]}, simplify = F)
-    vals.tb1 = c(NA, unlist(sapply(vars, function(v){labeldata[variable == v, val_label]})))
+    var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
+    vals.tb1 = c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
   }
   
   res = CreateTableOne(vars =vars, strata = strata, data = data, factorVars = factorVars, includeNA = includeNA, test = test, 
@@ -62,16 +62,16 @@ CreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, test =
                        testNormal = testNormal, argsNormal = argsNormal,
                        testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd)
   ptb1 = print(res,
-               showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
+               showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal, exact = exact,
                catDigits = catDigits, contDigits = contDigits, pDigits = pDigits)
   rownames(ptb1) = gsub("(mean (sd))", "", rownames(ptb1), fixed=T)
   #cap.tb1 = paste("Table 1: Stratified by ", strata, sep="")
   
   if (Labels & !is.null(labeldata)){
-    colname.group_var = labeldata[variable == strata, val_label]
-    colnames(ptb1)[1:(length(colname.group_var)+1)] = c(labeldata[variable == strata, var_label][1], colname.group_var)
+    colname.group_var = unlist(labeldata[get("variable") == strata, "val_label"])
+    colnames(ptb1)[1:(length(colname.group_var)+1)] = unlist(c(labeldata[get("variable") == strata, "var_label"][1], colname.group_var))
     ptb1[,1] = vals.tb1
-    #cap.tb1 = paste("Table 1: Stratified by ", labeldata[variable == strata, var_label][1], sep="")
+    #cap.tb1 = paste("Table 1: Stratified by ", labeldata[variable == strata, "var_label"][1], sep="")
     
   }
   sig = ifelse(ptb1[,"p"] == "<0.001", "0", ptb1[,"p"])
@@ -122,7 +122,7 @@ CreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, test =
 #' @rdname CreateTableOneJS
 #' @importFrom data.table data.table :=
 #' @importFrom tableone CreateTableOne 
-#' @importFrom labelled var_label
+#' @importFrom labelled var_label var_label<-
 #' @importFrom stats chisq.test fisher.test kruskal.test oneway.test
 #' @export 
 
@@ -135,12 +135,17 @@ CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVar
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, exact = NULL, nonnormal = NULL, 
                             catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL){
   
-  if (Labels & !is.null(labeldata)){
-    var_label(data) = sapply(names(data), function(v){labeldata[variable == v, var_label][1]}, simplify = F)
-    vals.tb1 = c(NA, unlist(sapply(vars, function(v){labeldata[variable == v, val_label]})))
-  }
+  #if (Labels & !is.null(labeldata)){
+  #  var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
+  #  vals.tb1 = c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
+  #}
   
   if (is.null(strata)){
+    if (Labels & !is.null(labeldata)){
+      var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
+      vals.tb1 = c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
+    }
+    
     res = CreateTableOne(vars =vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, 
                          testApprox = testApprox, argsApprox = argsApprox,
                          testExact = testExact, argsExact = argsExact,
@@ -161,13 +166,14 @@ CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVar
                            testExact = testExact, argsExact = argsExact,
                            testNormal = testNormal, argsNormal = argsNormal,
                            testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
-                           showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal,
-                           catDigits = catDigits, contDigits = contDigits, pDigits = pDigits)
+                           showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal, exact = exact,
+                           catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata)
     
     cap.tb1 = paste("Table 1: Stratified by ", strata, sep="")
     
     if (Labels & !is.null(labeldata)){
-      cap.tb1 = paste("Table 1: Stratified by ", labeldata[variable == strata, var_label][1], sep="")
+      cap.tb1 = paste("Table 1: Stratified by ", labeldata[get("variable") == strata, "var_label"][1], sep="")
+      #ptb1[,1] = vals.tb1
       
     }
     return(list(table = ptb1, caption = cap.tb1))
@@ -179,7 +185,7 @@ CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVar
                        testExact = testExact, argsExact = argsExact,
                        testNormal = testNormal, argsNormal = argsNormal,
                        testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
-                       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal,
+                       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal, exact = exact,
                        catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata
     )
     ptb1.cbind = Reduce(cbind, c(list(ptb1.list[[1]]), lapply(2:length(ptb1.list), function(x){ptb1.list[[x]][,-1]})))
@@ -187,7 +193,7 @@ CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVar
     ptb1.2group = ptb1.cbind[, c(setdiff(1:ncol(ptb1.cbind), colnum.test), colnum.test[1])]
     cap.tb1 = cap.tb1 = paste("Table 1: Stratified by ", strata, "(", paste(levels(data[[strata]]), collapse=", "), ") & ", strata2, sep="")
     if (Labels & !is.null(labeldata)){
-      cap.tb1 = paste("Table 1: Stratified by ", labeldata[variable == strata, var_label][1], "(", paste(labeldata[variable == strata, val_label], collapse=", "), ") & ", labeldata[variable == strata2, var_label][1], sep="")
+      cap.tb1 = paste("Table 1: Stratified by ", labeldata[get("variable") == strata, "var_label"][1], "(", paste(unlist(labeldata[get("variable") == strata, "val_label"]), collapse=", "), ") & ", labeldata[get("variable") == strata2, "var_label"][1], sep="")
     }
     
     return(list(table = ptb1.2group, caption = cap.tb1))
