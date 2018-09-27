@@ -51,7 +51,7 @@ opt.data = function(fname){
 
 opt.tb1 = function(fname){
   return(
-    list(dom = '<lf<rt>Bip>', lengthMenu = list(c(10, 25, -1), c('10', '25', 'All')), pageLength = 10, ordering = F,
+    list(dom = '<lf<rt>Bip>', lengthMenu = list(c(10, 25, -1), c('10', '25', 'All')), pageLength = 25, ordering = F,
          buttons = list('copy', 
                         'print', 
                         list(extend = 'collection', 
