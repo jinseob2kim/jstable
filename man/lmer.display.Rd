@@ -2,7 +2,7 @@
 % Please edit documentation in R/lmer.R
 \name{lmer.display}
 \alias{lmer.display}
-\title{lmer.display: table for "lmerMod" of "glmerMod" object (lme4 package)}
+\title{lmer.display: table for "lmerMod" or "glmerMod" object (lme4 package)}
 \usage{
 lmer.display(lmerMod.obj, dec = 2, ci.ranef = F)
 }

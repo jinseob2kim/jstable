@@ -96,16 +96,31 @@ geeglm.display = function(geeglm.obj, decimal = 2){
   y = as.character(geeglm.obj$terms[[2]])
   xs = names(geeglm.obj$model)[-1]
   gee.uni = Reduce(rbind, lapply(xs, function(x){geeUni(y, x, data = geeglm.obj$data, id.vec = geeglm.obj$id, family = family.gee, cor.type = corstr.gee)}))
-  gee.multi = summary(geeglm.obj)$coefficients[-1, -3]
-  gee.res = cbind(geeExp(gee.uni, family = family.gee, dec = decimal), geeExp(gee.multi, family = family.gee, dec = decimal))
-  gee.res.list = lapply(xs, function(x){gee.res[grepl(x, rownames(gee.uni)),]})      
-  varnum.mfac = which(lapply(gee.res.list, length) > 4)
-  lapply(varnum.mfac, function(x){gee.res.list[[x]] <<- rbind(rep(NA, 4), gee.res.list[[x]])})
-  gee.res.modi = Reduce(rbind, gee.res.list)
-  family.label = colnames(gee.res.modi)[1]
+  if (length(xs) ==1){
+    gee.res = geeExp(gee.uni, family = family.gee, dec = decimal)
+    gee.res.list = lapply(xs, function(x){gee.res[grepl(x, rownames(gee.uni)),]})      
+    varnum.mfac = which(lapply(gee.res.list, length) > ncol(gee.res))
+    lapply(varnum.mfac, function(x){gee.res.list[[x]] <<- rbind(rep(NA, ncol(gee.res)), gee.res.list[[x]])})
+    gee.res.modi = Reduce(rbind, gee.res.list)
+    if (nrow(gee.uni) == 1){
+      gee.res.modi = t(data.frame(gee.res.modi))
+    } 
+
+    family.label = colnames(gee.res.modi)[1]
+    colnames(gee.res.modi) =  c(paste(family.label, "(95%CI)",sep = ""), "P value")
+  } else{
+    gee.multi = summary(geeglm.obj)$coefficients[-1, -3]
+    gee.res = cbind(geeExp(gee.uni, family = family.gee, dec = decimal), geeExp(gee.multi, family = family.gee, dec = decimal))
+    gee.res.list = lapply(xs, function(x){gee.res[grepl(x, rownames(gee.uni)),]})      
+    varnum.mfac = which(lapply(gee.res.list, length) > ncol(gee.res))
+    lapply(varnum.mfac, function(x){gee.res.list[[x]] <<- rbind(rep(NA, ncol(gee.res)), gee.res.list[[x]])})
+    gee.res.modi = Reduce(rbind, gee.res.list)
+    family.label = colnames(gee.res.modi)[1]
+    colnames(gee.res.modi) = c(paste("crude ", family.label, "(95%CI)",sep = ""), "crude P value", paste("adj. ", family.label, "(95%CI)",sep = ""), "adj. P value")
+  }
   
-  ## name
-  colnames(gee.res.modi) = c(paste("crude ", family.label, ".(95%CI)",sep = ""), "crude P value", paste("adj. ", family.label, ".(95%CI)",sep = ""), "adj. P value")
+  
+  
   rn.list = lapply(xs, function(x){rownames(gee.uni)[grepl(x, rownames(gee.uni))]})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xs[x],": ref.=", geeglm.obj$xlevels[[xs[varnum.mfac]]][1], sep=""), gsub(xs[x],"   ", rn.list[[x]]))})
   varnum.2fac = which(lapply(xs, function(x){length(geeglm.obj$xlevels[[x]])}) == 2)
@@ -113,17 +128,17 @@ geeglm.display = function(geeglm.obj, decimal = 2){
   
   rownames(gee.res.modi) = unlist(rn.list)
   out = as.data.frame(gee.res.modi)
-  lapply(c(2,4), function(x){out[, x] <<- as.numeric(as.vector(out[, x]))})
+  lapply(seq(2, ncol(gee.res), by =2), function(x){out[, x] <<- as.numeric(as.vector(out[, x]))})
   
   ## Metric
-  info.gee = as.character(c(NA, as.numeric(summary(geeglm.obj)$corr[1]), length(unique(geeglm.obj$id)), length(geeglm.obj$y)))
-  info.df = data.frame(cbind(info.gee, matrix(NA, 4,3)))
+  info.gee = as.character(c(NA, round(as.numeric(summary(geeglm.obj)$corr[1]), decimal+1), length(unique(geeglm.obj$id)), length(geeglm.obj$y)))
+  info.df = data.frame(cbind(info.gee, matrix(NA, 4, ncol(gee.res) -1)))
   colnames(info.df) = colnames(out)
-  lapply(c(2,4), function(x){info.df[, x] <<- as.numeric(info.df[, x])})
+  lapply(seq(2, ncol(gee.res), by =2), function(x){info.df[, x] <<- as.numeric(info.df[, x])})
   rownames(info.df) = c("","Estimated correlation parameters", "No. of clusters", "No. of observations")
   
   ## Caption
-  cap.gee = paste("GEE(", family.gee, ") predicting ", y, " by ('", as.character(geeglm.obj$call[[5]])[length(geeglm.obj$call[[5]])],"')", sep="")
+  cap.gee = paste("GEE(", family.gee, ") predicting ", y, " by ", paste(xs, collapse = " , "), " - Group ", geeglm.obj$call$id, sep="")
   
   return(list(caption = cap.gee, table = out, metric = info.df))
 }
