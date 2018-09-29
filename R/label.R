@@ -98,8 +98,7 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
     rownames(tb.compact) = gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
     if (length(ref[variable == vname, level]) == 2){
       vll = ref[variable == vname, c("level", "val_label")]
-      rownames(tb.compact) = gsub(vll[1, 1], vll[1, 2], rownames(tb.compact))
-      rownames(tb.compact) = gsub(vll[2, 1], vll[2, 2], rownames(tb.compact))
+      rownames(tb.compact) = gsub(paste(vll[2, 1], " vs ", vll[1,1], sep=""), paste(vll[2, 2], " vs ", vll[1,2], sep=""), rownames(tb.compact))
     }
   }
   
@@ -110,7 +109,10 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
     vl_label = lapply(vl, function(x){
       vname = strsplit(x[1], ":")[[1]][1]
       x[1] = gsub(vname, ref[variable == vname, var_label][1], x[1])
-      if (ref[variable == vname, class][1] %in% c("factor", "character")){
+      if (length(ref[variable == vname, level]) == 2){
+        vll = ref[variable == vname, c("level", "val_label")]
+        x = gsub(paste(vll[2, 1], " vs ", vll[1,1], sep=""), paste(vll[2, 2], " vs ", vll[1,2], sep=""), x)
+      } else if (ref[variable == vname, class][1] %in% c("factor", "character")){
         for (y in ref[variable == vname, level]) {x = gsub(y, ref[variable == vname & level == y, val_label], x)}
       }
       return(x)
@@ -174,8 +176,7 @@ LabeljsTable = function(obj.table, ref){
     rownames(tb.compact) = gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
     if (length(ref[variable == vname, level]) == 2){
       vll = ref[variable == vname, c("level", "val_label")]
-      rownames(tb.compact) = gsub(vll[1, 1], vll[1, 2], rownames(tb.compact))
-      rownames(tb.compact) = gsub(vll[2, 1], vll[2, 2], rownames(tb.compact))
+      rownames(tb.compact) = gsub(paste(vll[2, 1], " vs ", vll[1,1], sep=""), paste(vll[2, 2], " vs ", vll[1,2], sep=""), rownames(tb.compact))
     }
   }
   
@@ -186,7 +187,10 @@ LabeljsTable = function(obj.table, ref){
     vl_label = lapply(vl, function(x){
       vname = strsplit(x[1], ":")[[1]][1]
       x[1] = gsub(vname, ref[variable == vname, var_label][1], x[1])
-      if (ref[variable == vname, class][1] %in% c("factor", "character")){
+      if (length(ref[variable == vname, level]) == 2){
+        vll = ref[variable == vname, c("level", "val_label")]
+        x = gsub(paste(vll[2, 1], " vs ", vll[1,1], sep=""), paste(vll[2, 2], " vs ", vll[1,2], sep=""), x)
+      } else if (ref[variable == vname, class][1] %in% c("factor", "character")){
         for (y in ref[variable == vname, level]) {x = gsub(y, ref[variable == vname & level == y, val_label], x)}
       }
       return(x)
