@@ -1,6 +1,6 @@
 Package: jstable
 Title: jstable: Research tables from the GEE, GLMM results
-Version: 0.4.0
+Version: 0.4.5
 Authors@R: person("Jinseob", "Kim", email = "jinseob2kim@gmail.com", role = c("aut", "cre"))
 Description: Research tables from the GEE, GLMM results.
 Depends: R (>= 3.4.0)

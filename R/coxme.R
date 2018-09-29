@@ -121,8 +121,7 @@ coxme.display = function(coxme.obj, dec =2){
   
   formula.surv = as.character(model$formulaList$fixed)[2]
   formula.ranef = as.character(model$formulaList$random)
-  ## data.frame
-  mdata = data.frame(get(as.character(model$call)[3]))
+  mdata = get(as.character(model$call)[3])
   
   if(length(xf) == 1){
     uni.res = coxmeTable(coxme(as.formula(paste(formula.surv, "~", xf," + ", formula.ranef, sep="")), data = mdata))
@@ -152,16 +151,27 @@ coxme.display = function(coxme.obj, dec =2){
     fix.all.unlist = t(data.frame(fix.all.unlist))
   }
   rownames(fix.all.unlist) = unlist(rn.list)
-  
+  pv.colnum = which(colnames(fix.all.unlist) %in% c("P value", "crude P value", "adj. P value"))
+  for (i in pv.colnum){
+    fix.all.unlist[, i] = ifelse(as.numeric(fix.all.unlist[, i]) < 0.001, "< 0.001", round(as.numeric(fix.all.unlist[, i]), dec + 1))
+  }
+
 
   ## random effect
   #ranef = unlist(model$vcoef)
   #ranef.out = round(ranef, dec)
   ranef.out = lapply(model$vcoef, function(x){round(x, dec)})
+  ranef.mat = cbind(c(NA, unlist(ranef.out)), matrix(NA, length(unlist(ranef.out)) + 1, ncol(fix.all) - 1))
+  rownames(ranef.mat)  = c("Random effect", paste(names(ranef.out), "(", unlist(lapply(ranef.out, names)), ")", sep=""))
+  
   
   ## metric
   no.grp = unlist(lapply(model$frail, length))
   no.obs = model$n[2]
+  no.event = model$n[1]
+  metric.mat = cbind(c(NA, no.grp, no.obs, no.event), matrix(NA, length(no.grp) + 3, ncol(fix.all) - 1))
+  rownames(metric.mat) = c(NA, paste("No. of groups(", names(no.grp), ")", sep=""), "No. of observations", "No. of events")
+  
   ## Integrated ll
   #ll = model$loglik[2]
   #aic = -2 * ll -2*model$df[1] 
@@ -174,7 +184,7 @@ coxme.display = function(coxme.obj, dec =2){
   var.names0 <- attr(model$terms, "term.labels")
   if(length(grep("strata", var.names0))>0) {intro <- paste(intro, " with '", var.names0[grep("strata", var.names0)], "'", sep="" )}
   
-  return(list(table = fix.all.unlist, ranef = ranef.out, metric = list("No. groups"= no.grp, "No. observations" =  no.obs), caption = intro))
+  return(list(table = fix.all.unlist, ranef = ranef.mat, metric = metric.mat, caption = intro))
 }
 
 

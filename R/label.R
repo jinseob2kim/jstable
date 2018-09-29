@@ -54,3 +54,265 @@ mk.lev = function(data){
   out.dt[, val_label := level]
   return(out.dt[])
 }
+
+
+
+
+
+
+#' @title LabelepiDisplay: Apply label information to epiDisplay object using label data
+#' @description Apply label information to epiDisplay.object using label data
+#' @param epiDisplay.obj epiDisplay.object
+#' @param label Apply label information, Default: F
+#' @param ref Label data made by mk.lev function
+#' @return epiDisplay.object with label information
+#' @details DETAILS
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  library(epiDisplay)
+#'  fit <- glm(Sepal.Length ~ Sepal.Width + Species, data = iris)
+#'  fit.table = regress.display(fit, crude = T, crude.p.value = T)
+#'  iris.label = mk.lev(iris)
+#'  LabelepiDisplay(fit.table, label = T, ref = iris.label)
+#'  }
+#' }
+#' @rdname LabelepiDisplay
+#' @export 
+#' @importFrom data.table data.table :=
+
+
+LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
+  tb.main = epiDisplay.obj$table
+  tb.compact = tb.main[!rownames(tb.main)=="", ]
+  if (nrow(tb.main) == 2){
+    tb.compact = tb.main
+  }
+  
+  ## Var label
+  tb.rn = gsub(" \\(cont. var.\\)", "", rownames(tb.compact))
+  rownames(tb.compact) = tb.rn
+  
+  if (nrow(tb.main) == 2 & label == T){
+    vname = strsplit(rownames(tb.compact)[1], ":")[[1]][1]
+    rownames(tb.compact) = gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
+    if (length(ref[variable == vname, level]) == 2){
+      vll = ref[variable == vname, c("level", "val_label")]
+      rownames(tb.compact) = gsub(vll[1, 1], vll[1, 2], rownames(tb.compact))
+      rownames(tb.compact) = gsub(vll[2, 1], vll[2, 2], rownames(tb.compact))
+    }
+  }
+  
+  if (nrow(tb.main) > 2 & label == T){
+    vn = which(substr(tb.rn, 1, 1) != " ")
+    vns = c(vn, length(tb.rn)+1 )
+    vl = lapply(1:length(vn), function(x){tb.rn[vns[x]:(vns[x+1]-1)]})
+    vl_label = lapply(vl, function(x){
+      vname = strsplit(x[1], ":")[[1]][1]
+      x[1] = gsub(vname, ref[variable == vname, var_label][1], x[1])
+      if (ref[variable == vname, class][1] %in% c("factor", "character")){
+        for (y in ref[variable == vname, level]) {x = gsub(y, ref[variable == vname & level == y, val_label], x)}
+      }
+      return(x)
+    })
+    rownames(tb.compact) = unlist(vl_label)
+  }
+  
+  ll = strsplit(epiDisplay.obj$last.lines,"\n")[[1]]
+  ll.vec = matrix(unlist(lapply(ll,function(x){strsplit(x," = ")})), ncol =2, byrow=T)
+  ll.mat = matrix(rep("", nrow(ll.vec)* ncol(tb.compact)), nrow = nrow(ll.vec))  
+  ll.mat[,1] = ll.vec[,2]
+  rownames(ll.mat) = ll.vec[,1]
+  out = rbind(tb.compact, rep("", ncol(tb.compact)), ll.mat)
+  
+  if (nrow(tb.main) == 2){
+    out = rbind(tb.compact, ll.mat)
+  }
+  
+  p.colnum = which(colnames(out) %in% c("P(t-test)", "P(Wald's test)")) 
+  
+  pn = gsub("< ","", out[, p.colnum])
+  
+  colnames(out)[p.colnum] = "adj. P value"
+  sig = ifelse(as.numeric(pn) <= 0.05, "**", "")
+  return(cbind(out,sig))
+}
+
+
+
+
+
+#' @title LabeljsTable: Apply label information to jstable object using label data
+#' @description Apply label information to table of geeglm.display, lmer.display, coxme.display using label data
+#' @param obj.table table of geeglm.display, lmer.display, coxme.display
+#' @param ref Label data made by mk.lev function
+#' @return table of geeglm.display, lmer.display, coxme.display with label information
+#' @details DETAILS
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  library(coxme)
+#'  fit <- <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
+#'  fit.table = coxme.display(fit)
+#'  lung.label = mk.lev(lung)
+#'  LabeljsTable(fit.table, ref = lung.label)
+#'  }
+#' }
+#' @rdname LabeljsTable
+#' @export 
+#' @importFrom data.table data.table :=
+
+LabeljsTable = function(obj.table, ref){
+  tb.main = obj.table
+  tb.compact = tb.main
+  
+  ## Var label
+  tb.rn = rownames(tb.compact)
+
+  if (nrow(tb.main) == 1){
+    vname = strsplit(rownames(tb.compact)[1], ":")[[1]][1]
+    rownames(tb.compact) = gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
+    if (length(ref[variable == vname, level]) == 2){
+      vll = ref[variable == vname, c("level", "val_label")]
+      rownames(tb.compact) = gsub(vll[1, 1], vll[1, 2], rownames(tb.compact))
+      rownames(tb.compact) = gsub(vll[2, 1], vll[2, 2], rownames(tb.compact))
+    }
+  }
+  
+  if (nrow(tb.main) > 1){
+    vn = which(substr(tb.rn, 1, 1) != " ")
+    vns = c(vn, length(tb.rn)+1 )
+    vl = lapply(1:length(vn), function(x){tb.rn[vns[x]:(vns[x+1]-1)]})
+    vl_label = lapply(vl, function(x){
+      vname = strsplit(x[1], ":")[[1]][1]
+      x[1] = gsub(vname, ref[variable == vname, var_label][1], x[1])
+      if (ref[variable == vname, class][1] %in% c("factor", "character")){
+        for (y in ref[variable == vname, level]) {x = gsub(y, ref[variable == vname & level == y, val_label], x)}
+      }
+      return(x)
+    })
+    rownames(tb.compact) = unlist(vl_label)
+  }
+  
+  out = tb.compact
+  #sig.colnum = which(colnames(out) %in% c("P value", "adj. P value")) 
+  #pn = gsub("< ","", out[, sig.colnum])
+  #sig = ifelse(as.numeric(pn) <= 0.05, "**", "")
+  
+  #pv.colnum = which(colnames(out) %in% c("P value", "crude P value", "adj. P value"))
+  #for (i in pv.colnum){
+  #  out[, i] = ifelse(as.numeric(out[, i]) < 0.001, "< 0.001", round(as.numeric(out[, i]), 3))
+  #}
+  return(out)
+}
+  
+
+
+
+#' @title LabeljsRanef: Apply label information to jstable random effect object using label data
+#' @description Apply label information to ranef object of jstable using label data
+#' @param obj.ranef ranef of lmer.display, coxme.display
+#' @param ref Label data made by mk.lev function
+#' @return ranef of lmer.display, coxme.display with label information
+#' @details DETAILS
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  library(coxme)
+#'  fit <- <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
+#'  fit.table = coxme.display(fit)
+#'  lung.label = mk.lev(lung)
+#'  LabeljsTable(fit.table$table, ref = lung.label)
+#'  LabeljsRanef(fit.table$ranef, ref = lung.label)
+#'  }
+#' }
+#' @rdname LabeljsRanef
+#' @export 
+
+LabeljsRanef = function(obj.ranef, ref){
+  ranef <- obj.ranef
+  ranef.split <- strsplit(rownames(ranef)[-1], "\\(")
+  ranef.vname <- unlist(lapply(ranef.split, function(x){x[[1]]}))
+  ranef.vname.label <- sapply(ranef.vname, function(x){ref[variable == x, var_label][1]})
+  rownames(ranef)[-1] <- paste(ranef.vname.label, "(", unlist(lapply(ranef.split, function(x){x[[2]]})), sep="")
+  return(ranef)
+}
+
+
+
+
+#' @title LabeljsMetric: Apply label information to jstable metric object using label data
+#' @description Apply label information to metric object of jstable using label data
+#' @param obj.metric metric of lmer.display, coxme.display
+#' @param ref Label data made by mk.lev function
+#' @return metric of lmer.display, coxme.display with label information
+#' @details DETAILS
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  library(coxme)
+#'  fit <- <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
+#'  fit.table = coxme.display(fit)
+#'  lung.label = mk.lev(lung)
+#'  LabeljsTable(fit.table$table, ref = lung.label)
+#'  LabeljsRanef(fit.table$ranef, ref = lung.label)
+#'  LabeljsMetric(fit.table$metric, ref = lung.label)
+#'  }
+#' }
+#' @rdname LabeljsMetric
+#' @export 
+
+LabeljsMetric = function(obj.metric, ref){
+  metric <- obj.metric
+  rname <- rownames(metric)
+  group.rnum <- grep("No. of group", rname)
+  group.vars <- unlist(lapply(strsplit(rname[group.rnum], "\\("), function(x){x[[2]]}))   
+  group.vname <- unlist(strsplit(group.vars, "\\)"))
+  group.vname.label <- sapply(group.vname, function(x){ref[variable == x, var_label][1]})
+  rownames(metric)[group.rnum] <- paste("No. of group(", group.vname.label, ")", sep="")
+  return(metric)
+}
+
+
+
+
+#' @title LabeljsMixed: Apply label information to jstable object using label data
+#' @description Apply label information to object of jstable using label data
+#' @param obj lmer.display, coxme.display
+#' @param ref Label data made by mk.lev function
+#' @return lmer.display, coxme.display with label information
+#' @details DETAILS
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  library(coxme)
+#'  fit <- <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
+#'  fit.table = coxme.display(fit)
+#'  lung.label = mk.lev(lung)
+#'  labeljsMixed(fit.table, ref = lung.label)
+#'  }
+#' }
+#' @rdname LabeljsMixed
+#' @export 
+
+LabeljsMixed = function(obj, ref){
+  out <- list()
+  out$table <- LabeljsTable(obj$table, ref = ref)
+  out$ranef <- LabeljsRanef(obj$ranef, ref = ref)
+  out$metric <- LabeljsMetric(obj$metric, ref = ref)
+  out$caption <- obj$caption
+  if (grep("Mixed effects Cox model", obj$caption) == 1){
+    surv.vname <- strsplit(obj$caption, "'")[[1]][c(2,4)]
+    for (vn in surv.vname){
+      out$caption <- gsub(paste("'", vn, "'", sep = ""), paste("'", ref[variable == vn, var_label][1], "'", sep = ""), out$caption)
+    }
+    group.vname.comma <- strsplit(obj$caption, "- Group ")[[1]][2]
+    group.vname <- strsplit(group.vname.comma, ", ")[[1]]
+    group.vname.label <- sapply(group.vname, function(x){ref[variable == x, var_label][1]})
+    out$caption <- gsub(group.vname.comma, paste(group.vname.label, collapse = ", "), out$caption)
+  }
+  
+  return(out)
+}
+
+

@@ -121,7 +121,7 @@ CreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, test =
 #'  }
 #' }
 #' @rdname CreateTableOneJS
-#' @importFrom data.table data.table :=
+#' @importFrom data.table data.table := CJ
 #' @importFrom tableone CreateTableOne 
 #' @importFrom labelled var_label var_label<-
 #' @importFrom stats chisq.test fisher.test kruskal.test oneway.test
