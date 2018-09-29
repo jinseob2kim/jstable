@@ -5,7 +5,7 @@
 [![GitHub license](https://img.shields.io/github/license/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/blob/master/LICENSE)
 [![GitHub last commit](https://img.shields.io/github/last-commit/google/skia.svg)](https://github.com/jinseob2kim/jstable)
 
-Research tables from GEE, GLMM results
+Research tables from GEE, GLMM, cox mixed effect model results
 
 ## Install
 
@@ -29,10 +29,20 @@ geeglm.display(gee02)
 ```
 
 ## Mixed model Table: from `lmerMod` or `glmerMod` object from **lme4** package
+
 ```r
 l1 = lmer(Weight ~ Time + Cu + (1|Pig) + (1|Evit), data = dietox) 
 lmer.display(l1, ci.ranef = T)
 
 l2 = glmer(ddn ~ Weight + Time + (1|Pig), data= dietox, family= "binomial")
 lmer.display(l2)
+```
+
+
+## Cox mixed effect model Table: from `coxme`  object from **coxme** package
+
+```r
+library(coxme)
+fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
+coxme.display(fit) 
 ```
