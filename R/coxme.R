@@ -121,7 +121,7 @@ coxme.display = function(coxme.obj, dec =2){
   
   formula.surv = as.character(model$formulaList$fixed)[2]
   formula.ranef = as.character(model$formulaList$random)
-  mdata = get(as.character(model$call)[3])
+  mdata = data.frame(get(as.character(model$call)[3]))
   
   if(length(xf) == 1){
     uni.res = coxmeTable(coxme(as.formula(paste(formula.surv, "~", xf," + ", formula.ranef, sep="")), data = mdata))
