@@ -24,10 +24,10 @@ DETAILS
 \dontrun{
 if(interactive()){
  library(survival)
- fit <- <- coxph(Surv(time, status) ~ sex + ph.ecog + ph.karno + cluster(inst), lung)
+ fit <- coxph(Surv(time, status) ~ sex + ph.ecog + ph.karno + cluster(inst), lung)
  fit.table = cox2.display(fit)
  lung.label = mk.lev(lung)
- labeljsCox(fit.table, ref = lung.label)
+ LabeljsCox(fit.table, ref = lung.label)
  }
 }
 }
