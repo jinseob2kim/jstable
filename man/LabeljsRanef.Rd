@@ -7,12 +7,12 @@
 LabeljsRanef(obj.ranef, ref)
 }
 \arguments{
-\item{obj.ranef}{ranef of lmer.display, coxme.display}
+\item{obj.ranef}{ranef of lmer.display, coxme.display, cox2.display}
 
 \item{ref}{Label data made by mk.lev function}
 }
 \value{
-ranef of lmer.display, coxme.display with label information
+ranef of lmer.display, coxme.display, cox2.display with label information
 }
 \description{
 Apply label information to ranef object of jstable using label data

@@ -53,8 +53,8 @@ coxmeTable <- function (mod){
 
 coxExp = function(cox.coef, dec){
   HR = paste(round(exp(cox.coef[,1]), dec), " (", round(exp(cox.coef[,1] - 1.96*exp(cox.coef[,2])), dec), ",", round(exp(cox.coef[,1] + 1.96*exp(cox.coef[,2])), dec),")", sep="")
-  #pv = cox.coef[, 4]
-  pv = 2*(1-pnorm(abs(cox.coef[, "z"])))
+  pv = cox.coef[, "p"]
+  #pv = 2*(1-pnorm(abs(cox.coef[, "z"])))
   return(cbind(HR, pv))
   
 } 
@@ -116,7 +116,7 @@ coxme.display = function(coxme.obj, dec =2){
   
   xf <- attr(model$terms, "term.labels") # Independent vars
   if(length(grep("strata", xf)) > 0){
-    xf <- var.names[-grep("strata",xf)]
+    xf <- xf[-grep("strata",xf)]
   }
   
   formula.surv = as.character(model$formulaList$fixed)[2]

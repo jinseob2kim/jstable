@@ -1,3 +1,10 @@
+## 0.5.0
+
+* Table from `coxph.object` (**survival** package) - allow `cluster` & `frailty` options: `cox2.display` function
+
+* Apply label information to `cox2.display`: `LabeljsCox` function
+
+
 ## 0.4.5 
 
 * Apply label information to `epiDisplay.object`: `LabelepiDisplay` function

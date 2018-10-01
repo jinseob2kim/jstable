@@ -215,9 +215,9 @@ LabeljsTable = function(obj.table, ref){
 
 #' @title LabeljsRanef: Apply label information to jstable random effect object using label data
 #' @description Apply label information to ranef object of jstable using label data
-#' @param obj.ranef ranef of lmer.display, coxme.display
+#' @param obj.ranef ranef of lmer.display, coxme.display, cox2.display
 #' @param ref Label data made by mk.lev function
-#' @return ranef of lmer.display, coxme.display with label information
+#' @return ranef of lmer.display, coxme.display, cox2.display with label information
 #' @details DETAILS
 #' @examples 
 #' \dontrun{
@@ -238,7 +238,11 @@ LabeljsRanef = function(obj.ranef, ref){
   ranef.split <- strsplit(rownames(ranef)[-1], "\\(")
   ranef.vname <- unlist(lapply(ranef.split, function(x){x[[1]]}))
   ranef.vname.label <- sapply(ranef.vname, function(x){ref[variable == x, var_label][1]})
-  rownames(ranef)[-1] <- paste(ranef.vname.label, "(", unlist(lapply(ranef.split, function(x){x[[2]]})), sep="")
+  if (length(ranef.split) ==1){
+    rownames(ranef)[-1] <- ranef.vname.label
+  } else{
+    rownames(ranef)[-1] <- paste(ranef.vname.label, "(", unlist(lapply(ranef.split, function(x){x[[2]]})), sep="")
+  }
   return(ranef)
 }
 
@@ -310,6 +314,49 @@ LabeljsMixed = function(obj, ref){
     for (vn in surv.vname){
       out$caption <- gsub(paste("'", vn, "'", sep = ""), paste("'", ref[variable == vn, var_label][1], "'", sep = ""), out$caption)
     }
+    group.vname.comma <- strsplit(obj$caption, "- Group ")[[1]][2]
+    group.vname <- strsplit(group.vname.comma, ", ")[[1]]
+    group.vname.label <- sapply(group.vname, function(x){ref[variable == x, var_label][1]})
+    out$caption <- gsub(group.vname.comma, paste(group.vname.label, collapse = ", "), out$caption)
+  }
+  
+  return(out)
+}
+
+
+
+#' @title LabeljsCox: Apply label information to cox2.display object using label data
+#' @description Apply label information to cox2.display object using label data
+#' @param obj cox2.display object
+#' @param ref Label data made by mk.lev function
+#' @return cox2.display object with label information
+#' @details DETAILS
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  library(survival)
+#'  fit <- <- coxph(Surv(time, status) ~ sex + ph.ecog + ph.karno + cluster(inst), lung)
+#'  fit.table = cox2.display(fit)
+#'  lung.label = mk.lev(lung)
+#'  labeljsCox(fit.table, ref = lung.label)
+#'  }
+#' }
+#' @rdname LabeljsCox
+#' @export 
+
+LabeljsCox = function(obj, ref){
+  out <- list()
+  out$table <- LabeljsTable(obj$table, ref = ref)
+  if (!is.null(obj$ranef)){
+    out$ranef <- LabeljsRanef(obj$ranef, ref = ref)
+  }
+  out$metric <- obj$metric
+  out$caption <- obj$caption
+  surv.vname <- strsplit(obj$caption, "'")[[1]][c(2,4)]
+  for (vn in surv.vname){
+    out$caption <- gsub(paste("'", vn, "'", sep = ""), paste("'", ref[variable == vn, var_label][1], "'", sep = ""), out$caption)
+  }
+  if (length(grep("- Group", obj$caption)) >= 1){
     group.vname.comma <- strsplit(obj$caption, "- Group ")[[1]][2]
     group.vname <- strsplit(group.vname.comma, ", ")[[1]]
     group.vname.label <- sapply(group.vname, function(x){ref[variable == x, var_label][1]})

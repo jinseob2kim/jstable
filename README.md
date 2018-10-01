@@ -39,6 +39,16 @@ lmer.display(l2)
 ```
 
 
+## Cox model with `frailty` or `cluster` options
+
+```r
+library(survival)
+fit1 <- coxph(Surv(time, status) ~ ph.ecog + age + cluster(inst), lung)
+fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frail(inst), lung)
+cox2.display(fit1)
+cox2.display(fit2)
+```
+
 ## Cox mixed effect model Table: from `coxme`  object from **coxme** package
 
 ```r
