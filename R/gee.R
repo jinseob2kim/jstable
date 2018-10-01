@@ -138,9 +138,9 @@ geeglm.display = function(geeglm.obj, decimal = 2){
   
   ## Metric
   info.gee = as.character(c(NA, round(as.numeric(summary(geeglm.obj)$corr[1]), decimal+1), length(unique(geeglm.obj$id)), length(geeglm.obj$y)))
-  info.df = data.frame(cbind(info.gee, matrix(NA, 4, ncol(gee.res) -1)))
+  info.df = cbind(info.gee, matrix(NA, 4, ncol(gee.res) -1))
   colnames(info.df) = colnames(out)
-  lapply(seq(2, ncol(gee.res), by =2), function(x){info.df[, x] <<- as.numeric(info.df[, x])})
+  #lapply(seq(2, ncol(gee.res), by =2), function(x){info.df[, x] <<- as.numeric(info.df[, x])})
   rownames(info.df) = c("","Estimated correlation parameters", "No. of clusters", "No. of observations")
   
   ## Caption
