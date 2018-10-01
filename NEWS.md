@@ -6,6 +6,9 @@
 
 * Apply label information to `geeglm.display`: `LabeljsGeeglm` function
 
+* Error correction: `geeglm.display` function
+
+
 
 ## 0.4.5 
 

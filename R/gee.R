@@ -122,13 +122,19 @@ geeglm.display = function(geeglm.obj, decimal = 2){
   
   
   rn.list = lapply(xs, function(x){rownames(gee.uni)[grepl(x, rownames(gee.uni))]})
-  lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xs[x],": ref.=", geeglm.obj$xlevels[[xs[varnum.mfac]]][1], sep=""), gsub(xs[x],"   ", rn.list[[x]]))})
   varnum.2fac = which(lapply(xs, function(x){length(geeglm.obj$xlevels[[x]])}) == 2)
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xs[x], ": ", geeglm.obj$xlevels[[xs[x]]][2], " vs ", geeglm.obj$xlevels[[xs[x]]][1], sep="")})
+  lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xs[x],": ref.=", geeglm.obj$xlevels[[xs[varnum.mfac]]][1], sep=""), gsub(xs[x],"   ", rn.list[[x]]))})
+  
   
   rownames(gee.res.modi) = unlist(rn.list)
-  out = as.data.frame(gee.res.modi)
-  lapply(seq(2, ncol(gee.res), by =2), function(x){out[, x] <<- as.numeric(as.vector(out[, x]))})
+  #out = as.data.frame(gee.res.modi)
+  #lapply(seq(2, ncol(gee.res), by =2), function(x){out[, x] <<- as.numeric(as.vector(out[, x]))})
+  out = gee.res.modi
+  pv.colnum = which(colnames(out) %in% c("P value", "crude P value", "adj. P value"))
+  for (i in pv.colnum){
+    out[, i] = ifelse(as.numeric(out[, i]) < 0.001, "< 0.001", round(as.numeric(out[, i]), decimal + 1))
+  }
   
   ## Metric
   info.gee = as.character(c(NA, round(as.numeric(summary(geeglm.obj)$corr[1]), decimal+1), length(unique(geeglm.obj$id)), length(geeglm.obj$y)))
@@ -138,7 +144,7 @@ geeglm.display = function(geeglm.obj, decimal = 2){
   rownames(info.df) = c("","Estimated correlation parameters", "No. of clusters", "No. of observations")
   
   ## Caption
-  cap.gee = paste("GEE(", family.gee, ") predicting ", y, " by ", paste(xs, collapse = " , "), " - Group ", geeglm.obj$call$id, sep="")
+  cap.gee = paste("GEE(", family.gee, ") predicting ", y, " by ", paste(xs, collapse = ", "), " - Group ", as.character(geeglm.obj$call$id)[length(as.character(geeglm.obj$call$id))], sep="")
   
   return(list(caption = cap.gee, table = out, metric = info.df))
 }

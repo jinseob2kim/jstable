@@ -398,7 +398,7 @@ LabeljsGeeglm = function(obj, ref){
   yxc1 <- strsplit(yxc, " by ")[[1]]
   y <- yxc1[1]
   x <- strsplit(yxc1[2], " - Group ")[[1]]
-  xx <- strsplit(x[1], " , ")[[1]]
+  xx <- strsplit(x[1], ", ")[[1]]
   xc <- x[2]
   out$caption <- paste(cap.split[1], "predicting ", ref[variable == y, var_label][1], " by ", paste(sapply(xx, function(vn){ref[variable == vn, var_label][1]}), collapse = ", "), " - Group ", ref[variable == xc, var_label][1], sep="") 
   
