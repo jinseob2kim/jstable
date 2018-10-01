@@ -4,6 +4,8 @@
 
 * Apply label information to `cox2.display`: `LabeljsCox` function
 
+* Apply label information to `geeglm.display`: `LabeljsGeeglm` function
+
 
 ## 0.4.5 
 

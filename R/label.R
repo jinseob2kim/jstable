@@ -367,3 +367,42 @@ LabeljsCox = function(obj, ref){
 }
 
 
+
+
+#' @title LabeljsGeeglm: Apply label information to geeglm.display object using label data
+#' @description Apply label information to geeglm.display object using label data
+#' @param obj geeglm.display object
+#' @param ref Label data made by mk.lev function
+#' @return geeglm.display object with label information
+#' @details DETAILS
+#' @examples 
+#' \dontrun{
+#'  library(geepack);library(jstable)
+#'  data(dietox)
+#'  dietox$Cu <- as.factor(dietox$Cu)
+#'  gee01 <- geeglm (Weight ~ Time + Cu , id =Pig, data = dietox,
+#'                 family=gaussian,corstr="ex")
+#'  g1 <- geeglm.display(gee01)
+#'  LabeljsGeeglm(g1, ref = mk.lev(dietox))
+#' }
+#' @rdname LabeljsGeeglm
+#' @export 
+
+LabeljsGeeglm = function(obj, ref){
+  out <- list()
+  out$table <- LabeljsTable(obj$table, ref = ref)
+  out$metric <- obj$metric
+  out$caption <- obj$caption
+  cap.split <- strsplit(obj$caption, "predicting ")[[1]]
+  yxc <- cap.split[2]
+  yxc1 <- strsplit(yxc, " by ")[[1]]
+  y <- yxc1[1]
+  x <- strsplit(yxc1[2], " - Group ")[[1]]
+  xx <- strsplit(x[1], " , ")[[1]]
+  xc <- x[2]
+  out$caption <- paste(cap.split[1], "predicting ", ref[variable == y, var_label][1], " by ", paste(sapply(xx, function(vn){ref[variable == vn, var_label][1]}), collapse = ", "), " - Group ", ref[variable == xc, var_label][1], sep="") 
+  
+  return(out)
+}
+
+
