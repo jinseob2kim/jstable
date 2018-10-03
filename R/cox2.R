@@ -60,7 +60,7 @@ cox2.display <- function (cox.obj, dec = 2)
     } else {
       uni.res2 <- uni.res[-nrow(uni.res), c(1, 3, 4, 6)]
     }
-    fix.all = coxExp(uni.res, dec = dec)
+    fix.all = coxExp(uni.res2, dec = dec)
     colnames(fix.all) = c("HR(95%CI)", "P value")
     rownames(fix.all) = ifelse(mtype == "frailty", names(model$coefficients)[-length(model$coefficients)], names(model$coefficients))
   } else{
