@@ -52,7 +52,7 @@ coxmeTable <- function (mod){
 #' @importFrom stats pnorm
 
 coxExp = function(cox.coef, dec){
-  HR = paste(round(exp(cox.coef[,1]), dec), " (", round(exp(cox.coef[,1] - 1.96*exp(cox.coef[,2])), dec), ",", round(exp(cox.coef[,1] + 1.96*exp(cox.coef[,2])), dec),")", sep="")
+  HR = paste(round(exp(cox.coef[,1]), dec), " (", round(exp(cox.coef[,1] - 1.96*cox.coef[,2]), dec), ",", round(exp(cox.coef[,1] + 1.96*cox.coef[,2]), dec), ")", sep="")
   pv = cox.coef[, "p"]
   #pv = 2*(1-pnorm(abs(cox.coef[, "z"])))
   return(cbind(HR, pv))

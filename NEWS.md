@@ -1,3 +1,8 @@
+## 0.5.1
+
+* Error correction: `coxExp` function
+
+
 ## 0.5.0
 
 * Table from `coxph.object` (**survival** package) - allow `cluster` & `frailty` options: `cox2.display` function
