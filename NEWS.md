@@ -1,6 +1,6 @@
 ## 0.5.1
 
-* Error correction: `coxExp` function
+* Error correction: `coxExp`, `cox2.display` function
 
 
 ## 0.5.0

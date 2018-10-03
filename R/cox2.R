@@ -62,7 +62,8 @@ cox2.display <- function (cox.obj, dec = 2)
     }
     fix.all = coxExp(uni.res2, dec = dec)
     colnames(fix.all) = c("HR(95%CI)", "P value")
-    rownames(fix.all) = ifelse(mtype == "frailty", names(model$coefficients)[-length(model$coefficients)], names(model$coefficients))
+    #rownames(fix.all) = ifelse(mtype == "frailty", names(model$coefficients)[-length(model$coefficients)], names(model$coefficients))
+    rownames(fix.all) =  names(model$coefficients)
   } else{
     unis <- lapply(xf, function(x){
       uni.res = data.frame(summary(coxph(as.formula(paste(formula.surv, "~", x, formula.ranef, sep="")), data = mdata))$coefficients)
