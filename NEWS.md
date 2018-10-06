@@ -1,9 +1,16 @@
-## 0.5.1
+# jstable 0.5.2
 
-* Error correction: `coxExp`, `cox2.display` function
+* Bug fixes: `geeExp`, `lmerExp` function
 
 
-## 0.5.0
+# jstable 0.5.1
+
+* Bug fixes: `coxExp`, `cox2.display` function
+
+
+# jstable 0.5.0
+
+## New function
 
 * Table from `coxph.object` (**survival** package) - allow `cluster` & `frailty` options: `cox2.display` function
 
@@ -11,11 +18,13 @@
 
 * Apply label information to `geeglm.display`: `LabeljsGeeglm` function
 
-* Error correction: `geeglm.display` function
+## Bug fixes
+
+* Bug fixes: `geeglm.display` function
 
 
 
-## 0.4.5 
+# jstable 0.4.5 
 
 * Apply label information to `epiDisplay.object`: `LabelepiDisplay` function
 
@@ -24,15 +33,19 @@
 
 
 
-## 0.4.0
+# jstable 0.4.0
 
-* Table from `coxme.object` (**coxme** package)
+## New function
 
-* Error correct: 1 variable case.
+* Table from `coxme.object` (**coxme** package): `coxme.display` function
+
+## Bug fixes
+
+* Bug fixes: 1 variable case.
 
 
 
 
-## 0.3.5
+# jstable 0.3.5
 
 * Change default page length option of `opt.tb1` from 10 to 25.

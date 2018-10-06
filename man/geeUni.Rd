@@ -34,7 +34,7 @@ if(interactive()){
  library(geepack)
  data(dietox)
  dietox$Cu <- as.factor(dietox$Cu)
- gee.uni <- geeUni("Weight", c("Time", "Cu"), data = dietox, id.vec = dietox$Pig, 
+ gee.uni <- geeUni("Weight", "Time", data = dietox, id.vec = dietox$Pig, 
                    family = "gaussian", cor.type = "exchangeable")
  }
 }

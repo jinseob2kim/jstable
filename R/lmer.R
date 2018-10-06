@@ -21,13 +21,13 @@ lmerExp = function(lmer.coef, family ="binomial", dec){
   }
   pv = 2*(1-pnorm(abs(lmer.coef[,3])))
   if (family == "binomial"){
-    OR = paste(round(exp(lmer.coef[,1]), dec), " (", round(exp(lmer.coef[,1] - 1.96*exp(lmer.coef[,2])), dec), ",", round(exp(lmer.coef[,1] + 1.96*exp(lmer.coef[,2])), dec),")", sep="")
+    OR = paste(round(exp(lmer.coef[,1]), dec), " (", round(exp(lmer.coef[,1] - 1.96*lmer.coef[,2]), dec), ",", round(exp(lmer.coef[,1] + 1.96*lmer.coef[,2]), dec),")", sep="")
     return(cbind(OR, pv))
   } else if (family %in% c(NULL, "gaussian")){
     coeff = paste(round(lmer.coef[,1], dec), " (", round(lmer.coef[,1] - 1.96*lmer.coef[,2], dec), ",", round(lmer.coef[,1] + 1.96*lmer.coef[,2], dec), ")", sep="")
     return(cbind(coeff, pv))
   } else if (family %in% c("poisson", "quasipoisson")){
-    RR = paste(round(exp(lmer.coef[,1]), dec), " (", round(exp(lmer.coef[,1] - 1.96*exp(lmer.coef[,2])), dec), ",", round(exp(lmer.coef[,1] + 1.96*exp(lmer.coef[,2])), dec),")", sep="")
+    RR = paste(round(exp(lmer.coef[,1]), dec), " (", round(exp(lmer.coef[,1] - 1.96*lmer.coef[,2]), dec), ",", round(exp(lmer.coef[,1] + 1.96*lmer.coef[,2]), dec),")", sep="")
     return(cbind(RR, pv))
   }
 } 

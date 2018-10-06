@@ -14,7 +14,7 @@
 #'  library(geepack)
 #'  data(dietox)
 #'  dietox$Cu <- as.factor(dietox$Cu)
-#'  gee.uni <- geeUni("Weight", c("Time", "Cu"), data = dietox, id.vec = dietox$Pig, 
+#'  gee.uni <- geeUni("Weight", "Time", data = dietox, id.vec = dietox$Pig, 
 #'                    family = "gaussian", cor.type = "exchangeable")
 #'  }
 #' }
@@ -57,13 +57,13 @@ geeUni = function(y, x, data, id.vec, family, cor.type = "exchangeable"){
 
 geeExp = function(gee.coef, family ="binomial", dec){
   if (family == "binomial"){
-    OR = paste(round(exp(gee.coef[,1]), dec), " (", round(exp(gee.coef[,1] - 1.96*exp(gee.coef[,2])), dec), ",", round(exp(gee.coef[,1] + 1.96*exp(gee.coef[,2])), dec),")", sep="")
+    OR = paste(round(exp(gee.coef[,1]), dec), " (", round(exp(gee.coef[,1] - 1.96*gee.coef[,2]), dec), ",", round(exp(gee.coef[,1] + 1.96*gee.coef[,2]), dec),")", sep="")
     return(cbind(OR, gee.coef[,3]))
   } else if (family == "gaussian"){
     coeff = paste(round(gee.coef[,1], dec), " (", round(gee.coef[,1] - 1.96*gee.coef[,2], dec), ",", round(gee.coef[,1] + 1.96*gee.coef[,2], dec), ")", sep="")
     return(cbind(coeff, gee.coef[,3]))
   } else if (family %in% c("poisson", "quasipoisson")){
-    RR = paste(round(exp(gee.coef[,1]), dec), " (", round(exp(gee.coef[,1] - 1.96*exp(gee.coef[,2])), dec), ",", round(exp(gee.coef[,1] + 1.96*exp(gee.coef[,2])), dec),")", sep="")
+    RR = paste(round(exp(gee.coef[,1]), dec), " (", round(exp(gee.coef[,1] - 1.96*gee.coef[,2]), dec), ",", round(exp(gee.coef[,1] + 1.96*gee.coef[,2]), dec),")", sep="")
     return(cbind(RR, gee.coef[,3]))
   }
 } 
