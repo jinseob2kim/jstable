@@ -177,7 +177,7 @@ jsBasicGadget <- function(data) {
   server <- function(input, output, session) {
     
     output$data <- renderDT({
-      datatable(data, rownames=F, editable = F, caption = "Data",
+      datatable(data, rownames=F, editable = F, extensions= "Buttons", caption = "Data",
                 options = opt.data("data")
       )
     })
@@ -508,7 +508,9 @@ jsBasicGadget <- function(data) {
   }
   
   
-  viewer <- dialogViewer("Descriptive statistics", width = 1100, height = 850)
+  
+  #viewer <- dialogViewer("Descriptive statistics", width = 1100, height = 850)
+  viewer <- browserViewer(browser = getOption("browser"))
   runGadget(ui, server, viewer = viewer)
 }
 
