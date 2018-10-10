@@ -178,7 +178,7 @@ jsBasicGadget <- function(data) {
     
     output$data <- renderDT({
       datatable(data, rownames=F, editable = F, caption = "Data",
-                options = list(scrollX = TRUE)
+                options = opt.data("data")
       )
     })
     
@@ -195,11 +195,15 @@ jsBasicGadget <- function(data) {
       
     
     
+    
     output$data_label <- renderDT({
-      datatable(data.label(), rownames=F, editable = T, extensions= "Buttons", caption = "Labels of data",
-                options = opt.data("data")
+      datatable(data.label(), rownames=F, editable = F, extensions= "Buttons", caption = "Labels of data",
+                options = opt.data("label")
       )
     })
+    
+    
+    
     
     output$table1 <- renderDT({
       
