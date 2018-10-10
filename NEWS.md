@@ -1,3 +1,9 @@
+# jstable 0.6.0
+
+* Shiny gadget for descriptive statistics: `jsBasicGadget`
+
+* Rstudio Addin of `jsBasicGadget`: `jsBasicAddin`
+
 # jstable 0.5.2
 
 * Bug fixes: `geeExp`, `lmerExp` function

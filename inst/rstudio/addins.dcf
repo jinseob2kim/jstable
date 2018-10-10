@@ -1,0 +1,4 @@
+Name: Basic Statistics in Medical Research
+Description: Gadget including Data, Label info, Table 1, Regression(liear, logistic), Basic plot.
+Binding: jsBasicAddin
+Interactive: true
