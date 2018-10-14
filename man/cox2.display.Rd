@@ -26,7 +26,7 @@ if(interactive()){
 library(survival)
  data(lung)
  fit1 <- coxph(Surv(time, status) ~ ph.ecog + age + cluster(inst), lung)
- fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frail(inst), lung)
+ fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frailty(inst), lung)
  cox2.display(fit1)
  cox2.display(fit2)
  }
