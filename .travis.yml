@@ -1,0 +1,3 @@
+language: r
+cache: packages
+Imports: geepack, lme4, stats, data.table, labelled, tableone, coxme, survival, DT, epiDisplay, GGally, ggplot2, shinycustomloader, shiny
