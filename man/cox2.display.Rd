@@ -4,10 +4,12 @@
 \alias{cox2.display}
 \title{cox2.display: table for coxph.object - allow "frailty" or "cluster" model}
 \usage{
-cox2.display(cox.obj, dec = 2)
+cox2.display(cox.obj, data = NULL, dec = 2)
 }
 \arguments{
 \item{cox.obj}{coxph.object}
+
+\item{data}{data if reactive environment, Default: NULL}
 
 \item{dec}{Decimal point, Default: 2}
 }

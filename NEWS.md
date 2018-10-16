@@ -1,3 +1,10 @@
+# jstable 0.6.1
+
+* Update: `cox2.display` function allows `data` argument.
+
+* Remove `jsBasicGadget` : Move to **jsmodule** package.
+
+
 # jstable 0.6.0
 
 * Shiny gadget for descriptive statistics: `jsBasicGadget`

@@ -1,6 +1,7 @@
 #' @title cox2.display: table for coxph.object - allow "frailty" or "cluster" model
 #' @description Table for coxph.object - allow "frailty" or "cluster" model  
 #' @param cox.obj coxph.object
+#' @param data data if reactive environment, Default: NULL
 #' @param dec Decimal point, Default: 2
 #' @return Table, cluster/frailty info, metrics, caption
 #' @details GEE like - cluster, Mixed effect model like - frailty
@@ -19,7 +20,7 @@
 #' @export 
 #' @importFrom survival coxph 
 
-cox2.display <- function (cox.obj, dec = 2) 
+cox2.display <- function (cox.obj, data = NULL, dec = 2) 
 {
   model <- cox.obj
   if(!any(class(model)=="coxph")){stop("Model not from Cox model")}
@@ -46,8 +47,13 @@ cox2.display <- function (cox.obj, dec = 2)
   if (is.null(xc)){ 
     formula.ranef = NULL
     }
-    
-  mdata = data.frame(get(as.character(model$call)[3]))
+  
+  if (is.null(data)){
+    mdata = data.frame(get(as.character(model$call)[3]))
+  } else{
+    mdata = data
+  } 
+  
   
   if(length(xf) == 1){
     uni.res = data.frame(summary(coxph(as.formula(paste(formula.surv, "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
