@@ -1,6 +1,7 @@
 # jstable
 
 [![Build Status](https://travis-ci.org/jinseob2kim/jstable.svg?branch=master)](https://travis-ci.org/jinseob2kim/jstable)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/jstable)](http://cran.r-project.org/package=jstable)
 [![GitHub issues](https://img.shields.io/github/issues/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/issues)
 [![GitHub forks](https://img.shields.io/github/forks/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/network)
 [![GitHub stars](https://img.shields.io/github/stars/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/stargazers)
