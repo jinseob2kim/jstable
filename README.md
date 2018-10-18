@@ -34,7 +34,7 @@ gee02 <- geeglm (ddn ~ Time + Cu , id = Pig, data = dietox, family = binomial, c
 geeglm.display(gee02)
 ```
 
-## Mixed model Table: from `lmerMod` or `glmerMod` object from **lme4** package
+## Mixed model Table: `lmerMod` or `glmerMod` object from **lme4** package
 
 ```r
 l1 = lmer(Weight ~ Time + Cu + (1|Pig) + (1|Evit), data = dietox) 
@@ -55,10 +55,25 @@ cox2.display(fit1)
 cox2.display(fit2)
 ```
 
-## Cox mixed effect model Table: from `coxme`  object from **coxme** package
+## Cox mixed effect model Table: `coxme`  object from **coxme** package
 
 ```r
 library(coxme)
 fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
 coxme.display(fit) 
+```
+
+## GLM for weighted data : `svyglm` object from **survey** package
+
+```r
+library(survey);library(jstable)
+data(api)
+apistrat$tt = c(rep(1, 20), rep(0, nrow(apistrat) -20))
+apistrat$tt2 = factor(c(rep(0, 40), rep(1, nrow(apistrat) -40)))
+
+dstrat<-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
+ds <- svyglm(api00~ell+meals+cname+mobility + tt2, design=dstrat)
+ds2 <- svyglm(tt~ell+meals+cname+mobility + tt2, design=dstrat, family = quasibinomial())
+svyglm.display(ds)
+svyglm.display(ds2)
 ```

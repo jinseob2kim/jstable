@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">jstable</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.6.1</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.6.2</span>
       </span>
     </div>
 
@@ -99,9 +99,9 @@
 <a class="sourceLine" id="cb2-9" data-line-number="9">gee02 &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/geepack/topics/geeglm">geeglm</a></span> (ddn <span class="op">~</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>Cu , <span class="dt">id =</span> Pig, <span class="dt">data =</span> dietox, <span class="dt">family =</span> binomial, <span class="dt">corstr =</span> <span class="st">"ex"</span>)</a>
 <a class="sourceLine" id="cb2-10" data-line-number="10"><span class="kw"><a href="reference/geeglm.display.html">geeglm.display</a></span>(gee02)</a></code></pre></div>
 </div>
-<div id="mixed-model-table-from-lmermod-or-glmermod-object-from-lme4-package" class="section level2">
+<div id="mixed-model-table-lmermod-or-glmermod-object-from-lme4-package" class="section level2">
 <h2 class="hasAnchor">
-<a href="#mixed-model-table-from-lmermod-or-glmermod-object-from-lme4-package" class="anchor"></a>Mixed model Table: from <code>lmerMod</code> or <code>glmerMod</code> object from <strong>lme4</strong> package</h2>
+<a href="#mixed-model-table-lmermod-or-glmermod-object-from-lme4-package" class="anchor"></a>Mixed model Table: <code>lmerMod</code> or <code>glmerMod</code> object from <strong>lme4</strong> package</h2>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">l1 =<span class="st"> </span><span class="kw">lmer</span>(Weight <span class="op">~</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>Cu <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Evit), <span class="dt">data =</span> dietox) </a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l1, <span class="dt">ci.ranef =</span> T)</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"></a>
@@ -117,12 +117,26 @@
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="kw"><a href="reference/cox2.display.html">cox2.display</a></span>(fit1)</a>
 <a class="sourceLine" id="cb4-5" data-line-number="5"><span class="kw"><a href="reference/cox2.display.html">cox2.display</a></span>(fit2)</a></code></pre></div>
 </div>
-<div id="cox-mixed-effect-model-table-from-coxme-object-from-coxme-package" class="section level2">
+<div id="cox-mixed-effect-model-table-coxme-object-from-coxme-package" class="section level2">
 <h2 class="hasAnchor">
-<a href="#cox-mixed-effect-model-table-from-coxme-object-from-coxme-package" class="anchor"></a>Cox mixed effect model Table: from <code>coxme</code> object from <strong>coxme</strong> package</h2>
+<a href="#cox-mixed-effect-model-table-coxme-object-from-coxme-package" class="anchor"></a>Cox mixed effect model Table: <code>coxme</code> object from <strong>coxme</strong> package</h2>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">library</span>(coxme)</a>
 <a class="sourceLine" id="cb5-2" data-line-number="2">fit &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/coxme/topics/coxme">coxme</a></span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/survival/topics/Surv">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>inst), lung)</a>
 <a class="sourceLine" id="cb5-3" data-line-number="3"><span class="kw"><a href="reference/coxme.display.html">coxme.display</a></span>(fit) </a></code></pre></div>
+</div>
+<div id="glm-for-weighted-data-svyglm-object-from-survey-package" class="section level2">
+<h2 class="hasAnchor">
+<a href="#glm-for-weighted-data-svyglm-object-from-survey-package" class="anchor"></a>GLM for weighted data : <code>svyglm</code> object from <strong>survey</strong> package</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">library</span>(survey);<span class="kw">library</span>(jstable)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">data</span>(api)</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">apistrat<span class="op">$</span>tt =<span class="st"> </span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">20</span>), <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">nrow</span>(apistrat) <span class="dv">-20</span>))</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">apistrat<span class="op">$</span>tt2 =<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">40</span>), <span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">nrow</span>(apistrat) <span class="dv">-40</span>)))</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">dstrat&lt;-<span class="kw"><a href="http://www.rdocumentation.org/packages/survey/topics/svydesign">svydesign</a></span>(<span class="dt">id=</span><span class="op">~</span><span class="dv">1</span>,<span class="dt">strata=</span><span class="op">~</span>stype, <span class="dt">weights=</span><span class="op">~</span>pw, <span class="dt">data=</span>apistrat, <span class="dt">fpc=</span><span class="op">~</span>fpc)</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">ds &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/survey/topics/svyglm">svyglm</a></span>(api00<span class="op">~</span>ell<span class="op">+</span>meals<span class="op">+</span>cname<span class="op">+</span>mobility <span class="op">+</span><span class="st"> </span>tt2, <span class="dt">design=</span>dstrat)</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8">ds2 &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/survey/topics/svyglm">svyglm</a></span>(tt<span class="op">~</span>ell<span class="op">+</span>meals<span class="op">+</span>cname<span class="op">+</span>mobility <span class="op">+</span><span class="st"> </span>tt2, <span class="dt">design=</span>dstrat, <span class="dt">family =</span> <span class="kw">quasibinomial</span>())</a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="kw"><a href="reference/svyglm.display.html">svyglm.display</a></span>(ds)</a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="kw"><a href="reference/svyglm.display.html">svyglm.display</a></span>(ds2)</a></code></pre></div>
 </div>
 </div>
   </div>
@@ -159,6 +173,8 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://travis-ci.org/jinseob2kim/jstable"><img src="https://travis-ci.org/jinseob2kim/jstable.svg?branch=master" alt="Build Status"></a></li>
+<li><a href="http://cran.r-project.org/package=jstable"><img src="http://www.r-pkg.org/badges/version/jstable" alt="CRAN_Status_Badge"></a></li>
+<li><a href="https://codecov.io/github/jinseob2kim/jstable"><img src="https://codecov.io/github/jinseob2kim/jstable/branch/master/graphs/badge.svg" alt="codecov"></a></li>
 <li><a href="https://github.com/jinseob2kim/jstable/issues"><img src="https://img.shields.io/github/issues/jinseob2kim/jstable.svg" alt="GitHub issues"></a></li>
 <li><a href="https://github.com/jinseob2kim/jstable/network"><img src="https://img.shields.io/github/forks/jinseob2kim/jstable.svg" alt="GitHub forks"></a></li>
 <li><a href="https://github.com/jinseob2kim/jstable/stargazers"><img src="https://img.shields.io/github/stars/jinseob2kim/jstable.svg" alt="GitHub stars"></a></li>

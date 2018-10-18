@@ -1,3 +1,9 @@
+# jstable 0.6.2
+
+## New function
+
+* `svyglm.display`: table from `svyglm.object` in **survey** package 
+
 # jstable 0.6.1
 
 * Update: `cox2.display` function allows `data` argument.
