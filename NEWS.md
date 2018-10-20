@@ -1,8 +1,14 @@
+# jstable 0.6.3
+
+## New function
+
+* `svycox.display`: table from `svycoxph.object` in **survey** package 
+
 # jstable 0.6.2
 
 ## New function
 
-* `svyglm.display`: table from `svyglm.object` in **survey** package 
+* `svyregress.display`: table from `svyglm.object` in **survey** package 
 
 # jstable 0.6.1
 

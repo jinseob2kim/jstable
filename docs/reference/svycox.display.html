@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>datable option for table 1(DT package) — opt.tb1 • jstable</title>
+<title>svycoxph.display: table for svycoxph.object in survey package. — svycox.display • jstable</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -36,9 +36,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
 
 
-<meta property="og:title" content="datable option for table 1(DT package) — opt.tb1" />
+<meta property="og:title" content="svycoxph.display: table for svycoxph.object in survey package. — svycox.display" />
 
-<meta property="og:description" content="DT::datatable option for table 1" />
+<meta property="og:description" content="Table for complex design cox model." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -113,47 +113,64 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>datable option for table 1(DT package)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/DToption.R'><code>R/DToption.R</code></a></small>
-    <div class="hidden name"><code>opt.tb1.Rd</code></div>
+    <h1>svycoxph.display: table for svycoxph.object in survey package.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/svycox.R'><code>R/svycox.R</code></a></small>
+    <div class="hidden name"><code>svycox.display.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>DT::datatable option for table 1</p>
+    <p>Table for complex design cox model.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>opt.tb1</span>(<span class='no'>fname</span>)</pre>
+    <pre class="usage"><span class='fu'>svycox.display</span>(<span class='no'>svycoxph.obj</span>, <span class='kw'>decimal</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>fname</th>
-      <td><p>File name to download</p></td>
+      <th>svycoxph.obj</th>
+      <td><p>svycoxph.object</p></td>
+    </tr>
+    <tr>
+      <th>decimal</th>
+      <td><p>digit, Default: 2</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>datatable option object</p>
+    <p>List including table, metric, caption</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>DETAILS</p>
     
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='http://www.rdocumentation.org/packages/survey/topics/svycoxph'>svycoxph</a></code>
+ <code><a href='http://www.rdocumentation.org/packages/stats/topics/AIC'>AIC</a></code></p></div>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"># NOT RUN {
-if(interactive()){
- datatable(ptb1, rownames=T, extension= "Buttons", caption = cap.tb1,
- options = c(opt.tb1("tb1"), list(columnDefs = list(list(visible=FALSE, targets=ncol(ptb1)))
-                                 )
-            )
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='kw'>if</span>(<span class='fu'>interactive</span>()){
+ <span class='fu'>data</span>(<span class='no'>pbc</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"survival"</span>)
+ <span class='no'>pbc</span>$<span class='no'>sex</span> <span class='kw'>=</span> <span class='fu'>factor</span>(<span class='no'>pbc</span>$<span class='no'>sex</span>)
+ <span class='no'>pbc</span>$<span class='no'>stage</span> <span class='kw'>=</span> <span class='fu'>factor</span>(<span class='no'>pbc</span>$<span class='no'>stage</span>)
+ <span class='no'>pbc</span>$<span class='no'>randomized</span><span class='kw'>&lt;-</span><span class='fu'>with</span>(<span class='no'>pbc</span>, !<span class='fu'>is.na</span>(<span class='no'>trt</span>) <span class='kw'>&amp;</span> <span class='no'>trt</span><span class='kw'>&gt;</span><span class='fl'>0</span>)
+ <span class='no'>biasmodel</span><span class='kw'>&lt;-</span><span class='fu'>glm</span>(<span class='no'>randomized</span>~<span class='no'>age</span>*<span class='no'>edema</span>,<span class='kw'>data</span><span class='kw'>=</span><span class='no'>pbc</span>,<span class='kw'>family</span><span class='kw'>=</span><span class='no'>binomial</span>)
+ <span class='no'>pbc</span>$<span class='no'>randprob</span><span class='kw'>&lt;-</span><span class='fu'>fitted</span>(<span class='no'>biasmodel</span>)
+
+ <span class='kw'>if</span> (<span class='fu'>is.null</span>(<span class='no'>pbc</span>$<span class='no'>albumin</span>)) <span class='no'>pbc</span>$<span class='no'>albumin</span><span class='kw'>&lt;-</span><span class='no'>pbc</span>$<span class='no'>alb</span> <span class='co'>##pre2.9.0</span>
+
+ <span class='no'>dpbc</span> <span class='kw'>&lt;-</span> <span class='fu'>svydesign</span>(<span class='kw'>id</span><span class='kw'>=</span>~<span class='fl'>1</span>, <span class='kw'>prob</span><span class='kw'>=</span>~<span class='no'>randprob</span>, <span class='kw'>strata</span><span class='kw'>=</span>~<span class='no'>edema</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='fu'>subset</span>(<span class='no'>pbc</span>,<span class='no'>randomized</span>))
+
+ <span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='fu'>svycoxph</span>(<span class='fu'>Surv</span>(<span class='no'>time</span>,<span class='no'>status</span><span class='kw'>&gt;</span><span class='fl'>0</span>)~ <span class='no'>sex</span> + <span class='no'>protime</span> + <span class='no'>albumin</span> + <span class='no'>stage</span>,<span class='kw'>design</span><span class='kw'>=</span><span class='no'>dpbc</span>)
+ <span class='fu'>svycox.display</span>(<span class='no'>model</span>)
  }
-# }
-</pre>
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -163,6 +180,8 @@ if(interactive()){
       <li><a href="#value">Value</a></li>
 
       <li><a href="#details">Details</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

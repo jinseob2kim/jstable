@@ -1,5 +1,5 @@
 
-#' @title svyglm.display: table for svyglm.object
+#' @title svyregress.display: table for svyglm.object
 #' @description table for svyglm.object (survey package).
 #' @param svyglm.obj svyglm.object
 #' @param decimal digit, Default: 2
@@ -13,8 +13,8 @@
 #'  dstrat<-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
 #'  ds <- svyglm(api00~ell+meals+cname+mobility, design=dstrat)
 #'  ds2 <- svyglm(tt~ell+meals+cname+mobility, design=dstrat, family = quasibinomial())
-#'  svyglm.display(ds)
-#'  svyglm.display(ds2)
+#'  svyregress.display(ds)
+#'  svyregress.display(ds2)
 #'  }
 #' }
 #' @rdname svyglm.display
@@ -22,7 +22,7 @@
 #' @importFrom survey svyglm
 
 
-svyglm.display <- function(svyglm.obj, decimal = 2){
+svyregress.display <- function(svyglm.obj, decimal = 2){
   
   model <- svyglm.obj
   design.model <- model$survey.design

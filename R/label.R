@@ -48,7 +48,7 @@ mk.lev.var = function(data , vname){
 
 mk.lev = function(data){
   out.list = lapply(names(data), function(x){mk.lev.var(data, x)})
-  out.dt = data.table(Reduce(rbind, out.list))
+  out.dt = data.table::data.table(Reduce(rbind, out.list))
   names(out.dt) = c("variable", "class","level")
   out.dt[, var_label := variable]
   out.dt[, val_label := level]

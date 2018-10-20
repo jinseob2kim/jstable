@@ -74,6 +74,25 @@ apistrat$tt2 = factor(c(rep(0, 40), rep(1, nrow(apistrat) -40)))
 dstrat<-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
 ds <- svyglm(api00~ell+meals+cname+mobility + tt2, design=dstrat)
 ds2 <- svyglm(tt~ell+meals+cname+mobility + tt2, design=dstrat, family = quasibinomial())
-svyglm.display(ds)
-svyglm.display(ds2)
+svyregress.display(ds)
+svyregress.display(ds2)
 ```
+
+## Cox model for weighted data :`svycoxph` object from **survey** package
+
+```r
+data(pbc, package="survival")
+pbc$sex = factor(pbc$sex)
+pbc$stage = factor(pbc$stage)
+pbc$randomized<-with(pbc, !is.na(trt) & trt>0)
+biasmodel<-glm(randomized~age*edema,data=pbc,family=binomial)
+pbc$randprob<-fitted(biasmodel)
+
+if (is.null(pbc$albumin)) pbc$albumin<-pbc$alb ##pre2.9.0
+
+dpbc <- svydesign(id=~1, prob=~randprob, strata=~edema, data=subset(pbc,randomized))
+
+model <- svycoxph(Surv(time,status>0)~ sex + protime + albumin + stage,design=dpbc)
+svycox.display(model)
+```
+

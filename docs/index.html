@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">jstable</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.6.2</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.6.3</span>
       </span>
     </div>
 
@@ -135,8 +135,25 @@
 <a class="sourceLine" id="cb6-6" data-line-number="6">dstrat&lt;-<span class="kw"><a href="http://www.rdocumentation.org/packages/survey/topics/svydesign">svydesign</a></span>(<span class="dt">id=</span><span class="op">~</span><span class="dv">1</span>,<span class="dt">strata=</span><span class="op">~</span>stype, <span class="dt">weights=</span><span class="op">~</span>pw, <span class="dt">data=</span>apistrat, <span class="dt">fpc=</span><span class="op">~</span>fpc)</a>
 <a class="sourceLine" id="cb6-7" data-line-number="7">ds &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/survey/topics/svyglm">svyglm</a></span>(api00<span class="op">~</span>ell<span class="op">+</span>meals<span class="op">+</span>cname<span class="op">+</span>mobility <span class="op">+</span><span class="st"> </span>tt2, <span class="dt">design=</span>dstrat)</a>
 <a class="sourceLine" id="cb6-8" data-line-number="8">ds2 &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/survey/topics/svyglm">svyglm</a></span>(tt<span class="op">~</span>ell<span class="op">+</span>meals<span class="op">+</span>cname<span class="op">+</span>mobility <span class="op">+</span><span class="st"> </span>tt2, <span class="dt">design=</span>dstrat, <span class="dt">family =</span> <span class="kw">quasibinomial</span>())</a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="kw"><a href="reference/svyglm.display.html">svyglm.display</a></span>(ds)</a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="kw"><a href="reference/svyglm.display.html">svyglm.display</a></span>(ds2)</a></code></pre></div>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="kw"><a href="reference/svyglm.display.html">svyregress.display</a></span>(ds)</a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="kw"><a href="reference/svyglm.display.html">svyregress.display</a></span>(ds2)</a></code></pre></div>
+</div>
+<div id="cox-model-for-weighted-data-svycoxph-object-from-survey-package" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cox-model-for-weighted-data-svycoxph-object-from-survey-package" class="anchor"></a>Cox model for weighted data :<code>svycoxph</code> object from <strong>survey</strong> package</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">data</span>(pbc, <span class="dt">package=</span><span class="st">"survival"</span>)</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">pbc<span class="op">$</span>sex =<span class="st"> </span><span class="kw">factor</span>(pbc<span class="op">$</span>sex)</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">pbc<span class="op">$</span>stage =<span class="st"> </span><span class="kw">factor</span>(pbc<span class="op">$</span>stage)</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">pbc<span class="op">$</span>randomized&lt;-<span class="kw">with</span>(pbc, <span class="op">!</span><span class="kw">is.na</span>(trt) <span class="op">&amp;</span><span class="st"> </span>trt<span class="op">&gt;</span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">biasmodel&lt;-<span class="kw">glm</span>(randomized<span class="op">~</span>age<span class="op">*</span>edema,<span class="dt">data=</span>pbc,<span class="dt">family=</span>binomial)</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">pbc<span class="op">$</span>randprob&lt;-<span class="kw">fitted</span>(biasmodel)</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="cf">if</span> (<span class="kw">is.null</span>(pbc<span class="op">$</span>albumin)) pbc<span class="op">$</span>albumin&lt;-pbc<span class="op">$</span>alb ##pre2.9.0</a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10">dpbc &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/survey/topics/svydesign">svydesign</a></span>(<span class="dt">id=</span><span class="op">~</span><span class="dv">1</span>, <span class="dt">prob=</span><span class="op">~</span>randprob, <span class="dt">strata=</span><span class="op">~</span>edema, <span class="dt">data=</span><span class="kw">subset</span>(pbc,randomized))</a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12">model &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/survey/topics/svycoxph">svycoxph</a></span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/survival/topics/Surv">Surv</a></span>(time,status<span class="op">&gt;</span><span class="dv">0</span>)<span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>protime <span class="op">+</span><span class="st"> </span>albumin <span class="op">+</span><span class="st"> </span>stage,<span class="dt">design=</span>dpbc)</a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="kw"><a href="reference/svycox.display.html">svycox.display</a></span>(model)</a></code></pre></div>
 </div>
 </div>
   </div>

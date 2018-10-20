@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>svyglm.display: table for svyglm.object — svyglm.display • jstable</title>
+<title>svyregress.display: table for svyglm.object — svyregress.display • jstable</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -36,7 +36,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
 
 
-<meta property="og:title" content="svyglm.display: table for svyglm.object — svyglm.display" />
+<meta property="og:title" content="svyregress.display: table for svyglm.object — svyregress.display" />
 
 <meta property="og:description" content="table for svyglm.object (survey package)." />
 <meta name="twitter:card" content="summary" />
@@ -68,7 +68,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.6.2</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.6.3</span>
       </span>
     </div>
 
@@ -113,7 +113,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>svyglm.display: table for svyglm.object</h1>
+    <h1>svyregress.display: table for svyglm.object</h1>
     <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/svyglm.R'><code>R/svyglm.R</code></a></small>
     <div class="hidden name"><code>svyglm.display.Rd</code></div>
     </div>
@@ -124,8 +124,7 @@
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for display</span>
-<span class='fu'>svyglm</span>(<span class='no'>svyglm.obj</span>, <span class='kw'>decimal</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>svyregress.display</span>(<span class='no'>svyglm.obj</span>, <span class='kw'>decimal</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,8 +156,8 @@
  <span class='no'>dstrat</span><span class='kw'>&lt;-</span><span class='fu'>svydesign</span>(<span class='kw'>id</span><span class='kw'>=</span>~<span class='fl'>1</span>,<span class='kw'>strata</span><span class='kw'>=</span>~<span class='no'>stype</span>, <span class='kw'>weights</span><span class='kw'>=</span>~<span class='no'>pw</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>apistrat</span>, <span class='kw'>fpc</span><span class='kw'>=</span>~<span class='no'>fpc</span>)
  <span class='no'>ds</span> <span class='kw'>&lt;-</span> <span class='fu'>svyglm</span>(<span class='no'>api00</span>~<span class='no'>ell</span>+<span class='no'>meals</span>+<span class='no'>cname</span>+<span class='no'>mobility</span>, <span class='kw'>design</span><span class='kw'>=</span><span class='no'>dstrat</span>)
  <span class='no'>ds2</span> <span class='kw'>&lt;-</span> <span class='fu'>svyglm</span>(<span class='no'>tt</span>~<span class='no'>ell</span>+<span class='no'>meals</span>+<span class='no'>cname</span>+<span class='no'>mobility</span>, <span class='kw'>design</span><span class='kw'>=</span><span class='no'>dstrat</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='fu'>quasibinomial</span>())
- <span class='fu'>svyglm.display</span>(<span class='no'>ds</span>)
- <span class='fu'>svyglm.display</span>(<span class='no'>ds2</span>)
+ <span class='fu'>svyregress.display</span>(<span class='no'>ds</span>)
+ <span class='fu'>svyregress.display</span>(<span class='no'>ds2</span>)
  }
 <span class='co'># }</span></pre>
   </div>
