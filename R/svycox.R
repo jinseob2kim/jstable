@@ -60,6 +60,7 @@ svycox.display <- function(svycoxph.obj, decimal = 2){
    unis2 <- Reduce(rbind, unis)
    uni.res <- unis2
     mul.res <- data.frame(summary(model)$coefficients)
+    uni.res <- uni.res[rownames(uni.res) %in% rownames(mul.res), ]  ## set
     colnames(mul.res)[ncol(mul.res)] <- "p"
     fix.all = cbind(coxExp(uni.res, dec = decimal), coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = decimal))
     colnames(fix.all) = c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")

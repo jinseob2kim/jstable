@@ -44,7 +44,7 @@ glmshow.display <- function (glm.object, decimal = 2){
     
   } else{
     uni <- lapply(xs, function(v){
-      summary(stats::glm(as.formula(paste(y, " ~ ", v)), data = data, family = model$family))$coefficients[-1, ]
+      data.frame(summary(stats::glm(as.formula(paste(y, " ~ ", v)), data = data, family = model$family))$coefficients)[-1, ]
     })
     uni <- Reduce(rbind, uni)
     if (gaussianT){
@@ -66,7 +66,8 @@ glmshow.display <- function (glm.object, decimal = 2){
       mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <=0.001, "< 0.001", as.character(round(mul[, 4], decimal +1)))))
       colnames(mul.res) <- c(paste("adj. OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
     }
-    res <-cbind(uni.res, mul.res)
+    
+    res <-cbind(uni.res[rownames(uni.res) %in% rownames(mul.res), ], mul.res)
     rownames(res) <- rownames(mul)
   }
   
