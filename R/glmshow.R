@@ -29,7 +29,7 @@ glmshow.display <- function (glm.object, decimal = 2){
   if (length(xs) == 0){
     stop("No independent variable")
   } else if (length(xs) ==1){
-    uni <- summary(stats::glm(as.formula(paste(y, " ~ ", xs)), data = data, family = model$family))$coefficients[-1, ]
+    uni <- data.frame(summary(stats::glm(as.formula(paste(y, " ~ ", xs)), data = data, family = model$family))$coefficients[-1, ])
     if (gaussianT){
       summ <- paste(round(uni[,1], decimal), " (", round(uni[, 1] - 1.96*uni[, 2], decimal), "," ,round(uni[, 1] + 1.96*uni[, 2], decimal), ")", sep ="")
       uni.res <- matrix(cbind(summ, ifelse(uni[, 4] <=0.001, "< 0.001", as.character(round(uni[, 4], decimal +1)))), nrow = 1)
