@@ -85,9 +85,10 @@ mk.lev = function(data){
 LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
   tb.main = epiDisplay.obj$table
   tb.compact = tb.main[!rownames(tb.main)=="", ]
-  if (nrow(tb.main) == 2){
+  if (nrow(tb.main)  <= 2){
     tb.compact = tb.main
   }
+
   
   ## Var label
   tb.rn = gsub(" \\(cont. var.\\)", "", rownames(tb.compact))

@@ -32,11 +32,11 @@ glmshow.display <- function (glm.object, decimal = 2){
     uni <- data.frame(summary(stats::glm(as.formula(paste(y, " ~ ", xs)), data = data, family = model$family))$coefficients)[-1, ]
     if (gaussianT){
       summ <- paste(round(uni[,1], decimal), " (", round(uni[, 1] - 1.96*uni[, 2], decimal), "," ,round(uni[, 1] + 1.96*uni[, 2], decimal), ")", sep ="")
-      uni.res <- matrix(cbind(summ, ifelse(uni[, 4] <=0.001, "< 0.001", as.character(round(uni[, 4], decimal +1)))), nrow = 1)
+      uni.res <- matrix(cbind(summ, ifelse(uni[, 4] <=0.001, "< 0.001", as.character(round(uni[, 4], decimal +1)))), nrow = nrow(uni))
       colnames(uni.res) <- c(paste("Coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "P value")
     } else{
       summ <- paste(round(exp(uni[,1]), decimal), " (", round(exp(uni[, 1] - 1.96*uni[, 2]), decimal), "," ,round(exp(uni[, 1] + 1.96*uni[, 2]), decimal), ")", sep ="")
-      uni.res <- matrix(cbind(summ, ifelse(uni[, 4] <=0.001, "< 0.001", as.character(round(uni[, 4], decimal +1)))), nrow = 1)
+      uni.res <- matrix(cbind(summ, ifelse(uni[, 4] <=0.001, "< 0.001", as.character(round(uni[, 4], decimal +1)))), nrow = nrow(uni))
       colnames(uni.res) <- c(paste("OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "P value")
     }
     rownames(uni.res) <-rownames(uni)
