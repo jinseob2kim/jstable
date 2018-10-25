@@ -4,6 +4,9 @@
 
 * `glmshow.display`: table from `glm.object`.
 
+## bug fixes
+
+* `LabelepiDisplay`: column name issue.
 
 # jstable 0.6.3
 

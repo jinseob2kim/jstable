@@ -131,11 +131,12 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
     out = rbind(tb.compact, ll.mat)
   }
   
-  p.colnum = which(colnames(out) %in% c("P(t-test)", "P(Wald's test)")) 
+  p.colnum = which(colnames(out) %in% c("P value", "adj. P value", "P(t-test)", "P(Wald's test)")) 
+  p.colnum = p.colnum[length(p.colnum)]
   
   pn = gsub("< ","", out[, p.colnum])
   
-  colnames(out)[p.colnum] = "adj. P value"
+  colnames(out)[p.colnum] = ifelse(colnames(out)[p.colnum] == "P value", "P value", "adj. P value")
   sig = ifelse(as.numeric(pn) <= 0.05, "**", "")
   return(cbind(out,sig))
 }
