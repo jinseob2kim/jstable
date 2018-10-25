@@ -44,7 +44,7 @@ glmshow.display <- function (glm.object, decimal = 2){
     
   } else{
     uni <- lapply(xs, function(v){
-      summary(stats::glm(as.formula(paste(y, " ~ ", v)), data = data))$coefficients[-1, ]
+      summary(stats::glm(as.formula(paste(y, " ~ ", v)), data = data, family = model$family))$coefficients[-1, ]
     })
     uni <- Reduce(rbind, uni)
     if (gaussianT){
