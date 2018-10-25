@@ -1,3 +1,10 @@
+# jstable 0.6.5
+
+## New function
+
+* `glmshow.display`: table from `glm.object`.
+
+
 # jstable 0.6.3
 
 ## New function
