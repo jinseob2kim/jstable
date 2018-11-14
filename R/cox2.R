@@ -57,6 +57,7 @@ cox2.display <- function (cox.obj, data = NULL, dec = 2)
   
   if(length(xf) == 1){
     uni.res = data.frame(summary(coxph(as.formula(paste(formula.surv, "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
+    rn.uni <- lapply(list(uni.res), rownames)
     names(uni.res)[ncol(uni.res)] = "p"
     uni.res2 = NULL
     if (mtype == "normal"){
@@ -84,6 +85,7 @@ cox2.display <- function (cox.obj, data = NULL, dec = 2)
       }
       return(uni.res2)
       })
+    rn.uni <- lapply(unis, rownames)
     unis2 <- Reduce(rbind, unis)
     uni.res <- unis2
     mul.res <- data.frame(summary(model)$coefficients)
@@ -95,12 +97,12 @@ cox2.display <- function (cox.obj, data = NULL, dec = 2)
   }
   
   ## rownames
-  fix.all.list = lapply(xf, function(x){fix.all[grepl(x, rownames(fix.all)),]})      
+  fix.all.list = lapply(1:length(xf), function(x){fix.all[rownames(fix.all) %in% rn.uni[[x]], ]})      
   varnum.mfac = which(lapply(fix.all.list, length) > ncol(fix.all))
   lapply(varnum.mfac, function(x){fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])})
   fix.all.unlist = Reduce(rbind, fix.all.list)
   
-  rn.list = lapply(xf, function(x){rownames(fix.all)[grepl(x, rownames(fix.all))]})
+  rn.list = lapply(1:length(xf), function(x){rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]})
   varnum.2fac = which(lapply(xf, function(x){length(sapply(mdata, levels)[[x]])}) == 2)
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep="")})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xf[x],": ref.=", levels(mdata[, xf[x]])[1], sep=""), gsub(xf[x],"   ", rn.list[[x]]))})

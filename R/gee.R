@@ -95,10 +95,14 @@ geeglm.display = function(geeglm.obj, decimal = 2){
   corstr.gee = geeglm.obj$corstr
   y = as.character(geeglm.obj$terms[[2]])
   xs = names(geeglm.obj$model)[-1]
-  gee.uni = Reduce(rbind, lapply(xs, function(x){geeUni(y, x, data = geeglm.obj$data, id.vec = geeglm.obj$id, family = family.gee, cor.type = corstr.gee)}))
+  ## rownames
+  gee.uni.list <- lapply(xs, function(x){geeUni(y, x, data = geeglm.obj$data, id.vec = geeglm.obj$id, family = family.gee, cor.type = corstr.gee)})
+  rn.uni <- lapply(gee.uni.list, rownames)
+  gee.uni = Reduce(rbind, gee.uni.list)
+  
   if (length(xs) ==1){
     gee.res = geeExp(gee.uni, family = family.gee, dec = decimal)
-    gee.res.list = lapply(xs, function(x){gee.res[grepl(x, rownames(gee.uni)),]})      
+    gee.res.list = lapply(1:length(xs), function(x){gee.res[rownames(gee.uni) %in% rn.uni[[x]], ]})     
     varnum.mfac = which(lapply(gee.res.list, length) > ncol(gee.res))
     lapply(varnum.mfac, function(x){gee.res.list[[x]] <<- rbind(rep(NA, ncol(gee.res)), gee.res.list[[x]])})
     gee.res.modi = Reduce(rbind, gee.res.list)
@@ -111,7 +115,7 @@ geeglm.display = function(geeglm.obj, decimal = 2){
   } else{
     gee.multi = summary(geeglm.obj)$coefficients[-1, -3]
     gee.res = cbind(geeExp(gee.uni, family = family.gee, dec = decimal), geeExp(gee.multi, family = family.gee, dec = decimal))
-    gee.res.list = lapply(xs, function(x){gee.res[grepl(x, rownames(gee.uni)),]})      
+    gee.res.list = lapply(1:length(xs), function(x){gee.res[rownames(gee.uni) %in% rn.uni[[x]], ]})      
     varnum.mfac = which(lapply(gee.res.list, length) > ncol(gee.res))
     lapply(varnum.mfac, function(x){gee.res.list[[x]] <<- rbind(rep(NA, ncol(gee.res)), gee.res.list[[x]])})
     gee.res.modi = Reduce(rbind, gee.res.list)
@@ -121,7 +125,7 @@ geeglm.display = function(geeglm.obj, decimal = 2){
   
   
   
-  rn.list = lapply(xs, function(x){rownames(gee.uni)[grepl(x, rownames(gee.uni))]})
+  rn.list = lapply(1:length(xs), function(x){rownames(gee.uni)[rownames(gee.uni) %in% rn.uni[[x]]]})
   varnum.2fac = which(lapply(xs, function(x){length(geeglm.obj$xlevels[[x]])}) == 2)
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xs[x], ": ", geeglm.obj$xlevels[[xs[x]]][2], " vs ", geeglm.obj$xlevels[[xs[x]]][1], sep="")})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xs[x],": ref.=", geeglm.obj$xlevels[[xs[x]]][1], sep=""), gsub(xs[x],"   ", rn.list[[x]]))})

@@ -1,10 +1,14 @@
+# jstable 0.6.7 
+
+*  Bug fixes : duplicate variable name - `glmshow.display`, `cox2.display`, `geeglm.display`, `coxme.display` 
+
 # jstable 0.6.5
 
 ## New function
 
 * `glmshow.display`: table from `glm.object`.
 
-## bug fixes
+## Bug fixes
 
 * `LabelepiDisplay`: column name issue.
 

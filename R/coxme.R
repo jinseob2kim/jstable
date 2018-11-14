@@ -125,11 +125,13 @@ coxme.display = function(coxme.obj, dec =2){
   
   if(length(xf) == 1){
     uni.res = coxmeTable(coxme(as.formula(paste(formula.surv, "~", xf," + ", formula.ranef, sep="")), data = mdata))
+    rn.uni <- lapply(list(uni.res), rownames)
     fix.all = coxExp(uni.res, dec = dec)
     colnames(fix.all) = c("HR(95%CI)", "P value")
     rownames(fix.all) = names(model$coefficients)
   } else{
     unis <- lapply(xf, function(x){coxmeTable(coxme(as.formula(paste(formula.surv, "~", x," + ", formula.ranef, sep="")), data = mdata))})
+    rn.uni <- lapply(unis, rownames)
     unis2 <- Reduce(rbind, unis)
     uni.res <- unis2
     fix.all = cbind(coxExp(uni.res, dec = dec), coxExp(coxmeTable(model), dec = dec))
@@ -138,12 +140,12 @@ coxme.display = function(coxme.obj, dec =2){
   }
   
   ## rownames
-  fix.all.list = lapply(xf, function(x){fix.all[grepl(x, rownames(fix.all)),]})      
+  fix.all.list = lapply(1:length(xf), function(x){fix.all[rownames(fix.all) %in% rn.uni[[x]], ]})        
   varnum.mfac = which(lapply(fix.all.list, length) > ncol(fix.all))
   lapply(varnum.mfac, function(x){fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])})
   fix.all.unlist = Reduce(rbind, fix.all.list)
   
-  rn.list = lapply(xf, function(x){rownames(fix.all)[grepl(x, rownames(fix.all))]})
+  rn.list = lapply(1:length(xf), function(x){rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]})
   varnum.2fac = which(lapply(xf, function(x){length(sapply(mdata, levels)[[x]])}) == 2)
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep="")})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xf[x],": ref.=", levels(mdata[, xf[x]])[1], sep=""), gsub(xf[x],"   ", rn.list[[x]]))})
