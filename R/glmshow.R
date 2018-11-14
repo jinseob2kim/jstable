@@ -83,7 +83,7 @@ glmshow.display <- function (glm.object, decimal = 2){
   fix.all.unlist = Reduce(rbind, fix.all.list)
   
   rn.list = lapply(1:length(xs), function(x){rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]})
-  varnum.2fac = which(xs == names(model$xlevels)[lapply(model$xlevels, length) == 2])
+  varnum.2fac = which(xs %in% names(model$xlevels)[lapply(model$xlevels, length) == 2])
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xs[x], ": ", model$xlevels[[xs[x]]][2], " vs ", model$xlevels[[xs[x]]][1], sep="")})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xs[x],": ref.=", model$xlevels[[xs[x]]][1], sep=""), gsub(xs[x],"   ", rn.list[[x]]))})
   if (class(fix.all.unlist) == "character"){
