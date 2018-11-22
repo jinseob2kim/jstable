@@ -1,3 +1,7 @@
+# jstable 0.6.8
+
+* Bug fixes: data.frame issues in `cox2.display`
+
 # jstable 0.6.7 
 
 *  Bug fixes : duplicate variable name - `glmshow.display`, `cox2.display`, `geeglm.display`, `coxme.display` 

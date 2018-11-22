@@ -51,7 +51,7 @@ cox2.display <- function (cox.obj, data = NULL, dec = 2)
   if (is.null(data)){
     mdata = data.frame(get(as.character(model$call)[3]))
   } else{
-    mdata = data
+    mdata = data.frame(data)
   } 
   
   
