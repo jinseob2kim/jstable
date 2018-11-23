@@ -1,7 +1,6 @@
-#' @title cox2.display: table for coxph.object - allow "frailty" or "cluster" model
-#' @description Table for coxph.object - allow "frailty" or "cluster" model  
-#' @param cox.obj coxph.object
-#' @param data data if reactive environment, Default: NULL
+#' @title cox2.display: table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model
+#' @description Table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model  
+#' @param cox.obj.withmodel coxph.object with model option: TRUE
 #' @param dec Decimal point, Default: 2
 #' @return Table, cluster/frailty info, metrics, caption
 #' @details GEE like - cluster, Mixed effect model like - frailty
@@ -20,14 +19,15 @@
 #' @export 
 #' @importFrom survival coxph 
 
-cox2.display <- function (cox.obj, data = NULL, dec = 2) 
+cox2.display <- function (cox.obj.withmodel, dec = 2) 
 {
-  model <- cox.obj
+  model <- cox.obj.withmodel
   if(!any(class(model)=="coxph")){stop("Model not from Cox model")}
   
   xf <- attr(model$terms, "term.labels") # Independent vars
   xf.old <- xf
   xc <- NULL
+  xc.vn <- NULL
   mtype <- "normal"
   
   if(length(grep("strata", xf)) > 0){
@@ -36,30 +36,36 @@ cox2.display <- function (cox.obj, data = NULL, dec = 2)
     xf <- xf[-grep("frailty\\(",xf)]
     mtype <- "frailty"
     xc <- setdiff(xf.old, xf)
+    xc.vn <- strsplit(strsplit(xc, "frailty\\(")[[1]][2], "\\)")[[1]][1]
   } else if(summary(model)$used.robust == T){
     mtype <- "cluster"
     #xfull <-  strsplit(as.character(model$call[[2]][3]), " \\+ ")[[1]]
     #xc <- setdiff(xfull, xf)
     xf <- xf[-grep("cluster\\(",xf)]
     xc <- setdiff(xf.old, xf)
-    
+    xc.vn <- strsplit(strsplit(xc, "cluster\\(")[[1]][2], "\\)")[[1]][1]
   }
    
-  formula.surv = as.character(model$formula)[2]
-  formula.ranef = paste(" + ", xc, sep = "")
+  formula.surv <- as.character(model$formula)[2]
+  formula.ranef <- paste(" + ", xc, sep = "")
+  mdata <- model$model
+  
   if (length(xc) == 0){ 
-    formula.ranef = NULL
+    formula.ranef <- NULL
+  } else{
+      names(mdata)[names(mdata) == xc] <- xc.vn
     }
   
-  if (is.null(data)){
-    mdata = data.frame(get(as.character(model$call)[3]))
-  } else{
-    mdata = data.frame(data)
-  } 
+  #if (is.null(data)){
+  #  mdata = data.frame(get(as.character(model$call)[3]))
+  #} else{
+  #  mdata = data.frame(data)
+  #} 
+  
   
   
   if(length(xf) == 1){
-    uni.res = data.frame(summary(coxph(as.formula(paste(formula.surv, "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
+    uni.res = data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
     rn.uni <- lapply(list(uni.res), rownames)
     names(uni.res)[ncol(uni.res)] = "p"
     uni.res2 = NULL
@@ -76,7 +82,7 @@ cox2.display <- function (cox.obj, data = NULL, dec = 2)
     rownames(fix.all) =  names(model$coefficients)
   } else{
     unis <- lapply(xf, function(x){
-      uni.res = data.frame(summary(coxph(as.formula(paste(formula.surv, "~", x, formula.ranef, sep="")), data = mdata))$coefficients)
+      uni.res = data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", x, formula.ranef, sep="")), data = mdata))$coefficients)
       names(uni.res)[ncol(uni.res)] = "p"
       uni.res2 = NULL
       if (mtype == "normal"){
@@ -91,7 +97,7 @@ cox2.display <- function (cox.obj, data = NULL, dec = 2)
     rn.uni <- lapply(unis, rownames)
     unis2 <- Reduce(rbind, unis)
     uni.res <- unis2
-    mul.res <- data.frame(summary(model)$coefficients)
+    mul.res <- data.frame(coefNA(model))
     uni.res <- uni.res[rownames(uni.res) %in% rownames(mul.res), ]
     colnames(mul.res)[ncol(mul.res)] <- "p"
     fix.all = cbind(coxExp(uni.res, dec = dec), coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = dec))

@@ -1,3 +1,27 @@
+
+#' @title coefNA: make coefficient table with NA
+#' @description Make coefficient table with NA
+#' @param model glm object (gaussian or binomial)
+#' @return coefficient table with NA
+#' @details DETAILS
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @rdname coefNA
+#' @export 
+#' @importFrom stats coef
+
+coefNA <- function(model){
+  coef.rownames <- merge(coef(summary(model)), coef(model), by =0, all= T)
+  coef.matrix <- as.matrix(coef.rownames[, -c(1, ncol(coef.rownames))])
+  rownames(coef.matrix) <- coef.rownames[, "Row.names"]
+  return(coef.matrix[names(coef(model)), ])
+}
+
+
 #' @title glmshow.display: Show summary table of glm object.
 #' @description Show summary table of glm object(regression, logistic).
 #' @param glm.object glm.object
@@ -29,7 +53,7 @@ glmshow.display <- function (glm.object, decimal = 2){
   if (length(xs) == 0){
     stop("No independent variable")
   } else if (length(xs) ==1){
-    uni <- data.frame(summary(stats::glm(as.formula(paste(y, " ~ ", xs)), data = data, family = model$family))$coefficients)[-1, ]
+    uni <- data.frame(coefNA(stats::glm(as.formula(paste(y, " ~ ", xs)), data = data, family = model$family)))[-1, ]
     rn.uni <- lapply(list(uni), rownames)
     if (gaussianT){
       summ <- paste(round(uni[,1], decimal), " (", round(uni[, 1] - 1.96*uni[, 2], decimal), "," ,round(uni[, 1] + 1.96*uni[, 2], decimal), ")", sep ="")
@@ -45,7 +69,7 @@ glmshow.display <- function (glm.object, decimal = 2){
     
   } else{
     uni <- lapply(xs, function(v){
-      data.frame(summary(stats::glm(as.formula(paste(y, " ~ ", v)), data = data, family = model$family))$coefficients)[-1, ]
+      data.frame(coefNA(stats::glm(as.formula(paste(y, " ~ ", v)), data = data, family = model$family)))[-1, ]
     })
     rn.uni <- lapply(uni, rownames)
     uni <- Reduce(rbind, uni)
@@ -54,7 +78,7 @@ glmshow.display <- function (glm.object, decimal = 2){
       uni.res <- t(rbind(summ, ifelse(uni[, 4] <=0.001, "< 0.001", as.character(round(uni[, 4], decimal +1)))))
       colnames(uni.res) <- c(paste("crude coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "crude P value")
       rownames(uni.res) <-rownames(uni)
-      mul <- summary(model)$coefficients[-1, ]
+      mul <- coefNA(model)[-1, ]
       mul.summ <- paste(round(mul[,1], decimal), " (", round(mul[, 1] - 1.96*mul[, 2], decimal), "," ,round(mul[, 1] + 1.96*mul[, 2], decimal), ")", sep ="")
       mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <=0.001, "< 0.001", as.character(round(mul[, 4], decimal +1)))))
       colnames(mul.res) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
@@ -63,7 +87,7 @@ glmshow.display <- function (glm.object, decimal = 2){
       uni.res <- t(rbind(summ, ifelse(uni[, 4] <=0.001, "< 0.001", as.character(round(uni[, 4], decimal +1)))))
       colnames(uni.res) <- c(paste("crude OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "crude P value")
       rownames(uni.res) <-rownames(uni)
-      mul <- summary(model)$coefficients[-1, ]
+      mul <- coefNA(model)[-1, ]
       mul.summ <- paste(round(exp(mul[,1]), decimal), " (", round(exp(mul[, 1] - 1.96*mul[, 2]), decimal), "," ,round(exp(mul[, 1] + 1.96*mul[, 2]), decimal), ")", sep ="")
       mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <=0.001, "< 0.001", as.character(round(mul[, 4], decimal +1)))))
       colnames(mul.res) <- c(paste("adj. OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
@@ -101,13 +125,13 @@ glmshow.display <- function (glm.object, decimal = 2){
   
   
   if (gaussianT) {
-    first.line <- paste("Linear regression predicting ", outcome.name, sep = "", "- weighted data\n")
+    first.line <- paste("Linear regression predicting ", outcome.name, sep = "", "\n")
     last.lines <- paste("No. of observations = ",
                         length(model$y), "\n", "AIC value = ", round(model$aic,
                                                                      decimal + 2), "\n", "\n", sep = "")
   }
   else {
-    first.line <- paste("Logistic regression predicting ", outcome.name, sep = "", "- weighted data\n")
+    first.line <- paste("Logistic regression predicting ", outcome.name, sep = "", "\n")
     last.lines <-  paste("No. of observations = ",
                          length(model$y), "\n", "AIC value = ", round(model$aic,
                                                                       decimal + 2), "\n", "\n", sep = "")

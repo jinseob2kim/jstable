@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>cox2.display: table for coxph.object - allow "frailty" or "cluster" model — cox2.display • jstable</title>
+<title>cox2.display: table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model — cox2.display • jstable</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -35,9 +35,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
 
 
-<meta property="og:title" content="cox2.display: table for coxph.object - allow "frailty" or "cluster" model — cox2.display" />
+<meta property="og:title" content="cox2.display: table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model — cox2.display" />
 
-<meta property="og:description" content="Table for coxph.object - allow &quot;frailty&quot; or &quot;cluster&quot; model" />
+<meta property="og:description" content="Table for coxph.object with model option: TRUE - allow &quot;frailty&quot; or &quot;cluster&quot; model" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -68,7 +68,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.6.8</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.6.9</span>
       </span>
     </div>
 
@@ -113,29 +113,25 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>cox2.display: table for coxph.object - allow "frailty" or "cluster" model</h1>
+    <h1>cox2.display: table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model</h1>
     <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/cox2.R'><code>R/cox2.R</code></a></small>
     <div class="hidden name"><code>cox2.display.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Table for coxph.object - allow "frailty" or "cluster" model</p>
+    <p>Table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>cox2.display</span>(<span class='no'>cox.obj</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dec</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>cox2.display</span>(<span class='no'>cox.obj.withmodel</span>, <span class='kw'>dec</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>cox.obj</th>
-      <td><p>coxph.object</p></td>
-    </tr>
-    <tr>
-      <th>data</th>
-      <td><p>data if reactive environment, Default: NULL</p></td>
+      <th>cox.obj.withmodel</th>
+      <td><p>coxph.object with model option: TRUE</p></td>
     </tr>
     <tr>
       <th>dec</th>

@@ -1,3 +1,9 @@
+# jstable 0.6.9
+
+* New function: `coefNA`
+
+* Bug fixes: Coefficients in `glmshow.display`, `cox2.display`
+
 # jstable 0.6.8
 
 * Bug fixes: data.frame & cluster model issue in `cox2.display`

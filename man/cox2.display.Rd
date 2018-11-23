@@ -2,14 +2,12 @@
 % Please edit documentation in R/cox2.R
 \name{cox2.display}
 \alias{cox2.display}
-\title{cox2.display: table for coxph.object - allow "frailty" or "cluster" model}
+\title{cox2.display: table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model}
 \usage{
-cox2.display(cox.obj, data = NULL, dec = 2)
+cox2.display(cox.obj.withmodel, dec = 2)
 }
 \arguments{
-\item{cox.obj}{coxph.object}
-
-\item{data}{data if reactive environment, Default: NULL}
+\item{cox.obj.withmodel}{coxph.object with model option: TRUE}
 
 \item{dec}{Decimal point, Default: 2}
 }
@@ -17,7 +15,7 @@ cox2.display(cox.obj, data = NULL, dec = 2)
 Table, cluster/frailty info, metrics, caption
 }
 \description{
-Table for coxph.object - allow "frailty" or "cluster" model
+Table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model
 }
 \details{
 GEE like - cluster, Mixed effect model like - frailty

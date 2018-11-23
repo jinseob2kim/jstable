@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>LabeljsCox: Apply label information to cox2.display object using label data — LabeljsCox • jstable</title>
+<title>coefNA: make coefficient table with NA — coefNA • jstable</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -35,9 +35,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
 
 
-<meta property="og:title" content="LabeljsCox: Apply label information to cox2.display object using label data — LabeljsCox" />
+<meta property="og:title" content="coefNA: make coefficient table with NA — coefNA" />
 
-<meta property="og:description" content="Apply label information to cox2.display object using label data" />
+<meta property="og:description" content="Make coefficient table with NA" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -113,35 +113,31 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>LabeljsCox: Apply label information to cox2.display object using label data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/label.R'><code>R/label.R</code></a></small>
-    <div class="hidden name"><code>LabeljsCox.Rd</code></div>
+    <h1>coefNA: make coefficient table with NA</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/glmshow.R'><code>R/glmshow.R</code></a></small>
+    <div class="hidden name"><code>coefNA.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Apply label information to cox2.display object using label data</p>
+    <p>Make coefficient table with NA</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>LabeljsCox</span>(<span class='no'>obj</span>, <span class='no'>ref</span>)</pre>
+    <pre class="usage"><span class='fu'>coefNA</span>(<span class='no'>model</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>obj</th>
-      <td><p>cox2.display object</p></td>
-    </tr>
-    <tr>
-      <th>ref</th>
-      <td><p>Label data made by mk.lev function</p></td>
+      <th>model</th>
+      <td><p>glm object (gaussian or binomial)</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>cox2.display object with label information</p>
+    <p>coefficient table with NA</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -151,11 +147,7 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
 <span class='kw'>if</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>()){
- <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>survival</span>)
- <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/survival/topics/coxph'>coxph</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/survival/topics/Surv'>Surv</a></span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>sex</span> + <span class='no'>ph.ecog</span> + <span class='no'>ph.karno</span> + <span class='fu'><a href='https://www.rdocumentation.org/packages/survival/topics/cluster'>cluster</a></span>(<span class='no'>inst</span>), <span class='no'>lung</span>)
- <span class='no'>fit.table</span> <span class='kw'>=</span> <span class='fu'><a href='cox2.display.html'>cox2.display</a></span>(<span class='no'>fit</span>)
- <span class='no'>lung.label</span> <span class='kw'>=</span> <span class='fu'><a href='mk.lev.html'>mk.lev</a></span>(<span class='no'>lung</span>)
- <span class='fu'>LabeljsCox</span>(<span class='no'>fit.table</span>, <span class='kw'>ref</span> <span class='kw'>=</span> <span class='no'>lung.label</span>)
+ <span class='co'>#EXAMPLE1</span>
  }
 <span class='co'># }</span></pre>
   </div>
