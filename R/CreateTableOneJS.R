@@ -52,11 +52,11 @@ CreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, test =
                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL){
   
   if (Labels & !is.null(labeldata)){
-    var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
+    labelled::var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
     vals.tb1 = c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
   }
   
-  res = CreateTableOne(vars =vars, strata = strata, data = data, factorVars = factorVars, includeNA = includeNA, test = test, 
+  res = tableone::CreateTableOne(vars =vars, strata = strata, data = data, factorVars = factorVars, includeNA = includeNA, test = test, 
                        testApprox = testApprox, argsApprox = argsApprox,
                        testExact = testExact, argsExact = argsExact,
                        testNormal = testNormal, argsNormal = argsNormal,
@@ -144,11 +144,11 @@ CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVar
   
   if (is.null(strata)){
     if (Labels & !is.null(labeldata)){
-      var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
+      labelled::var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
       vals.tb1 = c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
     }
     
-    res = CreateTableOne(vars =vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, 
+    res = tableone::CreateTableOne(vars =vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, 
                          testApprox = testApprox, argsApprox = argsApprox,
                          testExact = testExact, argsExact = argsExact,
                          testNormal = testNormal, argsNormal = argsNormal,
@@ -193,14 +193,14 @@ CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVar
     ptb1.cbind = Reduce(cbind, c(list(ptb1.list[[1]]), lapply(2:length(ptb1.list), function(x){ptb1.list[[x]][,-1]})))
     colnum.test = which(colnames(ptb1.cbind) == "test")
     ptb1.2group = ptb1.cbind[, c(setdiff(1:ncol(ptb1.cbind), colnum.test), colnum.test[1])]
-    cap.tb1 = cap.tb1 = paste("Table 1: Stratified by ", strata, "(", paste(levels(data[[strata]]), collapse=", "), ") & ", strata2, sep="")
+    cap.tb1 = paste("Table 1: Stratified by ", strata, "(", paste(levels(data[[strata]]), collapse=", "), ") & ", strata2, sep="")
     if (Labels & !is.null(labeldata)){
       cap.tb1 = paste("Table 1: Stratified by ", labeldata[get("variable") == strata, "var_label"][1], "(", paste(unlist(labeldata[get("variable") == strata, "val_label"]), collapse=", "), ") & ", labeldata[get("variable") == strata2, "var_label"][1], sep="")
     }
     
     return(list(table = ptb1.2group, caption = cap.tb1))
   } else{
-    res= CreateTableOne(vars = vars, strata = c(strata2, strata), data = data, factorVars = factorVars, includeNA = F, test = T,
+    res= tableone::CreateTableOne(vars = vars, strata = c(strata2, strata), data = data, factorVars = factorVars, includeNA = F, test = T,
                         testApprox = chisq.test, argsApprox = list(correct = TRUE),
                         testExact = fisher.test, argsExact = list(workspace = 2 * 10^5),
                         testNormal = oneway.test, argsNormal = list(var.equal = F),
