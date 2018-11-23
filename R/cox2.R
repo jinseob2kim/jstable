@@ -32,19 +32,22 @@ cox2.display <- function (cox.obj, data = NULL, dec = 2)
   
   if(length(grep("strata", xf)) > 0){
     xf <- xf[-grep("strata",xf)]
-  } else if(length(grep("frailty", xf)) > 0){
-    xf <- xf[-grep("frailty",xf)]
+  } else if(length(grep("frailty\\(", xf)) > 0){
+    xf <- xf[-grep("frailty\\(",xf)]
     mtype <- "frailty"
     xc <- setdiff(xf.old, xf)
   } else if(summary(model)$used.robust == T){
     mtype <- "cluster"
-    xfull <-  strsplit(as.character(model$call[[2]][3]), " \\+ ")[[1]]
-    xc <- setdiff(xfull, xf)
+    #xfull <-  strsplit(as.character(model$call[[2]][3]), " \\+ ")[[1]]
+    #xc <- setdiff(xfull, xf)
+    xf <- xf[-grep("cluster\\(",xf)]
+    xc <- setdiff(xf.old, xf)
+    
   }
    
   formula.surv = as.character(model$formula)[2]
   formula.ranef = paste(" + ", xc, sep = "")
-  if (is.null(xc)){ 
+  if (length(xc) == 0){ 
     formula.ranef = NULL
     }
   

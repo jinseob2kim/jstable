@@ -1,6 +1,6 @@
 # jstable 0.6.8
 
-* Bug fixes: data.frame issues in `cox2.display`
+* Bug fixes: data.frame & cluster model issue in `cox2.display`
 
 # jstable 0.6.7 
 
