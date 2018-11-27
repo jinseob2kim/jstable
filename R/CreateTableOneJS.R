@@ -44,7 +44,7 @@
 #' @importFrom methods is
 #' @export 
 
-CreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, test = T,
+CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test = T,
                            testApprox = chisq.test, argsApprox = list(correct = TRUE),
                            testExact = fisher.test, argsExact = list(workspace = 2 * 10^5),
                            testNormal = oneway.test, argsNormal = list(var.equal = F),
@@ -99,7 +99,7 @@ CreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, test =
 
 
 
-#' @title CreateTableOne2: Modified CreateTableOne function in tableone package
+#' @title CreateTableOneJS: Modified CreateTableOne function in tableone package
 #' @description Combine CreateTableOne & print function in tableone package
 #' @param data A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.
 #' @param strata Stratifying grouping variable name(s) given as a character vector. If omitted, the overall results are returned.
@@ -145,7 +145,7 @@ CreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, test =
 #' @export 
 
 
-CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVars = NULL, includeNA = F, test = T,
+CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVars = NULL, includeNA = F, test = T,
                             testApprox = chisq.test, argsApprox = list(correct = TRUE),
                             testExact = fisher.test, argsExact = list(workspace = 2 * 10^5),
                             testNormal = oneway.test, argsNormal = list(var.equal = F),

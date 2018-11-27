@@ -33,7 +33,7 @@
 #' @importFrom labelled var_label var_label<-
 #' @export 
 
-svyCreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, test = T,
+svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test = T,
                            showAllLevels = T, printToggle = F, quote = F, smd = F, nonnormal = NULL, 
                            catDigits = 1, contDigits = 2, pDigits = 3, Labels = F, labeldata = NULL){
   
@@ -74,7 +74,7 @@ svyCreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, tes
 
 
 
-#' @title svyCreateTableOne2: Modified CreateTableOne function in tableone package
+#' @title svyCreateTableOneJS: Modified CreateTableOne function in tableone package
 #' @description Combine svyCreateTableOne & print function in tableone package
 #' @param data A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.
 #' @param strata Stratifying grouping variable name(s) given as a character vector. If omitted, the overall results are returned.
@@ -109,7 +109,7 @@ svyCreateTableOne2 = function(data, strata, vars, factorVars, includeNA = F, tes
 #' @export 
 
 
-svyCreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVars = NULL, includeNA = F, test = T,
+svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVars = NULL, includeNA = F, test = T,
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, nonnormal = NULL, 
                             catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T){
   

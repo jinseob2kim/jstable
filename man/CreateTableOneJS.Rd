@@ -2,7 +2,7 @@
 % Please edit documentation in R/CreateTableOneJS.R
 \name{CreateTableOneJS}
 \alias{CreateTableOneJS}
-\title{CreateTableOne2: Modified CreateTableOne function in tableone package}
+\title{CreateTableOneJS: Modified CreateTableOne function in tableone package}
 \usage{
 CreateTableOneJS(vars, strata = NULL, strata2 = NULL, data,
   factorVars = NULL, includeNA = F, test = T,

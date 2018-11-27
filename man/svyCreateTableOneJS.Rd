@@ -2,7 +2,7 @@
 % Please edit documentation in R/svyCreateTableOneJS.R
 \name{svyCreateTableOneJS}
 \alias{svyCreateTableOneJS}
-\title{svyCreateTableOne2: Modified CreateTableOne function in tableone package}
+\title{svyCreateTableOneJS: Modified CreateTableOne function in tableone package}
 \usage{
 svyCreateTableOneJS(vars, strata = NULL, strata2 = NULL, data,
   factorVars = NULL, includeNA = F, test = T, showAllLevels = T,
