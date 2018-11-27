@@ -1,3 +1,7 @@
+# jstable 0.7.0
+
+* Update : Auto-selection between **Chi-square test** and **Fisher's exact test** in `CreateTableOneJS`, `CreateTableOne2`.
+
 # jstable 0.6.9
 
 * New function: `coefNA`

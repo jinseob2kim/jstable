@@ -1,6 +1,6 @@
 Package: jstable
 Title: jstable: Research tables from the GEE, GLMM results
-Version: 0.6.9
+Version: 0.7.0
 Authors@R: c(person("Jinseob", "Kim", email = "jinseob2kim@gmail.com", role = c("aut", "cre"),  comment = c(ORCID = "0000-0002-9403-605X")),
              person("Anpanman", role = c("cph", "fnd"))
              )
@@ -10,6 +10,6 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
-Imports: geepack, lme4, stats, data.table, labelled, tableone, coxme, survival, DT, epiDisplay, GGally, ggplot2, shinycustomloader, shiny, survey
+Imports: geepack, lme4, stats, data.table, labelled, tableone, coxme, survival, DT, epiDisplay, GGally, ggplot2, shinycustomloader, shiny, survey, methods
 URL: https://github.com/jinseob2kim/jstable
 BugReports: https://github.com/jinseob2kim/jstable/issues
