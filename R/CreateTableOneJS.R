@@ -247,7 +247,7 @@ CreateTableOneJS = function(vars, strata = NULL, strata2 = NULL, data, factorVar
     
     # Column name
     if (Labels & !is.null(labeldata)){
-      val_combination <- CJ(labeldata[variable == strata, val_label], labeldata[variable == strata2, val_label])
+      val_combination <- data.table::CJ(labeldata[variable == strata, val_label], labeldata[variable == strata2, val_label])
       colname.group_var <- val_combination[, paste(V1, ":", V2, sep="")] 
       colname.group_index <- paste(labeldata[variable == strata, var_label][1], ":", labeldata[variable == strata2, var_label][1], sep = "")
       colnames(ptb1)[1:(length(colname.group_var)+1)] = c(colname.group_index, colname.group_var)

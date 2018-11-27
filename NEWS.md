@@ -1,6 +1,10 @@
 # jstable 0.7.0
 
-* Update : Auto-selection between **Chi-square test** and **Fisher's exact test** in `CreateTableOneJS`, `CreateTableOne2`.
+## Update 
+
+* Auto-selection between **Chi-square test** and **Fisher's exact test** in `CreateTableOneJS`, `CreateTableOne2`.
+
+* Table 1 for survey data: `svyCreateTableOne2` and `svyCreateTableOneJS` are modified functions of `svyCreateTableOne`(**tableone** package).
 
 # jstable 0.6.9
 
