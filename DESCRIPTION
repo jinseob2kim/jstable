@@ -6,7 +6,7 @@ Authors@R: c(person("Jinseob", "Kim", email = "jinseob2kim@gmail.com", role = c(
              )
 Description: Research tables from the GEE, GLMM, cox results.
 Depends: R (>= 3.4.0)
-License: MIT + file LICENSE
+License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
