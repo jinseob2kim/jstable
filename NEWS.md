@@ -4,7 +4,7 @@
 
 * `svyglm` function.
 
-* Apply `testhat`.
+* Apply **testhat**.
 
 # jstable 0.7.0
 
