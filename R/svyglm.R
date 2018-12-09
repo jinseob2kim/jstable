@@ -33,7 +33,9 @@ svyregress.display <- function(svyglm.obj, decimal = 2){
   if (length(xs) == 0){
     stop("No independent variable")
   } else if (length(xs) ==1){
-    uni <- data.frame(summary(survey::svyglm(as.formula(paste(y, " ~ ", xs)), design = design.model, family = model$family))$coefficients)[-1, ]
+    uni <- data.frame(coefNA(survey::svyglm(as.formula(paste(y, " ~ ", xs)), design = design.model, family = model$family)))[-1, ]
+    rn.uni <- lapply(list(uni), rownames)
+    #uni <- data.frame(summary(survey::svyglm(as.formula(paste(y, " ~ ", xs)), design = design.model, family = model$family))$coefficients)[-1, ]
     if (gaussianT){
       summ <- paste(round(uni[,1], decimal), " (", round(uni[, 1] - 1.96*uni[, 2], decimal), "," ,round(uni[, 1] + 1.96*uni[, 2], decimal), ")", sep ="")
       uni.res <- matrix(cbind(summ, ifelse(uni[, 4] <=0.001, "< 0.001", as.character(round(uni[, 4], decimal +1)))), nrow = nrow(uni))
@@ -48,9 +50,14 @@ svyregress.display <- function(svyglm.obj, decimal = 2){
     
   } else{
     uni <- lapply(xs, function(v){
-      summary(survey::svyglm(as.formula(paste(y, " ~ ", v)), design = design.model))$coefficients[-1, ]
+      data.frame(coefNA(survey::svyglm(as.formula(paste(y, " ~ ", v)), design = design.model, family = model$family)))[-1, ]
     })
+    #uni <- lapply(xs, function(v){
+    #  summary(survey::svyglm(as.formula(paste(y, " ~ ", v)), design = design.model))$coefficients[-1, ]
+    #})
+    rn.uni <- lapply(uni, rownames)
     uni <- Reduce(rbind, uni)
+    
     if (gaussianT){
       summ <- paste(round(uni[,1], decimal), " (", round(uni[, 1] - 1.96*uni[, 2], decimal), "," ,round(uni[, 1] + 1.96*uni[, 2], decimal), ")", sep ="")
       uni.res <- t(rbind(summ, ifelse(uni[, 4] <=0.001, "< 0.001", as.character(round(uni[, 4], decimal +1)))))
@@ -77,12 +84,14 @@ svyregress.display <- function(svyglm.obj, decimal = 2){
   fix.all = res
   mdata = model$model
   ## rownames
-  fix.all.list = lapply(xs, function(x){fix.all[grepl(x, rownames(fix.all)),]})      
+  #fix.all.list = lapply(xs, function(x){fix.all[grepl(x, rownames(fix.all)),]})     
+  fix.all.list = lapply(1:length(xs), function(x){fix.all[rownames(fix.all) %in% rn.uni[[x]], ]})
   varnum.mfac = which(lapply(fix.all.list, length) > ncol(fix.all))
   lapply(varnum.mfac, function(x){fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])})
   fix.all.unlist = Reduce(rbind, fix.all.list)
   
-  rn.list = lapply(xs, function(x){rownames(fix.all)[grepl(x, rownames(fix.all))]})
+  #rn.list = lapply(xs, function(x){rownames(fix.all)[grepl(x, rownames(fix.all))]})
+  rn.list = lapply(1:length(xs), function(x){rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]})
   varnum.2fac = which(xs == names(model$xlevels)[lapply(model$xlevels, length) == 2])
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xs[x], ": ", model$xlevels[[xs[x]]][2], " vs ", model$xlevels[[xs[x]]][1], sep="")})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xs[x],": ref.=", model$xlevels[[xs[x]]][1], sep=""), gsub(xs[x],"   ", rn.list[[x]]))})

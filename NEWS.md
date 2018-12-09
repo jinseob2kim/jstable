@@ -1,3 +1,11 @@
+# jstable 0.7.1
+
+## Bug fixes
+
+* `svyglm` function.
+
+* Apply `testhat`.
+
 # jstable 0.7.0
 
 ## Update 
