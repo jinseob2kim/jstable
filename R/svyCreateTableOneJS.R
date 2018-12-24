@@ -125,11 +125,11 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
       vals.tb1 <- c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
     }
     
-    res <- tableone::svyCreateTableOne(vars =vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd)
+    res <- tableone::svyCreateTableOne(vars =vars, data = data, factorVars = factorVars, includeNA = includeNA)
     
     ptb1 <- print(res,
-                  showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
-                  catDigits = catDigits, contDigits = contDigits, pDigits = pDigits)
+                  showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
+                  catDigits = catDigits, contDigits = contDigits)
     
     rownames(ptb1) <- gsub("(mean (sd))", "", rownames(ptb1), fixed=T)
     cap.tb1 <- "Table 1: Total - weighted data"
