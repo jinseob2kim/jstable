@@ -38,7 +38,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
                            catDigits = 1, contDigits = 2, pDigits = 3, Labels = F, labeldata = NULL){
   
   if (Labels & !is.null(labeldata)){
-    labelled::var_label(data$variable) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
+    labelled::var_label(data$variables) = sapply(names(data$variables), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
     vals.tb1 <- c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
   }
   
