@@ -1,6 +1,6 @@
 # jstable 0.7.2
 
-* Bug fixes: `svyCreateTableOneJS`
+* Bug fixes: `svyCreateTableOneJS`, `LabelJsTable`
 
 # jstable 0.7.1
 
