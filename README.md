@@ -75,20 +75,20 @@ geeglm.display(gee02)
     ## 
     ## $table
     ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-    ## Time       "1.02 (0.98,1.06)" "0.315"       "1.02 (0.98,1.06)"
+    ## Time       "1 (0.97,1.04)"    "0.918"       "1 (0.97,1.04)"   
     ## Cu: ref.=1 NA                 NA            NA                
-    ##    2       "1.33 (0.99,1.78)" "0.056"       "1.33 (0.99,1.78)"
-    ##    3       "1.29 (0.99,1.68)" "0.063"       "1.29 (0.99,1.68)"
+    ##    2       "0.96 (0.69,1.32)" "0.788"       "0.96 (0.69,1.32)"
+    ##    3       "0.83 (0.6,1.16)"  "0.277"       "0.83 (0.6,1.16)" 
     ##            adj. P value
-    ## Time       "0.319"     
+    ## Time       "0.916"     
     ## Cu: ref.=1 NA          
-    ##    2       "0.057"     
-    ##    3       "0.064"     
+    ##    2       "0.787"     
+    ##    3       "0.277"     
     ## 
     ## $metric
     ##                                  crude OR(95%CI) crude P value
     ##                                  NA              NA           
-    ## Estimated correlation parameters "-0.023"        NA           
+    ## Estimated correlation parameters "0"             NA           
     ## No. of clusters                  "72"            NA           
     ## No. of observations              "861"           NA           
     ##                                  adj. OR(95%CI) adj. P value
@@ -101,18 +101,9 @@ geeglm.display(gee02)
 
 ``` r
 library(lme4)
-```
-
-    ## Loading required package: Matrix
-
-``` r
 l1 = lmer(Weight ~ Time + Cu + (1|Pig) + (1|Evit), data = dietox) 
 lmer.display(l1, ci.ranef = T)
 ```
-
-    ## singular fit
-
-    ## Computing profile confidence intervals ...
 
     ## $table
     ##                      crude coeff(95%CI) crude P value adj. coeff(95%CI)
@@ -151,32 +142,23 @@ lmer.display(l1, ci.ranef = T)
 
 ``` r
 l2 = glmer(ddn ~ Weight + Time + (1|Pig), data= dietox, family= "binomial")
-```
-
-    ## singular fit
-
-``` r
 lmer.display(l2)
 ```
 
-    ## singular fit
-
-    ## singular fit
-
     ## $table
-    ##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
-    ## Weight                    1 (1,1.01)     0.5200610 0.99 (0.97,1.01)
-    ## Time                1.02 (0.98,1.06)     0.3018741 1.11 (0.97,1.27)
-    ## Random effects                  <NA>            NA             <NA>
-    ## Pig                                0            NA             <NA>
-    ## Metrics                         <NA>            NA             <NA>
-    ## No. of groups (Pig)               72            NA             <NA>
-    ## No. of observations              861            NA             <NA>
-    ## Log-likelihood               -595.49            NA             <NA>
-    ## AIC value                    1198.98            NA             <NA>
+    ##                     crude OR(95%CI) crude P value   adj. OR(95%CI)
+    ## Weight                1 (0.99,1.01)     0.9208150 0.99 (0.98,1.01)
+    ## Time                  1 (0.96,1.04)     0.9248565  1.05 (0.91,1.2)
+    ## Random effects                 <NA>            NA             <NA>
+    ## Pig                               0            NA             <NA>
+    ## Metrics                        <NA>            NA             <NA>
+    ## No. of groups (Pig)              72            NA             <NA>
+    ## No. of observations             861            NA             <NA>
+    ## Log-likelihood              -594.81            NA             <NA>
+    ## AIC value                   1197.62            NA             <NA>
     ##                     adj. P value
-    ## Weight                 0.2277406
-    ## Time                   0.1470021
+    ## Weight                 0.5015483
+    ## Time                   0.5022575
     ## Random effects                NA
     ## Pig                           NA
     ## Metrics                       NA
@@ -243,18 +225,6 @@ cox2.display(fit2)
 
 ``` r
 library(coxme)
-```
-
-    ## Loading required package: bdsmatrix
-
-    ## 
-    ## Attaching package: 'bdsmatrix'
-
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     backsolve
-
-``` r
 fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
 coxme.display(fit) 
 ```
@@ -283,18 +253,6 @@ coxme.display(fit)
 
 ``` r
 library(survey);library(jstable)
-```
-
-    ## Loading required package: grid
-
-    ## 
-    ## Attaching package: 'survey'
-
-    ## The following object is masked from 'package:graphics':
-    ## 
-    ##     dotchart
-
-``` r
 data(api)
 apistrat$tt = c(rep(1, 20), rep(0, nrow(apistrat) -20))
 apistrat$tt2 = factor(c(rep(0, 40), rep(1, nrow(apistrat) -40)))
@@ -302,11 +260,6 @@ apistrat$tt2 = factor(c(rep(0, 40), rep(1, nrow(apistrat) -40)))
 dstrat<-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
 ds <- svyglm(api00~ell+meals+cname+mobility + tt2, design=dstrat)
 ds2 <- svyglm(tt~ell+meals+cname+mobility + tt2, design=dstrat, family = quasibinomial())
-```
-
-    ## Warning: glm.fit: algorithm did not converge
-
-``` r
 svyregress.display(ds)
 ```
 
