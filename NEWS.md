@@ -1,6 +1,6 @@
 # jstable 0.7.2
 
-* Bug fixes: `svyCreateTableOne2`,  `svyCreateTableOneJS`, `LabelJsTable`, `LabelepiDisplay`
+* Bug fixes: `svyCreateTableOne2`,  `svyCreateTableOneJS`, `LabelJsTable`, `LabelepiDisplay` and `svyregress.display`
 
 # jstable 0.7.1
 
