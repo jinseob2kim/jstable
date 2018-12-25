@@ -83,31 +83,31 @@ mk.lev = function(data){
 
 
 LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
-  tb.main = epiDisplay.obj$table
-  tb.compact = tb.main[!rownames(tb.main)=="", ]
+  tb.main <- epiDisplay.obj$table
+  tb.compact <- tb.main[!rownames(tb.main)=="", ]
   if (nrow(tb.main)  <= 2){
-    tb.compact = tb.main
+    tb.compact <- tb.main
   }
 
   
   ## Var label
   tb.rn = gsub(" \\(cont. var.\\)", "", rownames(tb.compact))
   rownames(tb.compact) = tb.rn
-  
-  if (nrow(tb.main) == 2 & label == T){
-    vname = strsplit(rownames(tb.compact)[1], ":")[[1]][1]
-    rownames(tb.compact) = gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
+ 
+  if (nrow(tb.main) < 2 & label == T){
+    vname <- strsplit(rownames(tb.compact)[1], ":")[[1]][1]
+    rownames(tb.compact) <- gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
     if (length(ref[variable == vname, level]) == 2){
-      vll = ref[variable == vname, c("level", "val_label")]
-      rownames(tb.compact) = gsub(paste(vll[2, 1], " vs ", vll[1,1], sep=""), paste(vll[2, 2], " vs ", vll[1,2], sep=""), rownames(tb.compact))
+      vll <- ref[variable == vname, c("level", "val_label")]
+      rownames(tb.compact) <- gsub(paste(vll[2, 1], " vs ", vll[1,1], sep=""), paste(vll[2, 2], " vs ", vll[1,2], sep=""), rownames(tb.compact))
     }
   }
   
   if (nrow(tb.main) > 2 & label == T){
-    vn = which(substr(tb.rn, 1, 1) != " ")
-    vns = c(vn, length(tb.rn)+1 )
-    vl = lapply(1:length(vn), function(x){tb.rn[vns[x]:(vns[x+1]-1)]})
-    vl_label = lapply(vl, function(x){
+    vn <- which(substr(tb.rn, 1, 1) != " ")
+    vns <- c(vn, length(tb.rn)+1 )
+    vl <- lapply(1:length(vn), function(x){tb.rn[vns[x]:(vns[x+1]-1)]})
+    vl_label <- lapply(vl, function(x){
       vname <- strsplit(x[1], ":")[[1]][1]
       #x[1] <- gsub(vname, ref[variable == vname, var_label][1], x[1])
       if (length(ref[variable == vname, level]) == 2){
@@ -124,7 +124,7 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
       }
       return(x)
     })
-    rownames(tb.compact) = unlist(vl_label)
+    rownames(tb.compact) <- unlist(vl_label)
   }
   
   ll = strsplit(epiDisplay.obj$last.lines,"\n")[[1]]
