@@ -15,10 +15,10 @@
 #' @importFrom stats coef
 
 coefNA <- function(model){
-  coef.rownames <- merge(coef(summary(model)), coef(model), by =0, all= T)
+  coef.rownames <- merge(coef(summary(model)), model$coefficients, by =0, all= T)
   coef.matrix <- as.matrix(coef.rownames[, -c(1, ncol(coef.rownames))])
   rownames(coef.matrix) <- coef.rownames[, "Row.names"]
-  return(coef.matrix[names(coef(model)), ])
+  return(coef.matrix[names(model$coefficients), ])
 }
 
 

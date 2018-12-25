@@ -1,6 +1,12 @@
 # jstable 0.7.2
 
-* Bug fixes: `svyCreateTableOne2`,  `svyCreateTableOneJS`, `LabelJsTable`, `LabelepiDisplay` and `svyregress.display`
+## Bug fixes 
+
+* `svyCreateTableOne2`,  `svyCreateTableOneJS`, `LabelJsTable`, `LabelepiDisplay` and `svyregress.display`
+
+## Update 
+
+* `coefNA` can be used in `svyregress.display`
 
 # jstable 0.7.1
 

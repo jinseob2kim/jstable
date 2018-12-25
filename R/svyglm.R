@@ -63,7 +63,8 @@ svyregress.display <- function(svyglm.obj, decimal = 2){
       uni.res <- t(rbind(summ, ifelse(uni[, 4] <=0.001, "< 0.001", as.character(round(uni[, 4], decimal +1)))))
       colnames(uni.res) <- c(paste("crude coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "crude P value")
       rownames(uni.res) <-rownames(uni)
-      mul <- summary(model)$coefficients[-1, ]
+      #mul <- summary(model)$coefficients[-1, ]
+      mul <- coefNA(model)[-1, ]
       mul.summ <- paste(round(mul[,1], decimal), " (", round(mul[, 1] - 1.96*mul[, 2], decimal), "," ,round(mul[, 1] + 1.96*mul[, 2], decimal), ")", sep ="")
       mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <=0.001, "< 0.001", as.character(round(mul[, 4], decimal +1)))))
       colnames(mul.res) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
@@ -72,7 +73,8 @@ svyregress.display <- function(svyglm.obj, decimal = 2){
       uni.res <- t(rbind(summ, ifelse(uni[, 4] <=0.001, "< 0.001", as.character(round(uni[, 4], decimal +1)))))
       colnames(uni.res) <- c(paste("crude OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "crude P value")
       rownames(uni.res) <-rownames(uni)
-      mul <- summary(model)$coefficients[-1, ]
+      #mul <- summary(model)$coefficients[-1, ]
+      mul <- coefNA(model)[-1, ]
       mul.summ <- paste(round(exp(mul[,1]), decimal), " (", round(exp(mul[, 1] - 1.96*mul[, 2]), decimal), "," ,round(exp(mul[, 1] + 1.96*mul[, 2]), decimal), ")", sep ="")
       mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <=0.001, "< 0.001", as.character(round(mul[, 4], decimal +1)))))
       colnames(mul.res) <- c(paste("adj. OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
