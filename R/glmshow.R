@@ -98,22 +98,22 @@ glmshow.display <- function (glm.object, decimal = 2){
   }
   
   ## label
-  fix.all = res
+  fix.all <- res
   
   ## rownames
-  fix.all.list = lapply(1:length(xs), function(x){fix.all[rownames(fix.all) %in% rn.uni[[x]], ]})
-  varnum.mfac = which(lapply(fix.all.list, length) > ncol(fix.all))
+  fix.all.list <- lapply(1:length(xs), function(x){fix.all[rownames(fix.all) %in% rn.uni[[x]], ]})
+  varnum.mfac <- which(lapply(fix.all.list, length) > ncol(fix.all))
   lapply(varnum.mfac, function(x){fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])})
-  fix.all.unlist = Reduce(rbind, fix.all.list)
+  fix.all.unlist <- Reduce(rbind, fix.all.list)
   
-  rn.list = lapply(1:length(xs), function(x){rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]})
-  varnum.2fac = which(xs %in% names(model$xlevels)[lapply(model$xlevels, length) == 2])
+  rn.list <- lapply(1:length(xs), function(x){rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]})
+  varnum.2fac <- which(xs %in% names(model$xlevels)[lapply(model$xlevels, length) == 2])
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xs[x], ": ", model$xlevels[[xs[x]]][2], " vs ", model$xlevels[[xs[x]]][1], sep="")})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xs[x],": ref.=", model$xlevels[[xs[x]]][1], sep=""), gsub(xs[x],"   ", rn.list[[x]]))})
   if (class(fix.all.unlist) == "character"){
-    fix.all.unlist = t(data.frame(fix.all.unlist))
+    fix.all.unlist <- t(data.frame(fix.all.unlist))
   }
-  rownames(fix.all.unlist) = unlist(rn.list)
+  rownames(fix.all.unlist) <- unlist(rn.list)
   
   #pv.colnum = which(colnames(fix.all.unlist) %in% c("P value", "crude P value", "adj. P value"))
   #for (i in pv.colnum){

@@ -79,9 +79,6 @@
 
     
     
-<div id="jstable" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#jstable" class="anchor"></a>jstable</h1></div>
 
 <p>Research tables from GEE, GLMM, cox mixed effect model results</p>
 <div id="install" class="section level2">
@@ -132,20 +129,20 @@
 ## 
 ## $table
 ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-## Time       "1.01 (0.97,1.04)" "0.722"       "1.01 (0.97,1.04)"
+## Time       "0.98 (0.95,1.02)" "0.357"       "0.98 (0.95,1.02)"
 ## Cu: ref.=1 NA                 NA            NA                
-##    2       "1.16 (0.83,1.6)"  "0.384"       "1.16 (0.83,1.6)" 
-##    3       "1.01 (0.71,1.43)" "0.975"       "1.01 (0.71,1.43)"
+##    2       "0.99 (0.71,1.39)" "0.962"       "0.99 (0.71,1.39)"
+##    3       "1.04 (0.74,1.45)" "0.826"       "1.04 (0.74,1.45)"
 ##            adj. P value
-## Time       "0.725"     
+## Time       "0.357"     
 ## Cu: ref.=1 NA          
-##    2       "0.385"     
-##    3       "0.975"     
+##    2       "0.965"     
+##    3       "0.824"     
 ## 
 ## $metric
 ##                                  crude OR(95%CI) crude P value
 ##                                  NA              NA           
-## Estimated correlation parameters "0.009"         NA           
+## Estimated correlation parameters "-0.002"        NA           
 ## No. of clusters                  "72"            NA           
 ## No. of observations              "861"           NA           
 ##                                  adj. OR(95%CI) adj. P value
@@ -198,25 +195,24 @@
 ## $caption
 ## [1] "Linear mixed model fit by REML : Weight ~ Time + Cu + (1 | Pig) + (1 | Evit)"</code></pre>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">l2 =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/lme4/topics/glmer">glmer</a></span>(ddn <span class="op">~</span><span class="st"> </span>Weight <span class="op">+</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig), <span class="dt">data=</span> dietox, <span class="dt">family=</span> <span class="st">"binomial"</span>)</a></code></pre></div>
-<pre><code>## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
-##  - Rescale variables?</code></pre>
+<pre><code>## singular fit</code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l2)</a></code></pre></div>
-<pre><code>## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
-##  - Rescale variables?</code></pre>
+<pre><code>## singular fit</code></pre>
+<pre><code>## singular fit</code></pre>
 <pre><code>## $table
 ##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
-## Weight                    1 (1,1.01)     0.7057127    1 (0.98,1.02)
-## Time                1.01 (0.97,1.05)     0.7578940 0.99 (0.86,1.14)
+## Weight                    1 (0.99,1)     0.2516555 0.99 (0.97,1.01)
+## Time                0.98 (0.94,1.02)     0.3629481  1.05 (0.91,1.2)
 ## Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;
-## Pig                             0.04            NA             &lt;NA&gt;
+## Pig                                0            NA             &lt;NA&gt;
 ## Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;
 ## No. of groups (Pig)               72            NA             &lt;NA&gt;
 ## No. of observations              861            NA             &lt;NA&gt;
-## Log-likelihood               -595.78            NA             &lt;NA&gt;
-## AIC value                    1199.55            NA             &lt;NA&gt;
+## Log-likelihood               -595.67            NA             &lt;NA&gt;
+## AIC value                    1199.34            NA             &lt;NA&gt;
 ##                     adj. P value
-## Weight                 0.7675742
-## Time                   0.8421995
+## Weight                 0.3373220
+## Time                   0.5101395
 ## Random effects                NA
 ## Pig                           NA
 ## Metrics                       NA
@@ -231,10 +227,10 @@
 <div id="cox-model-with-frailty-or-cluster-options" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cox-model-with-frailty-or-cluster-options" class="anchor"></a>Cox model with <code>frailty</code> or <code>cluster</code> options</h2>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(survival)</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2">fit1 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/coxph">coxph</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/Surv">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/cluster">cluster</a></span>(inst), lung, <span class="dt">model =</span> T)  ## model = T: to extract original data</a>
-<a class="sourceLine" id="cb17-3" data-line-number="3">fit2 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/coxph">coxph</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/Surv">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/frailty">frailty</a></span>(inst), lung, <span class="dt">model =</span> T)</a>
-<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="kw"><a href="reference/cox2.display.html">cox2.display</a></span>(fit1)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(survival)</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">fit1 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/coxph">coxph</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/Surv">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/cluster">cluster</a></span>(inst), lung, <span class="dt">model =</span> T)  ## model = T: to extract original data</a>
+<a class="sourceLine" id="cb18-3" data-line-number="3">fit2 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/coxph">coxph</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/Surv">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/frailty">frailty</a></span>(inst), lung, <span class="dt">model =</span> T)</a>
+<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="kw"><a href="reference/cox2.display.html">cox2.display</a></span>(fit1)</a></code></pre></div>
 <pre><code>## $table
 ##         crude HR(95%CI)    crude P value adj. HR(95%CI)  adj. P value
 ## ph.ecog "1.61 (1.25,2.08)" "&lt; 0.001"     "1.56 (1.22,2)" "&lt; 0.001"   
@@ -253,7 +249,7 @@
 ## 
 ## $caption
 ## [1] "Marginal Cox model on time ('time') to event ('status') - Group inst"</code></pre>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw"><a href="reference/cox2.display.html">cox2.display</a></span>(fit2)</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="reference/cox2.display.html">cox2.display</a></span>(fit2)</a></code></pre></div>
 <pre><code>## $table
 ##         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value
 ## ph.ecog "1.64 (1.31,2.05)" "&lt; 0.001"     "1.58 (1.26,1.99)" "&lt; 0.001"   
@@ -276,15 +272,15 @@
 <div id="cox-mixed-effect-model-table-coxme-object-from-coxme-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cox-mixed-effect-model-table-coxme-object-from-coxme-package" class="anchor"></a>Cox mixed effect model Table: <code>coxme</code> object from <strong>coxme</strong> package</h2>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(coxme)</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(coxme)</a></code></pre></div>
 <pre><code>## Loading required package: bdsmatrix</code></pre>
 <pre><code>## 
 ## Attaching package: 'bdsmatrix'</code></pre>
 <pre><code>## The following object is masked from 'package:base':
 ## 
 ##     backsolve</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">fit &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/coxme/topics/coxme">coxme</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/Surv">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>inst), lung)</a>
-<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw"><a href="reference/coxme.display.html">coxme.display</a></span>(fit) </a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">fit &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/coxme/topics/coxme">coxme</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/Surv">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>inst), lung)</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="kw"><a href="reference/coxme.display.html">coxme.display</a></span>(fit) </a></code></pre></div>
 <pre><code>## $table
 ##         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value
 ## ph.ecog "1.66 (1.32,2.09)" "&lt; 0.001"     "1.61 (1.27,2.03)" "&lt; 0.001"   
@@ -308,22 +304,22 @@
 <div id="glm-for-weighted-data-svyglm-object-from-survey-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#glm-for-weighted-data-svyglm-object-from-survey-package" class="anchor"></a>GLM for weighted data : <code>svyglm</code> object from <strong>survey</strong> package</h2>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(survey);<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(jstable)</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(survey);<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(jstable)</a></code></pre></div>
 <pre><code>## Loading required package: grid</code></pre>
 <pre><code>## 
 ## Attaching package: 'survey'</code></pre>
 <pre><code>## The following object is masked from 'package:graphics':
 ## 
 ##     dotchart</code></pre>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(api)</a>
-<a class="sourceLine" id="cb31-2" data-line-number="2">apistrat<span class="op">$</span>tt =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span>, <span class="dv">20</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">0</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(apistrat) <span class="dv">-20</span>))</a>
-<a class="sourceLine" id="cb31-3" data-line-number="3">apistrat<span class="op">$</span>tt2 =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">0</span>, <span class="dv">40</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(apistrat) <span class="dv">-40</span>)))</a>
-<a class="sourceLine" id="cb31-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb31-5" data-line-number="5">dstrat&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/survey/topics/svydesign">svydesign</a></span>(<span class="dt">id=</span><span class="op">~</span><span class="dv">1</span>,<span class="dt">strata=</span><span class="op">~</span>stype, <span class="dt">weights=</span><span class="op">~</span>pw, <span class="dt">data=</span>apistrat, <span class="dt">fpc=</span><span class="op">~</span>fpc)</a>
-<a class="sourceLine" id="cb31-6" data-line-number="6">ds &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survey/topics/svyglm">svyglm</a></span>(api00<span class="op">~</span>ell<span class="op">+</span>meals<span class="op">+</span>cname<span class="op">+</span>mobility <span class="op">+</span><span class="st"> </span>tt2, <span class="dt">design=</span>dstrat)</a>
-<a class="sourceLine" id="cb31-7" data-line-number="7">ds2 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survey/topics/svyglm">svyglm</a></span>(tt<span class="op">~</span>ell<span class="op">+</span>meals<span class="op">+</span>cname<span class="op">+</span>mobility <span class="op">+</span><span class="st"> </span>tt2, <span class="dt">design=</span>dstrat, <span class="dt">family =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/family">quasibinomial</a></span>())</a></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(api)</a>
+<a class="sourceLine" id="cb32-2" data-line-number="2">apistrat<span class="op">$</span>tt =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span>, <span class="dv">20</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">0</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(apistrat) <span class="dv">-20</span>))</a>
+<a class="sourceLine" id="cb32-3" data-line-number="3">apistrat<span class="op">$</span>tt2 =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">0</span>, <span class="dv">40</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(apistrat) <span class="dv">-40</span>)))</a>
+<a class="sourceLine" id="cb32-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb32-5" data-line-number="5">dstrat&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/survey/topics/svydesign">svydesign</a></span>(<span class="dt">id=</span><span class="op">~</span><span class="dv">1</span>,<span class="dt">strata=</span><span class="op">~</span>stype, <span class="dt">weights=</span><span class="op">~</span>pw, <span class="dt">data=</span>apistrat, <span class="dt">fpc=</span><span class="op">~</span>fpc)</a>
+<a class="sourceLine" id="cb32-6" data-line-number="6">ds &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survey/topics/svyglm">svyglm</a></span>(api00<span class="op">~</span>ell<span class="op">+</span>meals<span class="op">+</span>cname<span class="op">+</span>mobility <span class="op">+</span><span class="st"> </span>tt2, <span class="dt">design=</span>dstrat)</a>
+<a class="sourceLine" id="cb32-7" data-line-number="7">ds2 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survey/topics/svyglm">svyglm</a></span>(tt<span class="op">~</span>ell<span class="op">+</span>meals<span class="op">+</span>cname<span class="op">+</span>mobility <span class="op">+</span><span class="st"> </span>tt2, <span class="dt">design=</span>dstrat, <span class="dt">family =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/family">quasibinomial</a></span>())</a></code></pre></div>
 <pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="kw"><a href="reference/svyglm.display.html">svyregress.display</a></span>(ds)</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="kw"><a href="reference/svyglm.display.html">svyregress.display</a></span>(ds)</a></code></pre></div>
 <pre><code>## $first.line
 ## [1] "Linear regression predicting api00- weighted data\n"
 ## 
@@ -424,7 +420,7 @@
 ## 
 ## attr(,"class")
 ## [1] "display" "list"</code></pre>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="kw"><a href="reference/svyglm.display.html">svyregress.display</a></span>(ds2)</a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw"><a href="reference/svyglm.display.html">svyregress.display</a></span>(ds2)</a></code></pre></div>
 <pre><code>## $first.line
 ## [1] "Logistic regression predicting tt- weighted data\n"
 ## 
@@ -574,19 +570,19 @@
 <div id="cox-model-for-weighted-data-svycoxph-object-from-survey-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cox-model-for-weighted-data-svycoxph-object-from-survey-package" class="anchor"></a>Cox model for weighted data :<code>svycoxph</code> object from <strong>survey</strong> package</h2>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(pbc, <span class="dt">package=</span><span class="st">"survival"</span>)</a>
-<a class="sourceLine" id="cb37-2" data-line-number="2">pbc<span class="op">$</span>sex =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(pbc<span class="op">$</span>sex)</a>
-<a class="sourceLine" id="cb37-3" data-line-number="3">pbc<span class="op">$</span>stage =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(pbc<span class="op">$</span>stage)</a>
-<a class="sourceLine" id="cb37-4" data-line-number="4">pbc<span class="op">$</span>randomized&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(pbc, <span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NA">is.na</a></span>(trt) <span class="op">&amp;</span><span class="st"> </span>trt<span class="op">&gt;</span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb37-5" data-line-number="5">biasmodel&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/glm">glm</a></span>(randomized<span class="op">~</span>age<span class="op">*</span>edema,<span class="dt">data=</span>pbc,<span class="dt">family=</span>binomial)</a>
-<a class="sourceLine" id="cb37-6" data-line-number="6">pbc<span class="op">$</span>randprob&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/fitted.values">fitted</a></span>(biasmodel)</a>
-<a class="sourceLine" id="cb37-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb37-8" data-line-number="8"><span class="cf">if</span> (<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NULL">is.null</a></span>(pbc<span class="op">$</span>albumin)) pbc<span class="op">$</span>albumin&lt;-pbc<span class="op">$</span>alb ##pre2.9.0</a>
-<a class="sourceLine" id="cb37-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb37-10" data-line-number="10">dpbc &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survey/topics/svydesign">svydesign</a></span>(<span class="dt">id=</span><span class="op">~</span><span class="dv">1</span>, <span class="dt">prob=</span><span class="op">~</span>randprob, <span class="dt">strata=</span><span class="op">~</span>edema, <span class="dt">data=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/subset">subset</a></span>(pbc,randomized))</a>
-<a class="sourceLine" id="cb37-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb37-12" data-line-number="12">model &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survey/topics/svycoxph">svycoxph</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/Surv">Surv</a></span>(time,status<span class="op">&gt;</span><span class="dv">0</span>)<span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>protime <span class="op">+</span><span class="st"> </span>albumin <span class="op">+</span><span class="st"> </span>stage,<span class="dt">design=</span>dpbc)</a>
-<a class="sourceLine" id="cb37-13" data-line-number="13"><span class="kw"><a href="reference/svycox.display.html">svycox.display</a></span>(model)</a></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(pbc, <span class="dt">package=</span><span class="st">"survival"</span>)</a>
+<a class="sourceLine" id="cb38-2" data-line-number="2">pbc<span class="op">$</span>sex =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(pbc<span class="op">$</span>sex)</a>
+<a class="sourceLine" id="cb38-3" data-line-number="3">pbc<span class="op">$</span>stage =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(pbc<span class="op">$</span>stage)</a>
+<a class="sourceLine" id="cb38-4" data-line-number="4">pbc<span class="op">$</span>randomized&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(pbc, <span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NA">is.na</a></span>(trt) <span class="op">&amp;</span><span class="st"> </span>trt<span class="op">&gt;</span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb38-5" data-line-number="5">biasmodel&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/glm">glm</a></span>(randomized<span class="op">~</span>age<span class="op">*</span>edema,<span class="dt">data=</span>pbc,<span class="dt">family=</span>binomial)</a>
+<a class="sourceLine" id="cb38-6" data-line-number="6">pbc<span class="op">$</span>randprob&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/fitted.values">fitted</a></span>(biasmodel)</a>
+<a class="sourceLine" id="cb38-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb38-8" data-line-number="8"><span class="cf">if</span> (<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NULL">is.null</a></span>(pbc<span class="op">$</span>albumin)) pbc<span class="op">$</span>albumin&lt;-pbc<span class="op">$</span>alb ##pre2.9.0</a>
+<a class="sourceLine" id="cb38-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb38-10" data-line-number="10">dpbc &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survey/topics/svydesign">svydesign</a></span>(<span class="dt">id=</span><span class="op">~</span><span class="dv">1</span>, <span class="dt">prob=</span><span class="op">~</span>randprob, <span class="dt">strata=</span><span class="op">~</span>edema, <span class="dt">data=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/subset">subset</a></span>(pbc,randomized))</a>
+<a class="sourceLine" id="cb38-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb38-12" data-line-number="12">model &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/survey/topics/svycoxph">svycoxph</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/survival/topics/Surv">Surv</a></span>(time,status<span class="op">&gt;</span><span class="dv">0</span>)<span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>protime <span class="op">+</span><span class="st"> </span>albumin <span class="op">+</span><span class="st"> </span>stage,<span class="dt">design=</span>dpbc)</a>
+<a class="sourceLine" id="cb38-13" data-line-number="13"><span class="kw"><a href="reference/svycox.display.html">svycox.display</a></span>(model)</a></code></pre></div>
 <pre><code>## Stratified Independent Sampling design (with replacement)
 ## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, 
 ##     randomized))
@@ -629,7 +625,6 @@
 ## 
 ## $caption
 ## [1] "Survey cox model on time ('time') to event ('status &gt; 0')"</code></pre>
-</div>
 </div>
   </div>
 

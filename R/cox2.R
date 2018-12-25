@@ -65,10 +65,10 @@ cox2.display <- function (cox.obj.withmodel, dec = 2)
   
   
   if(length(xf) == 1){
-    uni.res = data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
+    uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
     rn.uni <- lapply(list(uni.res), rownames)
-    names(uni.res)[ncol(uni.res)] = "p"
-    uni.res2 = NULL
+    names(uni.res)[ncol(uni.res)] <- "p"
+    uni.res2 <- NULL
     if (mtype == "normal"){
       uni.res2 <- uni.res[, c(1, 3, 4, 5)]
     } else if (mtype == "cluster"){
@@ -76,15 +76,15 @@ cox2.display <- function (cox.obj.withmodel, dec = 2)
     } else {
       uni.res2 <- uni.res[-nrow(uni.res), c(1, 3, 4, 6)]
     }
-    fix.all = coxExp(uni.res2, dec = dec)
-    colnames(fix.all) = c("HR(95%CI)", "P value")
+    fix.all <- coxExp(uni.res2, dec = dec)
+    colnames(fix.all) <- c("HR(95%CI)", "P value")
     #rownames(fix.all) = ifelse(mtype == "frailty", names(model$coefficients)[-length(model$coefficients)], names(model$coefficients))
-    rownames(fix.all) =  names(model$coefficients)
+    rownames(fix.all) <-  names(model$coefficients)
   } else{
     unis <- lapply(xf, function(x){
-      uni.res = data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", x, formula.ranef, sep="")), data = mdata))$coefficients)
-      names(uni.res)[ncol(uni.res)] = "p"
-      uni.res2 = NULL
+      uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", x, formula.ranef, sep="")), data = mdata))$coefficients)
+      names(uni.res)[ncol(uni.res)] <- "p"
+      uni.res2 <- NULL
       if (mtype == "normal"){
         uni.res2 <- uni.res[, c(1, 3, 4, 5)]
       } else if (mtype == "cluster"){
@@ -100,28 +100,28 @@ cox2.display <- function (cox.obj.withmodel, dec = 2)
     mul.res <- data.frame(coefNA(model))
     uni.res <- uni.res[rownames(uni.res) %in% rownames(mul.res), ]
     colnames(mul.res)[ncol(mul.res)] <- "p"
-    fix.all = cbind(coxExp(uni.res, dec = dec), coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = dec))
-    colnames(fix.all) = c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
-    rownames(fix.all) = rownames(uni.res)
+    fix.all <- cbind(coxExp(uni.res, dec = dec), coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = dec))
+    colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
+    rownames(fix.all) <- rownames(uni.res)
   }
   
   ## rownames
-  fix.all.list = lapply(1:length(xf), function(x){fix.all[rownames(fix.all) %in% rn.uni[[x]], ]})      
-  varnum.mfac = which(lapply(fix.all.list, length) > ncol(fix.all))
+  fix.all.list <- lapply(1:length(xf), function(x){fix.all[rownames(fix.all) %in% rn.uni[[x]], ]})      
+  varnum.mfac <- which(lapply(fix.all.list, length) > ncol(fix.all))
   lapply(varnum.mfac, function(x){fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])})
-  fix.all.unlist = Reduce(rbind, fix.all.list)
+  fix.all.unlist <- Reduce(rbind, fix.all.list)
   
-  rn.list = lapply(1:length(xf), function(x){rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]})
-  varnum.2fac = which(lapply(xf, function(x){length(sapply(mdata, levels)[[x]])}) == 2)
+  rn.list <- lapply(1:length(xf), function(x){rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]})
+  varnum.2fac <- which(lapply(xf, function(x){length(sapply(mdata, levels)[[x]])}) == 2)
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep="")})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xf[x],": ref.=", levels(mdata[, xf[x]])[1], sep=""), gsub(xf[x],"   ", rn.list[[x]]))})
   if (class(fix.all.unlist) == "character"){
-    fix.all.unlist = t(data.frame(fix.all.unlist))
+    fix.all.unlist <- t(data.frame(fix.all.unlist))
   }
-  rownames(fix.all.unlist) = unlist(rn.list)
-  pv.colnum = which(colnames(fix.all.unlist) %in% c("P value", "crude P value", "adj. P value"))
+  rownames(fix.all.unlist) <- unlist(rn.list)
+  pv.colnum <- which(colnames(fix.all.unlist) %in% c("P value", "crude P value", "adj. P value"))
   for (i in pv.colnum){
-    fix.all.unlist[, i] = ifelse(as.numeric(fix.all.unlist[, i]) < 0.001, "< 0.001", round(as.numeric(fix.all.unlist[, i]), dec + 1))
+    fix.all.unlist[, i] <- ifelse(as.numeric(fix.all.unlist[, i]) < 0.001, "< 0.001", round(as.numeric(fix.all.unlist[, i]), dec + 1))
   }
   
   

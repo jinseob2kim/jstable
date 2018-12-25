@@ -1,7 +1,5 @@
-Untitled
+jstable
 ================
-
-# jstable
 
 [![Build
 Status](https://travis-ci.org/jinseob2kim/jstable.svg?branch=master)](https://travis-ci.org/jinseob2kim/jstable)
@@ -77,20 +75,20 @@ geeglm.display(gee02)
     ## 
     ## $table
     ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-    ## Time       "1.01 (0.98,1.05)" "0.483"       "1.01 (0.98,1.05)"
+    ## Time       "1.02 (0.98,1.06)" "0.315"       "1.02 (0.98,1.06)"
     ## Cu: ref.=1 NA                 NA            NA                
-    ##    2       "1.14 (0.86,1.5)"  "0.355"       "1.14 (0.86,1.5)" 
-    ##    3       "0.96 (0.7,1.31)"  "0.786"       "0.96 (0.7,1.31)" 
+    ##    2       "1.33 (0.99,1.78)" "0.056"       "1.33 (0.99,1.78)"
+    ##    3       "1.29 (0.99,1.68)" "0.063"       "1.29 (0.99,1.68)"
     ##            adj. P value
-    ## Time       "0.486"     
+    ## Time       "0.319"     
     ## Cu: ref.=1 NA          
-    ##    2       "0.356"     
-    ##    3       "0.784"     
+    ##    2       "0.057"     
+    ##    3       "0.064"     
     ## 
     ## $metric
     ##                                  crude OR(95%CI) crude P value
     ##                                  NA              NA           
-    ## Estimated correlation parameters "-0.014"        NA           
+    ## Estimated correlation parameters "-0.023"        NA           
     ## No. of clusters                  "72"            NA           
     ## No. of observations              "861"           NA           
     ##                                  adj. OR(95%CI) adj. P value
@@ -166,19 +164,19 @@ lmer.display(l2)
     ## singular fit
 
     ## $table
-    ##                      crude OR(95%CI) crude P value  adj. OR(95%CI)
-    ## Weight                    1 (1,1.01)     0.2957208   1.01 (1,1.03)
-    ## Time                1.01 (0.97,1.05)     0.5145443 0.92 (0.8,1.05)
-    ## Random effects                  <NA>            NA            <NA>
-    ## Pig                                0            NA            <NA>
-    ## Metrics                         <NA>            NA            <NA>
-    ## No. of groups (Pig)               72            NA            <NA>
-    ## No. of observations              861            NA            <NA>
-    ## Log-likelihood               -594.71            NA            <NA>
-    ## AIC value                    1197.42            NA            <NA>
+    ##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
+    ## Weight                    1 (1,1.01)     0.5200610 0.99 (0.97,1.01)
+    ## Time                1.02 (0.98,1.06)     0.3018741 1.11 (0.97,1.27)
+    ## Random effects                  <NA>            NA             <NA>
+    ## Pig                                0            NA             <NA>
+    ## Metrics                         <NA>            NA             <NA>
+    ## No. of groups (Pig)               72            NA             <NA>
+    ## No. of observations              861            NA             <NA>
+    ## Log-likelihood               -595.49            NA             <NA>
+    ## AIC value                    1198.98            NA             <NA>
     ##                     adj. P value
-    ## Weight                 0.1422917
-    ## Time                   0.2223504
+    ## Weight                 0.2277406
+    ## Time                   0.1470021
     ## Random effects                NA
     ## Pig                           NA
     ## Metrics                       NA

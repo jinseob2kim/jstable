@@ -125,8 +125,8 @@ geeglm.display = function(geeglm.obj, decimal = 2){
   
   
   
-  rn.list = lapply(1:length(xs), function(x){rownames(gee.uni)[rownames(gee.uni) %in% rn.uni[[x]]]})
-  varnum.2fac = which(lapply(xs, function(x){length(geeglm.obj$xlevels[[x]])}) == 2)
+  rn.list <- lapply(1:length(xs), function(x){rownames(gee.uni)[rownames(gee.uni) %in% rn.uni[[x]]]})
+  varnum.2fac <- which(lapply(xs, function(x){length(geeglm.obj$xlevels[[x]])}) == 2)
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xs[x], ": ", geeglm.obj$xlevels[[xs[x]]][2], " vs ", geeglm.obj$xlevels[[xs[x]]][1], sep="")})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xs[x],": ref.=", geeglm.obj$xlevels[[xs[x]]][1], sep=""), gsub(xs[x],"   ", rn.list[[x]]))})
   
