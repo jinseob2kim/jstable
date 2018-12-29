@@ -7,6 +7,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+library(jstable)
 ```
 
 [![Build Status](https://travis-ci.org/jinseob2kim/jstable.svg?branch=master)](https://travis-ci.org/jinseob2kim/jstable)
@@ -20,18 +21,30 @@ knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 [![GitHub contributors](https://img.shields.io/github/contributors/jinseob2kim/jstable.svg?maxAge=2592000)](https://github.com/jinseob2kim/jstable/graphs/contributors)
 
 
-Research tables from GEE, GLMM, cox mixed effect model results
+Research tables from the GLM, GEE, GLMM and Cox results
 
 ## Install
 
 ```{r, eval = F}
 devtools::install_github('jinseob2kim/jstable')
+library(jstable)
+```
+
+## GLM Table
+
+```{r}
+## Gaussian
+glm_gaussian <- glm(mpg~cyl + disp, data = mtcars)
+glmshow.display(glm_gaussian, decimal = 2)
+
+## Binomial
+glm_binomial <- glm(vs~cyl + disp, data = mtcars, family = binomial)
+glmshow.display(glm_binomial, decimal = 2)
 ```
 
 ## GEE Table: from `geeglm` object from **geepack** package
 
 ```{r}
-library(jstable)
 library(geepack)  ## for dietox data
 data(dietox)
 dietox$Cu <- as.factor(dietox$Cu)
@@ -73,10 +86,10 @@ fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
 coxme.display(fit) 
 ```
 
-## GLM for weighted data : `svyglm` object from **survey** package
+## GLM for survey data : `svyglm` object from **survey** package
 
 ```{r}
-library(survey);library(jstable)
+library(survey)
 data(api)
 apistrat$tt = c(rep(1, 20), rep(0, nrow(apistrat) -20))
 apistrat$tt2 = factor(c(rep(0, 40), rep(1, nrow(apistrat) -40)))
@@ -88,7 +101,7 @@ svyregress.display(ds)
 svyregress.display(ds2)
 ```
 
-## Cox model for weighted data :`svycoxph` object from **survey** package
+## Cox model for survey data :`svycoxph` object from **survey** package
 
 ```{r}
 data(pbc, package="survival")

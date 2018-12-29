@@ -18,18 +18,63 @@ commit](https://img.shields.io/github/last-commit/google/skia.svg)](https://gith
 [![GitHub
 contributors](https://img.shields.io/github/contributors/jinseob2kim/jstable.svg?maxAge=2592000)](https://github.com/jinseob2kim/jstable/graphs/contributors)
 
-Research tables from GEE, GLMM, cox mixed effect model results
+Research tables from the GLM, GEE, GLMM and Cox results
 
 ## Install
 
 ``` r
 devtools::install_github('jinseob2kim/jstable')
+library(jstable)
 ```
+
+## GLM Table
+
+``` r
+## Gaussian
+glm_gaussian <- glm(mpg~cyl + disp, data = mtcars)
+glmshow.display(glm_gaussian, decimal = 2)
+```
+
+    ## $first.line
+    ## [1] "Linear regression predicting mpg\n"
+    ## 
+    ## $table
+    ##      crude coeff.(95%CI)   crude P value adj. coeff.(95%CI)   
+    ## cyl  "-2.88 (-3.51,-2.24)" "< 0.001"     "-1.59 (-2.98,-0.19)"
+    ## disp "-0.04 (-0.05,-0.03)" "< 0.001"     "-0.02 (-0.04,0)"    
+    ##      adj. P value
+    ## cyl  "0.034"     
+    ## disp "0.054"     
+    ## 
+    ## $last.lines
+    ## [1] "No. of observations = 32\nR-squared = 0.7596\nAIC value = 167.1456\n\n"
+    ## 
+    ## attr(,"class")
+    ## [1] "display" "list"
+
+``` r
+## Binomial
+glm_binomial <- glm(vs~cyl + disp, data = mtcars, family = binomial)
+glmshow.display(glm_binomial, decimal = 2)
+```
+
+    ## $first.line
+    ## [1] "Logistic regression predicting vs\n"
+    ## 
+    ## $table
+    ##      crude OR.(95%CI)   crude P value adj. OR.(95%CI)    adj. P value
+    ## cyl  "0.2 (0.08,0.56)"  "0.002"       "0.15 (0.02,1.02)" "0.053"     
+    ## disp "0.98 (0.97,0.99)" "0.002"       "1 (0.98,1.03)"    "0.715"     
+    ## 
+    ## $last.lines
+    ## [1] "No. of observations = 32\nAIC value = 23.8304\n\n"
+    ## 
+    ## attr(,"class")
+    ## [1] "display" "list"
 
 ## GEE Table: from `geeglm` object from **geepack** package
 
 ``` r
-library(jstable)
 library(geepack)  ## for dietox data
 data(dietox)
 dietox$Cu <- as.factor(dietox$Cu)
@@ -75,20 +120,20 @@ geeglm.display(gee02)
     ## 
     ## $table
     ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-    ## Time       "1 (0.97,1.04)"    "0.918"       "1 (0.97,1.04)"   
+    ## Time       "0.99 (0.95,1.03)" "0.537"       "0.99 (0.95,1.03)"
     ## Cu: ref.=1 NA                 NA            NA                
-    ##    2       "0.96 (0.69,1.32)" "0.788"       "0.96 (0.69,1.32)"
-    ##    3       "0.83 (0.6,1.16)"  "0.277"       "0.83 (0.6,1.16)" 
+    ##    2       "1.13 (0.83,1.54)" "0.427"       "1.13 (0.83,1.54)"
+    ##    3       "0.97 (0.69,1.35)" "0.849"       "0.97 (0.69,1.36)"
     ##            adj. P value
-    ## Time       "0.916"     
+    ## Time       "0.534"     
     ## Cu: ref.=1 NA          
-    ##    2       "0.787"     
-    ##    3       "0.277"     
+    ##    2       "0.425"     
+    ##    3       "0.85"      
     ## 
     ## $metric
     ##                                  crude OR(95%CI) crude P value
     ##                                  NA              NA           
-    ## Estimated correlation parameters "0"             NA           
+    ## Estimated correlation parameters "-0.01"         NA           
     ## No. of clusters                  "72"            NA           
     ## No. of observations              "861"           NA           
     ##                                  adj. OR(95%CI) adj. P value
@@ -146,19 +191,19 @@ lmer.display(l2)
 ```
 
     ## $table
-    ##                     crude OR(95%CI) crude P value   adj. OR(95%CI)
-    ## Weight                1 (0.99,1.01)     0.9208150 0.99 (0.98,1.01)
-    ## Time                  1 (0.96,1.04)     0.9248565  1.05 (0.91,1.2)
-    ## Random effects                 <NA>            NA             <NA>
-    ## Pig                               0            NA             <NA>
-    ## Metrics                        <NA>            NA             <NA>
-    ## No. of groups (Pig)              72            NA             <NA>
-    ## No. of observations             861            NA             <NA>
-    ## Log-likelihood              -594.81            NA             <NA>
-    ## AIC value                   1197.62            NA             <NA>
+    ##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
+    ## Weight                    1 (0.99,1)     0.3533388 0.99 (0.97,1.01)
+    ## Time                0.99 (0.95,1.03)     0.5552684 1.07 (0.94,1.23)
+    ## Random effects                  <NA>            NA             <NA>
+    ## Pig                                0            NA             <NA>
+    ## Metrics                         <NA>            NA             <NA>
+    ## No. of groups (Pig)               72            NA             <NA>
+    ## No. of observations              861            NA             <NA>
+    ## Log-likelihood               -595.81            NA             <NA>
+    ## AIC value                    1199.62            NA             <NA>
     ##                     adj. P value
-    ## Weight                 0.5015483
-    ## Time                   0.5022575
+    ## Weight                 0.2057097
+    ## Time                   0.2964950
     ## Random effects                NA
     ## Pig                           NA
     ## Metrics                       NA
@@ -249,10 +294,10 @@ coxme.display(fit)
     ## $caption
     ## [1] "Mixed effects Cox model on time ('time') to event ('status') - Group inst"
 
-## GLM for weighted data : `svyglm` object from **survey** package
+## GLM for survey data : `svyglm` object from **survey** package
 
 ``` r
-library(survey);library(jstable)
+library(survey)
 data(api)
 apistrat$tt = c(rep(1, 20), rep(0, nrow(apistrat) -20))
 apistrat$tt2 = factor(c(rep(0, 40), rep(1, nrow(apistrat) -40)))
@@ -514,7 +559,7 @@ svyregress.display(ds2)
     ## attr(,"class")
     ## [1] "display" "list"
 
-## Cox model for weighted data :`svycoxph` object from **survey** package
+## Cox model for survey data :`svycoxph` object from **survey** package
 
 ``` r
 data(pbc, package="survival")

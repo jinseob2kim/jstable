@@ -38,7 +38,7 @@ coefNA <- function(model){
 #'  \code{\link[stats]{glm}}
 #' @rdname glmshow.display
 #' @export
-#' @importFrom stats glm
+#' @importFrom stats glm cor predict
 
 glmshow.display <- function (glm.object, decimal = 2){
   model <- glm.object
@@ -127,14 +127,14 @@ glmshow.display <- function (glm.object, decimal = 2){
   if (gaussianT) {
     first.line <- paste("Linear regression predicting ", outcome.name, sep = "", "\n")
     last.lines <- paste("No. of observations = ",
-                        length(model$y), "\n", "AIC value = ", round(model$aic,
-                                                                     decimal + 2), "\n", "\n", sep = "")
+                        length(model$y), "\n", "R-squared = ", round(cor(model$y, predict(model))^2, decimal + 2), "\n", 
+                        "AIC value = ", round(model$aic, decimal + 2), "\n", "\n", sep = "")
   }
   else {
     first.line <- paste("Logistic regression predicting ", outcome.name, sep = "", "\n")
     last.lines <-  paste("No. of observations = ",
-                         length(model$y), "\n", "AIC value = ", round(model$aic,
-                                                                      decimal + 2), "\n", "\n", sep = "")
+                         length(model$y), "\n", 
+                         "AIC value = ", round(model$aic, decimal + 2), "\n", "\n", sep = "")
   }
   
   results <- list(first.line = first.line, table = fix.all.unlist,
