@@ -3,8 +3,9 @@ jstable
 
 [![Build
 Status](https://travis-ci.org/jinseob2kim/jstable.svg?branch=master)](https://travis-ci.org/jinseob2kim/jstable)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/jinseob2kim/jstable?branch=master&svg=true)](https://ci.appveyor.com/project/jinseob2kim/jstable)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/jstable)](http://cran.r-project.org/package=jstable)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/jinseob2kim/jstable?branch=master&svg=true)](https://ci.appveyor.com/project/jinseob2kim/jstable)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/jstable)](https://cran.r-project.org/package=jstable)
 [![codecov](https://codecov.io/github/jinseob2kim/jstable/branch/master/graphs/badge.svg)](https://codecov.io/github/jinseob2kim/jstable)
 [![GitHub
 issues](https://img.shields.io/github/issues/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/issues)
@@ -19,12 +20,12 @@ commit](https://img.shields.io/github/last-commit/google/skia.svg)](https://gith
 [![GitHub
 contributors](https://img.shields.io/github/contributors/jinseob2kim/jstable.svg?maxAge=2592000)](https://github.com/jinseob2kim/jstable/graphs/contributors)
 
-Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results.
+Research Tables from ‘GLM’, ‘GEE’, ‘GLMM’, ‘Cox’ and ‘survey’ Results.
 
 ## Install
 
 ``` r
-devtools::install_github('jinseob2kim/jstable')
+remotes::install_github('jinseob2kim/jstable')
 library(jstable)
 ```
 
@@ -121,20 +122,20 @@ geeglm.display(gee02)
     ## 
     ## $table
     ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-    ## Time       "0.99 (0.95,1.03)" "0.537"       "0.99 (0.95,1.03)"
+    ## Time       "0.99 (0.95,1.03)" "0.68"        "0.99 (0.95,1.03)"
     ## Cu: ref.=1 NA                 NA            NA                
-    ##    2       "1.13 (0.83,1.54)" "0.427"       "1.13 (0.83,1.54)"
-    ##    3       "0.97 (0.69,1.35)" "0.849"       "0.97 (0.69,1.36)"
+    ##    2       "1 (0.76,1.34)"    "0.973"       "1.01 (0.76,1.34)"
+    ##    3       "1 (0.77,1.3)"     "0.988"       "1 (0.77,1.3)"    
     ##            adj. P value
-    ## Time       "0.534"     
+    ## Time       "0.68"      
     ## Cu: ref.=1 NA          
-    ##    2       "0.425"     
-    ##    3       "0.85"      
+    ##    2       "0.971"     
+    ##    3       "0.987"     
     ## 
     ## $metric
     ##                                  crude OR(95%CI) crude P value
     ##                                  NA              NA           
-    ## Estimated correlation parameters "-0.01"         NA           
+    ## Estimated correlation parameters "-0.027"        NA           
     ## No. of clusters                  "72"            NA           
     ## No. of observations              "861"           NA           
     ##                                  adj. OR(95%CI) adj. P value
@@ -193,18 +194,18 @@ lmer.display(l2)
 
     ## $table
     ##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
-    ## Weight                    1 (0.99,1)     0.3533388 0.99 (0.97,1.01)
-    ## Time                0.99 (0.95,1.03)     0.5552684 1.07 (0.94,1.23)
+    ## Weight                    1 (1,1.01)     0.8611499    1.02 (1,1.04)
+    ## Time                0.99 (0.95,1.03)     0.6718412 0.87 (0.76,0.99)
     ## Random effects                  <NA>            NA             <NA>
     ## Pig                                0            NA             <NA>
     ## Metrics                         <NA>            NA             <NA>
     ## No. of groups (Pig)               72            NA             <NA>
     ## No. of observations              861            NA             <NA>
-    ## Log-likelihood               -595.81            NA             <NA>
-    ## AIC value                    1199.62            NA             <NA>
+    ## Log-likelihood               -593.77            NA             <NA>
+    ## AIC value                    1195.54            NA             <NA>
     ##                     adj. P value
-    ## Weight                 0.2057097
-    ## Time                   0.2964950
+    ## Weight                0.04359124
+    ## Time                  0.03996422
     ## Random effects                NA
     ## Pig                           NA
     ## Metrics                       NA
