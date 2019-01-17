@@ -13,6 +13,7 @@ matrix:
     - covr
     r_github_packages:
     - r-lib/pkgdown
+    - jinseob2kim/jstable
     after_success:
     - Rscript -e 'covr::codecov()'
     - Rscript -e 'pkgdown::build_site()'
