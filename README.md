@@ -20,7 +20,7 @@ commit](https://img.shields.io/github/last-commit/google/skia.svg)](https://gith
 [![GitHub
 contributors](https://img.shields.io/github/contributors/jinseob2kim/jstable.svg?maxAge=2592000)](https://github.com/jinseob2kim/jstable/graphs/contributors)
 
-Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results.
+Regression Results Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results.
 
 ## Install
 

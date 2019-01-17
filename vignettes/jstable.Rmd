@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 library(jstable)
 ```
 
-Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results.
+Regression Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results for Publication.
 
 ## Install
 
