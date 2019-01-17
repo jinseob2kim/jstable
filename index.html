@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>jstable: Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results • jstable</title>
+<title>Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results • jstable</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><!-- docsearch --><script src="docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="jstable: Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results">
 <meta property="og:description" content="Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results.">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -171,20 +171,20 @@
 ## 
 ## $table
 ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-## Time       "1 (0.97,1.04)"    "0.807"       "1 (0.97,1.04)"   
+## Time       "0.99 (0.96,1.03)" "0.667"       "0.99 (0.96,1.03)"
 ## Cu: ref.=1 NA                 NA            NA                
-##    2       "0.98 (0.74,1.31)" "0.897"       "0.98 (0.74,1.31)"
-##    3       "1.12 (0.85,1.48)" "0.412"       "1.12 (0.85,1.48)"
+##    2       "1.24 (0.85,1.79)" "0.264"       "1.24 (0.85,1.8)" 
+##    3       "1.12 (0.75,1.65)" "0.583"       "1.12 (0.75,1.65)"
 ##            adj. P value
-## Time       "0.806"     
+## Time       "0.662"     
 ## Cu: ref.=1 NA          
-##    2       "0.896"     
-##    3       "0.412"     
+##    2       "0.263"     
+##    3       "0.582"     
 ## 
 ## $metric
 ##                                  crude OR(95%CI) crude P value
 ##                                  NA              NA           
-## Estimated correlation parameters "-0.017"        NA           
+## Estimated correlation parameters "0.026"         NA           
 ## No. of clusters                  "72"            NA           
 ## No. of observations              "861"           NA           
 ##                                  adj. OR(95%CI) adj. P value
@@ -236,19 +236,19 @@
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">l2 =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/lme4/topics/glmer">glmer</a></span>(ddn <span class="op">~</span><span class="st"> </span>Weight <span class="op">+</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig), <span class="dt">data=</span> dietox, <span class="dt">family=</span> <span class="st">"binomial"</span>)</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l2)</a></code></pre></div>
 <pre><code>## $table
-##                     crude OR(95%CI) crude P value   adj. OR(95%CI)
-## Weight                   1 (1,1.01)     0.8902288    1 (0.98,1.02)
-## Time                  1 (0.97,1.04)     0.8178121 1.02 (0.89,1.17)
-## Random effects                 &lt;NA&gt;            NA             &lt;NA&gt;
-## Pig                               0            NA             &lt;NA&gt;
-## Metrics                        &lt;NA&gt;            NA             &lt;NA&gt;
-## No. of groups (Pig)              72            NA             &lt;NA&gt;
-## No. of observations             861            NA             &lt;NA&gt;
-## Log-likelihood              -595.85            NA             &lt;NA&gt;
-## AIC value                    1199.7            NA             &lt;NA&gt;
+##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
+## Weight                    1 (0.99,1)     0.3767521    0.98 (0.96,1)
+## Time                0.99 (0.95,1.03)     0.6839879 1.14 (0.98,1.33)
+## Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;
+## Pig                              0.1            NA             &lt;NA&gt;
+## Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;
+## No. of groups (Pig)               72            NA             &lt;NA&gt;
+## No. of observations              861            NA             &lt;NA&gt;
+## Log-likelihood               -593.19            NA             &lt;NA&gt;
+## AIC value                    1194.38            NA             &lt;NA&gt;
 ##                     adj. P value
-## Weight                 0.7730578
-## Time                   0.7321310
+## Weight                0.05970230
+## Time                  0.08664019
 ## Random effects                NA
 ## Pig                           NA
 ## Metrics                       NA
