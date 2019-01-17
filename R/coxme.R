@@ -65,7 +65,7 @@ coxExp = function(cox.coef, dec){
 #' @description Extract AIC from coxme.object
 #' @param fit coxme.object
 #' @param scale NULL
-#' @param k numeric specifying the ‘weight’ of the equivalent degrees of freedom (=: edf) part in the AIC formula.
+#' @param k numeric specifying the 'weight' of the equivalent degrees of freedom (=: edf) part in the AIC formula.
 #' @param ... further arguments (currently unused in base R).
 #' @return AIC(Integreted, Penalized)
 #' @details DETAILS

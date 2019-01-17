@@ -11,7 +11,7 @@
 
 \item{scale}{NULL}
 
-\item{k}{numeric specifying the ‘weight’ of the equivalent degrees of freedom (=: edf) part in the AIC formula.}
+\item{k}{numeric specifying the 'weight' of the equivalent degrees of freedom (=: edf) part in the AIC formula.}
 
 \item{...}{further arguments (currently unused in base R).}
 }
