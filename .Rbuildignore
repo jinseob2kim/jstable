@@ -1,8 +1,0 @@
-^appveyor\.yml$
-^docs$
-^_pkgdown\.yml$
-^.*\.Rproj$
-^\.Rproj\.user$
-^\.travis\.yml$
-^README\.Rmd$
-^LICENSE$
