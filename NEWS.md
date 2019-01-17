@@ -1,3 +1,15 @@
+# jstable 0.7.4
+
+## Bug fixes
+
+* Fix some spell for cran release.
+
+## Update
+
+* Update **travis-ci**
+
+* Add appveyor CI to test window environment. 
+
 # jstable 0.7.3
 
 ## Update

@@ -1,11 +1,11 @@
 Package: jstable
-Title: jstable: Research tables from the GLM, GEE, GLMM and Cox results
-Version: 0.7.3
-Date: 2018-12-29
+Title: jstable: Research Tables from 'GLM', 'GEE', 'GLMM' and 'Cox' and 'survey' Results
+Version: 0.7.4
+Date: 2019-01-17
 Authors@R: c(person("Jinseob", "Kim", email = "jinseob2kim@gmail.com", role = c("aut", "cre"),  comment = c(ORCID = "0000-0002-9403-605X")),
              person("Anpanman", role = c("cph", "fnd"))
              )
-Description: Research tables from the GEE, GLMM, Cox results.
+Description: Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results.
 Depends: R (>= 3.4.0)
 License: Apache License 2.0 
 Encoding: UTF-8

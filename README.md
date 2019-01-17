@@ -3,6 +3,7 @@ jstable
 
 [![Build
 Status](https://travis-ci.org/jinseob2kim/jstable.svg?branch=master)](https://travis-ci.org/jinseob2kim/jstable)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/jinseob2kim/jstable?branch=master&svg=true)](https://ci.appveyor.com/project/jinseob2kim/jstable)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/jstable)](http://cran.r-project.org/package=jstable)
 [![codecov](https://codecov.io/github/jinseob2kim/jstable/branch/master/graphs/badge.svg)](https://codecov.io/github/jinseob2kim/jstable)
 [![GitHub
@@ -18,7 +19,7 @@ commit](https://img.shields.io/github/last-commit/google/skia.svg)](https://gith
 [![GitHub
 contributors](https://img.shields.io/github/contributors/jinseob2kim/jstable.svg?maxAge=2592000)](https://github.com/jinseob2kim/jstable/graphs/contributors)
 
-Research tables from the GLM, GEE, GLMM and Cox results
+Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results.
 
 ## Install
 

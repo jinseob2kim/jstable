@@ -2,8 +2,28 @@ language: r
 cache: packages
 Imports: geepack, lme4, stats, data.table, labelled, tableone, coxme, survival, DT, epiDisplay, GGally, ggplot2, shinycustomloader, shiny, survey
 
-r_packages:
-  - covr
-
-after_success:
-  - Rscript -e 'library(covr); codecov()'
+matrix:
+  allow_failures: 
+  - r: devel
+  
+  include:
+  - r: devel
+  - r: release
+    r_packages:
+    - covr
+    r_github_packages:
+    - r-lib/pkgdown
+    after_success:
+    - Rscript -e 'covr::codecov()'
+    - Rscript -e 'pkgdown::build_site()'
+    deploy:
+      provider: pages
+      skip-cleanup: true
+      github-token: $GITHUB_TOKEN  
+      keep-history: true
+      local-dir: docs
+      on:
+        branch: master
+  - r: release
+    os: osx
+  - r: oldrel
