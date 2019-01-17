@@ -37,6 +37,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
                            showAllLevels = T, printToggle = F, quote = F, smd = F, nonnormal = NULL, 
                            catDigits = 1, contDigits = 2, pDigits = 3, Labels = F, labeldata = NULL){
   
+
   if (Labels & !is.null(labeldata)){
     labelled::var_label(data$variables) = sapply(names(data$variables), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
     vals.tb1 <- c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
@@ -112,6 +113,9 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVars = NULL, includeNA = F, test = T,
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, nonnormal = NULL, 
                             catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T){
+  
+  
+  variable <- val_label <- V1 <- V2 <- NULL
   
   #if (Labels & !is.null(labeldata)){
   #  var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)

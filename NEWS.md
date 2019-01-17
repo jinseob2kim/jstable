@@ -2,13 +2,15 @@
 
 ## Bug fixes
 
-* Fix some spell for cran release.
+* Fix some spell for cran release
 
 ## Update
 
 * Update **travis-ci**
 
-* Add appveyor CI to test window environment. 
+* Add appveyor CI to test window environment
+
+* Add vignettes
 
 # jstable 0.7.3
 

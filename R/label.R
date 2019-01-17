@@ -47,6 +47,9 @@ mk.lev.var = function(data , vname){
 #' @importFrom data.table data.table :=
 
 mk.lev = function(data){
+  
+  variable <- level <- val_label <- NULL
+  
   out.list = lapply(names(data), function(x){mk.lev.var(data, x)})
   out.dt = data.table::data.table(Reduce(rbind, out.list))
   names(out.dt) = c("variable", "class","level")
@@ -83,6 +86,9 @@ mk.lev = function(data){
 
 
 LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
+  
+  variable <- level <- val_label <- NULL
+  
   tb.main <- epiDisplay.obj$table
   tb.compact <- tb.main[!rownames(tb.main)=="", ]
   if (nrow(tb.main)  <= 2){
@@ -173,6 +179,9 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
 #' @importFrom data.table data.table :=
 
 LabeljsTable = function(obj.table, ref){
+  
+  variable <- level <- val_label <- NULL
+  
   tb.main = obj.table
   tb.compact = tb.main
   
@@ -248,6 +257,9 @@ LabeljsTable = function(obj.table, ref){
 #' @export 
 
 LabeljsRanef = function(obj.ranef, ref){
+  
+  variable <- NULL
+  
   ranef <- obj.ranef
   ranef.split <- strsplit(rownames(ranef)[-1], "\\(")
   ranef.vname <- unlist(lapply(ranef.split, function(x){x[[1]]}))
@@ -285,6 +297,9 @@ LabeljsRanef = function(obj.ranef, ref){
 #' @export 
 
 LabeljsMetric = function(obj.metric, ref){
+  
+  variable <- NULL
+  
   metric <- obj.metric
   rname <- rownames(metric)
   group.rnum <- grep("No. of group", rname)
@@ -318,6 +333,9 @@ LabeljsMetric = function(obj.metric, ref){
 #' @export 
 
 LabeljsMixed = function(obj, ref){
+  
+  variable <- NULL
+  
   out <- list()
   out$table <- LabeljsTable(obj$table, ref = ref)
   out$ranef <- LabeljsRanef(obj$ranef, ref = ref)
@@ -359,6 +377,9 @@ LabeljsMixed = function(obj, ref){
 #' @export 
 
 LabeljsCox = function(obj, ref){
+  
+  variable <- NULL
+  
   out <- list()
   out$table <- LabeljsTable(obj$table, ref = ref)
   if (!is.null(obj$ranef)){
@@ -403,6 +424,9 @@ LabeljsCox = function(obj, ref){
 #' @export 
 
 LabeljsGeeglm = function(obj, ref){
+  
+  variable <- NULL
+  
   out <- list()
   out$table <- LabeljsTable(obj$table, ref = ref)
   out$metric <- obj$metric

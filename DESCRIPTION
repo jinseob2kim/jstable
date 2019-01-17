@@ -15,4 +15,7 @@ Imports: geepack, lme4, stats, data.table, labelled, tableone, coxme, survival, 
 URL: https://github.com/jinseob2kim/jstable
 BugReports: https://github.com/jinseob2kim/jstable/issues
 Suggests: 
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
