@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results • jstable</title>
+<title>Regression Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results for Publication. • jstable</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><!-- docsearch --><script src="docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results">
-<meta property="og:description" content="Research Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Regression Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results for Publication.">
+<meta property="og:description" content="Generate regression tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' results for publication.">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.4</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.5</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@
     
     
 
-<p>Research Tables from ‘GLM’, ‘GEE’, ‘GLMM’, ‘Cox’ and ‘survey’ Results.</p>
+<p>Regression Tables from ‘GLM’, ‘GEE’, ‘GLMM’, ‘Cox’ and ‘survey’ Results for Publication.</p>
 <div id="install" class="section level2">
 <h2 class="hasAnchor">
 <a href="#install" class="anchor"></a>Install</h2>
@@ -171,20 +171,20 @@
 ## 
 ## $table
 ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-## Time       "1 (0.96,1.04)"    "0.965"       "1 (0.96,1.04)"   
+## Time       "1.03 (0.99,1.07)" "0.132"       "1.03 (0.99,1.07)"
 ## Cu: ref.=1 NA                 NA            NA                
-##    2       "0.87 (0.65,1.17)" "0.366"       "0.87 (0.65,1.17)"
-##    3       "1.06 (0.78,1.46)" "0.697"       "1.06 (0.78,1.46)"
+##    2       "0.99 (0.72,1.36)" "0.958"       "0.99 (0.72,1.36)"
+##    3       "1.26 (0.9,1.77)"  "0.175"       "1.26 (0.9,1.77)" 
 ##            adj. P value
-## Time       "0.962"     
+## Time       "0.132"     
 ## Cu: ref.=1 NA          
-##    2       "0.366"     
-##    3       "0.697"     
+##    2       "0.952"     
+##    3       "0.176"     
 ## 
 ## $metric
 ##                                  crude OR(95%CI) crude P value
 ##                                  NA              NA           
-## Estimated correlation parameters "-0.009"        NA           
+## Estimated correlation parameters "-0.005"        NA           
 ## No. of clusters                  "72"            NA           
 ## No. of observations              "861"           NA           
 ##                                  adj. OR(95%CI) adj. P value
@@ -236,19 +236,19 @@
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">l2 =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/lme4/topics/glmer">glmer</a></span>(ddn <span class="op">~</span><span class="st"> </span>Weight <span class="op">+</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig), <span class="dt">data=</span> dietox, <span class="dt">family=</span> <span class="st">"binomial"</span>)</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l2)</a></code></pre></div>
 <pre><code>## $table
-##                     crude OR(95%CI) crude P value   adj. OR(95%CI)
-## Weight                   1 (1,1.01)     0.7922594 1.01 (0.99,1.03)
-## Time                  1 (0.96,1.04)     0.9652247 0.95 (0.83,1.09)
-## Random effects                 &lt;NA&gt;            NA             &lt;NA&gt;
-## Pig                               0            NA             &lt;NA&gt;
-## Metrics                        &lt;NA&gt;            NA             &lt;NA&gt;
-## No. of groups (Pig)              72            NA             &lt;NA&gt;
-## No. of observations             861            NA             &lt;NA&gt;
-## Log-likelihood              -596.49            NA             &lt;NA&gt;
-## AIC value                   1200.97            NA             &lt;NA&gt;
+##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
+## Weight                 1.01 (1,1.01)    0.05908608 1.01 (0.99,1.03)
+## Time                1.03 (0.99,1.07)    0.12131080 0.94 (0.82,1.08)
+## Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;
+## Pig                                0            NA             &lt;NA&gt;
+## Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;
+## No. of groups (Pig)               72            NA             &lt;NA&gt;
+## No. of observations              861            NA             &lt;NA&gt;
+## Log-likelihood               -594.57            NA             &lt;NA&gt;
+## AIC value                    1197.14            NA             &lt;NA&gt;
 ##                     adj. P value
-## Weight                 0.4397815
-## Time                   0.4668263
+## Weight                 0.1583377
+## Time                   0.3635441
 ## Random effects                NA
 ## Pig                           NA
 ## Metrics                       NA
