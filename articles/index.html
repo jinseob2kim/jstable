@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>LabeljsMetric: Apply label information to jstable metric object using label data — LabeljsMetric • jstable</title>
+<title>Articles • jstable</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -36,10 +36,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
 
 
-<meta property="og:title" content="LabeljsMetric: Apply label information to jstable metric object using label data — LabeljsMetric" />
-
-<meta property="og:description" content="Apply label information to metric object of jstable using label data" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:title" content="Articles" />
 
 
 
@@ -56,7 +53,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-topic">
+    <div class="container template-article-index">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -117,67 +114,17 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>LabeljsMetric: Apply label information to jstable metric object using label data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/label.R'><code>R/label.R</code></a></small>
-    <div class="hidden name"><code>LabeljsMetric.Rd</code></div>
+      <h1>Articles</h1>
     </div>
 
-    <div class="ref-description">
-    
-    <p>Apply label information to metric object of jstable using label data</p>
-    
+    <div class="section ">
+      <h3>All vignettes</h3>
+      <p class="section-desc"></p>
+
+      <ul>
+        <li><a href="jstable.html">Introduce jstable</a></li>
+      </ul>
     </div>
-
-    <pre class="usage"><span class='fu'>LabeljsMetric</span>(<span class='no'>obj.metric</span>, <span class='no'>ref</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>obj.metric</th>
-      <td><p>metric of lmer.display, coxme.display</p></td>
-    </tr>
-    <tr>
-      <th>ref</th>
-      <td><p>Label data made by mk.lev function</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>metric of lmer.display, coxme.display with label information</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>DETAILS</p>
-    
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"># NOT RUN {
-if(interactive()){
- library(coxme)
- fit <- <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
- fit.table = coxme.display(fit)
- lung.label = mk.lev(lung)
- LabeljsTable(fit.table$table, ref = lung.label)
- LabeljsRanef(fit.table$ranef, ref = lung.label)
- LabeljsMetric(fit.table$metric, ref = lung.label)
- }
-# }
-</pre>
-  </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
   </div>
 </div>
 
