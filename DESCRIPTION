@@ -1,5 +1,5 @@
 Package: jstable
-Title: Create Tables from Different Types of Regression Models
+Title: Create Tables from Different Types of Regression
 Version: 0.7.5
 Date: 2019-01-18
 Authors@R: c(person("Jinseob", "Kim", email = "jinseob2kim@gmail.com", role = c("aut", "cre"),  comment = c(ORCID = "0000-0002-9403-605X")),
