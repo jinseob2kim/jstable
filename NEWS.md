@@ -1,3 +1,7 @@
+# jstable 0.7.5
+
+* Change package **Title** for cran release.
+
 # jstable 0.7.4
 
 ## Bug fixes
