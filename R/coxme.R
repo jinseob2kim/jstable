@@ -6,13 +6,9 @@
 #' @return beta, se, z, p of fixed effects
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(coxme)
 #'  fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
-#'  coxmeTable(fit)
-#'  }
-#' }
+#'  jstable:::coxmeTable(fit)
 #' @rdname coxmeTable
 #' @importFrom coxme fixef
 #' @importFrom stats pnorm
@@ -41,13 +37,9 @@ coxmeTable <- function (mod){
 #' @return The transforemed coefficients(95% CI), p-value
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(coxme)
 #'  fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
-#'  coxExp(coxmeTable(fit))
-#'  }
-#' }
+#'  jstable:::coxExp(jstable:::coxmeTable(fit))
 #' @rdname coxExp
 #' @importFrom stats pnorm
 
@@ -70,13 +62,9 @@ coxExp = function(cox.coef, dec){
 #' @return AIC(Integreted, Penalized)
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(coxme)
 #'  fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
 #'  extractAIC(fit)
-#'  }
-#' }
 #' @rdname extractAIC.coxme
 #' @export 
 
@@ -99,13 +87,9 @@ extractAIC.coxme <- function(fit, scale = NULL, k = 2, ...){
 #' @return Fixed effect table, random effect, metrics, caption
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(coxme)
 #'  fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
 #'  coxme.display(fit) 
-#'  }
-#' }
 #' @rdname coxme.display
 #' @export
 #' @importFrom coxme coxme 

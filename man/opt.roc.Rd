@@ -19,12 +19,6 @@ DT::datatable option for ROC result
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
- datatable(roc.table, rownames=F, extension= "Buttons", caption = "Best cut-off", 
-           options = opt.roc(paste("roc", input$dep_vars_roc , 
-                                   paste(xs = input$indep_vars_roc, collapse = "_"), sep="_"))
-           )
- }
-}
+ DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
+ options = opt.roc("mtcars"))
 }

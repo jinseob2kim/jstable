@@ -21,11 +21,7 @@ Make mixed effect model results from coxme.object (coxme package)
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
  library(coxme)
  fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
  coxme.display(fit) 
- }
-}
 }

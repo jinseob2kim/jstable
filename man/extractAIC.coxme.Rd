@@ -25,11 +25,7 @@ Extract AIC from coxme.object
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
  library(coxme)
  fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
  extractAIC(fit)
- }
-}
 }

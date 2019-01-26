@@ -21,7 +21,6 @@ Apply label information to geeglm.display object using label data
 DETAILS
 }
 \examples{
-\dontrun{
  library(geepack);library(jstable)
  data(dietox)
  dietox$Cu <- as.factor(dietox$Cu)
@@ -29,5 +28,4 @@ DETAILS
                 family=gaussian,corstr="ex")
  g1 <- geeglm.display(gee01)
  LabeljsGeeglm(g1, ref = mk.lev(dietox))
-}
 }

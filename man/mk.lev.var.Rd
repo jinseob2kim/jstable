@@ -21,9 +21,5 @@ Export label and level: one variable
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
- out.list = lapply(names(data), function(x){mk.lev.var(data, x)})
- }
-}
+ lapply(names(iris), function(x){jstable::mk.lev.var(iris, x)})
 }

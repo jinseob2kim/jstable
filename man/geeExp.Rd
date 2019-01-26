@@ -23,14 +23,10 @@ Transform the unit of coefficients to "Coeff", "OR" or "RR"
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
  library(geepack)
  data(dietox)
  dietox$Cu <- as.factor(dietox$Cu)
  gee.uni <- geeUni("Weight", c("Time", "Cu"), data = dietox, id.vec = dietox$Pig, 
                    family = "gaussian", cor.type = "exchangeable")
  gee.exp <- geeExp(gee.uni, "binomial", 2)
- }
-}
 }

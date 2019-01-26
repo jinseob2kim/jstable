@@ -19,11 +19,7 @@ Extract fixed effect table in coxme.object
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
  library(coxme)
  fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
- coxmeTable(fit)
- }
-}
+ jstable:::coxmeTable(fit)
 }

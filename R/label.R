@@ -8,11 +8,7 @@
 #' @return if continuous variable - (label, NA), categorical variable - (label, level)
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  out.list = lapply(names(data), function(x){mk.lev.var(data, x)})
-#'  }
-#' }
+#'  lapply(names(iris), function(x){jstable::mk.lev.var(iris, x)})
 #' @rdname mk.lev.var
 #' @export 
 
@@ -37,11 +33,7 @@ mk.lev.var = function(data , vname){
 #' @return default label and level data
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  data.label = mk.lev(data)
-#'  }
-#' }
+#'  mk.lev(iris)
 #' @rdname mk.lev
 #' @export 
 #' @importFrom data.table data.table :=
@@ -71,15 +63,10 @@ mk.lev = function(data){
 #' @return epiDisplay.object with label information
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  library(epiDisplay)
 #'  fit <- glm(Sepal.Length ~ Sepal.Width + Species, data = iris)
-#'  fit.table = regress.display(fit, crude = T, crude.p.value = T)
-#'  iris.label = mk.lev(iris)
-#'  LabelepiDisplay(fit.table, label = T, ref = iris.label)
-#'  }
-#' }
+#'  fit.table <- epiDisplay::regress.display(fit, crude = TRUE, crude.p.value = TRUE)
+#'  iris.label <- mk.lev(iris)
+#'  LabelepiDisplay(fit.table, label = TRUE, ref = iris.label)
 #' @rdname LabelepiDisplay
 #' @export 
 #' @importFrom data.table data.table :=
@@ -165,15 +152,11 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
 #' @return table of geeglm.display, lmer.display, coxme.display with label information
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(coxme)
-#'  fit <- <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
-#'  fit.table = coxme.display(fit)
-#'  lung.label = mk.lev(lung)
-#'  LabeljsTable(fit.table, ref = lung.label)
-#'  }
-#' }
+#'  fit <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
+#'  fit.table <- coxme.display(fit)
+#'  lung.label <- mk.lev(lung)
+#'  LabeljsTable(fit.table$table, ref = lung.label)
 #' @rdname LabeljsTable
 #' @export 
 #' @importFrom data.table data.table :=
@@ -182,8 +165,8 @@ LabeljsTable = function(obj.table, ref){
   
   variable <- level <- val_label <- NULL
   
-  tb.main = obj.table
-  tb.compact = tb.main
+  tb.main <- obj.table
+  tb.compact <- tb.main
   
   ## Var label
   tb.rn = rownames(tb.compact)
@@ -243,16 +226,12 @@ LabeljsTable = function(obj.table, ref){
 #' @return ranef of lmer.display, coxme.display, cox2.display with label information
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(coxme)
-#'  fit <- <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
-#'  fit.table = coxme.display(fit)
-#'  lung.label = mk.lev(lung)
+#'  fit <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
+#'  fit.table <- coxme.display(fit)
+#'  lung.label <- mk.lev(lung)
 #'  LabeljsTable(fit.table$table, ref = lung.label)
 #'  LabeljsRanef(fit.table$ranef, ref = lung.label)
-#'  }
-#' }
 #' @rdname LabeljsRanef
 #' @export 
 
@@ -282,17 +261,13 @@ LabeljsRanef = function(obj.ranef, ref){
 #' @return metric of lmer.display, coxme.display with label information
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(coxme)
-#'  fit <- <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
-#'  fit.table = coxme.display(fit)
-#'  lung.label = mk.lev(lung)
+#'  fit <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
+#'  fit.table <- coxme.display(fit)
+#'  lung.label <- mk.lev(lung)
 #'  LabeljsTable(fit.table$table, ref = lung.label)
 #'  LabeljsRanef(fit.table$ranef, ref = lung.label)
 #'  LabeljsMetric(fit.table$metric, ref = lung.label)
-#'  }
-#' }
 #' @rdname LabeljsMetric
 #' @export 
 
@@ -320,15 +295,11 @@ LabeljsMetric = function(obj.metric, ref){
 #' @return lmer.display, coxme.display with label information
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(coxme)
-#'  fit <- <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
-#'  fit.table = coxme.display(fit)
-#'  lung.label = mk.lev(lung)
-#'  labeljsMixed(fit.table, ref = lung.label)
-#'  }
-#' }
+#'  fit <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
+#'  fit.table <- coxme.display(fit)
+#'  lung.label <- mk.lev(lung)
+#'  LabeljsMixed(fit.table, ref = lung.label)
 #' @rdname LabeljsMixed
 #' @export 
 
@@ -364,15 +335,12 @@ LabeljsMixed = function(obj, ref){
 #' @return cox2.display object with label information
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(survival)
-#'  fit <- coxph(Surv(time, status) ~ sex + ph.ecog + ph.karno + cluster(inst), lung)
-#'  fit.table = cox2.display(fit)
-#'  lung.label = mk.lev(lung)
+#'  fit <- coxph(Surv(time, status) ~ sex + ph.ecog + ph.karno + cluster(inst), 
+#'                data = lung, model = TRUE)
+#'  fit.table <- cox2.display(fit)
+#'  lung.label <- mk.lev(lung)
 #'  LabeljsCox(fit.table, ref = lung.label)
-#'  }
-#' }
 #' @rdname LabeljsCox
 #' @export 
 
@@ -411,7 +379,6 @@ LabeljsCox = function(obj, ref){
 #' @return geeglm.display object with label information
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
 #'  library(geepack);library(jstable)
 #'  data(dietox)
 #'  dietox$Cu <- as.factor(dietox$Cu)
@@ -419,7 +386,6 @@ LabeljsCox = function(obj, ref){
 #'                 family=gaussian,corstr="ex")
 #'  g1 <- geeglm.display(gee01)
 #'  LabeljsGeeglm(g1, ref = mk.lev(dietox))
-#' }
 #' @rdname LabeljsGeeglm
 #' @export 
 

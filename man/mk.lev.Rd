@@ -19,9 +19,5 @@ Export label and level: multiple variable
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
- data.label = mk.lev(data)
- }
-}
+ mk.lev(iris)
 }

@@ -21,11 +21,7 @@ Show summary table of glm object(regression, logistic).
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
- #EXAMPLE1
- }
-}
+ glmshow.display(glm(mpg ~ wt + qsec, data = mtcars))
 }
 \seealso{
 \code{\link[stats]{glm}}

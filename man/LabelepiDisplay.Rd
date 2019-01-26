@@ -23,13 +23,8 @@ Apply label information to epiDisplay.object using label data
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
- library(epiDisplay)
  fit <- glm(Sepal.Length ~ Sepal.Width + Species, data = iris)
- fit.table = regress.display(fit, crude = T, crude.p.value = T)
- iris.label = mk.lev(iris)
- LabelepiDisplay(fit.table, label = T, ref = iris.label)
- }
-}
+ fit.table <- epiDisplay::regress.display(fit, crude = TRUE, crude.p.value = TRUE)
+ iris.label <- mk.lev(iris)
+ LabelepiDisplay(fit.table, label = TRUE, ref = iris.label)
 }

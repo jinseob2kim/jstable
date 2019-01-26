@@ -9,15 +9,11 @@
 #' @return coefficient, standard error, p-value
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(geepack)
 #'  data(dietox)
 #'  dietox$Cu <- as.factor(dietox$Cu)
 #'  gee.uni <- geeUni("Weight", "Time", data = dietox, id.vec = dietox$Pig, 
 #'                    family = "gaussian", cor.type = "exchangeable")
-#'  }
-#' }
 #' @rdname geeUni
 #' @importFrom geepack geeglm 
 #' @importFrom stats as.formula
@@ -41,16 +37,12 @@ geeUni = function(y, x, data, id.vec, family, cor.type = "exchangeable"){
 #' @return The transforemed coefficients(95% CI), p-value
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(geepack)
 #'  data(dietox)
 #'  dietox$Cu <- as.factor(dietox$Cu)
 #'  gee.uni <- geeUni("Weight", c("Time", "Cu"), data = dietox, id.vec = dietox$Pig, 
 #'                    family = "gaussian", cor.type = "exchangeable")
 #'  gee.exp <- geeExp(gee.uni, "binomial", 2)
-#'  }
-#' }
 #' @rdname geeExp
 #' @export
 
@@ -77,16 +69,12 @@ geeExp = function(gee.coef, family ="binomial", dec){
 #' @return List: caption, main table, metrics table
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  library(geepack);library(jstable)
+#'  library(geepack)
 #'  data(dietox)
 #'  dietox$Cu <- as.factor(dietox$Cu)
 #'  gee01 <- geeglm (Weight ~ Time + Cu , id =Pig, data = dietox,
 #'                 family=gaussian,corstr="ex")
 #'  geeglm.display(gee01)
-#'  }
-#' }
 #' @rdname geeglm.display
 #' @export 
 

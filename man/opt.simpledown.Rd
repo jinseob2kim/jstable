@@ -19,12 +19,6 @@ Simple download DT::datatable option - No filter, No page
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
- datatable(NIInput()[["stat"]], rownames=T, extension= "Buttons", caption = "Outcome: statistics",
- options = c(opt.simpledown("Outcome_absent"), 
- list(scrollX = TRUE)
- ))
- }
-}
+ DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
+ options = opt.simpledown("mtcars"))
 }

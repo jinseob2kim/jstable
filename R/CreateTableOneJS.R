@@ -31,11 +31,8 @@
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
+#'  library(survival)
+#'  CreateTableOne2(vars = names(lung), strata = "sex", data = lung)
 #' @rdname CreateTableOne2
 #' @importFrom data.table data.table :=
 #' @importFrom tableone CreateTableOne 
@@ -131,11 +128,8 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
+#'  library(survival)
+#'  CreateTableOneJS(vars = names(lung), strata = "sex", data = lung)
 #' @rdname CreateTableOneJS
 #' @importFrom data.table data.table := CJ
 #' @importFrom tableone CreateTableOne 

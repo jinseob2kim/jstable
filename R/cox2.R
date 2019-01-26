@@ -5,16 +5,11 @@
 #' @return Table, cluster/frailty info, metrics, caption
 #' @details GEE like - cluster, Mixed effect model like - frailty
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
-#' library(survival)
-#'  data(lung)
-#'  fit1 <- coxph(Surv(time, status) ~ ph.ecog + age + cluster(inst), lung)
-#'  fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frailty(inst), lung)
+#'  library(survival);data(lung)
+#'  fit1 <- coxph(Surv(time, status) ~ ph.ecog + age + cluster(inst), data = lung, model = TRUE)
+#'  fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frailty(inst), data = lung, model = TRUE)
 #'  cox2.display(fit1)
 #'  cox2.display(fit2)
-#'  }
-#' }
 #' @rdname cox2.display
 #' @export 
 #' @importFrom survival coxph 

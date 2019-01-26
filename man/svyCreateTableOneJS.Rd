@@ -57,9 +57,10 @@ Combine svyCreateTableOne & print function in tableone package
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
- #EXAMPLE1
- }
-}
+ library(survey);data(nhanes)
+ nhanes$SDMVPSU <- as.factor(nhanes$SDMVPSU)
+ nhanesSvy <- svydesign(ids = ~ SDMVPSU, strata = ~ SDMVSTRA, weights = ~ WTMEC2YR, 
+                        nest = TRUE, data = nhanes)
+ svyCreateTableOneJS(vars = c("HI_CHOL","race","agecat","RIAGENDR"), 
+                     strata = "RIAGENDR", data = nhanesSvy)
 }

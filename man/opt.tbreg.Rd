@@ -19,12 +19,6 @@ DT::datatable option for glm, gee(geepack packge), lmer/glmer(lme4 package)
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
- datatable(out.gee, rownames=T, extension= "Buttons", caption = cap.gee,
-          options = c(opt.tbreg(paste("gee_gaussian", y , paste(xs, collapse = "_"), sep="_"))
-                     )
-          )
- }
-}
+ DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
+ options = opt.tbreg("mtcars"))
 }

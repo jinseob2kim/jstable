@@ -23,13 +23,9 @@ Make mixed effect model results from "lmerMod" or "glmerMod" object (lme4 packag
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
  library(geepack)
  data(dietox)
  dietox$Cu <- as.factor(dietox$Cu)
- l1 = lmer(Weight ~ Time + Cu + (1|Pig) + (1|Evit), data = dietox)
+ l1 <- lme4::lmer(Weight ~ Time + Cu + (1|Pig) + (1|Evit), data = dietox)
  lmer.display(l1)
- }
-}
 }

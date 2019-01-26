@@ -22,11 +22,12 @@
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
+#'  library(survey);data(nhanes)
+#'  nhanes$SDMVPSU <- as.factor(nhanes$SDMVPSU)
+#'  nhanesSvy <- svydesign(ids = ~ SDMVPSU, strata = ~ SDMVSTRA, weights = ~ WTMEC2YR, 
+#'                         nest = TRUE, data = nhanes)
+#'  svyCreateTableOne2(vars = c("HI_CHOL","race","agecat","RIAGENDR"), 
+#'                     strata = "RIAGENDR", data = nhanesSvy)
 #' @rdname svyCreateTableOne2
 #' @importFrom data.table data.table :=
 #' @importFrom tableone svyCreateTableOne 
@@ -98,11 +99,12 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
+#'  library(survey);data(nhanes)
+#'  nhanes$SDMVPSU <- as.factor(nhanes$SDMVPSU)
+#'  nhanesSvy <- svydesign(ids = ~ SDMVPSU, strata = ~ SDMVSTRA, weights = ~ WTMEC2YR, 
+#'                         nest = TRUE, data = nhanes)
+#'  svyCreateTableOneJS(vars = c("HI_CHOL","race","agecat","RIAGENDR"), 
+#'                      strata = "RIAGENDR", data = nhanesSvy)
 #' @rdname svyCreateTableOneJS
 #' @importFrom data.table data.table := CJ
 #' @importFrom tableone svyCreateTableOne 

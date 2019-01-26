@@ -23,9 +23,5 @@ Transform the unit of coefficients to "Coeff", "OR" or "RR"
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
   #EXAMPLE1
- }
-}
 }

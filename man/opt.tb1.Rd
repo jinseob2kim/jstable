@@ -19,12 +19,6 @@ DT::datatable option for table 1
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
- datatable(ptb1, rownames=T, extension= "Buttons", caption = cap.tb1,
- options = c(opt.tb1("tb1"), list(columnDefs = list(list(visible=FALSE, targets=ncol(ptb1)))
-                                 )
-            )
- }
-}
+ DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
+ options = opt.tb1("mtcars"))
 }

@@ -6,11 +6,7 @@
 #' @return The transforemed coefficients(95% CI), p-value
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'   #EXAMPLE1
-#'  }
-#' }
 #' @rdname lmerExp
 #' @importFrom stats pnorm
 
@@ -46,15 +42,11 @@ lmerExp = function(lmer.coef, family ="binomial", dec){
 #' @return Table: fixed & random effect
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
 #'  library(geepack)
 #'  data(dietox)
 #'  dietox$Cu <- as.factor(dietox$Cu)
-#'  l1 = lmer(Weight ~ Time + Cu + (1|Pig) + (1|Evit), data = dietox)
+#'  l1 <- lme4::lmer(Weight ~ Time + Cu + (1|Pig) + (1|Evit), data = dietox)
 #'  lmer.display(l1)
-#'  }
-#' }
 #' @rdname lmer.display
 #' @export 
 #' @importFrom lme4 lmer glmer confint.merMod

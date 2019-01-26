@@ -19,9 +19,5 @@ Make coefficient table with NA
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
- #EXAMPLE1
- }
-}
+ coefNA(glm(mpg ~ wt + qsec, data = mtcars))
 }

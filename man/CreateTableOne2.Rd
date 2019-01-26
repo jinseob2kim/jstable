@@ -74,9 +74,6 @@ Combine CreateTableOne & print function in tableone package
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
- #EXAMPLE1
- }
-}
+ library(survival)
+ CreateTableOne2(vars = names(lung), strata = "sex", data = lung)
 }

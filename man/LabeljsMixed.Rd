@@ -21,13 +21,9 @@ Apply label information to object of jstable using label data
 DETAILS
 }
 \examples{
-\dontrun{
-if(interactive()){
  library(coxme)
- fit <- <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
- fit.table = coxme.display(fit)
- lung.label = mk.lev(lung)
- labeljsMixed(fit.table, ref = lung.label)
- }
-}
+ fit <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
+ fit.table <- coxme.display(fit)
+ lung.label <- mk.lev(lung)
+ LabeljsMixed(fit.table, ref = lung.label)
 }

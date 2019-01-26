@@ -6,9 +6,7 @@
 #' @return List including table, metric, caption
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  data(pbc, package="survival")
+#'  library(survival);data(pbc)
 #'  pbc$sex = factor(pbc$sex)
 #'  pbc$stage = factor(pbc$stage)
 #'  pbc$randomized<-with(pbc, !is.na(trt) & trt>0)
@@ -17,12 +15,10 @@
 #'  
 #'  if (is.null(pbc$albumin)) pbc$albumin<-pbc$alb ##pre2.9.0
 #'  
-#'  dpbc <- svydesign(id=~1, prob=~randprob, strata=~edema, data=subset(pbc,randomized))
+#'  dpbc <- survey::svydesign(id=~1, prob=~randprob, strata=~edema, data=subset(pbc,randomized))
 #'  
-#'  model <- svycoxph(Surv(time,status>0)~ sex + protime + albumin + stage,design=dpbc)
+#'  model <- survey::svycoxph(Surv(time,status>0)~ sex + protime + albumin + stage,design=dpbc)
 #'  svycox.display(model)
-#'  }
-#' }
 #' @seealso 
 #'  \code{\link[survey]{svycoxph}}
 #'  \code{\link[stats]{AIC}}

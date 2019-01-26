@@ -5,11 +5,7 @@
 #' @return coefficient table with NA
 #' @details DETAILS
 #' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
+#'  coefNA(glm(mpg ~ wt + qsec, data = mtcars))
 #' @rdname coefNA
 #' @export 
 #' @importFrom stats coef
@@ -29,11 +25,7 @@ coefNA <- function(model){
 #' @return table
 #' @details DETAILS
 #' @examples
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
+#'  glmshow.display(glm(mpg ~ wt + qsec, data = mtcars))
 #' @seealso
 #'  \code{\link[stats]{glm}}
 #' @rdname glmshow.display

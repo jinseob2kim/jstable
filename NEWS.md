@@ -1,3 +1,7 @@
+# jstable 0.7.6
+
+* Fix description text and some examples fir cran release.
+
 # jstable 0.7.5
 
 * Change package **Title** for cran release.
