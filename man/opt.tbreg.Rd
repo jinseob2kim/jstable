@@ -13,7 +13,7 @@ opt.tbreg(fname)
 datatable option object
 }
 \description{
-DT::datatable option for glm, gee(geepack packge), lmer/glmer(lme4 package)
+DT::datatable option for glm, gee(geepack package), lmer/glmer(lme4 package)
 }
 \details{
 DETAILS

@@ -57,7 +57,7 @@ opt.tb1 = function(fname){
 
 
 #' @title datable option for regression table(DT package)
-#' @description DT::datatable option for glm, gee(geepack packge), lmer/glmer(lme4 package)
+#' @description DT::datatable option for glm, gee(geepack package), lmer/glmer(lme4 package)
 #' @param fname File name to download
 #' @return datatable option object
 #' @details DETAILS
