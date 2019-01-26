@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.5</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.6</span>
       </span>
     </div>
 
@@ -157,15 +157,45 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='kw'>if</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>()){
- <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>geepack</span>)
+    <pre class="examples"><div class='input'> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>geepack</span>)
  <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>dietox</span>)
  <span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
- <span class='no'>l1</span> <span class='kw'>=</span> <span class='fu'>lmer</span>(<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Pig</span>) + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Evit</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>)
- <span class='fu'>lmer.display</span>(<span class='no'>l1</span>)
- }
-<span class='co'># }</span></pre>
+ <span class='no'>l1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/lme4/topics/lmer'>lmer</a></span>(<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Pig</span>) + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Evit</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>)
+ <span class='fu'>lmer.display</span>(<span class='no'>l1</span>)</div><div class='output co'>#&gt; <span class='message'>singular fit</span></div><div class='output co'>#&gt; $table
+#&gt;                      crude coeff(95%CI) crude P value adj. coeff(95%CI)
+#&gt; Time                   6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)
+#&gt; Cu: ref.=1                         &lt;NA&gt;            NA              &lt;NA&gt;
+#&gt;    2                 -0.57 (-4.66,3.52)     0.7837049 -0.81 (-4.42,2.8)
+#&gt;    3                   1.9 (-2.23,6.04)     0.3666825 1.78 (-1.87,5.42)
+#&gt; Random effects                     &lt;NA&gt;            NA              &lt;NA&gt;
+#&gt; Pig                                39.7            NA              &lt;NA&gt;
+#&gt; Evit                               0.91            NA              &lt;NA&gt;
+#&gt; Residual                          11.37            NA              &lt;NA&gt;
+#&gt; Metrics                            &lt;NA&gt;            NA              &lt;NA&gt;
+#&gt; No. of groups (Pig)                  72            NA              &lt;NA&gt;
+#&gt; No. of groups (Evit)                  3            NA              &lt;NA&gt;
+#&gt; No. of observations                 861            NA              &lt;NA&gt;
+#&gt; Log-likelihood                 -2400.69            NA              &lt;NA&gt;
+#&gt; AIC value                       4801.38            NA              &lt;NA&gt;
+#&gt;                      adj. P value
+#&gt; Time                    0.0000000
+#&gt; Cu: ref.=1                     NA
+#&gt;    2                    0.6599124
+#&gt;    3                    0.3393017
+#&gt; Random effects                 NA
+#&gt; Pig                            NA
+#&gt; Evit                           NA
+#&gt; Residual                       NA
+#&gt; Metrics                        NA
+#&gt; No. of groups (Pig)            NA
+#&gt; No. of groups (Evit)           NA
+#&gt; No. of observations            NA
+#&gt; Log-likelihood                 NA
+#&gt; AIC value                      NA
+#&gt; 
+#&gt; $caption
+#&gt; [1] "Linear mixed model fit by REML : Weight ~ Time + Cu + (1 | Pig) + (1 | Evit)"
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

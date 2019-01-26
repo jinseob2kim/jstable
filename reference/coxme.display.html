@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.5</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.6</span>
       </span>
     </div>
 
@@ -153,13 +153,28 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='kw'>if</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>()){
- <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>coxme</span>)
+    <pre class="examples"><div class='input'> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>coxme</span>)
  <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/coxme/topics/coxme'>coxme</a></span>(<span class='fu'>Surv</span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>ph.ecog</span> + <span class='no'>age</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>inst</span>), <span class='no'>lung</span>)
- <span class='fu'>coxme.display</span>(<span class='no'>fit</span>)
- }
-<span class='co'># }</span></pre>
+ <span class='fu'>coxme.display</span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; $table
+#&gt;         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value
+#&gt; ph.ecog "1.66 (1.32,2.09)" "&lt; 0.001"     "1.61 (1.27,2.03)" "&lt; 0.001"   
+#&gt; age     "1.02 (1,1.04)"    "0.043"       "1.01 (0.99,1.03)" "0.227"     
+#&gt; 
+#&gt; $ranef
+#&gt;                 [,1] [,2] [,3] [,4]
+#&gt; Random effect     NA   NA   NA   NA
+#&gt; inst(Intercept) 0.02   NA   NA   NA
+#&gt; 
+#&gt; $metric
+#&gt;                     [,1] [,2] [,3] [,4]
+#&gt; &lt;NA&gt;                  NA   NA   NA   NA
+#&gt; No. of groups(inst)   18   NA   NA   NA
+#&gt; No. of observations  226   NA   NA   NA
+#&gt; No. of events        163   NA   NA   NA
+#&gt; 
+#&gt; $caption
+#&gt; [1] "Mixed effects Cox model on time ('time') to event ('status') - Group inst"
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

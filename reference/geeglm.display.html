@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.5</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.6</span>
       </span>
     </div>
 
@@ -153,16 +153,33 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='kw'>if</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>()){
- <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>geepack</span>);<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>jstable</span>)
+    <pre class="examples"><div class='input'> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>geepack</span>)
  <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>dietox</span>)
  <span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
  <span class='no'>gee01</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/geepack/topics/geeglm'>geeglm</a></span> (<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> , <span class='kw'>id</span> <span class='kw'>=</span><span class='no'>Pig</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>,
                 <span class='kw'>family</span><span class='kw'>=</span><span class='no'>gaussian</span>,<span class='kw'>corstr</span><span class='kw'>=</span><span class='st'>"ex"</span>)
- <span class='fu'>geeglm.display</span>(<span class='no'>gee01</span>)
- }
-<span class='co'># }</span></pre>
+ <span class='fu'>geeglm.display</span>(<span class='no'>gee01</span>)</div><div class='output co'>#&gt; $caption
+#&gt; [1] "GEE(gaussian) predicting Weight by Time, Cu - Group Pig"
+#&gt; 
+#&gt; $table
+#&gt;            crude coeff(95%CI)   crude P value adj. coeff(95%CI)   adj. P value
+#&gt; Time       "6.94 (6.79,7.1)"    "&lt; 0.001"     "6.94 (6.79,7.1)"   "&lt; 0.001"   
+#&gt; Cu: ref.=1 NA                   NA            NA                  NA          
+#&gt;    2       "-0.59 (-3.73,2.54)" "0.711"       "-0.84 (-3.9,2.23)" "0.593"     
+#&gt;    3       "1.9 (-1.87,5.66)"   "0.324"       "1.77 (-1.9,5.45)"  "0.345"     
+#&gt; 
+#&gt; $metric
+#&gt;                                  crude coeff(95%CI) crude P value
+#&gt;                                  NA                 NA           
+#&gt; Estimated correlation parameters "0.775"            NA           
+#&gt; No. of clusters                  "72"               NA           
+#&gt; No. of observations              "861"              NA           
+#&gt;                                  adj. coeff(95%CI) adj. P value
+#&gt;                                  NA                NA          
+#&gt; Estimated correlation parameters NA                NA          
+#&gt; No. of clusters                  NA                NA          
+#&gt; No. of observations              NA                NA          
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

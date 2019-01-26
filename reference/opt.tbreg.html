@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.5</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.6</span>
       </span>
     </div>
 
@@ -149,14 +149,8 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='kw'>if</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>()){
- <span class='fu'>datatable</span>(<span class='no'>out.gee</span>, <span class='kw'>rownames</span><span class='kw'>=</span><span class='no'>T</span>, <span class='kw'>extension</span><span class='kw'>=</span> <span class='st'>"Buttons"</span>, <span class='kw'>caption</span> <span class='kw'>=</span> <span class='no'>cap.gee</span>,
-          <span class='kw'>options</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'>opt.tbreg</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"gee_gaussian"</span>, <span class='no'>y</span> , <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='no'>xs</span>, <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='st'>"_"</span>), <span class='kw'>sep</span><span class='kw'>=</span><span class='st'>"_"</span>))
-                     )
-          )
- }
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'> <span class='kw pkg'>DT</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/DT/topics/datatable'>datatable</a></span>(<span class='no'>mtcars</span>, <span class='kw'>rownames</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>extension</span><span class='kw'>=</span> <span class='st'>"Buttons"</span>, <span class='kw'>caption</span> <span class='kw'>=</span> <span class='st'>"mtcars"</span>,
+ <span class='kw'>options</span> <span class='kw'>=</span> <span class='fu'>opt.tbreg</span>(<span class='st'>"mtcars"</span>))</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

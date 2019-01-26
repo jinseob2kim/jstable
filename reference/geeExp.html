@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.5</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.6</span>
       </span>
     </div>
 
@@ -157,16 +157,12 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='kw'>if</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>()){
- <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>geepack</span>)
+    <pre class="examples"><div class='input'> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>geepack</span>)
  <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>dietox</span>)
  <span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
  <span class='no'>gee.uni</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='geeUni.html'>geeUni</a></span>(<span class='st'>"Weight"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Time"</span>, <span class='st'>"Cu"</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>, <span class='kw'>id.vec</span> <span class='kw'>=</span> <span class='no'>dietox</span>$<span class='no'>Pig</span>,
                    <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"gaussian"</span>, <span class='kw'>cor.type</span> <span class='kw'>=</span> <span class='st'>"exchangeable"</span>)
- <span class='no'>gee.exp</span> <span class='kw'>&lt;-</span> <span class='fu'>geeExp</span>(<span class='no'>gee.uni</span>, <span class='st'>"binomial"</span>, <span class='fl'>2</span>)
- }
-<span class='co'># }</span></pre>
+ <span class='no'>gee.exp</span> <span class='kw'>&lt;-</span> <span class='fu'>geeExp</span>(<span class='no'>gee.uni</span>, <span class='st'>"binomial"</span>, <span class='fl'>2</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

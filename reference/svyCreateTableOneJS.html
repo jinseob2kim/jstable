@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.5</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.6</span>
       </span>
     </div>
 
@@ -221,11 +221,34 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='kw'>if</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>()){
- <span class='co'>#EXAMPLE1</span>
- }
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>survey</span>);<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>nhanes</span>)
+ <span class='no'>nhanes</span>$<span class='no'>SDMVPSU</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>as.factor</a></span>(<span class='no'>nhanes</span>$<span class='no'>SDMVPSU</span>)
+ <span class='no'>nhanesSvy</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/survey/topics/svydesign'>svydesign</a></span>(<span class='kw'>ids</span> <span class='kw'>=</span> ~ <span class='no'>SDMVPSU</span>, <span class='kw'>strata</span> <span class='kw'>=</span> ~ <span class='no'>SDMVSTRA</span>, <span class='kw'>weights</span> <span class='kw'>=</span> ~ <span class='no'>WTMEC2YR</span>,
+                        <span class='kw'>nest</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>nhanes</span>)
+ <span class='fu'>svyCreateTableOneJS</span>(<span class='kw'>vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"HI_CHOL"</span>,<span class='st'>"race"</span>,<span class='st'>"agecat"</span>,<span class='st'>"RIAGENDR"</span>),
+                     <span class='kw'>strata</span> <span class='kw'>=</span> <span class='st'>"RIAGENDR"</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>nhanesSvy</span>)</div><div class='output co'>#&gt; $table
+#&gt;            level      1                      2                      p       
+#&gt; n          ""         "134944553.92"         "141591892.00"         ""      
+#&gt; HI_CHOL    ""         "        0.10 (0.30)"  "        0.12 (0.33)"  " 0.009"
+#&gt; race       ""         "        2.08 (0.73)"  "        2.12 (0.74)"  " 0.015"
+#&gt; agecat (%) "(0,19]"   "  29299546.1 (21.7) " "  28150760.5 (19.9) " " 0.001"
+#&gt;            "(19,39]"  "  40497613.1 (30.0) " "  40640361.5 (28.7) " ""      
+#&gt;            "(39,59]"  "  41053579.4 (30.4) " "  42817044.0 (30.2) " ""      
+#&gt;            "(59,Inf]" "  24093815.3 (17.9) " "  29983725.9 (21.2) " ""      
+#&gt; RIAGENDR   ""         "        1.00 (0.00)"  "        2.00 (0.00)"  "&lt;0.001"
+#&gt;            test sig 
+#&gt; n          ""   NA  
+#&gt; HI_CHOL    ""   "**"
+#&gt; race       ""   "**"
+#&gt; agecat (%) ""   "**"
+#&gt;            ""   NA  
+#&gt;            ""   NA  
+#&gt;            ""   NA  
+#&gt; RIAGENDR   ""   "**"
+#&gt; 
+#&gt; $caption
+#&gt; [1] "Table 1: Stratified by RIAGENDR- weighted data"
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
