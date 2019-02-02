@@ -6,25 +6,25 @@ Status](https://travis-ci.org/jinseob2kim/jstable.svg?branch=master)](https://tr
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/jinseob2kim/jstable?branch=master&svg=true)](https://ci.appveyor.com/project/jinseob2kim/jstable)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/jstable)](https://cran.r-project.org/package=jstable)
+[![CRAN\_Download\_Badge](https://cranlogs.r-pkg.org/badges/jstable)](https://cran.rstudio.com/web/packages/jstable/index.html)
 [![codecov](https://codecov.io/github/jinseob2kim/jstable/branch/master/graphs/badge.svg)](https://codecov.io/github/jinseob2kim/jstable)
 [![GitHub
 issues](https://img.shields.io/github/issues/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/issues)
 [![GitHub
-forks](https://img.shields.io/github/forks/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/network)
-[![GitHub
 stars](https://img.shields.io/github/stars/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/stargazers)
 [![GitHub
 license](https://img.shields.io/github/license/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/blob/master/LICENSE)
-[![GitHub last
-commit](https://img.shields.io/github/last-commit/google/skia.svg)](https://github.com/jinseob2kim/jstable)
-[![GitHub
-contributors](https://img.shields.io/github/contributors/jinseob2kim/jstable.svg?maxAge=2592000)](https://github.com/jinseob2kim/jstable/graphs/contributors)
+
 
 Regression Results Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results.
 
 ## Install
 
 ``` r
+install.packages("jstable")
+
+
+## From github: latest version
 remotes::install_github('jinseob2kim/jstable')
 library(jstable)
 ```
