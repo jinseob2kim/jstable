@@ -6,7 +6,7 @@ Status](https://travis-ci.org/jinseob2kim/jstable.svg?branch=master)](https://tr
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/jinseob2kim/jstable?branch=master&svg=true)](https://ci.appveyor.com/project/jinseob2kim/jstable)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/jstable)](https://cran.r-project.org/package=jstable)
-[![CRAN\_Download\_Badge](https://cranlogs.r-pkg.org/badges/jstable)](https://cran.rstudio.com/web/packages/jstable/index.html)
+[![CRAN\_Download\_Badge](https://cranlogs.r-pkg.org/badges/jstable)](https://CRAN.R-project.org/package=jstable)
 [![codecov](https://codecov.io/github/jinseob2kim/jstable/branch/master/graphs/badge.svg)](https://codecov.io/github/jinseob2kim/jstable)
 [![GitHub
 issues](https://img.shields.io/github/issues/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/issues)
