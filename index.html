@@ -12,7 +12,7 @@
 <script src="pkgdown.js"></script><!-- docsearch --><script src="docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="docsearch.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Create Tables from Different Types of Regression">
-<meta property="og:description" content="Create regression tables from generalized linear model(GLM), Generalized estimating equation(GEE), generalized linear mixed-effects model(GLMM), Cox proportional hazards model, survey-weighted generalized linear model(svyglm) and survey-weighted Cox model results for publication.">
+<meta property="og:description" content="Create regression tables from generalized linear model(GLM), generalized estimating equation(GEE), generalized linear mixed-effects model(GLMM), Cox proportional hazards model, survey-weighted generalized linear model(svyglm) and survey-weighted Cox model results for publication.">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -175,20 +175,20 @@
 ## 
 ## $table
 ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-## Time       "1 (0.96,1.04)"    "0.93"        "1 (0.96,1.04)"   
+## Time       "1.01 (0.97,1.05)" "0.635"       "1.01 (0.97,1.05)"
 ## Cu: ref.=1 NA                 NA            NA                
-##    2       "0.79 (0.57,1.08)" "0.143"       "0.79 (0.57,1.08)"
-##    3       "0.86 (0.63,1.17)" "0.325"       "0.86 (0.63,1.17)"
+##    2       "0.74 (0.55,0.98)" "0.038"       "0.74 (0.55,0.98)"
+##    3       "0.76 (0.58,0.99)" "0.045"       "0.76 (0.58,0.99)"
 ##            adj. P value
-## Time       "0.924"     
+## Time       "0.628"     
 ## Cu: ref.=1 NA          
-##    2       "0.142"     
-##    3       "0.325"     
+##    2       "0.037"     
+##    3       "0.044"     
 ## 
 ## $metric
 ##                                  crude OR(95%CI) crude P value
 ##                                  NA              NA           
-## Estimated correlation parameters "-0.009"        NA           
+## Estimated correlation parameters "-0.019"        NA           
 ## No. of clusters                  "72"            NA           
 ## No. of observations              "861"           NA           
 ##                                  adj. OR(95%CI) adj. P value
@@ -240,19 +240,19 @@
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">l2 =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/lme4/topics/glmer">glmer</a></span>(ddn <span class="op">~</span><span class="st"> </span>Weight <span class="op">+</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig), <span class="dt">data=</span> dietox, <span class="dt">family=</span> <span class="st">"binomial"</span>)</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l2)</a></code></pre></div>
 <pre><code>## $table
-##                     crude OR(95%CI) crude P value   adj. OR(95%CI)
-## Weight                   1 (1,1.01)     0.6832151 1.01 (0.99,1.03)
-## Time                  1 (0.96,1.04)     0.9312789 0.93 (0.81,1.06)
-## Random effects                 &lt;NA&gt;            NA             &lt;NA&gt;
-## Pig                               0            NA             &lt;NA&gt;
-## Metrics                        &lt;NA&gt;            NA             &lt;NA&gt;
-## No. of groups (Pig)              72            NA             &lt;NA&gt;
-## No. of observations             861            NA             &lt;NA&gt;
-## Log-likelihood              -596.08            NA             &lt;NA&gt;
-## AIC value                   1200.16            NA             &lt;NA&gt;
+##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
+## Weight                    1 (1,1.01)     0.5046329 1.01 (0.99,1.03)
+## Time                1.01 (0.97,1.05)     0.6208536 0.97 (0.84,1.11)
+## Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;
+## Pig                                0            NA             &lt;NA&gt;
+## Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;
+## No. of groups (Pig)               72            NA             &lt;NA&gt;
+## No. of observations              861            NA             &lt;NA&gt;
+## Log-likelihood               -595.96            NA             &lt;NA&gt;
+## AIC value                    1199.92            NA             &lt;NA&gt;
 ##                     adj. P value
-## Weight                 0.2568000
-## Time                   0.2883106
+## Weight                 0.5001516
+## Time                   0.6140910
 ## Random effects                NA
 ## Pig                           NA
 ## Metrics                       NA
