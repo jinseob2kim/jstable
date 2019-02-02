@@ -1,6 +1,6 @@
 # jstable 0.7.6
 
-* Fix description text and some examples fir cran release.
+* Fix description text and some examples for cran release.
 
 # jstable 0.7.5
 
