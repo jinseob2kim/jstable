@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.6</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.7</span>
       </span>
     </div>
 
@@ -175,20 +175,20 @@
 ## 
 ## $table
 ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-## Time       "1.01 (0.97,1.05)" "0.635"       "1.01 (0.97,1.05)"
+## Time       "0.99 (0.96,1.03)" "0.713"       "0.99 (0.96,1.03)"
 ## Cu: ref.=1 NA                 NA            NA                
-##    2       "0.74 (0.55,0.98)" "0.038"       "0.74 (0.55,0.98)"
-##    3       "0.76 (0.58,0.99)" "0.045"       "0.76 (0.58,0.99)"
+##    2       "1.01 (0.74,1.36)" "0.968"       "1.01 (0.74,1.36)"
+##    3       "0.83 (0.61,1.12)" "0.221"       "0.83 (0.61,1.12)"
 ##            adj. P value
-## Time       "0.628"     
+## Time       "0.712"     
 ## Cu: ref.=1 NA          
-##    2       "0.037"     
-##    3       "0.044"     
+##    2       "0.966"     
+##    3       "0.221"     
 ## 
 ## $metric
 ##                                  crude OR(95%CI) crude P value
 ##                                  NA              NA           
-## Estimated correlation parameters "-0.019"        NA           
+## Estimated correlation parameters "-0.02"         NA           
 ## No. of clusters                  "72"            NA           
 ## No. of observations              "861"           NA           
 ##                                  adj. OR(95%CI) adj. P value
@@ -241,18 +241,18 @@
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l2)</a></code></pre></div>
 <pre><code>## $table
 ##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
-## Weight                    1 (1,1.01)     0.5046329 1.01 (0.99,1.03)
-## Time                1.01 (0.97,1.05)     0.6208536 0.97 (0.84,1.11)
+## Weight                    1 (0.99,1)     0.7780209    1 (0.98,1.02)
+## Time                0.99 (0.96,1.03)     0.7417419 0.99 (0.86,1.13)
 ## Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;
 ## Pig                                0            NA             &lt;NA&gt;
 ## Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;
 ## No. of groups (Pig)               72            NA             &lt;NA&gt;
 ## No. of observations              861            NA             &lt;NA&gt;
-## Log-likelihood               -595.96            NA             &lt;NA&gt;
-## AIC value                    1199.92            NA             &lt;NA&gt;
+## Log-likelihood               -596.67            NA             &lt;NA&gt;
+## AIC value                    1201.34            NA             &lt;NA&gt;
 ##                     adj. P value
-## Weight                 0.5001516
-## Time                   0.6140910
+## Weight                 0.9061115
+## Time                   0.8355919
 ## Random effects                NA
 ## Pig                           NA
 ## Metrics                       NA
