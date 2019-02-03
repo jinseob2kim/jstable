@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.7</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.8</span>
       </span>
     </div>
 
@@ -135,7 +135,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>epiDisplay.obj</th>
-      <td><p>epiDisplay.object</p></td>
+      <td><p>epiDisplay.object or glmshow.object</p></td>
     </tr>
     <tr>
       <th>label</th>
@@ -158,26 +158,26 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'> <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/glm'>glm</a></span>(<span class='no'>Sepal.Length</span> ~ <span class='no'>Sepal.Width</span> + <span class='no'>Species</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>iris</span>)
- <span class='no'>fit.table</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>epiDisplay</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/epiDisplay/topics/risk.display'>regress.display</a></span>(<span class='no'>fit</span>, <span class='kw'>crude</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>crude.p.value</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+ <span class='no'>fit.table</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='glmshow.display.html'>glmshow.display</a></span>(<span class='no'>fit</span>)
  <span class='no'>iris.label</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mk.lev.html'>mk.lev</a></span>(<span class='no'>iris</span>)
- <span class='fu'>LabelepiDisplay</span>(<span class='no'>fit.table</span>, <span class='kw'>label</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>ref</span> <span class='kw'>=</span> <span class='no'>iris.label</span>)</div><div class='output co'>#&gt;                      crude coeff.(95%CI)   crude P value adj. coeff.(95%CI) 
-#&gt; Sepal.Width          "-0.22 (-0.53,0.08) " "0.152"       "0.8 (0.59,1.01) " 
-#&gt; Species: ref.=setosa ""                    ""            ""                 
-#&gt;    versicolor        "0.93 (0.73,1.13) "   "&lt; 0.001"     "1.46 (1.24,1.68) "
-#&gt;    virginica         "1.58 (1.38,1.79) "   "&lt; 0.001"     "1.95 (1.75,2.14) "
-#&gt;                      ""                    ""            ""                 
-#&gt; Log-likelihood       "-86.9683"            ""            ""                 
-#&gt; No. of observations  "150"                 ""            ""                 
-#&gt; AIC value            "183.9366"            ""            ""                 
-#&gt;                      adj. P value P(F-test) sig 
-#&gt; Sepal.Width          "&lt; 0.001"    "0.007"   "**"
-#&gt; Species: ref.=setosa ""           "&lt; 0.001" NA  
-#&gt;    versicolor        "&lt; 0.001"    ""        "**"
-#&gt;    virginica         "&lt; 0.001"    ""        "**"
-#&gt;                      ""           ""        NA  
-#&gt; Log-likelihood       ""           ""        NA  
-#&gt; No. of observations  ""           ""        NA  
-#&gt; AIC value            ""           ""        NA  </div></pre>
+ <span class='fu'>LabelepiDisplay</span>(<span class='no'>fit.table</span>, <span class='kw'>label</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>ref</span> <span class='kw'>=</span> <span class='no'>iris.label</span>)</div><div class='output co'>#&gt;                      crude coeff.(95%CI)  crude P value adj. coeff.(95%CI)
+#&gt; Sepal.Width          "-0.22 (-0.53,0.08)" "0.152"       "0.8 (0.6,1.01)"  
+#&gt; Species: ref.=setosa NA                   NA            NA                
+#&gt;    versicolor        "0.93 (0.73,1.13)"   "&lt; 0.001"     "1.46 (1.24,1.68)"
+#&gt;    virginica         "1.58 (1.38,1.78)"   "&lt; 0.001"     "1.95 (1.75,2.14)"
+#&gt;                      ""                   ""            ""                
+#&gt; No. of observations  "150"                ""            ""                
+#&gt; R-squared            "0.7259"             ""            ""                
+#&gt; AIC value            "183.9366"           ""            ""                
+#&gt;                      adj. P value sig 
+#&gt; Sepal.Width          "&lt; 0.001"    "**"
+#&gt; Species: ref.=setosa NA           NA  
+#&gt;    versicolor        "&lt; 0.001"    "**"
+#&gt;    virginica         "&lt; 0.001"    "**"
+#&gt;                      ""           NA  
+#&gt; No. of observations  ""           NA  
+#&gt; R-squared            ""           NA  
+#&gt; AIC value            ""           NA  </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

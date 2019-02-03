@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.7</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.8</span>
       </span>
     </div>
 
@@ -158,190 +158,201 @@
  <span class='no'>dstrat</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://www.rdocumentation.org/packages/survey/topics/svydesign'>svydesign</a></span>(<span class='kw'>id</span><span class='kw'>=</span>~<span class='fl'>1</span>,<span class='kw'>strata</span><span class='kw'>=</span>~<span class='no'>stype</span>, <span class='kw'>weights</span><span class='kw'>=</span>~<span class='no'>pw</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>apistrat</span>, <span class='kw'>fpc</span><span class='kw'>=</span>~<span class='no'>fpc</span>)
  <span class='no'>ds</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/survey/topics/svyglm'>svyglm</a></span>(<span class='no'>api00</span>~<span class='no'>ell</span>+<span class='no'>meals</span>+<span class='no'>cname</span>+<span class='no'>mobility</span>, <span class='kw'>design</span><span class='kw'>=</span><span class='no'>dstrat</span>)
  <span class='no'>ds2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/survey/topics/svyglm'>svyglm</a></span>(<span class='no'>tt</span>~<span class='no'>ell</span>+<span class='no'>meals</span>+<span class='no'>cname</span>+<span class='no'>mobility</span>, <span class='kw'>design</span><span class='kw'>=</span><span class='no'>dstrat</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/family'>quasibinomial</a></span>())
- <span class='fu'>svyregress.display</span>(<span class='no'>ds</span>)</div><div class='output co'>#&gt; Linear regression predicting api00- weighted data
-#&gt;  
-#&gt;                     crude coeff.(95%CI)      crude P value
-#&gt; ell                 -3.73 (-4.35,-3.11)      &lt; 0.001      
-#&gt; meals               -3.38 (-3.71,-3.05)      &lt; 0.001      
-#&gt; cname: ref.=Alameda &lt;NA&gt;                     &lt;NA&gt;         
-#&gt;    Amador           47.84 (-52.72,148.4)     0.353        
-#&gt;    Butte            -68.16 (-168.72,32.4)    0.186        
-#&gt;    Colusa           -143.16 (-243.72,-42.6)  0.006        
-#&gt;    Contra Costa     83.73 (-38.42,205.89)    0.181        
-#&gt;    El Dorado        28.65 (-82.39,139.68)    0.614        
-#&gt;    Fresno           -141.53 (-263.93,-19.12) 0.025        
-#&gt;    Humboldt         16.84 (-83.72,117.4)     0.743        
-#&gt;    Inyo             -15.72 (-119.64,88.19)   0.767        
-#&gt;    Kern             -16.93 (-162.52,128.67)  0.82         
-#&gt;    Kings            -166.16 (-266.72,-65.6)  0.001        
-#&gt;    Los Angeles      -61.65 (-170.91,47.61)   0.27         
-#&gt;    Marin            136.85 (14.32,259.38)    0.03         
-#&gt;    Mariposa         10.84 (-89.72,111.4)     0.833        
-#&gt;    Mendocino        -63.14 (-163.71,37.43)   0.22         
-#&gt;    Merced           -124.3 (-226.55,-22.05)  0.018        
-#&gt;    Monterey         -32.33 (-181.51,116.86)  0.672        
-#&gt;    Napa             -35.16 (-135.72,65.4)    0.494        
-#&gt;    Orange           15.8 (-107.96,139.56)    0.803        
-#&gt;    Placer           111.2 (-24.09,246.48)    0.109        
-#&gt;    Riverside        -104.26 (-208.46,-0.06)  0.052        
-#&gt;    Sacramento       -3.86 (-146.36,138.64)   0.958        
-#&gt;    San Bernardino   -127.61 (-246.83,-8.38)  0.038        
-#&gt;    San Diego        8.96 (-110.28,128.2)     0.883        
-#&gt;    San Francisco    -163.11 (-272.65,-53.56) 0.004        
-#&gt;    San Joaquin      -2.07 (-106.6,102.45)    0.969        
-#&gt;    San Mateo        79.45 (-98.09,257)       0.382        
-#&gt;    Santa Barbara    47.84 (-52.72,148.4)     0.353        
-#&gt;    Santa Clara      -31.04 (-165.5,103.42)   0.652        
-#&gt;    Santa Cruz       57.37 (-43.49,158.24)    0.267        
-#&gt;    Shasta           -32.66 (-151.88,86.56)   0.592        
-#&gt;    Siskiyou         84.84 (-15.72,185.4)     0.1          
-#&gt;    Solano           48.84 (-51.72,149.4)     0.343        
-#&gt;    Sonoma           52.84 (-90.54,196.21)    0.471        
-#&gt;    Stanislaus       16.84 (-83.72,117.4)     0.743        
-#&gt;    Tehama           69.84 (-30.72,170.4)     0.175        
-#&gt;    Tulare           -68.08 (-189.66,53.49)   0.274        
-#&gt;    Tuolumne         17.84 (-82.72,118.4)     0.729        
-#&gt;    Ventura          12.01 (-106.02,130.04)   0.842        
-#&gt;    Yolo             -76.14 (-184.86,32.57)   0.172        
-#&gt; mobility            -1.43 (-3.3,0.44)        0.137        
-#&gt;                     adj. coeff.(95%CI)       adj. P value
-#&gt; ell                 -0.7 (-1.53,0.12)        0.098       
-#&gt; meals               -3.28 (-3.95,-2.62)      &lt; 0.001     
-#&gt; cname: ref.=Alameda &lt;NA&gt;                     &lt;NA&gt;        
-#&gt;    Amador           -49.07 (-108.77,10.62)   0.109       
-#&gt;    Butte            -16.79 (-84.08,50.49)    0.625       
-#&gt;    Colusa           -34.66 (-97.3,27.99)     0.28        
-#&gt;    Contra Costa     -2.19 (-82.54,78.15)     0.957       
-#&gt;    El Dorado        -67.35 (-127.93,-6.76)   0.031       
-#&gt;    Fresno           38.63 (-43.92,121.17)    0.36        
-#&gt;    Humboldt         -109.43 (-168.61,-50.25) &lt; 0.001     
-#&gt;    Inyo             -34.13 (-113.09,44.82)   0.398       
-#&gt;    Kern             4.97 (-68.88,78.83)      0.895       
-#&gt;    Kings            -52.63 (-124.41,19.15)   0.153       
-#&gt;    Los Angeles      19.3 (-50.49,89.1)       0.589       
-#&gt;    Marin            11.3 (-86.22,108.82)     0.821       
-#&gt;    Mariposa         -82.79 (-142.56,-23.02)  0.007       
-#&gt;    Mendocino        11.5 (-105.55,128.56)    0.848       
-#&gt;    Merced           -13.49 (-91.3,64.31)     0.734       
-#&gt;    Monterey         -18.77 (-101.16,63.61)   0.656       
-#&gt;    Napa             -49.01 (-111.71,13.68)   0.127       
-#&gt;    Orange           60.48 (-6.58,127.55)     0.079       
-#&gt;    Placer           9.52 (-74.66,93.7)       0.825       
-#&gt;    Riverside        -54.71 (-129.08,19.66)   0.151       
-#&gt;    Sacramento       -24 (-108.17,60.17)      0.577       
-#&gt;    San Bernardino   -48.23 (-124.71,28.25)   0.218       
-#&gt;    San Diego        19.4 (-45.16,83.95)      0.557       
-#&gt;    San Francisco    -120.99 (-231.02,-10.97) 0.033       
-#&gt;    San Joaquin      -45.96 (-113.91,22)      0.187       
-#&gt;    San Mateo        -21.33 (-141.17,98.51)   0.728       
-#&gt;    Santa Barbara    -13.77 (-72.16,44.61)    0.644       
-#&gt;    Santa Clara      -8.5 (-87.23,70.23)      0.833       
-#&gt;    Santa Cruz       -20.97 (-84.94,42.99)    0.521       
-#&gt;    Shasta           75.84 (-29.94,181.62)    0.162       
-#&gt;    Siskiyou         42.2 (-21.33,105.72)     0.195       
-#&gt;    Solano           23.63 (-40.84,88.1)      0.474       
-#&gt;    Sonoma           14.9 (-65.54,95.34)      0.717       
-#&gt;    Stanislaus       -100.63 (-160.12,-41.15) 0.001       
-#&gt;    Tehama           103.99 (35.59,172.39)    0.003       
-#&gt;    Tulare           19 (-54.7,92.7)          0.614       
-#&gt;    Tuolumne         -55.71 (-115.77,4.36)    0.071       
-#&gt;    Ventura          -4.67 (-68.52,59.17)     0.886       
-#&gt;    Yolo             16.23 (-84.84,117.29)    0.753       
-#&gt; mobility            0.19 (-0.61,0.99)        0.638       
-#&gt; No. of observations = 200
-#&gt; AIC value = 2333.5397
-#&gt; </div><div class='input'> <span class='fu'>svyregress.display</span>(<span class='no'>ds2</span>)</div><div class='output co'>#&gt; Logistic regression predicting tt- weighted data
-#&gt;  
-#&gt;                     crude OR.(95%CI)  crude P value adj. OR.(95%CI)   
-#&gt; ell                 1.02 (1,1.05)     0.047         1.04 (1,1.09)     
-#&gt; meals               1.01 (0.99,1.03)  0.255         0.98 (0.95,1.01)  
-#&gt; cname: ref.=Alameda &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;              
-#&gt;    Amador           0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Butte            0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Colusa           0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Contra Costa     0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    El Dorado        0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Fresno           1.74 (0.12,25.84) 0.687         1.68 (0.07,38.44) 
-#&gt;    Humboldt         0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Inyo             0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Kern             1.73 (0.09,33.26) 0.717         3.33 (0.14,76.85) 
-#&gt;    Kings            0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Los Angeles      1.86 (0.19,18.54) 0.598         2.47 (0.19,32.99) 
-#&gt;    Marin            0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Mariposa         0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Mendocino        0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Merced           0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Monterey         0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Napa             0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Orange           1.58 (0.11,22.23) 0.734         1 (0.06,15.59)    
-#&gt;    Placer           0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Riverside        2.95 (0.23,38.08) 0.408         4.62 (0.23,94.1)  
-#&gt;    Sacramento       0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    San Bernardino   0.74 (0.04,14.17) 0.839         1.07 (0.04,27.41) 
-#&gt;    San Diego        3.89 (0.29,51.72) 0.306         5.28 (0.36,78.62) 
-#&gt;    San Francisco    0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    San Joaquin      0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    San Mateo        0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Santa Barbara    0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Santa Clara      0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Santa Cruz       0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Shasta           0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Siskiyou         0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Solano           0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Sonoma           0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Stanislaus       0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Tehama           0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Tulare           0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Tuolumne         0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt;    Ventura          7.01 (0.56,88.41) 0.134         9.68 (0.59,158.28)
-#&gt;    Yolo             0 (0,0)           &lt; 0.001       0 (0,0)           
-#&gt; mobility            1.01 (0.98,1.03)  0.506         1 (0.97,1.04)     
+ <span class='fu'>svyregress.display</span>(<span class='no'>ds</span>)</div><div class='output co'>#&gt; $first.line
+#&gt; [1] "Linear regression predicting api00- weighted data\n"
+#&gt; 
+#&gt; $table
+#&gt;                     crude coeff.(95%CI)        crude P value
+#&gt; ell                 "-3.73 (-4.35,-3.11)"      "&lt; 0.001"    
+#&gt; meals               "-3.38 (-3.71,-3.05)"      "&lt; 0.001"    
+#&gt; cname: ref.=Alameda NA                         NA           
+#&gt;    Amador           "47.84 (-52.72,148.4)"     "0.353"      
+#&gt;    Butte            "-68.16 (-168.72,32.4)"    "0.186"      
+#&gt;    Colusa           "-143.16 (-243.72,-42.6)"  "0.006"      
+#&gt;    Contra Costa     "83.73 (-38.42,205.89)"    "0.181"      
+#&gt;    El Dorado        "28.65 (-82.39,139.68)"    "0.614"      
+#&gt;    Fresno           "-141.53 (-263.93,-19.12)" "0.025"      
+#&gt;    Humboldt         "16.84 (-83.72,117.4)"     "0.743"      
+#&gt;    Inyo             "-15.72 (-119.64,88.19)"   "0.767"      
+#&gt;    Kern             "-16.93 (-162.52,128.67)"  "0.82"       
+#&gt;    Kings            "-166.16 (-266.72,-65.6)"  "0.001"      
+#&gt;    Los Angeles      "-61.65 (-170.91,47.61)"   "0.27"       
+#&gt;    Marin            "136.85 (14.32,259.38)"    "0.03"       
+#&gt;    Mariposa         "10.84 (-89.72,111.4)"     "0.833"      
+#&gt;    Mendocino        "-63.14 (-163.71,37.43)"   "0.22"       
+#&gt;    Merced           "-124.3 (-226.55,-22.05)"  "0.018"      
+#&gt;    Monterey         "-32.33 (-181.51,116.86)"  "0.672"      
+#&gt;    Napa             "-35.16 (-135.72,65.4)"    "0.494"      
+#&gt;    Orange           "15.8 (-107.96,139.56)"    "0.803"      
+#&gt;    Placer           "111.2 (-24.09,246.48)"    "0.109"      
+#&gt;    Riverside        "-104.26 (-208.46,-0.06)"  "0.052"      
+#&gt;    Sacramento       "-3.86 (-146.36,138.64)"   "0.958"      
+#&gt;    San Bernardino   "-127.61 (-246.83,-8.38)"  "0.038"      
+#&gt;    San Diego        "8.96 (-110.28,128.2)"     "0.883"      
+#&gt;    San Francisco    "-163.11 (-272.65,-53.56)" "0.004"      
+#&gt;    San Joaquin      "-2.07 (-106.6,102.45)"    "0.969"      
+#&gt;    San Mateo        "79.45 (-98.09,257)"       "0.382"      
+#&gt;    Santa Barbara    "47.84 (-52.72,148.4)"     "0.353"      
+#&gt;    Santa Clara      "-31.04 (-165.5,103.42)"   "0.652"      
+#&gt;    Santa Cruz       "57.37 (-43.49,158.24)"    "0.267"      
+#&gt;    Shasta           "-32.66 (-151.88,86.56)"   "0.592"      
+#&gt;    Siskiyou         "84.84 (-15.72,185.4)"     "0.1"        
+#&gt;    Solano           "48.84 (-51.72,149.4)"     "0.343"      
+#&gt;    Sonoma           "52.84 (-90.54,196.21)"    "0.471"      
+#&gt;    Stanislaus       "16.84 (-83.72,117.4)"     "0.743"      
+#&gt;    Tehama           "69.84 (-30.72,170.4)"     "0.175"      
+#&gt;    Tulare           "-68.08 (-189.66,53.49)"   "0.274"      
+#&gt;    Tuolumne         "17.84 (-82.72,118.4)"     "0.729"      
+#&gt;    Ventura          "12.01 (-106.02,130.04)"   "0.842"      
+#&gt;    Yolo             "-76.14 (-184.86,32.57)"   "0.172"      
+#&gt; mobility            "-1.43 (-3.3,0.44)"        "0.137"      
+#&gt;                     adj. coeff.(95%CI)         adj. P value
+#&gt; ell                 "-0.7 (-1.53,0.12)"        "0.098"     
+#&gt; meals               "-3.28 (-3.95,-2.62)"      "&lt; 0.001"   
+#&gt; cname: ref.=Alameda NA                         NA          
+#&gt;    Amador           "-49.07 (-108.77,10.62)"   "0.109"     
+#&gt;    Butte            "-16.79 (-84.08,50.49)"    "0.625"     
+#&gt;    Colusa           "-34.66 (-97.3,27.99)"     "0.28"      
+#&gt;    Contra Costa     "-2.19 (-82.54,78.15)"     "0.957"     
+#&gt;    El Dorado        "-67.35 (-127.93,-6.76)"   "0.031"     
+#&gt;    Fresno           "38.63 (-43.92,121.17)"    "0.36"      
+#&gt;    Humboldt         "-109.43 (-168.61,-50.25)" "&lt; 0.001"   
+#&gt;    Inyo             "-34.13 (-113.09,44.82)"   "0.398"     
+#&gt;    Kern             "4.97 (-68.88,78.83)"      "0.895"     
+#&gt;    Kings            "-52.63 (-124.41,19.15)"   "0.153"     
+#&gt;    Los Angeles      "19.3 (-50.49,89.1)"       "0.589"     
+#&gt;    Marin            "11.3 (-86.22,108.82)"     "0.821"     
+#&gt;    Mariposa         "-82.79 (-142.56,-23.02)"  "0.007"     
+#&gt;    Mendocino        "11.5 (-105.55,128.56)"    "0.848"     
+#&gt;    Merced           "-13.49 (-91.3,64.31)"     "0.734"     
+#&gt;    Monterey         "-18.77 (-101.16,63.61)"   "0.656"     
+#&gt;    Napa             "-49.01 (-111.71,13.68)"   "0.127"     
+#&gt;    Orange           "60.48 (-6.58,127.55)"     "0.079"     
+#&gt;    Placer           "9.52 (-74.66,93.7)"       "0.825"     
+#&gt;    Riverside        "-54.71 (-129.08,19.66)"   "0.151"     
+#&gt;    Sacramento       "-24 (-108.17,60.17)"      "0.577"     
+#&gt;    San Bernardino   "-48.23 (-124.71,28.25)"   "0.218"     
+#&gt;    San Diego        "19.4 (-45.16,83.95)"      "0.557"     
+#&gt;    San Francisco    "-120.99 (-231.02,-10.97)" "0.033"     
+#&gt;    San Joaquin      "-45.96 (-113.91,22)"      "0.187"     
+#&gt;    San Mateo        "-21.33 (-141.17,98.51)"   "0.728"     
+#&gt;    Santa Barbara    "-13.77 (-72.16,44.61)"    "0.644"     
+#&gt;    Santa Clara      "-8.5 (-87.23,70.23)"      "0.833"     
+#&gt;    Santa Cruz       "-20.97 (-84.94,42.99)"    "0.521"     
+#&gt;    Shasta           "75.84 (-29.94,181.62)"    "0.162"     
+#&gt;    Siskiyou         "42.2 (-21.33,105.72)"     "0.195"     
+#&gt;    Solano           "23.63 (-40.84,88.1)"      "0.474"     
+#&gt;    Sonoma           "14.9 (-65.54,95.34)"      "0.717"     
+#&gt;    Stanislaus       "-100.63 (-160.12,-41.15)" "0.001"     
+#&gt;    Tehama           "103.99 (35.59,172.39)"    "0.003"     
+#&gt;    Tulare           "19 (-54.7,92.7)"          "0.614"     
+#&gt;    Tuolumne         "-55.71 (-115.77,4.36)"    "0.071"     
+#&gt;    Ventura          "-4.67 (-68.52,59.17)"     "0.886"     
+#&gt;    Yolo             "16.23 (-84.84,117.29)"    "0.753"     
+#&gt; mobility            "0.19 (-0.61,0.99)"        "0.638"     
+#&gt; 
+#&gt; $last.lines
+#&gt; [1] "No. of observations = 200\nAIC value = 2333.5397\n\n"
+#&gt; 
+#&gt; attr(,"class")
+#&gt; [1] "display" "list"   </div><div class='input'> <span class='fu'>svyregress.display</span>(<span class='no'>ds2</span>)</div><div class='output co'>#&gt; $first.line
+#&gt; [1] "Logistic regression predicting tt- weighted data\n"
+#&gt; 
+#&gt; $table
+#&gt;                     crude OR.(95%CI)    crude P value adj. OR.(95%CI)     
+#&gt; ell                 "1.02 (1,1.05)"     "0.047"       "1.04 (1,1.09)"     
+#&gt; meals               "1.01 (0.99,1.03)"  "0.255"       "0.98 (0.95,1.01)"  
+#&gt; cname: ref.=Alameda NA                  NA            NA                  
+#&gt;    Amador           "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Butte            "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Colusa           "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Contra Costa     "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    El Dorado        "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Fresno           "1.74 (0.12,25.84)" "0.687"       "1.68 (0.07,38.44)" 
+#&gt;    Humboldt         "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Inyo             "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Kern             "1.73 (0.09,33.26)" "0.717"       "3.33 (0.14,76.85)" 
+#&gt;    Kings            "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Los Angeles      "1.86 (0.19,18.54)" "0.598"       "2.47 (0.19,32.99)" 
+#&gt;    Marin            "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Mariposa         "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Mendocino        "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Merced           "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Monterey         "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Napa             "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Orange           "1.58 (0.11,22.23)" "0.734"       "1 (0.06,15.59)"    
+#&gt;    Placer           "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Riverside        "2.95 (0.23,38.08)" "0.408"       "4.62 (0.23,94.1)"  
+#&gt;    Sacramento       "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    San Bernardino   "0.74 (0.04,14.17)" "0.839"       "1.07 (0.04,27.41)" 
+#&gt;    San Diego        "3.89 (0.29,51.72)" "0.306"       "5.28 (0.36,78.62)" 
+#&gt;    San Francisco    "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    San Joaquin      "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    San Mateo        "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Santa Barbara    "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Santa Clara      "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Santa Cruz       "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Shasta           "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Siskiyou         "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Solano           "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Sonoma           "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Stanislaus       "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Tehama           "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Tulare           "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Tuolumne         "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt;    Ventura          "7.01 (0.56,88.41)" "0.134"       "9.68 (0.59,158.28)"
+#&gt;    Yolo             "0 (0,0)"           "&lt; 0.001"     "0 (0,0)"           
+#&gt; mobility            "1.01 (0.98,1.03)"  "0.506"       "1 (0.97,1.04)"     
 #&gt;                     adj. P value
-#&gt; ell                 0.061       
-#&gt; meals               0.182       
-#&gt; cname: ref.=Alameda &lt;NA&gt;        
-#&gt;    Amador           &lt; 0.001     
-#&gt;    Butte            &lt; 0.001     
-#&gt;    Colusa           &lt; 0.001     
-#&gt;    Contra Costa     &lt; 0.001     
-#&gt;    El Dorado        &lt; 0.001     
-#&gt;    Fresno           0.747       
-#&gt;    Humboldt         &lt; 0.001     
-#&gt;    Inyo             &lt; 0.001     
-#&gt;    Kern             0.454       
-#&gt;    Kings            &lt; 0.001     
-#&gt;    Los Angeles      0.494       
-#&gt;    Marin            &lt; 0.001     
-#&gt;    Mariposa         &lt; 0.001     
-#&gt;    Mendocino        &lt; 0.001     
-#&gt;    Merced           &lt; 0.001     
-#&gt;    Monterey         &lt; 0.001     
-#&gt;    Napa             &lt; 0.001     
-#&gt;    Orange           0.998       
-#&gt;    Placer           &lt; 0.001     
-#&gt;    Riverside        0.321       
-#&gt;    Sacramento       &lt; 0.001     
-#&gt;    San Bernardino   0.969       
-#&gt;    San Diego        0.229       
-#&gt;    San Francisco    &lt; 0.001     
-#&gt;    San Joaquin      &lt; 0.001     
-#&gt;    San Mateo        &lt; 0.001     
-#&gt;    Santa Barbara    &lt; 0.001     
-#&gt;    Santa Clara      &lt; 0.001     
-#&gt;    Santa Cruz       &lt; 0.001     
-#&gt;    Shasta           &lt; 0.001     
-#&gt;    Siskiyou         &lt; 0.001     
-#&gt;    Solano           &lt; 0.001     
-#&gt;    Sonoma           &lt; 0.001     
-#&gt;    Stanislaus       &lt; 0.001     
-#&gt;    Tehama           &lt; 0.001     
-#&gt;    Tulare           &lt; 0.001     
-#&gt;    Tuolumne         &lt; 0.001     
-#&gt;    Ventura          0.113       
-#&gt;    Yolo             &lt; 0.001     
-#&gt; mobility            0.787       
-#&gt; No. of observations = 200
-#&gt; </div></pre>
+#&gt; ell                 "0.061"     
+#&gt; meals               "0.182"     
+#&gt; cname: ref.=Alameda NA          
+#&gt;    Amador           "&lt; 0.001"   
+#&gt;    Butte            "&lt; 0.001"   
+#&gt;    Colusa           "&lt; 0.001"   
+#&gt;    Contra Costa     "&lt; 0.001"   
+#&gt;    El Dorado        "&lt; 0.001"   
+#&gt;    Fresno           "0.747"     
+#&gt;    Humboldt         "&lt; 0.001"   
+#&gt;    Inyo             "&lt; 0.001"   
+#&gt;    Kern             "0.454"     
+#&gt;    Kings            "&lt; 0.001"   
+#&gt;    Los Angeles      "0.494"     
+#&gt;    Marin            "&lt; 0.001"   
+#&gt;    Mariposa         "&lt; 0.001"   
+#&gt;    Mendocino        "&lt; 0.001"   
+#&gt;    Merced           "&lt; 0.001"   
+#&gt;    Monterey         "&lt; 0.001"   
+#&gt;    Napa             "&lt; 0.001"   
+#&gt;    Orange           "0.998"     
+#&gt;    Placer           "&lt; 0.001"   
+#&gt;    Riverside        "0.321"     
+#&gt;    Sacramento       "&lt; 0.001"   
+#&gt;    San Bernardino   "0.969"     
+#&gt;    San Diego        "0.229"     
+#&gt;    San Francisco    "&lt; 0.001"   
+#&gt;    San Joaquin      "&lt; 0.001"   
+#&gt;    San Mateo        "&lt; 0.001"   
+#&gt;    Santa Barbara    "&lt; 0.001"   
+#&gt;    Santa Clara      "&lt; 0.001"   
+#&gt;    Santa Cruz       "&lt; 0.001"   
+#&gt;    Shasta           "&lt; 0.001"   
+#&gt;    Siskiyou         "&lt; 0.001"   
+#&gt;    Solano           "&lt; 0.001"   
+#&gt;    Sonoma           "&lt; 0.001"   
+#&gt;    Stanislaus       "&lt; 0.001"   
+#&gt;    Tehama           "&lt; 0.001"   
+#&gt;    Tulare           "&lt; 0.001"   
+#&gt;    Tuolumne         "&lt; 0.001"   
+#&gt;    Ventura          "0.113"     
+#&gt;    Yolo             "&lt; 0.001"   
+#&gt; mobility            "0.787"     
+#&gt; 
+#&gt; $last.lines
+#&gt; [1] "No. of observations = 200\n\n"
+#&gt; 
+#&gt; attr(,"class")
+#&gt; [1] "display" "list"   </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
