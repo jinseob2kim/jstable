@@ -5,8 +5,7 @@
 #' @return datatable option object
 #' @details DETAILS
 #' @examples 
-#'  DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
-#'  options = opt.data("mtcars"))
+#' opt.data("mtcars")
 #' @rdname opt.data
 #' @export 
 
@@ -33,8 +32,7 @@ opt.data = function(fname){
 #' @return datatable option object
 #' @details DETAILS
 #' @examples 
-#'  DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
-#'  options = opt.tb1("mtcars"))
+#'  options = opt.tb1("mtcars")
 #' @rdname opt.tb1
 #' @export 
 
@@ -62,8 +60,7 @@ opt.tb1 = function(fname){
 #' @return datatable option object
 #' @details DETAILS
 #' @examples 
-#'  DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
-#'  options = opt.tbreg("mtcars"))
+#'  options = opt.tbreg("mtcars")
 #' @rdname opt.tbreg
 #' @export 
 
@@ -89,8 +86,7 @@ opt.tbreg = function(fname){
 #' @return datatable option object
 #' @details DETAILS
 #' @examples 
-#'  DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
-#'  options = opt.roc("mtcars"))
+#'  options = opt.roc("mtcars")
 #' @rdname opt.roc
 #' @export 
 
@@ -118,8 +114,7 @@ opt.roc = function(fname){
 #' @return datatable option object
 #' @details DETAILS
 #' @examples 
-#'  DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
-#'  options = opt.simpledown("mtcars"))
+#'  options = opt.simpledown("mtcars")
 #' @rdname opt.simpledown
 #' @export 
 

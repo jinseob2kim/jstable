@@ -1,3 +1,7 @@
+# jstable 0.7.8
+
+* Remove 2 packages to Import: **DT**, **epiDisplay**. 
+
 # jstable 0.7.7
 
 * Fix typo in DESCRIPTION.

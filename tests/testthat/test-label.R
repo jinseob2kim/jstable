@@ -6,7 +6,7 @@ test_that("Make label data", {
 
 test_that("LabelepiDisplay", {
   fit <- glm(Sepal.Length ~ Sepal.Width + Species, data = iris)
-  fit.table <- epiDisplay::regress.display(fit, crude = TRUE, crude.p.value = TRUE)
+  fit.table <- glmshow.display(fit)
   iris.label <- mk.lev(iris)
   expect_is(LabelepiDisplay(fit.table, label = TRUE, ref = iris.label), "matrix")
 })

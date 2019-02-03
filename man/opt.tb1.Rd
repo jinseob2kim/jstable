@@ -19,6 +19,5 @@ DT::datatable option for table 1
 DETAILS
 }
 \examples{
- DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
- options = opt.tb1("mtcars"))
+ options = opt.tb1("mtcars")
 }

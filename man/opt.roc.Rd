@@ -19,6 +19,5 @@ DT::datatable option for ROC result
 DETAILS
 }
 \examples{
- DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
- options = opt.roc("mtcars"))
+ options = opt.roc("mtcars")
 }

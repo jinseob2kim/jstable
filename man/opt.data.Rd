@@ -19,6 +19,5 @@ DT::datatable option for data
 DETAILS
 }
 \examples{
- DT::datatable(mtcars, rownames = FALSE, extension= "Buttons", caption = "mtcars",
- options = opt.data("mtcars"))
+opt.data("mtcars")
 }

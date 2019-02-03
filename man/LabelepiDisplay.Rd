@@ -7,7 +7,7 @@
 LabelepiDisplay(epiDisplay.obj, label = F, ref)
 }
 \arguments{
-\item{epiDisplay.obj}{epiDisplay.object}
+\item{epiDisplay.obj}{epiDisplay.object or glmshow.object}
 
 \item{label}{Apply label information, Default: F}
 
@@ -24,7 +24,7 @@ DETAILS
 }
 \examples{
  fit <- glm(Sepal.Length ~ Sepal.Width + Species, data = iris)
- fit.table <- epiDisplay::regress.display(fit, crude = TRUE, crude.p.value = TRUE)
+ fit.table <- glmshow.display(fit)
  iris.label <- mk.lev(iris)
  LabelepiDisplay(fit.table, label = TRUE, ref = iris.label)
 }

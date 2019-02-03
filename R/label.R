@@ -57,14 +57,14 @@ mk.lev = function(data){
 
 #' @title LabelepiDisplay: Apply label information to epiDisplay object using label data
 #' @description Apply label information to epiDisplay.object using label data
-#' @param epiDisplay.obj epiDisplay.object
+#' @param epiDisplay.obj epiDisplay.object or glmshow.object
 #' @param label Apply label information, Default: F
 #' @param ref Label data made by mk.lev function
 #' @return epiDisplay.object with label information
 #' @details DETAILS
 #' @examples 
 #'  fit <- glm(Sepal.Length ~ Sepal.Width + Species, data = iris)
-#'  fit.table <- epiDisplay::regress.display(fit, crude = TRUE, crude.p.value = TRUE)
+#'  fit.table <- glmshow.display(fit)
 #'  iris.label <- mk.lev(iris)
 #'  LabelepiDisplay(fit.table, label = TRUE, ref = iris.label)
 #' @rdname LabelepiDisplay
