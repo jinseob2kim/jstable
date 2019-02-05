@@ -98,8 +98,8 @@ apistrat$tt = c(rep(1, 20), rep(0, nrow(apistrat) -20))
 apistrat$tt2 = factor(c(rep(0, 40), rep(1, nrow(apistrat) -40)))
 
 dstrat<-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
-ds <- svyglm(api00~ell+meals+cname+mobility + tt2, design=dstrat)
-ds2 <- svyglm(tt~ell+meals+cname+mobility + tt2, design=dstrat, family = quasibinomial())
+ds <- svyglm(api00~ell+meals+mobility + tt2, design=dstrat)
+ds2 <- svyglm(tt~ell+meals+mobility + tt2, design=dstrat, family = quasibinomial())
 svyregress.display(ds)
 svyregress.display(ds2)
 ```
