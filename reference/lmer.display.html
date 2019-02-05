@@ -160,16 +160,15 @@
     <pre class="examples"><div class='input'> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>geepack</span>)
  <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>dietox</span>)
  <span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
- <span class='no'>l1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/lme4/topics/lmer'>lmer</a></span>(<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Pig</span>) + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Evit</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>)
- <span class='fu'>lmer.display</span>(<span class='no'>l1</span>)</div><div class='output co'>#&gt; <span class='message'>singular fit</span></div><div class='output co'>#&gt; $table
+ <span class='no'>l1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/lme4/topics/lmer'>lmer</a></span>(<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Pig</span>) + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Evit</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Model failed to converge with max|grad| = 0.00688873 (tol = 0.002, component 1)</span></div><div class='input'> <span class='fu'>lmer.display</span>(<span class='no'>l1</span>)</div><div class='output co'>#&gt; <span class='message'>singular fit</span></div><div class='output co'>#&gt; $table
 #&gt;                      crude coeff(95%CI) crude P value adj. coeff(95%CI)
 #&gt; Time                   6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)
 #&gt; Cu: ref.=1                         &lt;NA&gt;            NA              &lt;NA&gt;
-#&gt;    2                 -0.57 (-4.66,3.52)     0.7837049 -0.81 (-4.42,2.8)
-#&gt;    3                   1.9 (-2.23,6.04)     0.3666825 1.78 (-1.87,5.42)
+#&gt;    2                 -0.57 (-4.66,3.52)     0.7837028 -0.81 (-4.42,2.8)
+#&gt;    3                   1.9 (-2.23,6.04)     0.3666829 1.78 (-1.87,5.43)
 #&gt; Random effects                     &lt;NA&gt;            NA              &lt;NA&gt;
-#&gt; Pig                                39.7            NA              &lt;NA&gt;
-#&gt; Evit                               0.91            NA              &lt;NA&gt;
+#&gt; Pig                               39.71            NA              &lt;NA&gt;
+#&gt; Evit                                0.9            NA              &lt;NA&gt;
 #&gt; Residual                          11.37            NA              &lt;NA&gt;
 #&gt; Metrics                            &lt;NA&gt;            NA              &lt;NA&gt;
 #&gt; No. of groups (Pig)                  72            NA              &lt;NA&gt;
@@ -180,8 +179,8 @@
 #&gt;                      adj. P value
 #&gt; Time                    0.0000000
 #&gt; Cu: ref.=1                     NA
-#&gt;    2                    0.6599124
-#&gt;    3                    0.3393017
+#&gt;    2                    0.6598522
+#&gt;    3                    0.3393579
 #&gt; Random effects                 NA
 #&gt; Pig                            NA
 #&gt; Evit                           NA
