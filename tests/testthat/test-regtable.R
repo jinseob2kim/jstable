@@ -26,7 +26,10 @@ test_that("Run svyglm.display", {
   apistrat$tt = c(rep(1, 20), rep(0, nrow(apistrat) -20))
   dstrat<-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
   ds <- svyglm(api00~ell+meals, design=dstrat)
-  expect_is(svyregress.display(ds), "display")
+  expect_is(svyregress.display(ds, decimal = 3), "display")
+  expect_is(svyregress.display(svyglm(api00~ell, design=dstrat), decimal = 3), "display")
+  ds2 <- svyglm(tt~ell+meals+cname+mobility, design=dstrat, family = quasibinomial())
+  expect_is(svyregress.display(ds2, decimal = 3), "display")
 })
 
 test_that("Run svycox.display", {
@@ -45,11 +48,26 @@ test_that("Run svycox.display", {
 })
 
 
+library(geepack);data(dietox)
+
 test_that("Run geeglm.display", {
-  library(geepack)
-  data(dietox)
   expect_is(geeglm.display(geeglm (Weight ~ Time, id =Pig, data = dietox, family=gaussian, corstr="ex")), "list")
   expect_is(geeglm.display(geeglm (Weight ~ Time + Cu, id =Pig, data = dietox, family=gaussian, corstr="ex")), "list")    
+  dietox$Weight_cat <- as.integer(dietox$Weight > 50)
+  expect_is(geeglm.display(geeglm(Weight_cat ~ Time, id = Pig, data = dietox, family = binomial, corstr="ex")), "list")
+  expect_is(geeglm.display(geeglm(Weight_cat ~ Time + Cu, id = Pig, data = dietox, family = binomial, corstr="ex")), "list")
 })
+
+
+library(lme4)
+
+test_that("Run lmer.display", {
+  expect_is(lmer.display(lmer(Reaction ~ Days + (1 | Subject), sleepstudy)), "list")
+  expect_is(lmer.display(lmer(Weight ~ Time + Feed  + (1|Pig) + (1|Evit), data = dietox)), "list")
+  dietox$Weight_cat <- as.integer(dietox$Weight > 50)
+  expect_is(lmer.display(glmer(Weight_cat ~ Time + Cu+ (1|Pig) + (1|Evit), data = dietox, family=binomial)), "list")
+  expect_is(lmer.display(glmer(Weight_cat ~ Time + (1|Pig) + (1|Evit), data = dietox, family=binomial)), "list")
+})
+
 
 
