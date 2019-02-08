@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.8</span>
       </span>
     </div>
 
@@ -82,7 +82,7 @@
       <h1>Introduce jstable</h1>
                         <h4 class="author">Jinseob Kim</h4>
             
-            <h4 class="date">2019-02-05</h4>
+            <h4 class="date">2019-02-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jinseob2kim/jstable/blob/master/vignettes/jstable.Rmd"><code>vignettes/jstable.Rmd</code></a></small>
       <div class="hidden name"><code>jstable.Rmd</code></div>
@@ -181,20 +181,20 @@
 <a class="sourceLine" id="cb3-38" data-line-number="38"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb3-39" data-line-number="39"><span class="co">#&gt; $table</span></a>
 <a class="sourceLine" id="cb3-40" data-line-number="40"><span class="co">#&gt;            crude OR(95%CI)    crude P value adj. OR(95%CI)    </span></a>
-<a class="sourceLine" id="cb3-41" data-line-number="41"><span class="co">#&gt; Time       "0.99 (0.96,1.03)" "0.745"       "0.99 (0.96,1.03)"</span></a>
+<a class="sourceLine" id="cb3-41" data-line-number="41"><span class="co">#&gt; Time       "1.02 (0.99,1.06)" "0.22"        "1.02 (0.99,1.06)"</span></a>
 <a class="sourceLine" id="cb3-42" data-line-number="42"><span class="co">#&gt; Cu: ref.=1 NA                 NA            NA                </span></a>
-<a class="sourceLine" id="cb3-43" data-line-number="43"><span class="co">#&gt;    2       "1.1 (0.82,1.47)"  "0.534"       "1.1 (0.82,1.47)" </span></a>
-<a class="sourceLine" id="cb3-44" data-line-number="44"><span class="co">#&gt;    3       "1.03 (0.74,1.44)" "0.866"       "1.03 (0.74,1.44)"</span></a>
+<a class="sourceLine" id="cb3-43" data-line-number="43"><span class="co">#&gt;    2       "0.83 (0.63,1.11)" "0.214"       "0.83 (0.63,1.11)"</span></a>
+<a class="sourceLine" id="cb3-44" data-line-number="44"><span class="co">#&gt;    3       "1.03 (0.75,1.42)" "0.849"       "1.03 (0.75,1.42)"</span></a>
 <a class="sourceLine" id="cb3-45" data-line-number="45"><span class="co">#&gt;            adj. P value</span></a>
-<a class="sourceLine" id="cb3-46" data-line-number="46"><span class="co">#&gt; Time       "0.743"     </span></a>
+<a class="sourceLine" id="cb3-46" data-line-number="46"><span class="co">#&gt; Time       "0.218"     </span></a>
 <a class="sourceLine" id="cb3-47" data-line-number="47"><span class="co">#&gt; Cu: ref.=1 NA          </span></a>
-<a class="sourceLine" id="cb3-48" data-line-number="48"><span class="co">#&gt;    2       "0.533"     </span></a>
-<a class="sourceLine" id="cb3-49" data-line-number="49"><span class="co">#&gt;    3       "0.866"     </span></a>
+<a class="sourceLine" id="cb3-48" data-line-number="48"><span class="co">#&gt;    2       "0.211"     </span></a>
+<a class="sourceLine" id="cb3-49" data-line-number="49"><span class="co">#&gt;    3       "0.851"     </span></a>
 <a class="sourceLine" id="cb3-50" data-line-number="50"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb3-51" data-line-number="51"><span class="co">#&gt; $metric</span></a>
 <a class="sourceLine" id="cb3-52" data-line-number="52"><span class="co">#&gt;                                  crude OR(95%CI) crude P value</span></a>
 <a class="sourceLine" id="cb3-53" data-line-number="53"><span class="co">#&gt;                                  NA              NA           </span></a>
-<a class="sourceLine" id="cb3-54" data-line-number="54"><span class="co">#&gt; Estimated correlation parameters "-0.008"        NA           </span></a>
+<a class="sourceLine" id="cb3-54" data-line-number="54"><span class="co">#&gt; Estimated correlation parameters "-0.016"        NA           </span></a>
 <a class="sourceLine" id="cb3-55" data-line-number="55"><span class="co">#&gt; No. of clusters                  "72"            NA           </span></a>
 <a class="sourceLine" id="cb3-56" data-line-number="56"><span class="co">#&gt; No. of observations              "861"           NA           </span></a>
 <a class="sourceLine" id="cb3-57" data-line-number="57"><span class="co">#&gt;                                  adj. OR(95%CI) adj. P value</span></a>
@@ -248,18 +248,18 @@
 <a class="sourceLine" id="cb4-40" data-line-number="40"><span class="kw"><a href="../reference/lmer.display.html">lmer.display</a></span>(l2)</a>
 <a class="sourceLine" id="cb4-41" data-line-number="41"><span class="co">#&gt; $table</span></a>
 <a class="sourceLine" id="cb4-42" data-line-number="42"><span class="co">#&gt;                      crude OR(95%CI) crude P value   adj. OR(95%CI)</span></a>
-<a class="sourceLine" id="cb4-43" data-line-number="43"><span class="co">#&gt; Weight                    1 (0.99,1)     0.7079560    1 (0.98,1.02)</span></a>
-<a class="sourceLine" id="cb4-44" data-line-number="44"><span class="co">#&gt; Time                0.99 (0.96,1.03)     0.7483739 1.01 (0.88,1.16)</span></a>
+<a class="sourceLine" id="cb4-43" data-line-number="43"><span class="co">#&gt; Weight                    1 (1,1.01)     0.2097159 1.01 (0.99,1.03)</span></a>
+<a class="sourceLine" id="cb4-44" data-line-number="44"><span class="co">#&gt; Time                1.02 (0.98,1.06)     0.2643443 0.98 (0.86,1.12)</span></a>
 <a class="sourceLine" id="cb4-45" data-line-number="45"><span class="co">#&gt; Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;</span></a>
 <a class="sourceLine" id="cb4-46" data-line-number="46"><span class="co">#&gt; Pig                                0            NA             &lt;NA&gt;</span></a>
 <a class="sourceLine" id="cb4-47" data-line-number="47"><span class="co">#&gt; Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;</span></a>
 <a class="sourceLine" id="cb4-48" data-line-number="48"><span class="co">#&gt; No. of groups (Pig)               72            NA             &lt;NA&gt;</span></a>
 <a class="sourceLine" id="cb4-49" data-line-number="49"><span class="co">#&gt; No. of observations              861            NA             &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb4-50" data-line-number="50"><span class="co">#&gt; Log-likelihood               -595.54            NA             &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb4-51" data-line-number="51"><span class="co">#&gt; AIC value                    1199.09            NA             &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb4-50" data-line-number="50"><span class="co">#&gt; Log-likelihood               -595.84            NA             &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb4-51" data-line-number="51"><span class="co">#&gt; AIC value                    1199.67            NA             &lt;NA&gt;</span></a>
 <a class="sourceLine" id="cb4-52" data-line-number="52"><span class="co">#&gt;                     adj. P value</span></a>
-<a class="sourceLine" id="cb4-53" data-line-number="53"><span class="co">#&gt; Weight                 0.8143619</span></a>
-<a class="sourceLine" id="cb4-54" data-line-number="54"><span class="co">#&gt; Time                   0.8942736</span></a>
+<a class="sourceLine" id="cb4-53" data-line-number="53"><span class="co">#&gt; Weight                 0.5177926</span></a>
+<a class="sourceLine" id="cb4-54" data-line-number="54"><span class="co">#&gt; Time                   0.7646511</span></a>
 <a class="sourceLine" id="cb4-55" data-line-number="55"><span class="co">#&gt; Random effects                NA</span></a>
 <a class="sourceLine" id="cb4-56" data-line-number="56"><span class="co">#&gt; Pig                           NA</span></a>
 <a class="sourceLine" id="cb4-57" data-line-number="57"><span class="co">#&gt; Metrics                       NA</span></a>
