@@ -1,6 +1,5 @@
 language: r
 cache: packages
-Imports: geepack, lme4, stats, data.table, labelled, tableone, coxme, survival, DT, epiDisplay, GGally, ggplot2, shinycustomloader, shiny, survey
 
 matrix:
   allow_failures: 
@@ -13,7 +12,6 @@ matrix:
     - covr
     r_github_packages:
     - r-lib/pkgdown
-    - jinseob2kim/jstable
     after_success:
     - Rscript -e 'covr::codecov()'
     - Rscript -e 'pkgdown::build_site()'
