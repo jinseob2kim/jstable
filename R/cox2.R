@@ -12,7 +12,7 @@
 #'  cox2.display(fit2)
 #' @rdname cox2.display
 #' @export 
-#' @importFrom survival coxph 
+#' @importFrom survival coxph cluster frailty
 
 cox2.display <- function (cox.obj.withmodel, dec = 2) 
 {
