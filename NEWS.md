@@ -1,3 +1,7 @@
+# jstable 0.7.10
+
+* Update `CreateTableOneJS` and `svyCreateTableOneJS` according to [tableone](https://github.com/kaz-yos/tableone) package(0.10.0).
+
 # jstable 0.7.9
 
 * Add namespace **survival::cluster, survival::frailty** to `cox2.display`

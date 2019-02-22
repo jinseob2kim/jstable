@@ -56,7 +56,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
   ptb1 <- print(res,
                 showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
                 catDigits = catDigits, contDigits = contDigits, pDigits = pDigits)
-  rownames(ptb1) = gsub("(mean (sd))", "", rownames(ptb1), fixed=T)
+  rownames(ptb1) = gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
   #cap.tb1 = paste("Table 1: Stratified by ", strata, sep="")
   
   if (Labels & !is.null(labeldata)){
@@ -137,7 +137,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
                   showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
                   catDigits = catDigits, contDigits = contDigits)
     
-    rownames(ptb1) <- gsub("(mean (sd))", "", rownames(ptb1), fixed=T)
+    rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
     cap.tb1 <- "Table 1: Total - weighted data"
     if (Labels & !is.null(labeldata)){
       ptb1[,1] <- vals.tb1
@@ -181,7 +181,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
                   printToggle=F, quote=F, smd = smd, varLabels = T,  nonnormal = nonnormal,
                   catDigits = catDigits, contDigits = contDigits, pDigits = pDigits)
     
-    rownames(ptb1) <- gsub("(mean (sd))", "", rownames(ptb1), fixed=T)
+    rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
     sig <- ifelse(ptb1[,"p"] == "<0.001", "0", ptb1[,"p"])
     sig <- as.numeric(as.vector(sig))
     sig <- ifelse(sig <= 0.05, "**", "")
