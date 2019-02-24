@@ -112,20 +112,20 @@ geeglm.display(gee02)
     ## 
     ## $table
     ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-    ## Time       "0.99 (0.96,1.03)" "0.624"       "0.99 (0.96,1.03)"
+    ## Time       "1.01 (0.97,1.06)" "0.508"       "1.01 (0.97,1.06)"
     ## Cu: ref.=1 NA                 NA            NA                
-    ##    2       "0.91 (0.63,1.32)" "0.626"       "0.91 (0.63,1.32)"
-    ##    3       "0.97 (0.63,1.49)" "0.873"       "0.97 (0.63,1.49)"
+    ##    2       "0.93 (0.69,1.25)" "0.635"       "0.93 (0.69,1.25)"
+    ##    3       "1.1 (0.81,1.49)"  "0.543"       "1.1 (0.81,1.49)" 
     ##            adj. P value
-    ## Time       "0.625"     
+    ## Time       "0.507"     
     ## Cu: ref.=1 NA          
-    ##    2       "0.627"     
-    ##    3       "0.874"     
+    ##    2       "0.632"     
+    ##    3       "0.544"     
     ## 
     ## $metric
     ##                                  crude OR(95%CI) crude P value
     ##                                  NA              NA           
-    ## Estimated correlation parameters "0.04"          NA           
+    ## Estimated correlation parameters "-0.005"        NA           
     ## No. of clusters                  "72"            NA           
     ## No. of observations              "861"           NA           
     ##                                  adj. OR(95%CI) adj. P value
@@ -185,18 +185,18 @@ lmer.display(l2)
 
     ## $table
     ##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
-    ## Weight                    1 (0.99,1)     0.7355407    1 (0.98,1.03)
-    ## Time                0.99 (0.95,1.03)     0.6622994 0.96 (0.82,1.13)
+    ## Weight                    1 (1,1.01)     0.5142031    1 (0.98,1.02)
+    ## Time                1.01 (0.97,1.05)     0.4953641 1.01 (0.89,1.16)
     ## Random effects                  <NA>            NA             <NA>
-    ## Pig                             0.17            NA             <NA>
+    ## Pig                                0            NA             <NA>
     ## Metrics                         <NA>            NA             <NA>
     ## No. of groups (Pig)               72            NA             <NA>
     ## No. of observations              861            NA             <NA>
-    ## Log-likelihood               -593.35            NA             <NA>
-    ## AIC value                    1194.69            NA             <NA>
+    ## Log-likelihood               -595.86            NA             <NA>
+    ## AIC value                    1199.71            NA             <NA>
     ##                     adj. P value
-    ## Weight                 0.7331655
-    ## Time                   0.6608942
+    ## Weight                 0.9975157
+    ## Time                   0.8425179
     ## Random effects                NA
     ## Pig                           NA
     ## Metrics                       NA
@@ -424,34 +424,42 @@ mutate(status = as.integer(status == 1),
        kk = factor(as.integer(pat.karno >= 70)),
        kk1 = factor(as.integer(pat.karno >= 60))) -> lung
 
-TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung)
+TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = T)
 ```
 
-    ##   Variable Count Percent Point Estimate  Low Upper    0    1 P value
-    ## 1       kk  <NA>    <NA>           <NA> <NA>  <NA> <NA> <NA>    <NA>
-    ## 2        0    38      38           2.88 0.31 26.49   20   80    0.35
-    ## 3        1   187     187           1.84 1.08  3.14 43.1 56.9   0.026
-    ## 4      kk1  <NA>    <NA>           <NA> <NA>  <NA> <NA> <NA>    <NA>
-    ## 5        0     8       8           <NA> <NA>  <NA>    0  100    <NA>
-    ## 6        1   217     217           1.88 1.12  3.17 42.6 57.4   0.018
+    ##   Variable Count Percent Point Estimate Lower Upper    0    1 P value
+    ## 1  Overall   228     100           1.91  1.14   3.2 41.3 58.7   0.014
+    ## 2     <NA>  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 3       kk  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 4        0    38      38           2.88  0.31 26.49   20   80    0.35
+    ## 5        1   187     187           1.84  1.08  3.14 43.1 56.9   0.026
+    ## 6     <NA>  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 7      kk1  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 8        0     8       8           <NA>  <NA>  <NA>    0  100    <NA>
+    ## 9        1   217     217           1.88  1.12  3.17 42.6 57.4   0.018
     ##   P for interaction
-    ## 1             0.525
+    ## 1              <NA>
     ## 2              <NA>
-    ## 3              <NA>
-    ## 4             0.997
+    ## 3             0.525
+    ## 4              <NA>
     ## 5              <NA>
     ## 6              <NA>
+    ## 7             0.997
+    ## 8              <NA>
+    ## 9              <NA>
 
 ``` r
 ## Survey data
 library(survey)
 data.design <- svydesign(id = ~1, data = lung)
-TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design)
+TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = F)
 ```
 
     ## Independent Sampling design (with replacement)
     ## svydesign(id = ~1, data = lung)
     ## Independent Sampling design (with replacement)
+    ## svydesign(id = ~1, data = lung)
+    ## Independent Sampling design (with replacement)
     ## subset(data, get(var_subgroup) == .)
     ## Independent Sampling design (with replacement)
     ## subset(data, get(var_subgroup) == .)
@@ -460,17 +468,19 @@ TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), 
     ## Independent Sampling design (with replacement)
     ## subset(data, get(var_subgroup) == .)
 
-    ##   Variable Count Percent Point Estimate  Low Upper prop P value
-    ## 1       kk  <NA>    <NA>           <NA> <NA>  <NA> <NA>    <NA>
-    ## 2        0    38      38           2.88 0.31  27.1 <NA>   0.355
-    ## 3        1   187     187           1.84 1.08  3.11 <NA>   0.024
-    ## 4      kk1  <NA>    <NA>           <NA> <NA>  <NA> <NA>    <NA>
-    ## 5        0  <NA>    <NA>           <NA> <NA>  <NA> <NA>    <NA>
-    ## 6        1   217     217           1.88 1.12  3.15 <NA>   0.017
+    ##   Variable Count Percent Point Estimate Lower Upper    0    1 P value
+    ## 1  Overall   228     100           1.91  1.14  3.19 41.3 58.7   0.013
+    ## 2       kk  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 3        0    38      38           2.88  0.31  27.1   20   80   0.355
+    ## 4        1   187     187           1.84  1.08  3.11 43.1 56.9   0.024
+    ## 5      kk1  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 6        0  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 7        1   217     217           1.88  1.12  3.15 42.6 57.4   0.017
     ##   P for interaction
     ## 1              <NA>
-    ## 2              <NA>
+    ## 2             0.523
     ## 3              <NA>
     ## 4              <NA>
-    ## 5              <NA>
+    ## 5            <0.001
     ## 6              <NA>
+    ## 7              <NA>

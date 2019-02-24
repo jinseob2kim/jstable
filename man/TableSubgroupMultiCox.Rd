@@ -5,7 +5,8 @@
 \title{TableSubgroupMultiCox: Multiple sub-group analysis table for Cox/svycox model.}
 \usage{
 TableSubgroupMultiCox(formula, var_subgroups = NULL, data,
-  decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3)
+  decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3,
+  line = F)
 }
 \arguments{
 \item{formula}{formula with survival analysis.}
@@ -19,6 +20,8 @@ TableSubgroupMultiCox(formula, var_subgroups = NULL, data,
 \item{decimal.percent}{Decimal for percent, Default: 1}
 
 \item{decimal.pvalue}{Decimal for pvalue, Default: 3}
+
+\item{line}{Include new-line between sub-group variables, Default: F}
 }
 \value{
 Multiple sub-group analysis table.
@@ -37,7 +40,7 @@ lung \%>\%
          sex = factor(sex),
          kk = factor(as.integer(pat.karno >= 70)),
          kk1 = factor(as.integer(pat.karno >= 60))) -> lung
-TableSubgroupMultiCox(formula, var_subgroups = c("kk", "kk1"), data=lung)
+TableSubgroupMultiCox(formula, var_subgroups = c("kk", "kk1"), data=lung, line = T)
 
 ## survey design
 library(survey)

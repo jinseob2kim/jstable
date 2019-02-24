@@ -57,7 +57,8 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
   possible_coxph <- purrr::possibly(survival::coxph, NA)
   possible_svycoxph <- purrr::possibly(survey::svycoxph, NA)
   possible_confint <- purrr::possibly(stats::confint, NA)
-  possible_modely <- purrr::possibly(function(x){purrr::map_dbl(x, .[["y"]], 1)}, NA) 
+  possible_modely <- purrr::possibly(function(x){purrr::map_dbl(x, .[["y"]], 1)}, NA)
+  possible_rowone <- purrr::possibly(function(x){x[1, ]}, NA)
   
   if (is.null(var_subgroup)){
     if (any(class(data) == "survey.design")){
@@ -77,7 +78,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
     prop <- round(prop.table(table(event, model$x[, 1]), 1)[2, ] * 100, decimal.percent)
     pv <- round(summary(model)$coefficients[1, 5], decimal.pvalue)
     
-    tibble::tibble(Variable = "Overall", Count = model$n, Percent = 100, `Point Estimate` = Point.Estimate, Low = CI[1], Upper = CI[2]) %>% 
+    tibble::tibble(Variable = "Overall", Count = model$n, Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2]) %>% 
       cbind(t(prop)) %>% 
       mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
     
@@ -87,25 +88,27 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
   } else{
     if (any(class(data) == "survey.design")){
       data$variables[[var_subgroup]] %>% table %>% names -> label_val
-      label_val %>% purrr::map(~possible_svycoxph(formula, design = subset(data, get(var_subgroup) == .)), x = T) -> model
-      pvs_int <- possible_svycoxph(as.formula(paste(deparse(formula), "*", var_subgroup, sep="")), design = data) %>% summary %>% coefficients
+      label_val %>% purrr::map(~possible_svycoxph(formula, design = subset(data, get(var_subgroup) == .), x = TRUE)) -> model
+      xlabel <- names(survey::svycoxph(formula, design = data)$xlevels)[1]
+      pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), design = data) %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
     } else{
       data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~possible_coxph(formula, data = ., x= T)) -> model
       data %>% filter(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
-      pvs_int <- possible_coxph(as.formula(paste(deparse(formula), "*", var_subgroup, sep="")), data = data) %>% summary %>% coefficients
+      xlabel <- names(survival::coxph(formula, data = data)$xlevels)[1]
+      pvs_int <- possible_coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data) %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
     }
     
     model %>% purrr::map_dbl("n", .default = NA) -> Count
-    model %>% purrr::map_dbl("coefficients", .default = NA) %>%  exp %>% round(decimal.hr) -> Point.Estimate
-    model %>% purrr::map(possible_confint) %>% Reduce(rbind, .) %>% exp %>% round(decimal.hr) -> CI
+    model %>% purrr::map("coefficients", .default = NA) %>% purrr::map_dbl(1) %>% exp %>% round(decimal.hr) -> Point.Estimate
+    model %>% purrr::map(possible_confint) %>% purrr::map(possible_rowone) %>% Reduce(rbind, .) %>% exp %>% round(decimal.hr) -> CI
     model %>% purrr::map("y") %>% purrr::map(~purrr::map_dbl(., 1)) %>% purrr::map(~tail(., length(.)/2)) -> event
     purrr::map2(event, model, ~possible_table(.x, .y[["x"]][, 1])) %>% purrr::map(possible_prop.table) %>% purrr::map(~round(., decimal.percent)) %>% Reduce(rbind, .) -> prop
     model %>% purrr::map(possible_pv) %>% purrr::map_dbl(~round(., decimal.pvalue)) -> pv
     
     
-    tibble::tibble(Variable = paste("  ", label_val) , Count = Count, Percent = round(Count, decimal.percent), `Point Estimate` = Point.Estimate, Low = CI[, 1], Upper = CI[, 2]) %>%
+    tibble::tibble(Variable = paste("  ", label_val) , Count = Count, Percent = round(Count, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2]) %>%
       cbind(prop) %>% 
       mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
     
@@ -124,6 +127,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
 #' @param decimal.hr Decimal for hazard ratio, Default: 2
 #' @param decimal.percent Decimal for percent, Default: 1
 #' @param decimal.pvalue Decimal for pvalue, Default: 3
+#' @param line Include new-line between sub-group variables, Default: F
 #' @return Multiple sub-group analysis table. 
 #' @details This result is used to make forestplot.
 #' @examples 
@@ -134,7 +138,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
 #'          sex = factor(sex),
 #'          kk = factor(as.integer(pat.karno >= 70)),
 #'          kk1 = factor(as.integer(pat.karno >= 60))) -> lung
-#' TableSubgroupMultiCox(formula, var_subgroups = c("kk", "kk1"), data=lung)
+#' TableSubgroupMultiCox(formula, var_subgroups = c("kk", "kk1"), data=lung, line = T)
 #' 
 #' ## survey design
 #' library(survey)
@@ -151,17 +155,22 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
 #' @importFrom dplyr bind_rows
 
 
-TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3){
+TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, line = F){
   
   . <- NULL
+  out.all <- TableSubgroupCox(formula, data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue)
   
   if (is.null(var_subgroups)){
-    return(TableSubgroupCox(formula, data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue))
-  } else{
-    return(purrr::map(var_subgroups, ~TableSubgroupCox(formula, var_subgroup = ., data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue)) %>% 
-             dplyr::bind_rows())
-    }
-
+    return(out.all)
+  } else {
+    out.list <- purrr::map(var_subgroups, ~TableSubgroupCox(formula, var_subgroup = ., data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue))
+    if (line){
+      out.newline <- out.list %>% purrr::map(~rbind(NA, .))
+      return(rbind(out.all, out.newline %>% dplyr::bind_rows()))
+    } else{
+      return(rbind(out.all, out.list %>% dplyr::bind_rows()))
+      }
+    } 
   }
 
 
