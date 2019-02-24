@@ -112,20 +112,20 @@ geeglm.display(gee02)
     ## 
     ## $table
     ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-    ## Time       "1 (0.97,1.04)"    "0.906"       "1 (0.97,1.04)"   
+    ## Time       "0.99 (0.96,1.03)" "0.624"       "0.99 (0.96,1.03)"
     ## Cu: ref.=1 NA                 NA            NA                
-    ##    2       "1.07 (0.78,1.47)" "0.681"       "1.07 (0.78,1.47)"
-    ##    3       "1.3 (0.94,1.82)"  "0.117"       "1.3 (0.94,1.82)" 
+    ##    2       "0.91 (0.63,1.32)" "0.626"       "0.91 (0.63,1.32)"
+    ##    3       "0.97 (0.63,1.49)" "0.873"       "0.97 (0.63,1.49)"
     ##            adj. P value
-    ## Time       "0.908"     
+    ## Time       "0.625"     
     ## Cu: ref.=1 NA          
-    ##    2       "0.682"     
-    ##    3       "0.117"     
+    ##    2       "0.627"     
+    ##    3       "0.874"     
     ## 
     ## $metric
     ##                                  crude OR(95%CI) crude P value
     ##                                  NA              NA           
-    ## Estimated correlation parameters "-0.006"        NA           
+    ## Estimated correlation parameters "0.04"          NA           
     ## No. of clusters                  "72"            NA           
     ## No. of observations              "861"           NA           
     ##                                  adj. OR(95%CI) adj. P value
@@ -144,26 +144,26 @@ lmer.display(l1, ci.ranef = T)
 ```
 
     ## $table
-    ##                      crude coeff(95%CI) crude P value adj. coeff(95%CI)
-    ## Time                   6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)
-    ## Cu: ref.=1                         <NA>            NA              <NA>
-    ##    2                 -0.57 (-4.66,3.52)     0.7837049 -0.81 (-4.42,2.8)
-    ##    3                   1.9 (-2.23,6.04)     0.3666825 1.78 (-1.87,5.42)
-    ## Random effects                     <NA>            NA              <NA>
-    ## Pig                  39.7 (27.82,54.93)            NA              <NA>
-    ## Evit                     0.91 (0,13.45)            NA              <NA>
-    ## Residual             11.37 (10.3,12.55)            NA              <NA>
-    ## Metrics                            <NA>            NA              <NA>
-    ## No. of groups (Pig)                  72            NA              <NA>
-    ## No. of groups (Evit)                  3            NA              <NA>
-    ## No. of observations                 861            NA              <NA>
-    ## Log-likelihood                 -2400.69            NA              <NA>
-    ## AIC value                       4801.38            NA              <NA>
+    ##                       crude coeff(95%CI) crude P value adj. coeff(95%CI)
+    ## Time                    6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)
+    ## Cu: ref.=1                          <NA>            NA              <NA>
+    ##    2                  -0.57 (-4.66,3.52)     0.7837028 -0.81 (-4.42,2.8)
+    ##    3                    1.9 (-2.23,6.04)     0.3666829 1.78 (-1.87,5.43)
+    ## Random effects                      <NA>            NA              <NA>
+    ## Pig                  39.71 (27.82,54.93)            NA              <NA>
+    ## Evit                       0.9 (0,13.45)            NA              <NA>
+    ## Residual              11.37 (10.3,12.55)            NA              <NA>
+    ## Metrics                             <NA>            NA              <NA>
+    ## No. of groups (Pig)                   72            NA              <NA>
+    ## No. of groups (Evit)                   3            NA              <NA>
+    ## No. of observations                  861            NA              <NA>
+    ## Log-likelihood                  -2400.69            NA              <NA>
+    ## AIC value                        4801.38            NA              <NA>
     ##                      adj. P value
     ## Time                    0.0000000
     ## Cu: ref.=1                     NA
-    ##    2                    0.6599124
-    ##    3                    0.3393017
+    ##    2                    0.6598522
+    ##    3                    0.3393579
     ## Random effects                 NA
     ## Pig                            NA
     ## Evit                           NA
@@ -184,19 +184,19 @@ lmer.display(l2)
 ```
 
     ## $table
-    ##                     crude OR(95%CI) crude P value  adj. OR(95%CI)
-    ## Weight                   1 (1,1.01)     0.5752969   1.02 (1,1.03)
-    ## Time                  1 (0.96,1.04)     0.9116082 0.9 (0.79,1.03)
-    ## Random effects                 <NA>            NA            <NA>
-    ## Pig                               0            NA            <NA>
-    ## Metrics                        <NA>            NA            <NA>
-    ## No. of groups (Pig)              72            NA            <NA>
-    ## No. of observations             861            NA            <NA>
-    ## Log-likelihood              -595.41            NA            <NA>
-    ## AIC value                   1198.81            NA            <NA>
+    ##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
+    ## Weight                    1 (0.99,1)     0.7355407    1 (0.98,1.03)
+    ## Time                0.99 (0.95,1.03)     0.6622994 0.96 (0.82,1.13)
+    ## Random effects                  <NA>            NA             <NA>
+    ## Pig                             0.17            NA             <NA>
+    ## Metrics                         <NA>            NA             <NA>
+    ## No. of groups (Pig)               72            NA             <NA>
+    ## No. of observations              861            NA             <NA>
+    ## Log-likelihood               -593.35            NA             <NA>
+    ## AIC value                    1194.69            NA             <NA>
     ##                     adj. P value
-    ## Weight                 0.1141328
-    ## Time                   0.1382701
+    ## Weight                 0.7331655
+    ## Time                   0.6608942
     ## Random effects                NA
     ## Pig                           NA
     ## Metrics                       NA
@@ -412,3 +412,65 @@ svycox.display(model)
     ## 
     ## $caption
     ## [1] "Survey cox model on time ('time') to event ('status > 0')"
+
+Sub-group analysis for Cox/svycox model
+---------------------------------------
+
+``` r
+library(survival); library(dplyr)
+lung %>% 
+mutate(status = as.integer(status == 1),
+       sex = factor(sex),
+       kk = factor(as.integer(pat.karno >= 70)),
+       kk1 = factor(as.integer(pat.karno >= 60))) -> lung
+
+TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung)
+```
+
+    ##   Variable Count Percent Point Estimate  Low Upper    0    1 P value
+    ## 1       kk  <NA>    <NA>           <NA> <NA>  <NA> <NA> <NA>    <NA>
+    ## 2        0    38      38           2.88 0.31 26.49   20   80    0.35
+    ## 3        1   187     187           1.84 1.08  3.14 43.1 56.9   0.026
+    ## 4      kk1  <NA>    <NA>           <NA> <NA>  <NA> <NA> <NA>    <NA>
+    ## 5        0     8       8           <NA> <NA>  <NA>    0  100    <NA>
+    ## 6        1   217     217           1.88 1.12  3.17 42.6 57.4   0.018
+    ##   P for interaction
+    ## 1             0.525
+    ## 2              <NA>
+    ## 3              <NA>
+    ## 4             0.997
+    ## 5              <NA>
+    ## 6              <NA>
+
+``` r
+## Survey data
+library(survey)
+data.design <- svydesign(id = ~1, data = lung)
+TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design)
+```
+
+    ## Independent Sampling design (with replacement)
+    ## svydesign(id = ~1, data = lung)
+    ## Independent Sampling design (with replacement)
+    ## subset(data, get(var_subgroup) == .)
+    ## Independent Sampling design (with replacement)
+    ## subset(data, get(var_subgroup) == .)
+    ## Independent Sampling design (with replacement)
+    ## svydesign(id = ~1, data = lung)
+    ## Independent Sampling design (with replacement)
+    ## subset(data, get(var_subgroup) == .)
+
+    ##   Variable Count Percent Point Estimate  Low Upper prop P value
+    ## 1       kk  <NA>    <NA>           <NA> <NA>  <NA> <NA>    <NA>
+    ## 2        0    38      38           2.88 0.31  27.1 <NA>   0.355
+    ## 3        1   187     187           1.84 1.08  3.11 <NA>   0.024
+    ## 4      kk1  <NA>    <NA>           <NA> <NA>  <NA> <NA>    <NA>
+    ## 5        0  <NA>    <NA>           <NA> <NA>  <NA> <NA>    <NA>
+    ## 6        1   217     217           1.88 1.12  3.15 <NA>   0.017
+    ##   P for interaction
+    ## 1              <NA>
+    ## 2              <NA>
+    ## 3              <NA>
+    ## 4              <NA>
+    ## 5              <NA>
+    ## 6              <NA>

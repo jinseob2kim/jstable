@@ -1,0 +1,168 @@
+#' @title TableSubgroupCox: Sub-group analysis table for Cox/svycox model.
+#' @description Sub-group analysis table for Cox/svycox model.
+#' @param formula formula with survival analysis.
+#' @param var_subgroup 1 sub-group variable for analysis, Default: NULL
+#' @param data Data or svydesign in survey package.
+#' @param decimal.hr Decimal for hazard ratio, Default: 2
+#' @param decimal.percent Decimal for percent, Default: 1
+#' @param decimal.pvalue Decimal for pvalue, Default: 3
+#' @return Sub-group analysis table. 
+#' @details This result is used to make forestplot.
+#' @examples
+#' \dontrun{ 
+#' library(survival);library(dplyr)
+#' lung %>% 
+#'   mutate(status = as.integer(status == 1),
+#'          sex = factor(sex),
+#'          kk = factor(as.integer(pat.karno >= 70))) -> lung
+#' TableSubgroupCox(Surv(time, status) ~ sex, data = lung)
+#' TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = lung)
+#' 
+#' ## survey design
+#' library(survey)
+#' data.design <- svydesign(id = ~1, data = lung)
+#' TableSubgroupCox(Surv(time, status) ~ sex, data = data.design)
+#' TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = data.design)
+#' }
+#' @seealso 
+#'  \code{\link[purrr]{safely}},\code{\link[purrr]{map}},\code{\link[purrr]{map2}}
+#'  \code{\link[survival]{coxph}}
+#'  \code{\link[survey]{svycoxph}}
+#'  \code{\link[stats]{confint}}
+#' @rdname TableSubgroupCox
+#' @importFrom purrr possibly map_dbl map map2
+#' @importFrom dplyr group_split select filter mutate
+#' @importFrom magrittr %>%
+#' @importFrom tibble tibble
+#' @importFrom survival coxph
+#' @importFrom survey svycoxph
+#' @importFrom stats confint coefficients
+#' @importFrom utils tail
+
+TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3){
+  
+  . <- NULL
+  
+  if (any(class(data) == "survey.design" & !is.null(var_subgroup))){
+    if (is.numeric(data$variable[[var_subgroup]])) stop("var_subgroup must categorical.")
+  } else if(any(class(data) == "data.frame" & !is.null(var_subgroup))){
+    if (is.numeric(data[[var_subgroup]])) stop("var_subgroup must categorical.")
+  }
+  
+  
+  ## functions with error
+  possible_table <- purrr::possibly(table, NA)
+  possible_prop.table <- purrr::possibly(function(x){prop.table(x, 1)[2, ] * 100}, NA) 
+  possible_pv <- purrr::possibly(function(x){summary(x)[["coefficients"]][1, ] %>% tail(1)}, NA)
+  possible_coxph <- purrr::possibly(survival::coxph, NA)
+  possible_svycoxph <- purrr::possibly(survey::svycoxph, NA)
+  possible_confint <- purrr::possibly(stats::confint, NA)
+  possible_modely <- purrr::possibly(function(x){purrr::map_dbl(x, .[["y"]], 1)}, NA) 
+  
+  if (is.null(var_subgroup)){
+    if (any(class(data) == "survey.design")){
+      model <- survey::svycoxph(formula, design = data, x= T)
+    } else{
+      model <- survival::coxph(formula, data = data, x= T)
+    }
+    
+    Point.Estimate <- round(exp(coef(model)), decimal.hr)
+    
+    if (length(Point.Estimate) > 1){
+      stop("Formula must contain 1 independent variable only.")
+    }
+    
+    CI <- round(exp(confint(model)), decimal.hr)
+    event <- purrr::map_dbl(model$y, 1) %>% tail(model$n)
+    prop <- round(prop.table(table(event, model$x[, 1]), 1)[2, ] * 100, decimal.percent)
+    pv <- round(summary(model)$coefficients[1, 5], decimal.pvalue)
+    
+    tibble::tibble(Variable = "Overall", Count = model$n, Percent = 100, `Point Estimate` = Point.Estimate, Low = CI[1], Upper = CI[2]) %>% 
+      cbind(t(prop)) %>% 
+      mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
+    
+    return(out)
+  } else if (length(var_subgroup) > 1 | any(grepl(var_subgroup, formula))){
+    stop("Please input correct subgroup variable.")
+  } else{
+    if (any(class(data) == "survey.design")){
+      data$variables[[var_subgroup]] %>% table %>% names -> label_val
+      label_val %>% purrr::map(~possible_svycoxph(formula, design = subset(data, get(var_subgroup) == .)), x = T) -> model
+      pvs_int <- possible_svycoxph(as.formula(paste(deparse(formula), "*", var_subgroup, sep="")), design = data) %>% summary %>% coefficients
+      pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+    } else{
+      data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~possible_coxph(formula, data = ., x= T)) -> model
+      data %>% filter(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
+      pvs_int <- possible_coxph(as.formula(paste(deparse(formula), "*", var_subgroup, sep="")), data = data) %>% summary %>% coefficients
+      pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+    }
+    
+    model %>% purrr::map_dbl("n", .default = NA) -> Count
+    model %>% purrr::map_dbl("coefficients", .default = NA) %>%  exp %>% round(decimal.hr) -> Point.Estimate
+    model %>% purrr::map(possible_confint) %>% Reduce(rbind, .) %>% exp %>% round(decimal.hr) -> CI
+    model %>% purrr::map("y") %>% purrr::map(~purrr::map_dbl(., 1)) %>% purrr::map(~tail(., length(.)/2)) -> event
+    purrr::map2(event, model, ~possible_table(.x, .y[["x"]][, 1])) %>% purrr::map(possible_prop.table) %>% purrr::map(~round(., decimal.percent)) %>% Reduce(rbind, .) -> prop
+    model %>% purrr::map(possible_pv) %>% purrr::map_dbl(~round(., decimal.pvalue)) -> pv
+    
+    
+    tibble::tibble(Variable = paste("  ", label_val) , Count = Count, Percent = round(Count, decimal.percent), `Point Estimate` = Point.Estimate, Low = CI[, 1], Upper = CI[, 2]) %>%
+      cbind(prop) %>% 
+      mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
+    
+    return(rbind(c(var_subgroup, rep(NA, 8), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
+  }
+}
+
+
+
+
+#' @title TableSubgroupMultiCox: Multiple sub-group analysis table for Cox/svycox model.
+#' @description Multiple sub-group analysis table for Cox/svycox model.
+#' @param formula formula with survival analysis.
+#' @param var_subgroups Multiple sub-group variables for analysis, Default: NULL
+#' @param data Data or svydesign in survey package.
+#' @param decimal.hr Decimal for hazard ratio, Default: 2
+#' @param decimal.percent Decimal for percent, Default: 1
+#' @param decimal.pvalue Decimal for pvalue, Default: 3
+#' @return Multiple sub-group analysis table. 
+#' @details This result is used to make forestplot.
+#' @examples 
+#' \dontrun{
+#' library(survival);library(dplyr)
+#' lung %>% 
+#'   mutate(status = as.integer(status == 1),
+#'          sex = factor(sex),
+#'          kk = factor(as.integer(pat.karno >= 70)),
+#'          kk1 = factor(as.integer(pat.karno >= 60))) -> lung
+#' TableSubgroupMultiCox(formula, var_subgroups = c("kk", "kk1"), data=lung)
+#' 
+#' ## survey design
+#' library(survey)
+#' data.design <- svydesign(id = ~1, data = lung)
+#' TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design)
+#' }
+#' @seealso 
+#'  \code{\link[purrr]{map}}
+#'  \code{\link[dplyr]{bind}}
+#' @rdname TableSubgroupMultiCox
+#' @export 
+#' @importFrom purrr map
+#' @importFrom magrittr %>%
+#' @importFrom dplyr bind_rows
+
+
+TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3){
+  
+  . <- NULL
+  
+  if (is.null(var_subgroups)){
+    return(TableSubgroupCox(formula, data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue))
+  } else{
+    return(purrr::map(var_subgroups, ~TableSubgroupCox(formula, var_subgroup = ., data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue)) %>% 
+             dplyr::bind_rows())
+    }
+
+  }
+
+
+

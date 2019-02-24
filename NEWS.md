@@ -1,3 +1,10 @@
+# jstable 0.8.0
+
+## New function
+
+* `TableSubgroupMultiCox`: Get **sub-group analysis table** for forestplot with **Cox/svycox model**.
+
+
 # jstable 0.7.10
 
 * Update `CreateTableOneJS` and `svyCreateTableOneJS` according to [tableone](https://github.com/kaz-yos/tableone) package(0.10.0).
