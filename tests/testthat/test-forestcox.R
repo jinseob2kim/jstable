@@ -11,13 +11,13 @@ test_that("Run TableSubgroupMultiCox", {
   
   expect_is(TableSubgroupMultiCox(Surv(time, status) ~ sex, data=lung), "data.frame")
   expect_warning(TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung))
-  expect_warning(TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = T))
+  expect_warning(TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = TRUE))
   
   ## Survey data
   library(survey)
   expect_warning(data.design <- svydesign(id = ~1, data = lung))
   expect_is(TableSubgroupMultiCox(Surv(time, status) ~ sex, data=data.design), "data.frame")
   expect_warning(TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design))
-  expect_warning(TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = T))
+  expect_warning(TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = TRUE))
   
   })
