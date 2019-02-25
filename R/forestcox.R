@@ -9,7 +9,6 @@
 #' @return Sub-group analysis table. 
 #' @details This result is used to make forestplot.
 #' @examples
-#' \dontrun{ 
 #' library(survival);library(dplyr)
 #' lung %>% 
 #'   mutate(status = as.integer(status == 1),
@@ -23,13 +22,13 @@
 #' data.design <- svydesign(id = ~1, data = lung)
 #' TableSubgroupCox(Surv(time, status) ~ sex, data = data.design)
 #' TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = data.design)
-#' }
 #' @seealso 
 #'  \code{\link[purrr]{safely}},\code{\link[purrr]{map}},\code{\link[purrr]{map2}}
 #'  \code{\link[survival]{coxph}}
 #'  \code{\link[survey]{svycoxph}}
 #'  \code{\link[stats]{confint}}
 #' @rdname TableSubgroupCox
+#' @export 
 #' @importFrom purrr possibly map_dbl map map2
 #' @importFrom dplyr group_split select filter mutate
 #' @importFrom magrittr %>%
@@ -131,20 +130,20 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
 #' @return Multiple sub-group analysis table. 
 #' @details This result is used to make forestplot.
 #' @examples 
-#' \dontrun{
 #' library(survival);library(dplyr)
 #' lung %>% 
 #'   mutate(status = as.integer(status == 1),
 #'          sex = factor(sex),
 #'          kk = factor(as.integer(pat.karno >= 70)),
 #'          kk1 = factor(as.integer(pat.karno >= 60))) -> lung
-#' TableSubgroupMultiCox(formula, var_subgroups = c("kk", "kk1"), data=lung, line = T)
+#' TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), 
+#'                       data=lung, line = TRUE)
 #' 
 #' ## survey design
 #' library(survey)
 #' data.design <- svydesign(id = ~1, data = lung)
-#' TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design)
-#' }
+#' TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), 
+#'                       data = data.design)
 #' @seealso 
 #'  \code{\link[purrr]{map}}
 #'  \code{\link[dplyr]{bind}}

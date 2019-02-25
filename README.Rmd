@@ -131,11 +131,11 @@ mutate(status = as.integer(status == 1),
        kk = factor(as.integer(pat.karno >= 70)),
        kk1 = factor(as.integer(pat.karno >= 60))) -> lung
 
-#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = T)
+TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = TRUE)
 
 ## Survey data
 library(survey)
 data.design <- svydesign(id = ~1, data = lung)
-#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = F)
+TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = FALSE)
 ```
 

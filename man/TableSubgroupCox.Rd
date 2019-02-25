@@ -30,7 +30,6 @@ Sub-group analysis table for Cox/svycox model.
 This result is used to make forestplot.
 }
 \examples{
-\dontrun{ 
 library(survival);library(dplyr)
 lung \%>\% 
   mutate(status = as.integer(status == 1),
@@ -44,7 +43,6 @@ library(survey)
 data.design <- svydesign(id = ~1, data = lung)
 TableSubgroupCox(Surv(time, status) ~ sex, data = data.design)
 TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = data.design)
-}
 }
 \seealso{
 \code{\link[purrr]{safely}},\code{\link[purrr]{map}},\code{\link[purrr]{map2}}
