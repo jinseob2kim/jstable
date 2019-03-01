@@ -107,7 +107,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
     model %>% purrr::map(possible_pv) %>% purrr::map_dbl(~round(., decimal.pvalue)) -> pv
     
     
-    tibble::tibble(Variable = paste("  ", label_val) , Count = Count, Percent = round(Count, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2]) %>%
+    tibble::tibble(Variable = paste("  ", label_val) , Count = Count, Percent = round(Count/sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2]) %>%
       cbind(prop) %>% 
       mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
     
