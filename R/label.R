@@ -186,7 +186,7 @@ LabeljsTable = function(obj.table, ref){
     vl = lapply(1:length(vn), function(x){tb.rn[vns[x]:(vns[x+1]-1)]})
     vl_label = lapply(vl, function(x){
       vname <- strsplit(x[1], ":")[[1]][1]
-      #x[1] <- gsub(vname, ref[variable == vname, var_label][1], x[1])
+      x[1] <- gsub(vname, ref[variable == vname, var_label][1], x[1])
       if (length(ref[variable == vname, level]) == 2){
         vll = ref[variable == vname, c("level", "val_label")]
         x <- paste(ref[variable == vname, var_label][1], ": ", vll[2, 2], " vs ", vll[1, 2], sep = "")
