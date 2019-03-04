@@ -2,6 +2,7 @@
 #' @description Sub-group analysis table for Cox/svycox model.
 #' @param formula formula with survival analysis.
 #' @param var_subgroup 1 sub-group variable for analysis, Default: NULL
+#' @param var_cov Variables for additional adjust, Default: NULL
 #' @param data Data or svydesign in survey package.
 #' @param decimal.hr Decimal for hazard ratio, Default: 2
 #' @param decimal.percent Decimal for percent, Default: 1
@@ -38,7 +39,7 @@
 #' @importFrom stats confint coefficients
 #' @importFrom utils tail
 
-TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3){
+TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3){
   
   . <- NULL
   
@@ -59,20 +60,25 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
   possible_modely <- purrr::possibly(function(x){purrr::map_dbl(x, .[["y"]], 1)}, NA)
   possible_rowone <- purrr::possibly(function(x){x[1, ]}, NA)
   
+  var_cov <- setdiff(var_cov, var_subgroup)
   if (is.null(var_subgroup)){
+    if (!is.null(var_cov)){
+      formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
+    }
     if (any(class(data) == "survey.design")){
       model <- survey::svycoxph(formula, design = data, x= T)
     } else{
       model <- survival::coxph(formula, data = data, x= T)
     }
     
-    Point.Estimate <- round(exp(coef(model)), decimal.hr)
+    Point.Estimate <- round(exp(coef(model)), decimal.hr)[1]
     
-    if (length(Point.Estimate) > 1){
-      stop("Formula must contain 1 independent variable only.")
-    }
     
-    CI <- round(exp(confint(model)), decimal.hr)
+    #if (length(Point.Estimate) > 1){
+    #  stop("Formula must contain 1 independent variable only.")
+    #}
+    
+    CI <- round(exp(confint(model)[1, ]), decimal.hr)
     event <- purrr::map_dbl(model$y, 1) %>% tail(model$n)
     prop <- round(prop.table(table(event, model$x[, 1]), 1)[2, ] * 100, decimal.percent)
     pv <- round(summary(model)$coefficients[1, 5], decimal.pvalue)
@@ -85,6 +91,9 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
   } else if (length(var_subgroup) > 1 | any(grepl(var_subgroup, formula))){
     stop("Please input correct subgroup variable.")
   } else{
+    if (!is.null(var_cov)){
+      formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
+    }
     if (any(class(data) == "survey.design")){
       data$variables[[var_subgroup]] %>% table %>% names -> label_val
       label_val %>% purrr::map(~possible_svycoxph(formula, design = subset(data, get(var_subgroup) == .), x = TRUE)) -> model
@@ -122,6 +131,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
 #' @description Multiple sub-group analysis table for Cox/svycox model.
 #' @param formula formula with survival analysis.
 #' @param var_subgroups Multiple sub-group variables for analysis, Default: NULL
+#' @param var_cov Variables for additional adjust, Default: NULL
 #' @param data Data or svydesign in survey package.
 #' @param decimal.hr Decimal for hazard ratio, Default: 2
 #' @param decimal.percent Decimal for percent, Default: 1
@@ -154,15 +164,15 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, data, decimal.hr = 2,
 #' @importFrom dplyr bind_rows
 
 
-TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, line = F){
+TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, var_cov = NULL, data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, line = F){
   
   . <- NULL
-  out.all <- TableSubgroupCox(formula, data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue)
+  out.all <- TableSubgroupCox(formula, var_subgroup = NULL, var_cov = var_cov, data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue)
   
   if (is.null(var_subgroups)){
     return(out.all)
   } else {
-    out.list <- purrr::map(var_subgroups, ~TableSubgroupCox(formula, var_subgroup = ., data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue))
+    out.list <- purrr::map(var_subgroups, ~TableSubgroupCox(formula, var_subgroup = ., var_cov = var_cov,  data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue))
     if (line){
       out.newline <- out.list %>% purrr::map(~rbind(NA, .))
       return(rbind(out.all, out.newline %>% dplyr::bind_rows()))

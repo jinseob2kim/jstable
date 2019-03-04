@@ -4,14 +4,16 @@
 \alias{TableSubgroupMultiCox}
 \title{TableSubgroupMultiCox: Multiple sub-group analysis table for Cox/svycox model.}
 \usage{
-TableSubgroupMultiCox(formula, var_subgroups = NULL, data,
-  decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3,
+TableSubgroupMultiCox(formula, var_subgroups = NULL, var_cov = NULL,
+  data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3,
   line = F)
 }
 \arguments{
 \item{formula}{formula with survival analysis.}
 
 \item{var_subgroups}{Multiple sub-group variables for analysis, Default: NULL}
+
+\item{var_cov}{Variables for additional adjust, Default: NULL}
 
 \item{data}{Data or svydesign in survey package.}
 

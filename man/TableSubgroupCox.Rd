@@ -4,13 +4,15 @@
 \alias{TableSubgroupCox}
 \title{TableSubgroupCox: Sub-group analysis table for Cox/svycox model.}
 \usage{
-TableSubgroupCox(formula, var_subgroup = NULL, data, decimal.hr = 2,
-  decimal.percent = 1, decimal.pvalue = 3)
+TableSubgroupCox(formula, var_subgroup = NULL, var_cov = NULL, data,
+  decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3)
 }
 \arguments{
 \item{formula}{formula with survival analysis.}
 
 \item{var_subgroup}{1 sub-group variable for analysis, Default: NULL}
+
+\item{var_cov}{Variables for additional adjust, Default: NULL}
 
 \item{data}{Data or svydesign in survey package.}
 
