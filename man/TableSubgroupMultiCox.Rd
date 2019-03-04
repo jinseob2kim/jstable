@@ -5,8 +5,8 @@
 \title{TableSubgroupMultiCox: Multiple sub-group analysis table for Cox/svycox model.}
 \usage{
 TableSubgroupMultiCox(formula, var_subgroups = NULL, var_cov = NULL,
-  data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3,
-  line = F)
+  data, time_eventrate = 3 * 365, decimal.hr = 2,
+  decimal.percent = 1, decimal.pvalue = 3, line = F)
 }
 \arguments{
 \item{formula}{formula with survival analysis.}
@@ -16,6 +16,8 @@ TableSubgroupMultiCox(formula, var_subgroups = NULL, var_cov = NULL,
 \item{var_cov}{Variables for additional adjust, Default: NULL}
 
 \item{data}{Data or svydesign in survey package.}
+
+\item{time_eventrate}{Time for kaplan-meier based event rate calculation, Default = 365 * 3}
 
 \item{decimal.hr}{Decimal for hazard ratio, Default: 2}
 
@@ -42,13 +44,13 @@ lung \%>\%
          kk = factor(as.integer(pat.karno >= 70)),
          kk1 = factor(as.integer(pat.karno >= 60))) -> lung
 TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), 
-                      data=lung, line = TRUE)
+                      data=lung, time_eventrate = 100, line = TRUE)
 
 ## survey design
 library(survey)
 data.design <- svydesign(id = ~1, data = lung)
 TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), 
-                      data = data.design)
+                      data = data.design, time_eventrate = 100)
 }
 \seealso{
 \code{\link[purrr]{map}}

@@ -5,7 +5,8 @@
 \title{TableSubgroupCox: Sub-group analysis table for Cox/svycox model.}
 \usage{
 TableSubgroupCox(formula, var_subgroup = NULL, var_cov = NULL, data,
-  decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3)
+  time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1,
+  decimal.pvalue = 3)
 }
 \arguments{
 \item{formula}{formula with survival analysis.}
@@ -15,6 +16,8 @@ TableSubgroupCox(formula, var_subgroup = NULL, var_cov = NULL, data,
 \item{var_cov}{Variables for additional adjust, Default: NULL}
 
 \item{data}{Data or svydesign in survey package.}
+
+\item{time_eventrate}{Time for kaplan-meier based event rate calculation, Default = 365 * 3}
 
 \item{decimal.hr}{Decimal for hazard ratio, Default: 2}
 
@@ -37,14 +40,16 @@ lung \%>\%
   mutate(status = as.integer(status == 1),
          sex = factor(sex),
          kk = factor(as.integer(pat.karno >= 70))) -> lung
-TableSubgroupCox(Surv(time, status) ~ sex, data = lung)
-TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = lung)
+TableSubgroupCox(Surv(time, status) ~ sex, data = lung, time_eventrate = 100)
+TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = lung, 
+                 time_eventrate = 100)
 
 ## survey design
 library(survey)
 data.design <- svydesign(id = ~1, data = lung)
-TableSubgroupCox(Surv(time, status) ~ sex, data = data.design)
-TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = data.design)
+TableSubgroupCox(Surv(time, status) ~ sex, data = data.design, time_eventrate = 100)
+TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = data.design,
+                 time_eventrate = 100)
 }
 \seealso{
 \code{\link[purrr]{safely}},\code{\link[purrr]{map}},\code{\link[purrr]{map2}}

@@ -4,6 +4,7 @@
 #' @param var_subgroup 1 sub-group variable for analysis, Default: NULL
 #' @param var_cov Variables for additional adjust, Default: NULL
 #' @param data Data or svydesign in survey package.
+#' @param time_eventrate Time for kaplan-meier based event rate calculation, Default = 365 * 3
 #' @param decimal.hr Decimal for hazard ratio, Default: 2
 #' @param decimal.percent Decimal for percent, Default: 1
 #' @param decimal.pvalue Decimal for pvalue, Default: 3
@@ -15,14 +16,16 @@
 #'   mutate(status = as.integer(status == 1),
 #'          sex = factor(sex),
 #'          kk = factor(as.integer(pat.karno >= 70))) -> lung
-#' TableSubgroupCox(Surv(time, status) ~ sex, data = lung)
-#' TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = lung)
+#' TableSubgroupCox(Surv(time, status) ~ sex, data = lung, time_eventrate = 100)
+#' TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = lung, 
+#'                  time_eventrate = 100)
 #' 
 #' ## survey design
 #' library(survey)
 #' data.design <- svydesign(id = ~1, data = lung)
-#' TableSubgroupCox(Surv(time, status) ~ sex, data = data.design)
-#' TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = data.design)
+#' TableSubgroupCox(Surv(time, status) ~ sex, data = data.design, time_eventrate = 100)
+#' TableSubgroupCox(Surv(time, status) ~ sex, var_subgroup = "kk", data = data.design,
+#'                  time_eventrate = 100)
 #' @seealso 
 #'  \code{\link[purrr]{safely}},\code{\link[purrr]{map}},\code{\link[purrr]{map2}}
 #'  \code{\link[survival]{coxph}}
@@ -31,7 +34,7 @@
 #' @rdname TableSubgroupCox
 #' @export 
 #' @importFrom purrr possibly map_dbl map map2
-#' @importFrom dplyr group_split select filter mutate
+#' @importFrom dplyr group_split select filter mutate bind_cols
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble
 #' @importFrom survival coxph
@@ -39,7 +42,7 @@
 #' @importFrom stats confint coefficients
 #' @importFrom utils tail
 
-TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3){
+TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3){
   
   . <- NULL
   
@@ -60,6 +63,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   possible_modely <- purrr::possibly(function(x){purrr::map_dbl(x, .[["y"]], 1)}, NA)
   possible_rowone <- purrr::possibly(function(x){x[1, ]}, NA)
   
+  formula.km <- formula
   var_cov <- setdiff(var_cov, var_subgroup)
   if (is.null(var_subgroup)){
     if (!is.null(var_cov)){
@@ -67,8 +71,16 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     }
     if (any(class(data) == "survey.design")){
       model <- survey::svycoxph(formula, design = data, x= T)
+      res.kap <- survey::svykm(formula.km, design = data)
+      prop <- round(100 * sapply(res.kap, function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent)
+      names(prop) <- model$xlevels[[1]]
     } else{
       model <- survival::coxph(formula, data = data, x= T)
+      res.kap <- survival::survfit(formula.km, data = data)
+      res.kap.times <- summary(res.kap, times = time_eventrate)
+      prop <- round(100 * (1 - res.kap.times[["surv"]]), decimal.percent)
+      names(prop) <- model$xlevels[[1]]
+      #out.kap <- paste(res.kap.times[["n.event"]], " (", round(100 * (1 - res.kap.times[["surv"]]), decimal.percent), ")", sep = "")
     }
     
     Point.Estimate <- round(exp(coef(model)), decimal.hr)[1]
@@ -78,9 +90,10 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     #  stop("Formula must contain 1 independent variable only.")
     #}
     
+    
     CI <- round(exp(confint(model)[1, ]), decimal.hr)
     event <- purrr::map_dbl(model$y, 1) %>% tail(model$n)
-    prop <- round(prop.table(table(event, model$x[, 1]), 1)[2, ] * 100, decimal.percent)
+    #prop <- round(prop.table(table(event, model$x[, 1]), 2)[2, ] * 100, decimal.percent)
     pv <- round(summary(model)$coefficients[1, 5], decimal.pvalue)
     
     tibble::tibble(Variable = "Overall", Count = model$n, Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2]) %>% 
@@ -97,22 +110,35 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if (any(class(data) == "survey.design")){
       data$variables[[var_subgroup]] %>% table %>% names -> label_val
       label_val %>% purrr::map(~possible_svycoxph(formula, design = subset(data, get(var_subgroup) == .), x = TRUE)) -> model
-      xlabel <- names(survey::svycoxph(formula, design = data)$xlevels)[1]
+      xlev <- survey::svycoxph(formula, design = data)$xlevels
+      xlabel <- names(xlev)[1]
       pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), design = data) %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+      res.kap <- purrr::map(label_val, ~survey::svykm(formula.km, design = subset(data, get(var_subgroup) == . )))
+      mkz <- function(reskap){
+        round(100 * sapply(reskap, function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent)
+      }  
+      prop <- purrr::map(res.kap, mkz)  %>% dplyr::bind_cols() %>% t
+      #prop <- purrr::map(res.kap, ~round(100 * sapply(., function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent))
+      colnames(prop) <- xlev[[1]]
+      
     } else{
       data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~possible_coxph(formula, data = ., x= T)) -> model
       data %>% filter(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
-      xlabel <- names(survival::coxph(formula, data = data)$xlevels)[1]
+      xlev <- survival::coxph(formula, data = data)$xlevels
+      xlabel <- names(xlev)[1]
       pvs_int <- possible_coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data) %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+      res.kap.times <- data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~survival::survfit(formula.km, data = .)) %>% purrr::map(~summary(., times = time_eventrate))
+      prop <- res.kap.times %>% purrr::map(~round(100 * (1 - .[["surv"]]), decimal.percent)) %>% dplyr::bind_cols() %>% t
+      colnames(prop) <- xlev[[1]]
     }
     
     model %>% purrr::map_dbl("n", .default = NA) -> Count
     model %>% purrr::map("coefficients", .default = NA) %>% purrr::map_dbl(1) %>% exp %>% round(decimal.hr) -> Point.Estimate
     model %>% purrr::map(possible_confint) %>% purrr::map(possible_rowone) %>% Reduce(rbind, .) %>% exp %>% round(decimal.hr) -> CI
-    model %>% purrr::map("y") %>% purrr::map(~purrr::map_dbl(., 1)) %>% purrr::map(~tail(., length(.)/2)) -> event
-    purrr::map2(event, model, ~possible_table(.x, .y[["x"]][, 1])) %>% purrr::map(possible_prop.table) %>% purrr::map(~round(., decimal.percent)) %>% Reduce(rbind, .) -> prop
+    #model %>% purrr::map("y") %>% purrr::map(~purrr::map_dbl(., 1)) %>% purrr::map(~tail(., length(.)/2)) -> event
+    #purrr::map2(event, model, ~possible_table(.x, .y[["x"]][, 1])) %>% purrr::map(possible_prop.table) %>% purrr::map(~round(., decimal.percent)) %>% Reduce(rbind, .) -> prop
     model %>% purrr::map(possible_pv) %>% purrr::map_dbl(~round(., decimal.pvalue)) -> pv
     
     
@@ -133,6 +159,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 #' @param var_subgroups Multiple sub-group variables for analysis, Default: NULL
 #' @param var_cov Variables for additional adjust, Default: NULL
 #' @param data Data or svydesign in survey package.
+#' @param time_eventrate Time for kaplan-meier based event rate calculation, Default = 365 * 3
 #' @param decimal.hr Decimal for hazard ratio, Default: 2
 #' @param decimal.percent Decimal for percent, Default: 1
 #' @param decimal.pvalue Decimal for pvalue, Default: 3
@@ -147,13 +174,13 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 #'          kk = factor(as.integer(pat.karno >= 70)),
 #'          kk1 = factor(as.integer(pat.karno >= 60))) -> lung
 #' TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), 
-#'                       data=lung, line = TRUE)
+#'                       data=lung, time_eventrate = 100, line = TRUE)
 #' 
 #' ## survey design
 #' library(survey)
 #' data.design <- svydesign(id = ~1, data = lung)
 #' TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), 
-#'                       data = data.design)
+#'                       data = data.design, time_eventrate = 100)
 #' @seealso 
 #'  \code{\link[purrr]{map}}
 #'  \code{\link[dplyr]{bind}}
@@ -164,15 +191,15 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 #' @importFrom dplyr bind_rows
 
 
-TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, var_cov = NULL, data, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, line = F){
+TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, line = F){
   
   . <- NULL
-  out.all <- TableSubgroupCox(formula, var_subgroup = NULL, var_cov = var_cov, data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue)
+  out.all <- TableSubgroupCox(formula, var_subgroup = NULL, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue)
   
   if (is.null(var_subgroups)){
     return(out.all)
   } else {
-    out.list <- purrr::map(var_subgroups, ~TableSubgroupCox(formula, var_subgroup = ., var_cov = var_cov,  data = data, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue))
+    out.list <- purrr::map(var_subgroups, ~TableSubgroupCox(formula, var_subgroup = ., var_cov = var_cov,  data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue))
     if (line){
       out.newline <- out.list %>% purrr::map(~rbind(NA, .))
       return(rbind(out.all, out.newline %>% dplyr::bind_rows()))
