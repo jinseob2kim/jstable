@@ -128,8 +128,8 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>TableSubgroupMultiCox</span>(<span class='no'>formula</span>, <span class='kw'>var_subgroups</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>data</span>,
-  <span class='kw'>decimal.hr</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>decimal.percent</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>decimal.pvalue</span> <span class='kw'>=</span> <span class='fl'>3</span>,
+    <pre class="usage"><span class='fu'>TableSubgroupMultiCox</span>(<span class='no'>formula</span>, <span class='kw'>var_subgroups</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>var_cov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>data</span>, <span class='kw'>decimal.hr</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>decimal.percent</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>decimal.pvalue</span> <span class='kw'>=</span> <span class='fl'>3</span>,
   <span class='kw'>line</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -142,6 +142,10 @@
     <tr>
       <th>var_subgroups</th>
       <td><p>Multiple sub-group variables for analysis, Default: NULL</p></td>
+    </tr>
+    <tr>
+      <th>var_cov</th>
+      <td><p>Variables for additional adjust, Default: NULL</p></td>
     </tr>
     <tr>
       <th>data</th>
