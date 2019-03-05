@@ -1,3 +1,9 @@
+# jstable 0.8.1
+
+## Update
+
+* `CreateTableOneJS` and `svyCreateTableOneJS` can get simplified table with **showAllLevels == F** option. 
+
 # jstable 0.8.0
 
 ## New function

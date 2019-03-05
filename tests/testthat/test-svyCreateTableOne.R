@@ -8,14 +8,32 @@ test_that("Run SvyCreateOneTableJS", {
   nhanesSvy <- svydesign(ids = ~ SDMVPSU, strata = ~ SDMVSTRA, weights = ~ WTMEC2YR, nest = TRUE, data = nhanes)
   
   expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","agecat","RIAGENDR"),
-                               strata = "RIAGENDR", data = nhanesSvy, nonnormal = "HI_CHOL", labeldata = a.label, Labels = T
-                               ), "list")
+                                data = nhanesSvy, nonnormal = "HI_CHOL", labeldata = a.label, Labels = T), "list")
+  
+  expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","agecat","RIAGENDR"),
+                                data = nhanesSvy, nonnormal = "HI_CHOL", labeldata = a.label, Labels = T, showAllLevels = F), "list")
+  
+  
+  expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","agecat","RIAGENDR"),
+                               strata = "RIAGENDR", data = nhanesSvy, nonnormal = "HI_CHOL", labeldata = a.label, Labels = T), "list")
+
+  
+  expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","agecat","RIAGENDR"),
+                                strata = "RIAGENDR", data = nhanesSvy, nonnormal = "HI_CHOL", labeldata = a.label, Labels = T, showAllLevels = F
+  ), "list")
   
   expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","RIAGENDR"),
                                 strata = "SDMVPSU", strata2 = "agecat", data = nhanesSvy, nonnormal = "HI_CHOL", labeldata = a.label, Labels = T
                                 ), "list")
   
+  expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","RIAGENDR"),
+                                strata = "SDMVPSU", strata2 = "agecat", data = nhanesSvy, nonnormal = "HI_CHOL", labeldata = a.label, Labels = T, showAllLevels = F), "list")
+  
   expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","RIAGENDR"), data = nhanesSvy, labeldata = a.label, Labels = T,
                                 includeNA = F, showAllLevels = T, printToggle = F, quote = F, nonnormal = NULL, catDigits = 2, contDigits = 2
                                 ), "list")
+  
+  expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","RIAGENDR"), data = nhanesSvy, labeldata = a.label, Labels = T,
+                                includeNA = F, showAllLevels = F, printToggle = F, quote = F, nonnormal = NULL, catDigits = 2, contDigits = 2
+  ), "list")
 })
