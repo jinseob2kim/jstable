@@ -191,7 +191,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     data.strata <-  lapply(levels(data$variable[[strata]]), function(x){subset(data, get(strata) == x)})
     ptb1.list <- lapply(data.strata, svyCreateTableOne2,
                         vars =vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
-                        showAllLevels = F, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal, 
+                        showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal, 
                         catDigits = catDigits, contDigits = contDigits, pDigits = pDigits)
     
     
