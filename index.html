@@ -174,16 +174,21 @@
 ## [1] "GEE(binomial) predicting ddn by Time, Cu - Group Pig"
 ## 
 ## $table
-##            crude OR(95%CI)   crude P value adj. OR(95%CI)     adj. P value
-## Time       "1.03 (1,1.07)"   "0.087"       "1.03 (1,1.07)"    "0.088"     
-## Cu: ref.=1 NA                NA            NA                 NA          
-##    2       "1.1 (0.77,1.57)" "0.617"       "1.09 (0.76,1.57)" "0.623"     
-##    3       "1.1 (0.79,1.54)" "0.573"       "1.1 (0.79,1.54)"  "0.576"     
+##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
+## Time       "1 (0.96,1.04)"    "0.834"       "1 (0.96,1.04)"   
+## Cu: ref.=1 NA                 NA            NA                
+##    2       "0.87 (0.63,1.2)"  "0.4"         "0.87 (0.63,1.2)" 
+##    3       "0.75 (0.54,1.05)" "0.09"        "0.75 (0.54,1.04)"
+##            adj. P value
+## Time       "0.836"     
+## Cu: ref.=1 NA          
+##    2       "0.4"       
+##    3       "0.09"      
 ## 
 ## $metric
 ##                                  crude OR(95%CI) crude P value
 ##                                  NA              NA           
-## Estimated correlation parameters "0.018"         NA           
+## Estimated correlation parameters "0.002"         NA           
 ## No. of clusters                  "72"            NA           
 ## No. of observations              "861"           NA           
 ##                                  adj. OR(95%CI) adj. P value
@@ -235,19 +240,19 @@
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">l2 =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/lme4/topics/glmer">glmer</a></span>(ddn <span class="op">~</span><span class="st"> </span>Weight <span class="op">+</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig), <span class="dt">data=</span> dietox, <span class="dt">family=</span> <span class="st">"binomial"</span>)</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l2)</a></code></pre></div>
 <pre><code>## $table
-##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
-## Weight                    1 (1,1.01)     0.1551671 0.99 (0.97,1.01)
-## Time                1.03 (0.99,1.07)     0.1013624 1.08 (0.93,1.25)
-## Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;
-## Pig                             0.07            NA             &lt;NA&gt;
-## Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;
-## No. of groups (Pig)               72            NA             &lt;NA&gt;
-## No. of observations              861            NA             &lt;NA&gt;
-## Log-likelihood               -594.12            NA             &lt;NA&gt;
-## AIC value                    1196.23            NA             &lt;NA&gt;
+##                     crude OR(95%CI) crude P value   adj. OR(95%CI)
+## Weight                   1 (0.99,1)     0.6720488 0.99 (0.97,1.01)
+## Time                  1 (0.96,1.04)     0.8291575  1.05 (0.91,1.2)
+## Random effects                 &lt;NA&gt;            NA             &lt;NA&gt;
+## Pig                            0.02            NA             &lt;NA&gt;
+## Metrics                        &lt;NA&gt;            NA             &lt;NA&gt;
+## No. of groups (Pig)              72            NA             &lt;NA&gt;
+## No. of observations             861            NA             &lt;NA&gt;
+## Log-likelihood               -595.8            NA             &lt;NA&gt;
+## AIC value                    1199.6            NA             &lt;NA&gt;
 ##                     adj. P value
-## Weight                 0.5555199
-## Time                   0.3141529
+## Weight                 0.4428915
+## Time                   0.4992647
 ## Random effects                NA
 ## Pig                           NA
 ## Metrics                       NA
