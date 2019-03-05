@@ -232,7 +232,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     if (Labels & !is.null(labeldata)){
       labelled::var_label(data$variable) <- sapply(names(data$variable), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
       data.table::setkey(labeldata, variable, level)
-      res0 <- tableone::CreateTableOne(vars =vars, data = data, factorVars = factorVars, includeNA = includeNA)
+      res0 <- tableone::svyCreateTableOne(vars =vars, data = data, factorVars = factorVars, includeNA = includeNA)
       for (i in seq_along(res0$CatTable)){
         for(j in factor_vars){
           lvs <- res0$CatTable[[i]][[j]]$level
