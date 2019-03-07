@@ -160,7 +160,7 @@
     <pre class="examples"><div class='input'> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>geepack</span>)
  <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>dietox</span>)
  <span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/factor'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
- <span class='no'>l1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/lme4/topics/lmer'>lmer</a></span>(<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Pig</span>) + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Evit</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Model failed to converge with max|grad| = 0.00688873 (tol = 0.002, component 1)</span></div><div class='input'> <span class='fu'>lmer.display</span>(<span class='no'>l1</span>)</div><div class='output co'>#&gt; <span class='message'>singular fit</span></div><div class='output co'>#&gt; $table
+ <span class='no'>l1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/lme4/topics/lmer'>lmer</a></span>(<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Pig</span>) + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Evit</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Model failed to converge with max|grad| = 0.00688873 (tol = 0.002, component 1)</span></div><div class='input'> <span class='fu'>lmer.display</span>(<span class='no'>l1</span>)</div><div class='output co'>#&gt; <span class='message'>boundary (singular) fit: see ?isSingular</span></div><div class='output co'>#&gt; $table
 #&gt;                      crude coeff(95%CI) crude P value adj. coeff(95%CI)
 #&gt; Time                   6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)
 #&gt; Cu: ref.=1                         &lt;NA&gt;            NA              &lt;NA&gt;
@@ -213,7 +213,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.anpanman.co.kr'><img src="https://raw.githubusercontent.com/anpanmancorp/Anpanman/master/horizontal_anpanman_transparent.png" height="24" /></a>.</p>
+  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.zarathu.com'><img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" /></a>.</p>
 </div>
 
 <div class="pkgdown">
