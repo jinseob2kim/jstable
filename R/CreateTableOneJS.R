@@ -182,6 +182,11 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
   
   if (is.null(strata)){
     
+    if (Labels & !is.null(labeldata)){
+      labelled::var_label(data) <- sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
+      data.table::setkey(labeldata, variable, level)
+    }
+    
     res <- tableone::CreateTableOne(vars =vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, 
                          testApprox = testApprox, argsApprox = argsApprox,
                          testExact = testExact, argsExact = argsExact,
@@ -191,8 +196,6 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
     factor_vars <- res[["MetaData"]][["varFactors"]]
     
     if (Labels & !is.null(labeldata)){
-      labelled::var_label(data) <- sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
-      data.table::setkey(labeldata, variable, level)
       for (i in seq_along(res$CatTable)){
         for(j in factor_vars){
           lvs <- res$CatTable[[i]][[j]]$level
