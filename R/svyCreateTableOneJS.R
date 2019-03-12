@@ -148,14 +148,16 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
   
   if (is.null(strata)){
     
-    res <- tableone::svyCreateTableOne(vars =vars, data = data, factorVars = factorVars, includeNA = includeNA)
-    
-    factor_vars <- res[["MetaData"]][["varFactors"]]
-    
     if (Labels & !is.null(labeldata)){
       labelled::var_label(data$variables) = sapply(names(data$variables), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
       #vals.tb1 <- c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
       data.table::setkey(labeldata, variable, level)
+    }
+    
+    res <- tableone::svyCreateTableOne(vars =vars, data = data, factorVars = factorVars, includeNA = includeNA)
+    factor_vars <- res[["MetaData"]][["varFactors"]]
+    
+    if (Labels & !is.null(labeldata)){
       for (i in seq_along(res$CatTable)){
         for(j in factor_vars){
           lvs <- res$CatTable[[i]][[j]]$level
