@@ -61,8 +61,9 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
         res0$CatTable[[i]][[j]]$level <- labeldata[.(j, lvs), val_label]
       }
     }
-    ptb1.rn <- rownames(print(res0, showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
-                              catDigits = catDigits, contDigits = contDigits))
+    ptb1.res0 <- print(res0, showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
+                       catDigits = catDigits, contDigits = contDigits)
+    ptb1.rn <- rownames(ptb1.res0)
     ptb1.rn <- gsub("(mean (SD))", "", ptb1.rn, fixed=T)
 
   }
@@ -74,7 +75,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
   rownames(ptb1) = gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
   if (Labels & !is.null(labeldata)){
     rownames(ptb1) <- ptb1.rn
-    
+    if (showAllLevels == T) ptb1[, 1] <- ptb1.res0[, 1]
   }
   #cap.tb1 = paste("Table 1: Stratified by ", strata, sep="")
   
@@ -219,9 +220,12 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
           res$CatTable[[i]][[j]]$level <- labeldata[.(j, lvs), val_label]
         }
       }
-      ptb1.rn <- rownames(print(res, showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
-                                catDigits = catDigits, contDigits = contDigits))
+      
+      ptb1.res <- print(res, showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
+                        catDigits = catDigits, contDigits = contDigits)
+      ptb1.rn <- rownames(ptb1.res)
       rownames(ptb1.cbind) <- gsub("(mean (SD))", "", ptb1.rn, fixed=T)
+      if (showAllLevels == T) {ptb1.cbind[, 1] <- ptb1.res[, 1]}
       
       cap.tb1 <- paste("Stratified by ", labeldata[get("variable") == strata, "var_label"][1], "(", paste(unlist(labeldata[get("variable") == strata, "val_label"]), collapse=", "), ") & ", labeldata[get("variable") == strata2, "var_label"][1], "- weighted data", sep="")
     }
@@ -241,9 +245,12 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
           res0$CatTable[[i]][[j]]$level <- labeldata[.(j, lvs), val_label]
         }
       }
-      ptb1.rn <- rownames(print(res0, showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
-                                catDigits = catDigits, contDigits = contDigits))
+      
+      ptb1.res0 <- print(res0, showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
+                         catDigits = catDigits, contDigits = contDigits)
+      ptb1.rn <- rownames(ptb1.res0)
       ptb1.rn <- gsub("(mean (SD))", "", ptb1.rn, fixed=T)
+      
       #vals.tb1 <- c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
     }
     
@@ -255,6 +262,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
     if (Labels & !is.null(labeldata)){
       rownames(ptb1) <- ptb1.rn
+      if (showAllLevels == T) {ptb1[, 1] <- ptb1.res0[, 1]}
       }
     
     sig <- ifelse(ptb1[,"p"] == "<0.001", "0", ptb1[,"p"])

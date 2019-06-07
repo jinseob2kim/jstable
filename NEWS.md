@@ -1,3 +1,7 @@
+# jstable 0.8.2
+
+* Bug fixes: Apply label information to table 1 with strata.
+
 # jstable 0.8.1
 
 ## Update
