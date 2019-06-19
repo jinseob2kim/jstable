@@ -28,3 +28,7 @@ DETAILS
                 family=gaussian,corstr="ex")
  geeglm.display(gee01)
 }
+\seealso{
+\code{\link[data.table]{data.table-package}}
+ \code{\link[stats]{complete.cases}}
+}
