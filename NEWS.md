@@ -1,3 +1,7 @@
+# jstable 0.8.4
+
+* Bug fixes: Incorrect **P for interaction** in `TableSubgroupCox`.
+
 # jstable 0.8.3
 
 * Bug fixes: Univariate analysis in `geeglm.display`.

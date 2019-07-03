@@ -39,7 +39,7 @@
 #' @importFrom tibble tibble
 #' @importFrom survival coxph
 #' @importFrom survey svycoxph
-#' @importFrom stats confint coefficients
+#' @importFrom stats confint coefficients anova
 #' @importFrom utils tail
 
 TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3){
@@ -114,6 +114,14 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       xlabel <- names(xlev)[1]
       pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), design = data) %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+      if (length(xlev[[xlabel]]) > 2){
+        data.int <- data$variables
+        model.int <- survival::coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data.int, weights = get(names(data$allprob)))
+        model.int$call$formula <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula)))
+        model.int$call$data <- as.name("data.int")
+        pv_anova <- stats::anova(model.int)
+        pv_int <- pv_anova[nrow(pv_anova), 4]
+      }
       res.kap <- purrr::map(label_val, ~survey::svykm(formula.km, design = subset(data, get(var_subgroup) == . )))
       mkz <- function(reskap){
         round(100 * sapply(reskap, function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent)
@@ -127,8 +135,15 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data %>% filter(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
       xlev <- survival::coxph(formula, data = data)$xlevels
       xlabel <- names(xlev)[1]
-      pvs_int <- possible_coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data) %>% summary %>% coefficients
+      model.int <- possible_coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data)  
+      pvs_int <- model.int %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+      if (length(xlev[[xlabel]]) > 2){
+        model.int$call$formula <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula)))
+        model.int$call$data <- as.name("data")
+        pv_anova <- stats::anova(model.int)
+        pv_int <- round(pv_anova[nrow(pv_anova), 4], decimal.pvalue)
+      }
       res.kap.times <- data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~survival::survfit(formula.km, data = .)) %>% purrr::map(~summary(., times = time_eventrate))
       prop <- res.kap.times %>% purrr::map(~round(100 * (1 - .[["surv"]]), decimal.percent)) %>% dplyr::bind_cols() %>% t
       colnames(prop) <- xlev[[1]]
@@ -146,7 +161,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       cbind(prop) %>% 
       mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
     
-    return(rbind(c(var_subgroup, rep(NA, 8), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
+    return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
   }
 }
 
