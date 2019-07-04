@@ -39,7 +39,8 @@
 #' @importFrom tibble tibble
 #' @importFrom survival coxph
 #' @importFrom survey svycoxph
-#' @importFrom stats confint coefficients anova
+#' @importFrom stats confint coefficients
+#' @importFrom car Anova
 #' @importFrom utils tail
 
 TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3){
@@ -119,8 +120,8 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         model.int <- survival::coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data.int, weights = get(names(data$allprob)))
         model.int$call$formula <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula)))
         model.int$call$data <- as.name("data.int")
-        pv_anova <- stats::anova(model.int)
-        pv_int <- pv_anova[nrow(pv_anova), 4]
+        pv_anova <- car::Anova(model.int, test.statistics = "Wald")
+        pv_int <- pv_anova[nrow(pv_anova), 3]
       }
       res.kap <- purrr::map(label_val, ~survey::svykm(formula.km, design = subset(data, get(var_subgroup) == . )))
       mkz <- function(reskap){
@@ -141,8 +142,8 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       if (length(xlev[[xlabel]]) > 2){
         model.int$call$formula <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula)))
         model.int$call$data <- as.name("data")
-        pv_anova <- stats::anova(model.int)
-        pv_int <- round(pv_anova[nrow(pv_anova), 4], decimal.pvalue)
+        pv_anova <- car::Anova(model.int, test.statistics = "Wald")
+        pv_int <- round(pv_anova[nrow(pv_anova), 3], decimal.pvalue)
       }
       res.kap.times <- data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~survival::survfit(formula.km, data = .)) %>% purrr::map(~summary(., times = time_eventrate))
       prop <- res.kap.times %>% purrr::map(~round(100 * (1 - .[["surv"]]), decimal.percent)) %>% dplyr::bind_cols() %>% t
