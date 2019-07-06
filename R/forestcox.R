@@ -48,9 +48,11 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   . <- NULL
   
   if (any(class(data) == "survey.design" & !is.null(var_subgroup))){
-    if (is.numeric(data$variable[[var_subgroup]])) stop("var_subgroup must categorical.")
+    if (is.numeric(data$variables[[var_subgroup]])) stop("var_subgroup must categorical.")
+    if (length(unique(data$variables[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
   } else if(any(class(data) == "data.frame" & !is.null(var_subgroup))){
     if (is.numeric(data[[var_subgroup]])) stop("var_subgroup must categorical.")
+    if (length(unique(data[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
   }
   
   
@@ -72,11 +74,13 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     }
     if (any(class(data) == "survey.design")){
       model <- survey::svycoxph(formula, design = data, x= T)
+      if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       res.kap <- survey::svykm(formula.km, design = data)
       prop <- round(100 * sapply(res.kap, function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent)
       names(prop) <- model$xlevels[[1]]
     } else{
-      model <- survival::coxph(formula, data = data, x= T)
+      model <- survival::coxph(formula, data = data, x= TRUE)
+      if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       res.kap <- survival::survfit(formula.km, data = data)
       res.kap.times <- summary(res.kap, times = time_eventrate)
       prop <- round(100 * (1 - res.kap.times[["surv"]]), decimal.percent)
@@ -112,10 +116,13 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data$variables[[var_subgroup]] %>% table %>% names -> label_val
       label_val %>% purrr::map(~possible_svycoxph(formula, design = subset(data, get(var_subgroup) == .), x = TRUE)) -> model
       xlev <- survey::svycoxph(formula, design = data)$xlevels
-      xlabel <- names(xlev)[1]
+      xlabel <- names(attr(model[[which(!is.na(model))[1]]]$x, "contrast"))[1]
       pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), design = data) %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
-      if (length(xlev[[xlabel]]) > 2){
+      if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      
+      
+      if (length(label_val) > 2){
         data.int <- data$variables
         model.int <- survival::coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data.int, weights = get(names(data$allprob)))
         model.int$call$formula <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula)))
@@ -135,11 +142,13 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~possible_coxph(formula, data = ., x= T)) -> model
       data %>% filter(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
       xlev <- survival::coxph(formula, data = data)$xlevels
-      xlabel <- names(xlev)[1]
+      xlabel <- names(attr(model[[which(!is.na(model))[1]]]$x, "contrast"))[1]
       model.int <- possible_coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data)  
       pvs_int <- model.int %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
-      if (length(xlev[[xlabel]]) > 2){
+      if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      
+      if (length(label_val) > 2){
         model.int$call$formula <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula)))
         model.int$call$data <- as.name("data")
         pv_anova <- car::Anova(model.int, test.statistics = "Wald")
