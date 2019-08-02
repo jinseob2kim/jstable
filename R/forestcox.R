@@ -124,7 +124,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       
       if (length(label_val) > 2){
         data.int <- data$variables
-        model.int <- survival::coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data.int, weights = get(names(data$allprob)))
+        model.int <- survival::coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data.int, weights = get(names(data$allprob)), robust =T)
         model.int$call$formula <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula)))
         model.int$call$data <- as.name("data.int")
         pv_anova <- car::Anova(model.int, test.statistics = "Wald")
