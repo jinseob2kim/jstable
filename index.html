@@ -177,20 +177,20 @@
 ## 
 ## $table
 ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-## Time       "0.99 (0.95,1.02)" "0.458"       "0.99 (0.95,1.02)"
+## Time       "1 (0.96,1.03)"    "0.873"       "1 (0.96,1.03)"   
 ## Cu: ref.=1 NA                 NA            NA                
-##    2       "0.99 (0.69,1.41)" "0.938"       "0.99 (0.69,1.42)"
-##    3       "1.06 (0.76,1.48)" "0.713"       "1.06 (0.76,1.48)"
+##    2       "0.96 (0.68,1.35)" "0.817"       "0.96 (0.68,1.35)"
+##    3       "1.06 (0.78,1.45)" "0.694"       "1.06 (0.78,1.45)"
 ##            adj. P value
-## Time       "0.458"     
+## Time       "0.874"     
 ## Cu: ref.=1 NA          
-##    2       "0.94"      
-##    3       "0.711"     
+##    2       "0.817"     
+##    3       "0.694"     
 ## 
 ## $metric
 ##                                  crude OR(95%CI) crude P value
 ##                                  NA              NA           
-## Estimated correlation parameters "0.012"         NA           
+## Estimated correlation parameters "0.015"         NA           
 ## No. of clusters                  "72"            NA           
 ## No. of observations              "861"           NA           
 ##                                  adj. OR(95%CI) adj. P value
@@ -242,19 +242,19 @@
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">l2 =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/lme4/man/glmer.html">glmer</a></span>(ddn <span class="op">~</span><span class="st"> </span>Weight <span class="op">+</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig), <span class="dt">data=</span> dietox, <span class="dt">family=</span> <span class="st">"binomial"</span>)</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l2)</a></code></pre></div>
 <pre><code>## $table
-##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
-## Weight                    1 (0.99,1)     0.5321556    1 (0.98,1.02)
-## Time                0.99 (0.95,1.02)     0.4585963 0.96 (0.84,1.11)
-## Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;
-## Pig                             0.05            NA             &lt;NA&gt;
-## Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;
-## No. of groups (Pig)               72            NA             &lt;NA&gt;
-## No. of observations              861            NA             &lt;NA&gt;
-## Log-likelihood               -596.07            NA             &lt;NA&gt;
-## AIC value                    1200.14            NA             &lt;NA&gt;
+##                     crude OR(95%CI) crude P value adj. OR(95%CI)
+## Weight                   1 (0.99,1)     0.4969991  0.98 (0.96,1)
+## Time                  1 (0.96,1.04)     0.8791692  1.15 (1,1.33)
+## Random effects                 &lt;NA&gt;            NA           &lt;NA&gt;
+## Pig                            0.03            NA           &lt;NA&gt;
+## Metrics                        &lt;NA&gt;            NA           &lt;NA&gt;
+## No. of groups (Pig)              72            NA           &lt;NA&gt;
+## No. of observations             861            NA           &lt;NA&gt;
+## Log-likelihood              -594.26            NA           &lt;NA&gt;
+## AIC value                   1196.53            NA           &lt;NA&gt;
 ##                     adj. P value
-## Weight                 0.7465344
-## Time                   0.6073241
+## Weight                0.04133590
+## Time                  0.05492672
 ## Random effects                NA
 ## Pig                           NA
 ## Metrics                       NA
