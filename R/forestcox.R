@@ -67,7 +67,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   possible_rowone <- purrr::possibly(function(x){x[1, ]}, NA)
   
   formula.km <- formula
-  var_cov <- setdiff(var_cov, var_subgroup)
+  var_cov <- setdiff(var_cov, c(as.character(formula[[3]]), var_subgroup))
   if (is.null(var_subgroup)){
     if (!is.null(var_cov)){
       formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
