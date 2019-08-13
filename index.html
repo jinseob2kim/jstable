@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.6</span>
       </span>
     </div>
 
@@ -177,20 +177,20 @@
 ## 
 ## $table
 ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-## Time       "0.97 (0.94,1.01)" "0.13"        "0.97 (0.94,1.01)"
+## Time       "1.03 (0.99,1.08)" "0.098"       "1.03 (0.99,1.08)"
 ## Cu: ref.=1 NA                 NA            NA                
-##    2       "1.25 (0.85,1.83)" "0.253"       "1.25 (0.85,1.83)"
-##    3       "1.07 (0.71,1.61)" "0.75"        "1.07 (0.71,1.61)"
+##    2       "1.09 (0.78,1.53)" "0.605"       "1.09 (0.78,1.53)"
+##    3       "1.02 (0.71,1.46)" "0.92"        "1.02 (0.71,1.46)"
 ##            adj. P value
-## Time       "0.128"     
+## Time       "0.098"     
 ## Cu: ref.=1 NA          
-##    2       "0.25"      
-##    3       "0.748"     
+##    2       "0.61"      
+##    3       "0.923"     
 ## 
 ## $metric
 ##                                  crude OR(95%CI) crude P value
 ##                                  NA              NA           
-## Estimated correlation parameters "0.034"         NA           
+## Estimated correlation parameters "0.013"         NA           
 ## No. of clusters                  "72"            NA           
 ## No. of observations              "861"           NA           
 ##                                  adj. OR(95%CI) adj. P value
@@ -242,19 +242,19 @@
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">l2 =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/lme4/man/glmer.html">glmer</a></span>(ddn <span class="op">~</span><span class="st"> </span>Weight <span class="op">+</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig), <span class="dt">data=</span> dietox, <span class="dt">family=</span> <span class="st">"binomial"</span>)</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l2)</a></code></pre></div>
 <pre><code>## $table
-##                      crude OR(95%CI) crude P value  adj. OR(95%CI)
-## Weight                    1 (0.99,1)     0.2067599   1 (0.98,1.03)
-## Time                0.97 (0.93,1.01)     0.1604823 0.94 (0.81,1.1)
-## Random effects                  &lt;NA&gt;            NA            &lt;NA&gt;
-## Pig                             0.15            NA            &lt;NA&gt;
-## Metrics                         &lt;NA&gt;            NA            &lt;NA&gt;
-## No. of groups (Pig)               72            NA            &lt;NA&gt;
-## No. of observations              861            NA            &lt;NA&gt;
-## Log-likelihood               -593.33            NA            &lt;NA&gt;
-## AIC value                    1194.66            NA            &lt;NA&gt;
+##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
+## Weight                    1 (1,1.01)     0.1741962 0.99 (0.97,1.01)
+## Time                1.03 (0.99,1.08)     0.0889052 1.11 (0.96,1.28)
+## Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;
+## Pig                             0.05            NA             &lt;NA&gt;
+## Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;
+## No. of groups (Pig)               72            NA             &lt;NA&gt;
+## No. of observations              861            NA             &lt;NA&gt;
+## Log-likelihood               -593.53            NA             &lt;NA&gt;
+## AIC value                    1195.05            NA             &lt;NA&gt;
 ##                     adj. P value
-## Weight                 0.7042023
-## Time                   0.4708041
+## Weight                 0.3059354
+## Time                   0.1478657
 ## Random effects                NA
 ## Pig                           NA
 ## Metrics                       NA

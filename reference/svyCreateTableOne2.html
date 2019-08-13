@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.6</span>
       </span>
     </div>
 
@@ -135,7 +135,7 @@
     <pre class="usage"><span class='fu'>svyCreateTableOne2</span>(<span class='no'>data</span>, <span class='no'>strata</span>, <span class='no'>vars</span>, <span class='no'>factorVars</span>, <span class='kw'>includeNA</span> <span class='kw'>=</span> <span class='no'>F</span>,
   <span class='kw'>test</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>showAllLevels</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>printToggle</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>quote</span> <span class='kw'>=</span> <span class='no'>F</span>,
   <span class='kw'>smd</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>nonnormal</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>catDigits</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>contDigits</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>pDigits</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>Labels</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>labeldata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+  <span class='kw'>pDigits</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>Labels</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>labeldata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>minMax</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -203,6 +203,10 @@
     <tr>
       <th>labeldata</th>
       <td><p>labeldata to use, Default: NULL</p></td>
+    </tr>
+    <tr>
+      <th>minMax</th>
+      <td><p>Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.</p></td>
     </tr>
     </table>
     

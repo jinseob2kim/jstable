@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.6</span>
       </span>
     </div>
 
@@ -140,7 +140,8 @@
   <span class='kw'>testNonNormal</span> <span class='kw'>=</span> <span class='no'>kruskal.test</span>, <span class='kw'>argsNonNormal</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>NULL</span>),
   <span class='kw'>showAllLevels</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>printToggle</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>quote</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>smd</span> <span class='kw'>=</span> <span class='no'>F</span>,
   <span class='kw'>Labels</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>exact</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nonnormal</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>catDigits</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>contDigits</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>pDigits</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>labeldata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>psub</span> <span class='kw'>=</span> <span class='no'>T</span>)</pre>
+  <span class='kw'>contDigits</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>pDigits</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>labeldata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>psub</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>minMax</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -252,6 +253,10 @@
     <tr>
       <th>psub</th>
       <td><p>show sub-group p-values, Default: F</p></td>
+    </tr>
+    <tr>
+      <th>minMax</th>
+      <td><p>Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.</p></td>
     </tr>
     </table>
     
