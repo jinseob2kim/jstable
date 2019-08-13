@@ -7,7 +7,7 @@
 svyCreateTableOne2(data, strata, vars, factorVars, includeNA = F,
   test = T, showAllLevels = T, printToggle = F, quote = F,
   smd = F, nonnormal = NULL, catDigits = 1, contDigits = 2,
-  pDigits = 3, Labels = F, labeldata = NULL)
+  pDigits = 3, Labels = F, labeldata = NULL, minMax = F)
 }
 \arguments{
 \item{data}{A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.}
@@ -41,6 +41,8 @@ svyCreateTableOne2(data, strata, vars, factorVars, includeNA = F,
 \item{Labels}{Use Label, Default: F}
 
 \item{labeldata}{labeldata to use, Default: NULL}
+
+\item{minMax}{Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.}
 }
 \value{
 A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.

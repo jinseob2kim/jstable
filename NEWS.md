@@ -1,3 +1,7 @@
+# jstable 0.8.6
+
+* Updates: Non-normal variables can be summarized with [min,max]. 
+
 # jstable 0.8.5
 
 * Bug fixes: Additional incorrect **P for interaction** in `TableSubgroupCox`.

@@ -11,7 +11,7 @@ CreateTableOne2(data, strata, vars, factorVars, includeNA = F,
   testNonNormal = kruskal.test, argsNonNormal = list(NULL),
   showAllLevels = T, printToggle = F, quote = F, smd = F,
   Labels = F, exact = NULL, nonnormal = NULL, catDigits = 1,
-  contDigits = 2, pDigits = 3, labeldata = NULL)
+  contDigits = 2, pDigits = 3, labeldata = NULL, minMax = F)
 }
 \arguments{
 \item{data}{A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.}
@@ -63,6 +63,8 @@ CreateTableOne2(data, strata, vars, factorVars, includeNA = F,
 \item{pDigits}{Number of digits to print for p-values (also used for standardized mean differences), Default: 3}
 
 \item{labeldata}{labeldata to use, Default: NULL}
+
+\item{minMax}{Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.}
 }
 \value{
 A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.

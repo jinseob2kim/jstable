@@ -8,7 +8,7 @@ svyCreateTableOneJS(vars, strata = NULL, strata2 = NULL, data,
   factorVars = NULL, includeNA = F, test = T, showAllLevels = T,
   printToggle = F, quote = F, smd = F, Labels = F,
   nonnormal = NULL, catDigits = 1, contDigits = 2, pDigits = 3,
-  labeldata = NULL, psub = T)
+  labeldata = NULL, psub = T, minMax = F)
 }
 \arguments{
 \item{vars}{Variables to be summarized given as a character vector. Factors are handled as categorical variables, whereas numeric variables are handled as continuous variables. If empty, all variables in the data frame specified in the data argument are used.}
@@ -46,6 +46,8 @@ svyCreateTableOneJS(vars, strata = NULL, strata2 = NULL, data,
 \item{labeldata}{labeldata to use, Default: NULL}
 
 \item{psub}{show sub-group p-values, Default: F}
+
+\item{minMax}{Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.}
 }
 \value{
 A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.

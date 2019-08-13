@@ -19,6 +19,7 @@
 #' @param contDigits Number of digits to print for continuous variables. Default 2.
 #' @param pDigits Number of digits to print for p-values (also used for standardized mean differences), Default: 3
 #' @param labeldata labeldata to use, Default: NULL
+#' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
@@ -36,7 +37,7 @@
 
 svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test = T,
                            showAllLevels = T, printToggle = F, quote = F, smd = F, nonnormal = NULL, 
-                           catDigits = 1, contDigits = 2, pDigits = 3, Labels = F, labeldata = NULL){
+                           catDigits = 1, contDigits = 2, pDigits = 3, Labels = F, labeldata = NULL, minMax = F){
   
   setkey <- variable <- level <- . <- val_label <- NULL
   
@@ -62,7 +63,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
       }
     }
     ptb1.res0 <- print(res0, showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
-                       catDigits = catDigits, contDigits = contDigits)
+                       catDigits = catDigits, contDigits = contDigits, minMax = minMax)
     ptb1.rn <- rownames(ptb1.res0)
     ptb1.rn <- gsub("(mean (SD))", "", ptb1.rn, fixed=T)
 
@@ -71,7 +72,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
   
   ptb1 <- print(res,
                 showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
-                catDigits = catDigits, contDigits = contDigits, pDigits = pDigits)
+                catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
   rownames(ptb1) = gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
   if (Labels & !is.null(labeldata)){
     rownames(ptb1) <- ptb1.rn
@@ -119,6 +120,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 #' @param pDigits Number of digits to print for p-values (also used for standardized mean differences), Default: 3
 #' @param labeldata labeldata to use, Default: NULL
 #' @param psub show sub-group p-values, Default: F
+#' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
@@ -137,7 +139,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 
 svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVars = NULL, includeNA = F, test = T,
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, nonnormal = NULL, 
-                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T){
+                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F){
   
   . <- level <- variable <- val_label <- V1 <- V2 <- NULL
   
@@ -169,7 +171,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     
     ptb1 <- print(res,
                   showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
-                  catDigits = catDigits, contDigits = contDigits)
+                  catDigits = catDigits, contDigits = contDigits, minMax = minMax)
     
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
     cap.tb1 <- "Total - weighted data"
@@ -180,7 +182,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
   } else if (is.null(strata2)){
     ptb1 <- svyCreateTableOne2(strata = strata, vars =vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
                             showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal,
-                            catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata)
+                            catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax)
     
     cap.tb1 <- paste("Stratified by ", strata, "- weighted data", sep="")
     
@@ -195,7 +197,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     ptb1.list <- lapply(data.strata, svyCreateTableOne2,
                         vars =vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
                         showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal, 
-                        catDigits = catDigits, contDigits = contDigits, pDigits = pDigits)
+                        catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
     
     
     if (showAllLevels == T){
@@ -222,7 +224,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
       }
       
       ptb1.res <- print(res, showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
-                        catDigits = catDigits, contDigits = contDigits)
+                        catDigits = catDigits, contDigits = contDigits, minMax = minMax)
       ptb1.rn <- rownames(ptb1.res)
       rownames(ptb1.cbind) <- gsub("(mean (SD))", "", ptb1.rn, fixed=T)
       if (showAllLevels == T) {ptb1.cbind[, 1] <- ptb1.res[, 1]}
@@ -247,7 +249,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
       }
       
       ptb1.res0 <- print(res0, showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
-                         catDigits = catDigits, contDigits = contDigits)
+                         catDigits = catDigits, contDigits = contDigits, minMax = minMax)
       ptb1.rn <- rownames(ptb1.res0)
       ptb1.rn <- gsub("(mean (SD))", "", ptb1.rn, fixed=T)
       
@@ -257,7 +259,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     ptb1 <- print(res, 
                   showAllLevels=showAllLevels,
                   printToggle=F, quote=F, smd = smd, varLabels = T,  nonnormal = nonnormal,
-                  catDigits = catDigits, contDigits = contDigits, pDigits = pDigits)
+                  catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
     
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
     if (Labels & !is.null(labeldata)){
