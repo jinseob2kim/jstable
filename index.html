@@ -21,7 +21,7 @@
 <![endif]-->
 </head>
 <body>
-    <div class="container template-article">
+    <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -79,11 +79,10 @@
       
 
       </header><div class="row">
-  <div class="col-md-9 contents">
-    
-
-    
-    
+  <div class="contents col-md-9">
+<div id="jstable" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#jstable" class="anchor"></a>jstable</h1></div>
 
 <p>Regression Tables from ‘GLM’, ‘GEE’, ‘GLMM’, ‘Cox’ and ‘survey’ Results for Publication.</p>
 <div id="install" class="section level2">
@@ -102,38 +101,38 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">## Gaussian</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">glm_gaussian &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(mpg<span class="op">~</span>cyl <span class="op">+</span><span class="st"> </span>disp, <span class="dt">data =</span> mtcars)</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="reference/glmshow.display.html">glmshow.display</a></span>(glm_gaussian, <span class="dt">decimal =</span> <span class="dv">2</span>)</a></code></pre></div>
-<pre><code>## $first.line
-## [1] "Linear regression predicting mpg\n"
-## 
-## $table
-##      crude coeff.(95%CI)   crude P value adj. coeff.(95%CI)   
-## cyl  "-2.88 (-3.51,-2.24)" "&lt; 0.001"     "-1.59 (-2.98,-0.19)"
-## disp "-0.04 (-0.05,-0.03)" "&lt; 0.001"     "-0.02 (-0.04,0)"    
-##      adj. P value
-## cyl  "0.034"     
-## disp "0.054"     
-## 
-## $last.lines
-## [1] "No. of observations = 32\nR-squared = 0.7596\nAIC value = 167.1456\n\n"
-## 
-## attr(,"class")
-## [1] "display" "list"</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">## $first.line</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">## [1] "Linear regression predicting mpg\n"</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">## </a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">## $table</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">##      crude coeff.(95%CI)   crude P value adj. coeff.(95%CI)   </a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">## cyl  "-2.88 (-3.51,-2.24)" "&lt; 0.001"     "-1.59 (-2.98,-0.19)"</a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">## disp "-0.04 (-0.05,-0.03)" "&lt; 0.001"     "-0.02 (-0.04,0)"    </a>
+<a class="sourceLine" id="cb3-8" data-line-number="8">##      adj. P value</a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">## cyl  "0.034"     </a>
+<a class="sourceLine" id="cb3-10" data-line-number="10">## disp "0.054"     </a>
+<a class="sourceLine" id="cb3-11" data-line-number="11">## </a>
+<a class="sourceLine" id="cb3-12" data-line-number="12">## $last.lines</a>
+<a class="sourceLine" id="cb3-13" data-line-number="13">## [1] "No. of observations = 32\nR-squared = 0.7596\nAIC value = 167.1456\n\n"</a>
+<a class="sourceLine" id="cb3-14" data-line-number="14">## </a>
+<a class="sourceLine" id="cb3-15" data-line-number="15">## attr(,"class")</a>
+<a class="sourceLine" id="cb3-16" data-line-number="16">## [1] "display" "list"</a></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">## Binomial</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2">glm_binomial &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(vs<span class="op">~</span>cyl <span class="op">+</span><span class="st"> </span>disp, <span class="dt">data =</span> mtcars, <span class="dt">family =</span> binomial)</a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="reference/glmshow.display.html">glmshow.display</a></span>(glm_binomial, <span class="dt">decimal =</span> <span class="dv">2</span>)</a></code></pre></div>
-<pre><code>## $first.line
-## [1] "Logistic regression predicting vs\n"
-## 
-## $table
-##      crude OR.(95%CI)   crude P value adj. OR.(95%CI)    adj. P value
-## cyl  "0.2 (0.08,0.56)"  "0.002"       "0.15 (0.02,1.02)" "0.053"     
-## disp "0.98 (0.97,0.99)" "0.002"       "1 (0.98,1.03)"    "0.715"     
-## 
-## $last.lines
-## [1] "No. of observations = 32\nAIC value = 23.8304\n\n"
-## 
-## attr(,"class")
-## [1] "display" "list"</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">## $first.line</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">## [1] "Logistic regression predicting vs\n"</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">## </a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">## $table</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">##      crude OR.(95%CI)   crude P value adj. OR.(95%CI)    adj. P value</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">## cyl  "0.2 (0.08,0.56)"  "0.002"       "0.15 (0.02,1.02)" "0.053"     </a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">## disp "0.98 (0.97,0.99)" "0.002"       "1 (0.98,1.03)"    "0.715"     </a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">## </a>
+<a class="sourceLine" id="cb5-9" data-line-number="9">## $last.lines</a>
+<a class="sourceLine" id="cb5-10" data-line-number="10">## [1] "No. of observations = 32\nAIC value = 23.8304\n\n"</a>
+<a class="sourceLine" id="cb5-11" data-line-number="11">## </a>
+<a class="sourceLine" id="cb5-12" data-line-number="12">## attr(,"class")</a>
+<a class="sourceLine" id="cb5-13" data-line-number="13">## [1] "display" "list"</a></code></pre></div>
 </div>
 <div id="gee-table-from-geeglm-object-from-geepack-package" class="section level2">
 <h2 class="hasAnchor">
@@ -144,60 +143,60 @@
 <a class="sourceLine" id="cb6-4" data-line-number="4">dietox<span class="op">$</span>ddn =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="kw"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(dietox)) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</a>
 <a class="sourceLine" id="cb6-5" data-line-number="5">gee01 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/geepack/man/geeglm.html">geeglm</a></span> (Weight <span class="op">~</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>Cu , <span class="dt">id =</span> Pig, <span class="dt">data =</span> dietox, <span class="dt">family =</span> gaussian, <span class="dt">corstr =</span> <span class="st">"ex"</span>)</a>
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="kw"><a href="reference/geeglm.display.html">geeglm.display</a></span>(gee01)</a></code></pre></div>
-<pre><code>## $caption
-## [1] "GEE(gaussian) predicting Weight by Time, Cu - Group Pig"
-## 
-## $table
-##            crude coeff(95%CI)   crude P value adj. coeff(95%CI)  
-## Time       "6.94 (6.79,7.1)"    "&lt; 0.001"     "6.94 (6.79,7.1)"  
-## Cu: ref.=1 NA                   NA            NA                 
-##    2       "-0.59 (-3.73,2.54)" "0.711"       "-0.84 (-3.9,2.23)"
-##    3       "1.9 (-1.87,5.66)"   "0.324"       "1.77 (-1.9,5.45)" 
-##            adj. P value
-## Time       "&lt; 0.001"   
-## Cu: ref.=1 NA          
-##    2       "0.593"     
-##    3       "0.345"     
-## 
-## $metric
-##                                  crude coeff(95%CI) crude P value
-##                                  NA                 NA           
-## Estimated correlation parameters "0.775"            NA           
-## No. of clusters                  "72"               NA           
-## No. of observations              "861"              NA           
-##                                  adj. coeff(95%CI) adj. P value
-##                                  NA                NA          
-## Estimated correlation parameters NA                NA          
-## No. of clusters                  NA                NA          
-## No. of observations              NA                NA</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">## $caption</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">## [1] "GEE(gaussian) predicting Weight by Time, Cu - Group Pig"</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">## </a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">## $table</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">##            crude coeff(95%CI)   crude P value adj. coeff(95%CI)  </a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">## Time       "6.94 (6.79,7.1)"    "&lt; 0.001"     "6.94 (6.79,7.1)"  </a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">## Cu: ref.=1 NA                   NA            NA                 </a>
+<a class="sourceLine" id="cb7-8" data-line-number="8">##    2       "-0.59 (-3.73,2.54)" "0.711"       "-0.84 (-3.9,2.23)"</a>
+<a class="sourceLine" id="cb7-9" data-line-number="9">##    3       "1.9 (-1.87,5.66)"   "0.324"       "1.77 (-1.9,5.45)" </a>
+<a class="sourceLine" id="cb7-10" data-line-number="10">##            adj. P value</a>
+<a class="sourceLine" id="cb7-11" data-line-number="11">## Time       "&lt; 0.001"   </a>
+<a class="sourceLine" id="cb7-12" data-line-number="12">## Cu: ref.=1 NA          </a>
+<a class="sourceLine" id="cb7-13" data-line-number="13">##    2       "0.593"     </a>
+<a class="sourceLine" id="cb7-14" data-line-number="14">##    3       "0.345"     </a>
+<a class="sourceLine" id="cb7-15" data-line-number="15">## </a>
+<a class="sourceLine" id="cb7-16" data-line-number="16">## $metric</a>
+<a class="sourceLine" id="cb7-17" data-line-number="17">##                                  crude coeff(95%CI) crude P value</a>
+<a class="sourceLine" id="cb7-18" data-line-number="18">##                                  NA                 NA           </a>
+<a class="sourceLine" id="cb7-19" data-line-number="19">## Estimated correlation parameters "0.775"            NA           </a>
+<a class="sourceLine" id="cb7-20" data-line-number="20">## No. of clusters                  "72"               NA           </a>
+<a class="sourceLine" id="cb7-21" data-line-number="21">## No. of observations              "861"              NA           </a>
+<a class="sourceLine" id="cb7-22" data-line-number="22">##                                  adj. coeff(95%CI) adj. P value</a>
+<a class="sourceLine" id="cb7-23" data-line-number="23">##                                  NA                NA          </a>
+<a class="sourceLine" id="cb7-24" data-line-number="24">## Estimated correlation parameters NA                NA          </a>
+<a class="sourceLine" id="cb7-25" data-line-number="25">## No. of clusters                  NA                NA          </a>
+<a class="sourceLine" id="cb7-26" data-line-number="26">## No. of observations              NA                NA</a></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">gee02 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/geepack/man/geeglm.html">geeglm</a></span> (ddn <span class="op">~</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>Cu , <span class="dt">id =</span> Pig, <span class="dt">data =</span> dietox, <span class="dt">family =</span> binomial, <span class="dt">corstr =</span> <span class="st">"ex"</span>)</a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="reference/geeglm.display.html">geeglm.display</a></span>(gee02)</a></code></pre></div>
-<pre><code>## $caption
-## [1] "GEE(binomial) predicting ddn by Time, Cu - Group Pig"
-## 
-## $table
-##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-## Time       "1.03 (0.99,1.08)" "0.098"       "1.03 (0.99,1.08)"
-## Cu: ref.=1 NA                 NA            NA                
-##    2       "1.09 (0.78,1.53)" "0.605"       "1.09 (0.78,1.53)"
-##    3       "1.02 (0.71,1.46)" "0.92"        "1.02 (0.71,1.46)"
-##            adj. P value
-## Time       "0.098"     
-## Cu: ref.=1 NA          
-##    2       "0.61"      
-##    3       "0.923"     
-## 
-## $metric
-##                                  crude OR(95%CI) crude P value
-##                                  NA              NA           
-## Estimated correlation parameters "0.013"         NA           
-## No. of clusters                  "72"            NA           
-## No. of observations              "861"           NA           
-##                                  adj. OR(95%CI) adj. P value
-##                                  NA             NA          
-## Estimated correlation parameters NA             NA          
-## No. of clusters                  NA             NA          
-## No. of observations              NA             NA</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">## $caption</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">## [1] "GEE(binomial) predicting ddn by Time, Cu - Group Pig"</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">## </a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">## $table</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">##            crude OR(95%CI)    crude P value adj. OR(95%CI)    </a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">## Time       "0.99 (0.96,1.03)" "0.785"       "0.99 (0.96,1.03)"</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">## Cu: ref.=1 NA                 NA            NA                </a>
+<a class="sourceLine" id="cb9-8" data-line-number="8">##    2       "1.14 (0.79,1.65)" "0.485"       "1.14 (0.79,1.65)"</a>
+<a class="sourceLine" id="cb9-9" data-line-number="9">##    3       "1.06 (0.72,1.57)" "0.76"        "1.06 (0.72,1.57)"</a>
+<a class="sourceLine" id="cb9-10" data-line-number="10">##            adj. P value</a>
+<a class="sourceLine" id="cb9-11" data-line-number="11">## Time       "0.783"     </a>
+<a class="sourceLine" id="cb9-12" data-line-number="12">## Cu: ref.=1 NA          </a>
+<a class="sourceLine" id="cb9-13" data-line-number="13">##    2       "0.484"     </a>
+<a class="sourceLine" id="cb9-14" data-line-number="14">##    3       "0.76"      </a>
+<a class="sourceLine" id="cb9-15" data-line-number="15">## </a>
+<a class="sourceLine" id="cb9-16" data-line-number="16">## $metric</a>
+<a class="sourceLine" id="cb9-17" data-line-number="17">##                                  crude OR(95%CI) crude P value</a>
+<a class="sourceLine" id="cb9-18" data-line-number="18">##                                  NA              NA           </a>
+<a class="sourceLine" id="cb9-19" data-line-number="19">## Estimated correlation parameters "0.026"         NA           </a>
+<a class="sourceLine" id="cb9-20" data-line-number="20">## No. of clusters                  "72"            NA           </a>
+<a class="sourceLine" id="cb9-21" data-line-number="21">## No. of observations              "861"           NA           </a>
+<a class="sourceLine" id="cb9-22" data-line-number="22">##                                  adj. OR(95%CI) adj. P value</a>
+<a class="sourceLine" id="cb9-23" data-line-number="23">##                                  NA             NA          </a>
+<a class="sourceLine" id="cb9-24" data-line-number="24">## Estimated correlation parameters NA             NA          </a>
+<a class="sourceLine" id="cb9-25" data-line-number="25">## No. of clusters                  NA             NA          </a>
+<a class="sourceLine" id="cb9-26" data-line-number="26">## No. of observations              NA             NA</a></code></pre></div>
 </div>
 <div id="mixed-model-table-lmermod-or-glmermod-object-from-lme4-package" class="section level2">
 <h2 class="hasAnchor">
@@ -205,66 +204,66 @@
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(lme4)</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">l1 =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span>(Weight <span class="op">~</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>Cu <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Evit), <span class="dt">data =</span> dietox) </a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l1, <span class="dt">ci.ranef =</span> T)</a></code></pre></div>
-<pre><code>## $table
-##                       crude coeff(95%CI) crude P value adj. coeff(95%CI)
-## Time                    6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)
-## Cu: ref.=1                          &lt;NA&gt;            NA              &lt;NA&gt;
-##    2                  -0.57 (-4.66,3.52)     0.7837028 -0.81 (-4.42,2.8)
-##    3                    1.9 (-2.23,6.04)     0.3666829 1.78 (-1.87,5.43)
-## Random effects                      &lt;NA&gt;            NA              &lt;NA&gt;
-## Pig                  39.71 (27.82,54.93)            NA              &lt;NA&gt;
-## Evit                       0.9 (0,13.45)            NA              &lt;NA&gt;
-## Residual              11.37 (10.3,12.55)            NA              &lt;NA&gt;
-## Metrics                             &lt;NA&gt;            NA              &lt;NA&gt;
-## No. of groups (Pig)                   72            NA              &lt;NA&gt;
-## No. of groups (Evit)                   3            NA              &lt;NA&gt;
-## No. of observations                  861            NA              &lt;NA&gt;
-## Log-likelihood                  -2400.69            NA              &lt;NA&gt;
-## AIC value                        4801.38            NA              &lt;NA&gt;
-##                      adj. P value
-## Time                    0.0000000
-## Cu: ref.=1                     NA
-##    2                    0.6598522
-##    3                    0.3393579
-## Random effects                 NA
-## Pig                            NA
-## Evit                           NA
-## Residual                       NA
-## Metrics                        NA
-## No. of groups (Pig)            NA
-## No. of groups (Evit)           NA
-## No. of observations            NA
-## Log-likelihood                 NA
-## AIC value                      NA
-## 
-## $caption
-## [1] "Linear mixed model fit by REML : Weight ~ Time + Cu + (1 | Pig) + (1 | Evit)"</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">## $table</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">##                       crude coeff(95%CI) crude P value adj. coeff(95%CI)</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">## Time                    6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4">## Cu: ref.=1                          &lt;NA&gt;            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">##    2                  -0.57 (-4.66,3.52)     0.7837028 -0.81 (-4.42,2.8)</a>
+<a class="sourceLine" id="cb11-6" data-line-number="6">##    3                    1.9 (-2.23,6.04)     0.3666829 1.78 (-1.87,5.43)</a>
+<a class="sourceLine" id="cb11-7" data-line-number="7">## Random effects                      &lt;NA&gt;            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-8" data-line-number="8">## Pig                  39.71 (27.82,54.93)            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-9" data-line-number="9">## Evit                       0.9 (0,13.45)            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-10" data-line-number="10">## Residual              11.37 (10.3,12.55)            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-11" data-line-number="11">## Metrics                             &lt;NA&gt;            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-12" data-line-number="12">## No. of groups (Pig)                   72            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-13" data-line-number="13">## No. of groups (Evit)                   3            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-14" data-line-number="14">## No. of observations                  861            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-15" data-line-number="15">## Log-likelihood                  -2400.69            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-16" data-line-number="16">## AIC value                        4801.38            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-17" data-line-number="17">##                      adj. P value</a>
+<a class="sourceLine" id="cb11-18" data-line-number="18">## Time                    0.0000000</a>
+<a class="sourceLine" id="cb11-19" data-line-number="19">## Cu: ref.=1                     NA</a>
+<a class="sourceLine" id="cb11-20" data-line-number="20">##    2                    0.6598522</a>
+<a class="sourceLine" id="cb11-21" data-line-number="21">##    3                    0.3393579</a>
+<a class="sourceLine" id="cb11-22" data-line-number="22">## Random effects                 NA</a>
+<a class="sourceLine" id="cb11-23" data-line-number="23">## Pig                            NA</a>
+<a class="sourceLine" id="cb11-24" data-line-number="24">## Evit                           NA</a>
+<a class="sourceLine" id="cb11-25" data-line-number="25">## Residual                       NA</a>
+<a class="sourceLine" id="cb11-26" data-line-number="26">## Metrics                        NA</a>
+<a class="sourceLine" id="cb11-27" data-line-number="27">## No. of groups (Pig)            NA</a>
+<a class="sourceLine" id="cb11-28" data-line-number="28">## No. of groups (Evit)           NA</a>
+<a class="sourceLine" id="cb11-29" data-line-number="29">## No. of observations            NA</a>
+<a class="sourceLine" id="cb11-30" data-line-number="30">## Log-likelihood                 NA</a>
+<a class="sourceLine" id="cb11-31" data-line-number="31">## AIC value                      NA</a>
+<a class="sourceLine" id="cb11-32" data-line-number="32">## </a>
+<a class="sourceLine" id="cb11-33" data-line-number="33">## $caption</a>
+<a class="sourceLine" id="cb11-34" data-line-number="34">## [1] "Linear mixed model fit by REML : Weight ~ Time + Cu + (1 | Pig) + (1 | Evit)"</a></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">l2 =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/lme4/man/glmer.html">glmer</a></span>(ddn <span class="op">~</span><span class="st"> </span>Weight <span class="op">+</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig), <span class="dt">data=</span> dietox, <span class="dt">family=</span> <span class="st">"binomial"</span>)</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l2)</a></code></pre></div>
-<pre><code>## $table
-##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
-## Weight                    1 (1,1.01)     0.1741962 0.99 (0.97,1.01)
-## Time                1.03 (0.99,1.08)     0.0889052 1.11 (0.96,1.28)
-## Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;
-## Pig                             0.05            NA             &lt;NA&gt;
-## Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;
-## No. of groups (Pig)               72            NA             &lt;NA&gt;
-## No. of observations              861            NA             &lt;NA&gt;
-## Log-likelihood               -593.53            NA             &lt;NA&gt;
-## AIC value                    1195.05            NA             &lt;NA&gt;
-##                     adj. P value
-## Weight                 0.3059354
-## Time                   0.1478657
-## Random effects                NA
-## Pig                           NA
-## Metrics                       NA
-## No. of groups (Pig)           NA
-## No. of observations           NA
-## Log-likelihood                NA
-## AIC value                     NA
-## 
-## $caption
-## [1] "Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) : ddn ~ Weight + Time + (1 | Pig)"</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">## $table</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">##                      crude OR(95%CI) crude P value   adj. OR(95%CI)</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">## Weight                 1 (0.99,1.01)     0.9358643 1.01 (0.99,1.03)</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">## Time                0.99 (0.96,1.03)     0.7905865  0.95 (0.81,1.1)</a>
+<a class="sourceLine" id="cb13-5" data-line-number="5">## Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-6" data-line-number="6">## Pig                              0.1            NA             &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-7" data-line-number="7">## Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-8" data-line-number="8">## No. of groups (Pig)               72            NA             &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-9" data-line-number="9">## No. of observations              861            NA             &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-10" data-line-number="10">## Log-likelihood                -594.2            NA             &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-11" data-line-number="11">## AIC value                     1196.4            NA             &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-12" data-line-number="12">##                     adj. P value</a>
+<a class="sourceLine" id="cb13-13" data-line-number="13">## Weight                 0.4925311</a>
+<a class="sourceLine" id="cb13-14" data-line-number="14">## Time                   0.4642975</a>
+<a class="sourceLine" id="cb13-15" data-line-number="15">## Random effects                NA</a>
+<a class="sourceLine" id="cb13-16" data-line-number="16">## Pig                           NA</a>
+<a class="sourceLine" id="cb13-17" data-line-number="17">## Metrics                       NA</a>
+<a class="sourceLine" id="cb13-18" data-line-number="18">## No. of groups (Pig)           NA</a>
+<a class="sourceLine" id="cb13-19" data-line-number="19">## No. of observations           NA</a>
+<a class="sourceLine" id="cb13-20" data-line-number="20">## Log-likelihood                NA</a>
+<a class="sourceLine" id="cb13-21" data-line-number="21">## AIC value                     NA</a>
+<a class="sourceLine" id="cb13-22" data-line-number="22">## </a>
+<a class="sourceLine" id="cb13-23" data-line-number="23">## $caption</a>
+<a class="sourceLine" id="cb13-24" data-line-number="24">## [1] "Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) : ddn ~ Weight + Time + (1 | Pig)"</a></code></pre></div>
 </div>
 <div id="cox-model-with-frailty-or-cluster-options" class="section level2">
 <h2 class="hasAnchor">
@@ -273,43 +272,43 @@
 <a class="sourceLine" id="cb14-2" data-line-number="2">fit1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survival/man/cluster.html">cluster</a></span>(inst), lung, <span class="dt">model =</span> T)  ## model = T: to extract original data</a>
 <a class="sourceLine" id="cb14-3" data-line-number="3">fit2 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survival/man/frailty.html">frailty</a></span>(inst), lung, <span class="dt">model =</span> T)</a>
 <a class="sourceLine" id="cb14-4" data-line-number="4"><span class="kw"><a href="reference/cox2.display.html">cox2.display</a></span>(fit1)</a></code></pre></div>
-<pre><code>## $table
-##         crude HR(95%CI)    crude P value adj. HR(95%CI)  adj. P value
-## ph.ecog "1.61 (1.25,2.08)" "&lt; 0.001"     "1.56 (1.22,2)" "&lt; 0.001"   
-## age     "1.02 (1.01,1.03)" "0.007"       "1.01 (1,1.02)" "0.085"     
-## 
-## $ranef
-##         [,1] [,2] [,3] [,4]
-## cluster   NA   NA   NA   NA
-## inst      NA   NA   NA   NA
-## 
-## $metric
-##                     [,1] [,2] [,3] [,4]
-## &lt;NA&gt;                  NA   NA   NA   NA
-## No. of observations  226   NA   NA   NA
-## No. of events        163   NA   NA   NA
-## 
-## $caption
-## [1] "Marginal Cox model on time ('time') to event ('status') - Group inst"</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">## $table</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">##         crude HR(95%CI)    crude P value adj. HR(95%CI)  adj. P value</a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">## ph.ecog "1.61 (1.25,2.08)" "&lt; 0.001"     "1.56 (1.22,2)" "&lt; 0.001"   </a>
+<a class="sourceLine" id="cb15-4" data-line-number="4">## age     "1.02 (1.01,1.03)" "0.007"       "1.01 (1,1.02)" "0.085"     </a>
+<a class="sourceLine" id="cb15-5" data-line-number="5">## </a>
+<a class="sourceLine" id="cb15-6" data-line-number="6">## $ranef</a>
+<a class="sourceLine" id="cb15-7" data-line-number="7">##         [,1] [,2] [,3] [,4]</a>
+<a class="sourceLine" id="cb15-8" data-line-number="8">## cluster   NA   NA   NA   NA</a>
+<a class="sourceLine" id="cb15-9" data-line-number="9">## inst      NA   NA   NA   NA</a>
+<a class="sourceLine" id="cb15-10" data-line-number="10">## </a>
+<a class="sourceLine" id="cb15-11" data-line-number="11">## $metric</a>
+<a class="sourceLine" id="cb15-12" data-line-number="12">##                     [,1] [,2] [,3] [,4]</a>
+<a class="sourceLine" id="cb15-13" data-line-number="13">## &lt;NA&gt;                  NA   NA   NA   NA</a>
+<a class="sourceLine" id="cb15-14" data-line-number="14">## No. of observations  226   NA   NA   NA</a>
+<a class="sourceLine" id="cb15-15" data-line-number="15">## No. of events        163   NA   NA   NA</a>
+<a class="sourceLine" id="cb15-16" data-line-number="16">## </a>
+<a class="sourceLine" id="cb15-17" data-line-number="17">## $caption</a>
+<a class="sourceLine" id="cb15-18" data-line-number="18">## [1] "Marginal Cox model on time ('time') to event ('status') - Group inst"</a></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="reference/cox2.display.html">cox2.display</a></span>(fit2)</a></code></pre></div>
-<pre><code>## $table
-##         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value
-## ph.ecog "1.64 (1.31,2.05)" "&lt; 0.001"     "1.58 (1.26,1.99)" "&lt; 0.001"   
-## age     "1.02 (1,1.04)"    "0.041"       "1.01 (0.99,1.03)" "0.225"     
-## 
-## $ranef
-##         [,1] [,2] [,3] [,4]
-## frailty   NA   NA   NA   NA
-## inst      NA   NA   NA   NA
-## 
-## $metric
-##                     [,1] [,2] [,3] [,4]
-## &lt;NA&gt;                  NA   NA   NA   NA
-## No. of observations  226   NA   NA   NA
-## No. of events        163   NA   NA   NA
-## 
-## $caption
-## [1] "Frailty Cox model on time ('time') to event ('status') - Group inst"</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">## $table</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">##         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">## ph.ecog "1.64 (1.31,2.05)" "&lt; 0.001"     "1.58 (1.26,1.99)" "&lt; 0.001"   </a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">## age     "1.02 (1,1.04)"    "0.041"       "1.01 (0.99,1.03)" "0.225"     </a>
+<a class="sourceLine" id="cb17-5" data-line-number="5">## </a>
+<a class="sourceLine" id="cb17-6" data-line-number="6">## $ranef</a>
+<a class="sourceLine" id="cb17-7" data-line-number="7">##         [,1] [,2] [,3] [,4]</a>
+<a class="sourceLine" id="cb17-8" data-line-number="8">## frailty   NA   NA   NA   NA</a>
+<a class="sourceLine" id="cb17-9" data-line-number="9">## inst      NA   NA   NA   NA</a>
+<a class="sourceLine" id="cb17-10" data-line-number="10">## </a>
+<a class="sourceLine" id="cb17-11" data-line-number="11">## $metric</a>
+<a class="sourceLine" id="cb17-12" data-line-number="12">##                     [,1] [,2] [,3] [,4]</a>
+<a class="sourceLine" id="cb17-13" data-line-number="13">## &lt;NA&gt;                  NA   NA   NA   NA</a>
+<a class="sourceLine" id="cb17-14" data-line-number="14">## No. of observations  226   NA   NA   NA</a>
+<a class="sourceLine" id="cb17-15" data-line-number="15">## No. of events        163   NA   NA   NA</a>
+<a class="sourceLine" id="cb17-16" data-line-number="16">## </a>
+<a class="sourceLine" id="cb17-17" data-line-number="17">## $caption</a>
+<a class="sourceLine" id="cb17-18" data-line-number="18">## [1] "Frailty Cox model on time ('time') to event ('status') - Group inst"</a></code></pre></div>
 </div>
 <div id="cox-mixed-effect-model-table-coxme-object-from-coxme-package" class="section level2">
 <h2 class="hasAnchor">
@@ -317,25 +316,25 @@
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(coxme)</a>
 <a class="sourceLine" id="cb18-2" data-line-number="2">fit &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/coxme/man/coxme.html">coxme</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>inst), lung)</a>
 <a class="sourceLine" id="cb18-3" data-line-number="3"><span class="kw"><a href="reference/coxme.display.html">coxme.display</a></span>(fit) </a></code></pre></div>
-<pre><code>## $table
-##         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value
-## ph.ecog "1.66 (1.32,2.09)" "&lt; 0.001"     "1.61 (1.27,2.03)" "&lt; 0.001"   
-## age     "1.02 (1,1.04)"    "0.043"       "1.01 (0.99,1.03)" "0.227"     
-## 
-## $ranef
-##                 [,1] [,2] [,3] [,4]
-## Random effect     NA   NA   NA   NA
-## inst(Intercept) 0.02   NA   NA   NA
-## 
-## $metric
-##                     [,1] [,2] [,3] [,4]
-## &lt;NA&gt;                  NA   NA   NA   NA
-## No. of groups(inst)   18   NA   NA   NA
-## No. of observations  226   NA   NA   NA
-## No. of events        163   NA   NA   NA
-## 
-## $caption
-## [1] "Mixed effects Cox model on time ('time') to event ('status') - Group inst"</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">## $table</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">##         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3">## ph.ecog "1.66 (1.32,2.09)" "&lt; 0.001"     "1.61 (1.27,2.03)" "&lt; 0.001"   </a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">## age     "1.02 (1,1.04)"    "0.043"       "1.01 (0.99,1.03)" "0.227"     </a>
+<a class="sourceLine" id="cb19-5" data-line-number="5">## </a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">## $ranef</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7">##                 [,1] [,2] [,3] [,4]</a>
+<a class="sourceLine" id="cb19-8" data-line-number="8">## Random effect     NA   NA   NA   NA</a>
+<a class="sourceLine" id="cb19-9" data-line-number="9">## inst(Intercept) 0.02   NA   NA   NA</a>
+<a class="sourceLine" id="cb19-10" data-line-number="10">## </a>
+<a class="sourceLine" id="cb19-11" data-line-number="11">## $metric</a>
+<a class="sourceLine" id="cb19-12" data-line-number="12">##                     [,1] [,2] [,3] [,4]</a>
+<a class="sourceLine" id="cb19-13" data-line-number="13">## &lt;NA&gt;                  NA   NA   NA   NA</a>
+<a class="sourceLine" id="cb19-14" data-line-number="14">## No. of groups(inst)   18   NA   NA   NA</a>
+<a class="sourceLine" id="cb19-15" data-line-number="15">## No. of observations  226   NA   NA   NA</a>
+<a class="sourceLine" id="cb19-16" data-line-number="16">## No. of events        163   NA   NA   NA</a>
+<a class="sourceLine" id="cb19-17" data-line-number="17">## </a>
+<a class="sourceLine" id="cb19-18" data-line-number="18">## $caption</a>
+<a class="sourceLine" id="cb19-19" data-line-number="19">## [1] "Mixed effects Cox model on time ('time') to event ('status') - Group inst"</a></code></pre></div>
 </div>
 <div id="glm-for-survey-data-svyglm-object-from-survey-package" class="section level2">
 <h2 class="hasAnchor">
@@ -349,47 +348,47 @@
 <a class="sourceLine" id="cb20-7" data-line-number="7">ds &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survey/man/svyglm.html">svyglm</a></span>(api00<span class="op">~</span>ell<span class="op">+</span>meals<span class="op">+</span>mobility <span class="op">+</span><span class="st"> </span>tt2, <span class="dt">design=</span>dstrat)</a>
 <a class="sourceLine" id="cb20-8" data-line-number="8">ds2 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survey/man/svyglm.html">svyglm</a></span>(tt<span class="op">~</span>ell<span class="op">+</span>meals<span class="op">+</span>mobility <span class="op">+</span><span class="st"> </span>tt2, <span class="dt">design=</span>dstrat, <span class="dt">family =</span> <span class="kw"><a href="https://rdrr.io/r/stats/family.html">quasibinomial</a></span>())</a>
 <a class="sourceLine" id="cb20-9" data-line-number="9"><span class="kw"><a href="reference/svyglm.display.html">svyregress.display</a></span>(ds)</a></code></pre></div>
-<pre><code>## $first.line
-## [1] "Linear regression predicting api00- weighted data\n"
-## 
-## $table
-##             crude coeff.(95%CI)    crude P value adj. coeff.(95%CI)   
-## ell         "-3.73 (-4.35,-3.11)"  "&lt; 0.001"     "-0.48 (-1.25,0.29)" 
-## meals       "-3.38 (-3.71,-3.05)"  "&lt; 0.001"     "-3.14 (-3.69,-2.59)"
-## mobility    "-1.43 (-3.3,0.44)"    "0.137"       "0.22 (-0.55,0.99)"  
-## tt2: 1 vs 0 "10.98 (-34.16,56.12)" "0.634"       "6.13 (-17.89,30.15)"
-##             adj. P value
-## ell         "0.222"     
-## meals       "&lt; 0.001"   
-## mobility    "0.573"     
-## tt2: 1 vs 0 "0.618"     
-## 
-## $last.lines
-## [1] "No. of observations = 200\nAIC value = 2309.8282\n\n"
-## 
-## attr(,"class")
-## [1] "display" "list"</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">## $first.line</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">## [1] "Linear regression predicting api00- weighted data\n"</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">## </a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">## $table</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">##             crude coeff.(95%CI)    crude P value adj. coeff.(95%CI)   </a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">## ell         "-3.73 (-4.35,-3.11)"  "&lt; 0.001"     "-0.48 (-1.25,0.29)" </a>
+<a class="sourceLine" id="cb21-7" data-line-number="7">## meals       "-3.38 (-3.71,-3.05)"  "&lt; 0.001"     "-3.14 (-3.69,-2.59)"</a>
+<a class="sourceLine" id="cb21-8" data-line-number="8">## mobility    "-1.43 (-3.3,0.44)"    "0.137"       "0.22 (-0.55,0.99)"  </a>
+<a class="sourceLine" id="cb21-9" data-line-number="9">## tt2: 1 vs 0 "10.98 (-34.16,56.12)" "0.634"       "6.13 (-17.89,30.15)"</a>
+<a class="sourceLine" id="cb21-10" data-line-number="10">##             adj. P value</a>
+<a class="sourceLine" id="cb21-11" data-line-number="11">## ell         "0.222"     </a>
+<a class="sourceLine" id="cb21-12" data-line-number="12">## meals       "&lt; 0.001"   </a>
+<a class="sourceLine" id="cb21-13" data-line-number="13">## mobility    "0.573"     </a>
+<a class="sourceLine" id="cb21-14" data-line-number="14">## tt2: 1 vs 0 "0.618"     </a>
+<a class="sourceLine" id="cb21-15" data-line-number="15">## </a>
+<a class="sourceLine" id="cb21-16" data-line-number="16">## $last.lines</a>
+<a class="sourceLine" id="cb21-17" data-line-number="17">## [1] "No. of observations = 200\nAIC value = 2309.8282\n\n"</a>
+<a class="sourceLine" id="cb21-18" data-line-number="18">## </a>
+<a class="sourceLine" id="cb21-19" data-line-number="19">## attr(,"class")</a>
+<a class="sourceLine" id="cb21-20" data-line-number="20">## [1] "display" "list"</a></code></pre></div>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw"><a href="reference/svyglm.display.html">svyregress.display</a></span>(ds2)</a></code></pre></div>
-<pre><code>## $first.line
-## [1] "Logistic regression predicting tt- weighted data\n"
-## 
-## $table
-##             crude OR.(95%CI)   crude P value adj. OR.(95%CI)   
-## ell         "1.02 (1,1.05)"    "0.047"       "1.11 (1.03,1.21)"
-## meals       "1.01 (0.99,1.03)" "0.255"       "0.95 (0.91,1)"   
-## mobility    "1.01 (0.98,1.03)" "0.506"       "1.1 (0.98,1.23)" 
-## tt2: 1 vs 0 "0 (0,0)"          "&lt; 0.001"     "0 (0,0)"         
-##             adj. P value
-## ell         "0.009"     
-## meals       "0.068"     
-## mobility    "0.114"     
-## tt2: 1 vs 0 "&lt; 0.001"   
-## 
-## $last.lines
-## [1] "No. of observations = 200\n\n"
-## 
-## attr(,"class")
-## [1] "display" "list"</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">## $first.line</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">## [1] "Logistic regression predicting tt- weighted data\n"</a>
+<a class="sourceLine" id="cb23-3" data-line-number="3">## </a>
+<a class="sourceLine" id="cb23-4" data-line-number="4">## $table</a>
+<a class="sourceLine" id="cb23-5" data-line-number="5">##             crude OR.(95%CI)   crude P value adj. OR.(95%CI)   </a>
+<a class="sourceLine" id="cb23-6" data-line-number="6">## ell         "1.02 (1,1.05)"    "0.047"       "1.11 (1.03,1.21)"</a>
+<a class="sourceLine" id="cb23-7" data-line-number="7">## meals       "1.01 (0.99,1.03)" "0.255"       "0.95 (0.91,1)"   </a>
+<a class="sourceLine" id="cb23-8" data-line-number="8">## mobility    "1.01 (0.98,1.03)" "0.506"       "1.1 (0.98,1.23)" </a>
+<a class="sourceLine" id="cb23-9" data-line-number="9">## tt2: 1 vs 0 "0 (0,0)"          "&lt; 0.001"     "0 (0,0)"         </a>
+<a class="sourceLine" id="cb23-10" data-line-number="10">##             adj. P value</a>
+<a class="sourceLine" id="cb23-11" data-line-number="11">## ell         "0.009"     </a>
+<a class="sourceLine" id="cb23-12" data-line-number="12">## meals       "0.068"     </a>
+<a class="sourceLine" id="cb23-13" data-line-number="13">## mobility    "0.114"     </a>
+<a class="sourceLine" id="cb23-14" data-line-number="14">## tt2: 1 vs 0 "&lt; 0.001"   </a>
+<a class="sourceLine" id="cb23-15" data-line-number="15">## </a>
+<a class="sourceLine" id="cb23-16" data-line-number="16">## $last.lines</a>
+<a class="sourceLine" id="cb23-17" data-line-number="17">## [1] "No. of observations = 200\n\n"</a>
+<a class="sourceLine" id="cb23-18" data-line-number="18">## </a>
+<a class="sourceLine" id="cb23-19" data-line-number="19">## attr(,"class")</a>
+<a class="sourceLine" id="cb23-20" data-line-number="20">## [1] "display" "list"</a></code></pre></div>
 </div>
 <div id="cox-model-for-survey-data-svycoxph-object-from-survey-package" class="section level2">
 <h2 class="hasAnchor">
@@ -407,65 +406,115 @@
 <a class="sourceLine" id="cb24-11" data-line-number="11"></a>
 <a class="sourceLine" id="cb24-12" data-line-number="12">model &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survey/man/svycoxph.html">svycoxph</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(time,status<span class="op">&gt;</span><span class="dv">0</span>)<span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>protime <span class="op">+</span><span class="st"> </span>albumin <span class="op">+</span><span class="st"> </span>stage,<span class="dt">design=</span>dpbc)</a>
 <a class="sourceLine" id="cb24-13" data-line-number="13"><span class="kw"><a href="reference/svycox.display.html">svycox.display</a></span>(model)</a></code></pre></div>
-<pre><code>## Stratified Independent Sampling design (with replacement)
-## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, 
-##     randomized))
-## Stratified Independent Sampling design (with replacement)
-## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, 
-##     randomized))
-## Stratified Independent Sampling design (with replacement)
-## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, 
-##     randomized))
-## Stratified Independent Sampling design (with replacement)
-## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, 
-##     randomized))
-## Stratified Independent Sampling design (with replacement)
-## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, 
-##     randomized))</code></pre>
-<pre><code>## $table
-##               crude HR(95%CI)      crude P value adj. HR(95%CI)       
-## sex: f vs m   "0.62 (0.4,0.97)"    "0.038"       "0.55 (0.33,0.9)"    
-## protime       "1.37 (1.09,1.72)"   "0.006"       "1.52 (1.2,1.91)"    
-## albumin       "0.2 (0.14,0.29)"    "&lt; 0.001"     "0.31 (0.2,0.47)"    
-## stage: ref.=1 NA                   NA            NA                   
-##    2          "5.67 (0.77,41.78)"  "0.089"       "10.94 (1.01,118.55)"
-##    3          "9.78 (1.37,69.94)"  "0.023"       "17.03 (1.69,171.6)" 
-##    4          "22.89 (3.2,163.48)" "0.002"       "22.56 (2.25,226.42)"
-##               adj. P value
-## sex: f vs m   "0.017"     
-## protime       "&lt; 0.001"   
-## albumin       "&lt; 0.001"   
-## stage: ref.=1 NA          
-##    2          "0.049"     
-##    3          "0.016"     
-##    4          "0.008"     
-## 
-## $metric
-##                        [,1] [,2] [,3] [,4]
-## &lt;NA&gt;                     NA   NA   NA   NA
-## No. of observations  312.00   NA   NA   NA
-## No. of events        144.00   NA   NA   NA
-## AIC                 1483.12   NA   NA   NA
-## 
-## $caption
-## [1] "Survey cox model on time ('time') to event ('status &gt; 0')"</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">## Stratified Independent Sampling design (with replacement)</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, </a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">##     randomized))</a>
+<a class="sourceLine" id="cb25-4" data-line-number="4">## Stratified Independent Sampling design (with replacement)</a>
+<a class="sourceLine" id="cb25-5" data-line-number="5">## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, </a>
+<a class="sourceLine" id="cb25-6" data-line-number="6">##     randomized))</a>
+<a class="sourceLine" id="cb25-7" data-line-number="7">## Stratified Independent Sampling design (with replacement)</a>
+<a class="sourceLine" id="cb25-8" data-line-number="8">## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, </a>
+<a class="sourceLine" id="cb25-9" data-line-number="9">##     randomized))</a>
+<a class="sourceLine" id="cb25-10" data-line-number="10">## Stratified Independent Sampling design (with replacement)</a>
+<a class="sourceLine" id="cb25-11" data-line-number="11">## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, </a>
+<a class="sourceLine" id="cb25-12" data-line-number="12">##     randomized))</a>
+<a class="sourceLine" id="cb25-13" data-line-number="13">## Stratified Independent Sampling design (with replacement)</a>
+<a class="sourceLine" id="cb25-14" data-line-number="14">## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, </a>
+<a class="sourceLine" id="cb25-15" data-line-number="15">##     randomized))</a>
+<a class="sourceLine" id="cb25-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb25-17" data-line-number="17">## $table</a>
+<a class="sourceLine" id="cb25-18" data-line-number="18">##               crude HR(95%CI)      crude P value adj. HR(95%CI)       </a>
+<a class="sourceLine" id="cb25-19" data-line-number="19">## sex: f vs m   "0.62 (0.4,0.97)"    "0.038"       "0.55 (0.33,0.9)"    </a>
+<a class="sourceLine" id="cb25-20" data-line-number="20">## protime       "1.37 (1.09,1.72)"   "0.006"       "1.52 (1.2,1.91)"    </a>
+<a class="sourceLine" id="cb25-21" data-line-number="21">## albumin       "0.2 (0.14,0.29)"    "&lt; 0.001"     "0.31 (0.2,0.47)"    </a>
+<a class="sourceLine" id="cb25-22" data-line-number="22">## stage: ref.=1 NA                   NA            NA                   </a>
+<a class="sourceLine" id="cb25-23" data-line-number="23">##    2          "5.67 (0.77,41.78)"  "0.089"       "10.94 (1.01,118.55)"</a>
+<a class="sourceLine" id="cb25-24" data-line-number="24">##    3          "9.78 (1.37,69.94)"  "0.023"       "17.03 (1.69,171.6)" </a>
+<a class="sourceLine" id="cb25-25" data-line-number="25">##    4          "22.89 (3.2,163.48)" "0.002"       "22.56 (2.25,226.42)"</a>
+<a class="sourceLine" id="cb25-26" data-line-number="26">##               adj. P value</a>
+<a class="sourceLine" id="cb25-27" data-line-number="27">## sex: f vs m   "0.017"     </a>
+<a class="sourceLine" id="cb25-28" data-line-number="28">## protime       "&lt; 0.001"   </a>
+<a class="sourceLine" id="cb25-29" data-line-number="29">## albumin       "&lt; 0.001"   </a>
+<a class="sourceLine" id="cb25-30" data-line-number="30">## stage: ref.=1 NA          </a>
+<a class="sourceLine" id="cb25-31" data-line-number="31">##    2          "0.049"     </a>
+<a class="sourceLine" id="cb25-32" data-line-number="32">##    3          "0.016"     </a>
+<a class="sourceLine" id="cb25-33" data-line-number="33">##    4          "0.008"     </a>
+<a class="sourceLine" id="cb25-34" data-line-number="34">## </a>
+<a class="sourceLine" id="cb25-35" data-line-number="35">## $metric</a>
+<a class="sourceLine" id="cb25-36" data-line-number="36">##                        [,1] [,2] [,3] [,4]</a>
+<a class="sourceLine" id="cb25-37" data-line-number="37">## &lt;NA&gt;                     NA   NA   NA   NA</a>
+<a class="sourceLine" id="cb25-38" data-line-number="38">## No. of observations  312.00   NA   NA   NA</a>
+<a class="sourceLine" id="cb25-39" data-line-number="39">## No. of events        144.00   NA   NA   NA</a>
+<a class="sourceLine" id="cb25-40" data-line-number="40">## AIC                 1483.12   NA   NA   NA</a>
+<a class="sourceLine" id="cb25-41" data-line-number="41">## </a>
+<a class="sourceLine" id="cb25-42" data-line-number="42">## $caption</a>
+<a class="sourceLine" id="cb25-43" data-line-number="43">## [1] "Survey cox model on time ('time') to event ('status &gt; 0')"</a></code></pre></div>
 </div>
 <div id="sub-group-analysis-for-coxsvycox-model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#sub-group-analysis-for-coxsvycox-model" class="anchor"></a>Sub-group analysis for Cox/svycox model</h2>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(survival); <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(dplyr)</a>
-<a class="sourceLine" id="cb27-2" data-line-number="2">lung <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">status =</span> <span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(status <span class="op">==</span><span class="st"> </span><span class="dv">1</span>),</a>
-<a class="sourceLine" id="cb27-4" data-line-number="4">       <span class="dt">sex =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(sex),</a>
-<a class="sourceLine" id="cb27-5" data-line-number="5">       <span class="dt">kk =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(pat.karno <span class="op">&gt;=</span><span class="st"> </span><span class="dv">70</span>)),</a>
-<a class="sourceLine" id="cb27-6" data-line-number="6">       <span class="dt">kk1 =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(pat.karno <span class="op">&gt;=</span><span class="st"> </span><span class="dv">60</span>))) -&gt;<span class="st"> </span>lung</a>
-<a class="sourceLine" id="cb27-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb27-8" data-line-number="8"><span class="co">#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = TRUE)</span></a>
-<a class="sourceLine" id="cb27-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb27-10" data-line-number="10">## Survey data</a>
-<a class="sourceLine" id="cb27-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(survey)</a>
-<a class="sourceLine" id="cb27-12" data-line-number="12">data.design &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survey/man/svydesign.html">svydesign</a></span>(<span class="dt">id =</span> <span class="op">~</span><span class="dv">1</span>, <span class="dt">data =</span> lung)</a>
-<a class="sourceLine" id="cb27-13" data-line-number="13"><span class="co">#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = FALSE)</span></a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(survival); <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(dplyr)</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2">lung <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-3" data-line-number="3"><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">status =</span> <span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(status <span class="op">==</span><span class="st"> </span><span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb26-4" data-line-number="4">       <span class="dt">sex =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(sex),</a>
+<a class="sourceLine" id="cb26-5" data-line-number="5">       <span class="dt">kk =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(pat.karno <span class="op">&gt;=</span><span class="st"> </span><span class="dv">70</span>)),</a>
+<a class="sourceLine" id="cb26-6" data-line-number="6">       <span class="dt">kk1 =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(pat.karno <span class="op">&gt;=</span><span class="st"> </span><span class="dv">60</span>))) -&gt;<span class="st"> </span>lung</a>
+<a class="sourceLine" id="cb26-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb26-8" data-line-number="8"><span class="kw"><a href="reference/TableSubgroupMultiCox.html">TableSubgroupMultiCox</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>sex, <span class="dt">var_subgroups =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"kk"</span>, <span class="st">"kk1"</span>), <span class="dt">data=</span>lung, <span class="dt">line =</span> T)</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">##   Variable Count Percent Point Estimate Lower Upper    0    1 P value</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">## 1  Overall   228     100           1.91  1.14   3.2 41.3 58.7   0.014</a>
+<a class="sourceLine" id="cb27-3" data-line-number="3">## 2     &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
+<a class="sourceLine" id="cb27-4" data-line-number="4">## 3       kk  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
+<a class="sourceLine" id="cb27-5" data-line-number="5">## 4        0    38      38           2.88  0.31 26.49   20   80    0.35</a>
+<a class="sourceLine" id="cb27-6" data-line-number="6">## 5        1   187     187           1.84  1.08  3.14 43.1 56.9   0.026</a>
+<a class="sourceLine" id="cb27-7" data-line-number="7">## 6     &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
+<a class="sourceLine" id="cb27-8" data-line-number="8">## 7      kk1  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
+<a class="sourceLine" id="cb27-9" data-line-number="9">## 8        0     8       8           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    0  100    &lt;NA&gt;</a>
+<a class="sourceLine" id="cb27-10" data-line-number="10">## 9        1   217     217           1.88  1.12  3.17 42.6 57.4   0.018</a>
+<a class="sourceLine" id="cb27-11" data-line-number="11">##   P for interaction</a>
+<a class="sourceLine" id="cb27-12" data-line-number="12">## 1              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb27-13" data-line-number="13">## 2              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb27-14" data-line-number="14">## 3             0.525</a>
+<a class="sourceLine" id="cb27-15" data-line-number="15">## 4              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb27-16" data-line-number="16">## 5              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb27-17" data-line-number="17">## 6              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb27-18" data-line-number="18">## 7             0.997</a>
+<a class="sourceLine" id="cb27-19" data-line-number="19">## 8              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb27-20" data-line-number="20">## 9              &lt;NA&gt;</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">## Survey data</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(survey)</a>
+<a class="sourceLine" id="cb28-3" data-line-number="3">data.design &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survey/man/svydesign.html">svydesign</a></span>(<span class="dt">id =</span> <span class="op">~</span><span class="dv">1</span>, <span class="dt">data =</span> lung)</a>
+<a class="sourceLine" id="cb28-4" data-line-number="4"><span class="kw"><a href="reference/TableSubgroupMultiCox.html">TableSubgroupMultiCox</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>sex, <span class="dt">var_subgroups =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"kk"</span>, <span class="st">"kk1"</span>), <span class="dt">data =</span> data.design, <span class="dt">line =</span> F)</a></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">## Independent Sampling design (with replacement)</a>
+<a class="sourceLine" id="cb29-2" data-line-number="2">## svydesign(id = ~1, data = lung)</a>
+<a class="sourceLine" id="cb29-3" data-line-number="3">## Independent Sampling design (with replacement)</a>
+<a class="sourceLine" id="cb29-4" data-line-number="4">## svydesign(id = ~1, data = lung)</a>
+<a class="sourceLine" id="cb29-5" data-line-number="5">## Independent Sampling design (with replacement)</a>
+<a class="sourceLine" id="cb29-6" data-line-number="6">## subset(data, get(var_subgroup) == .)</a>
+<a class="sourceLine" id="cb29-7" data-line-number="7">## Independent Sampling design (with replacement)</a>
+<a class="sourceLine" id="cb29-8" data-line-number="8">## subset(data, get(var_subgroup) == .)</a>
+<a class="sourceLine" id="cb29-9" data-line-number="9">## Independent Sampling design (with replacement)</a>
+<a class="sourceLine" id="cb29-10" data-line-number="10">## svydesign(id = ~1, data = lung)</a>
+<a class="sourceLine" id="cb29-11" data-line-number="11">## Independent Sampling design (with replacement)</a>
+<a class="sourceLine" id="cb29-12" data-line-number="12">## subset(data, get(var_subgroup) == .)</a>
+<a class="sourceLine" id="cb29-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb29-14" data-line-number="14">##   Variable Count Percent Point Estimate Lower Upper    0    1 P value</a>
+<a class="sourceLine" id="cb29-15" data-line-number="15">## 1  Overall   228     100           1.91  1.14  3.19 41.3 58.7   0.013</a>
+<a class="sourceLine" id="cb29-16" data-line-number="16">## 2       kk  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
+<a class="sourceLine" id="cb29-17" data-line-number="17">## 3        0    38      38           2.88  0.31  27.1   20   80   0.355</a>
+<a class="sourceLine" id="cb29-18" data-line-number="18">## 4        1   187     187           1.84  1.08  3.11 43.1 56.9   0.024</a>
+<a class="sourceLine" id="cb29-19" data-line-number="19">## 5      kk1  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
+<a class="sourceLine" id="cb29-20" data-line-number="20">## 6        0  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
+<a class="sourceLine" id="cb29-21" data-line-number="21">## 7        1   217     217           1.88  1.12  3.15 42.6 57.4   0.017</a>
+<a class="sourceLine" id="cb29-22" data-line-number="22">##   P for interaction</a>
+<a class="sourceLine" id="cb29-23" data-line-number="23">## 1              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb29-24" data-line-number="24">## 2             0.523</a>
+<a class="sourceLine" id="cb29-25" data-line-number="25">## 3              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb29-26" data-line-number="26">## 4              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb29-27" data-line-number="27">## 5            &lt;0.001</a>
+<a class="sourceLine" id="cb29-28" data-line-number="28">## 6              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb29-29" data-line-number="29">## 7              &lt;NA&gt;</a></code></pre></div>
+</div>
 </div>
   </div>
 
@@ -497,7 +546,7 @@
 </ul>
 </div>
 
-      <div class="dev-status">
+  <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://travis-ci.org/jinseob2kim/jstable"><img src="https://travis-ci.org/jinseob2kim/jstable.svg?branch=master" alt="Build Status"></a></li>
@@ -511,9 +560,7 @@
 </ul>
 </div>
 </div>
-
 </div>
-
 
 
       <footer><div class="copyright">
@@ -521,7 +568,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.9100.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.9900.</p>
 </div>
 
       </footer>
