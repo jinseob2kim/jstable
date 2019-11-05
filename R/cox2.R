@@ -13,6 +13,7 @@
 #' @rdname cox2.display
 #' @export 
 #' @importFrom survival coxph cluster frailty
+#' @importFrom stats formula update
 
 cox2.display <- function (cox.obj.withmodel, dec = 2) 
 {
