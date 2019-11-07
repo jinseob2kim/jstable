@@ -33,18 +33,21 @@ cox2.display <- function (cox.obj.withmodel, dec = 2)
     mtype <- "frailty"
     xc <- setdiff(xf.old, xf)
     xc.vn <- strsplit(strsplit(xc, "frailty\\(")[[1]][2], "\\)")[[1]][1]
-  } else if(summary(model)$used.robust == T){
+  } else if(!is.null(attr(model$terms, "specials")$cluster)){
     mtype <- "cluster"
     #xfull <-  strsplit(as.character(model$call[[2]][3]), " \\+ ")[[1]]
     #xc <- setdiff(xfull, xf)
+    xf <- xf[-grep("cluster\\(",xf)]
+    xc <- setdiff(xf.old, xf)
+    xc.vn <- strsplit(strsplit(xc, "cluster\\(")[[1]][2], "\\)")[[1]][1]
     
     # a robust variance is often, but not always, the result of +cluster()
     #  in the formula.  If that is the case, remove it from our copy
-    if (!is.null(attr(model$terms, "specials")$cluster)) {
-      xf <- xf[-grep("cluster\\(",xf)]
-      xc <- setdiff(xf.old, xf)
-      xc.vn <- strsplit(strsplit(xc, "cluster\\(")[[1]][2], "\\)")[[1]][1]
-    }
+    #if (!is.null(attr(model$terms, "specials")$cluster)) {
+    #  xf <- xf[-grep("cluster\\(",xf)]
+    #  xc <- setdiff(xf.old, xf)
+    #  xc.vn <- strsplit(strsplit(xc, "cluster\\(")[[1]][2], "\\)")[[1]][1]
+    #}
   }
    
   formula.surv <- as.character(model$formula)[2]
