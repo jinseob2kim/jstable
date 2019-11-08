@@ -112,20 +112,20 @@ geeglm.display(gee02)
     ## 
     ## $table
     ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-    ## Time       "0.99 (0.96,1.03)" "0.785"       "0.99 (0.96,1.03)"
+    ## Time       "1.01 (0.97,1.06)" "0.559"       "1.01 (0.97,1.06)"
     ## Cu: ref.=1 NA                 NA            NA                
-    ##    2       "1.14 (0.79,1.65)" "0.485"       "1.14 (0.79,1.65)"
-    ##    3       "1.06 (0.72,1.57)" "0.76"        "1.06 (0.72,1.57)"
+    ##    2       "0.79 (0.58,1.08)" "0.135"       "0.79 (0.58,1.07)"
+    ##    3       "0.89 (0.67,1.18)" "0.421"       "0.89 (0.67,1.18)"
     ##            adj. P value
-    ## Time       "0.783"     
+    ## Time       "0.554"     
     ## Cu: ref.=1 NA          
-    ##    2       "0.484"     
-    ##    3       "0.76"      
+    ##    2       "0.134"     
+    ##    3       "0.42"      
     ## 
     ## $metric
     ##                                  crude OR(95%CI) crude P value
     ##                                  NA              NA           
-    ## Estimated correlation parameters "0.026"         NA           
+    ## Estimated correlation parameters "-0.019"        NA           
     ## No. of clusters                  "72"            NA           
     ## No. of observations              "861"           NA           
     ##                                  adj. OR(95%CI) adj. P value
@@ -139,64 +139,60 @@ Mixed model Table: `lmerMod` or `glmerMod` object from **lme4** package
 
 ``` r
 library(lme4)
-l1 = lmer(Weight ~ Time + Cu + (1|Pig) + (1|Evit), data = dietox) 
+l1 <- lmer(Weight ~ Time + Cu + (1|Pig), data = dietox) 
 lmer.display(l1, ci.ranef = T)
 ```
 
     ## $table
-    ##                       crude coeff(95%CI) crude P value adj. coeff(95%CI)
-    ## Time                    6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)
-    ## Cu: ref.=1                          <NA>            NA              <NA>
-    ##    2                  -0.57 (-4.66,3.52)     0.7837028 -0.81 (-4.42,2.8)
-    ##    3                    1.9 (-2.23,6.04)     0.3666829 1.78 (-1.87,5.43)
-    ## Random effects                      <NA>            NA              <NA>
-    ## Pig                  39.71 (27.82,54.93)            NA              <NA>
-    ## Evit                       0.9 (0,13.45)            NA              <NA>
-    ## Residual              11.37 (10.3,12.55)            NA              <NA>
-    ## Metrics                             <NA>            NA              <NA>
-    ## No. of groups (Pig)                   72            NA              <NA>
-    ## No. of groups (Evit)                   3            NA              <NA>
-    ## No. of observations                  861            NA              <NA>
-    ## Log-likelihood                  -2400.69            NA              <NA>
-    ## AIC value                        4801.38            NA              <NA>
-    ##                      adj. P value
-    ## Time                    0.0000000
-    ## Cu: ref.=1                     NA
-    ##    2                    0.6598522
-    ##    3                    0.3393579
-    ## Random effects                 NA
-    ## Pig                            NA
-    ## Evit                           NA
-    ## Residual                       NA
-    ## Metrics                        NA
-    ## No. of groups (Pig)            NA
-    ## No. of groups (Evit)           NA
-    ## No. of observations            NA
-    ## Log-likelihood                 NA
-    ## AIC value                      NA
+    ##                      crude coeff(95%CI) crude P value adj. coeff(95%CI)
+    ## Time                   6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)
+    ## Cu: ref.=1                         <NA>            NA              <NA>
+    ##    2                 -0.58 (-4.67,3.51)     0.7811327 -0.84 (-4.47,2.8)
+    ##    3                   1.9 (-2.23,6.04)     0.3670740  1.77 (-1.9,5.45)
+    ## Random effects                     <NA>            NA              <NA>
+    ## Pig                 40.34 (28.08,54.95)            NA              <NA>
+    ## Residual             11.37 (10.3,12.55)            NA              <NA>
+    ## Metrics                            <NA>            NA              <NA>
+    ## No. of groups (Pig)                  72            NA              <NA>
+    ## No. of observations                 861            NA              <NA>
+    ## Log-likelihood                  -2400.8            NA              <NA>
+    ## AIC value                        4801.6            NA              <NA>
+    ##                     adj. P value
+    ## Time                   0.0000000
+    ## Cu: ref.=1                    NA
+    ##    2                   0.6527264
+    ##    3                   0.3442310
+    ## Random effects                NA
+    ## Pig                           NA
+    ## Residual                      NA
+    ## Metrics                       NA
+    ## No. of groups (Pig)           NA
+    ## No. of observations           NA
+    ## Log-likelihood                NA
+    ## AIC value                     NA
     ## 
     ## $caption
-    ## [1] "Linear mixed model fit by REML : Weight ~ Time + Cu + (1 | Pig) + (1 | Evit)"
+    ## [1] "Linear mixed model fit by REML : Weight ~ Time + Cu + (1 | Pig)"
 
 ``` r
-l2 = glmer(ddn ~ Weight + Time + (1|Pig), data= dietox, family= "binomial")
+l2 <- glmer(ddn ~ Weight + Time + (1|Pig), data= dietox, family= "binomial")
 lmer.display(l2)
 ```
 
     ## $table
-    ##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
-    ## Weight                 1 (0.99,1.01)     0.9358643 1.01 (0.99,1.03)
-    ## Time                0.99 (0.96,1.03)     0.7905865  0.95 (0.81,1.1)
-    ## Random effects                  <NA>            NA             <NA>
-    ## Pig                              0.1            NA             <NA>
-    ## Metrics                         <NA>            NA             <NA>
-    ## No. of groups (Pig)               72            NA             <NA>
-    ## No. of observations              861            NA             <NA>
-    ## Log-likelihood                -594.2            NA             <NA>
-    ## AIC value                     1196.4            NA             <NA>
+    ##                      crude OR(95%CI) crude P value adj. OR(95%CI)
+    ## Weight                    1 (1,1.01)     0.5059625  1 (0.98,1.02)
+    ## Time                1.01 (0.97,1.05)     0.5173971  1 (0.88,1.15)
+    ## Random effects                  <NA>            NA           <NA>
+    ## Pig                                0            NA           <NA>
+    ## Metrics                         <NA>            NA           <NA>
+    ## No. of groups (Pig)               72            NA           <NA>
+    ## No. of observations              861            NA           <NA>
+    ## Log-likelihood                -595.5            NA           <NA>
+    ## AIC value                    1199.01            NA           <NA>
     ##                     adj. P value
-    ## Weight                 0.4925311
-    ## Time                   0.4642975
+    ## Weight                 0.8751956
+    ## Time                   0.9718584
     ## Random effects                NA
     ## Pig                           NA
     ## Metrics                       NA
@@ -213,7 +209,7 @@ Cox model with `frailty` or `cluster` options
 
 ``` r
 library(survival)
-fit1 <- coxph(Surv(time, status) ~ ph.ecog + age + cluster(inst), lung, model = T)  ## model = T: to extract original data
+fit1 <- coxph(Surv(time, status) ~ ph.ecog + age, cluster = inst, lung, model = T)  ## model = T: to extract original data
 fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frailty(inst), lung, model = T)
 cox2.display(fit1)
 ```
@@ -221,7 +217,7 @@ cox2.display(fit1)
     ## $table
     ##         crude HR(95%CI)    crude P value adj. HR(95%CI)  adj. P value
     ## ph.ecog "1.61 (1.25,2.08)" "< 0.001"     "1.56 (1.22,2)" "< 0.001"   
-    ## age     "1.02 (1.01,1.03)" "0.007"       "1.01 (1,1.02)" "0.085"     
+    ## age     "1.02 (1,1.03)"    "0.008"       "1.01 (1,1.02)" "0.085"     
     ## 
     ## $ranef
     ##         [,1] [,2] [,3] [,4]
@@ -244,7 +240,7 @@ cox2.display(fit2)
     ## $table
     ##         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value
     ## ph.ecog "1.64 (1.31,2.05)" "< 0.001"     "1.58 (1.26,1.99)" "< 0.001"   
-    ## age     "1.02 (1,1.04)"    "0.041"       "1.01 (0.99,1.03)" "0.225"     
+    ## age     "1.02 (1,1.04)"    "0.043"       "1.01 (0.99,1.03)" "0.225"     
     ## 
     ## $ranef
     ##         [,1] [,2] [,3] [,4]
@@ -424,63 +420,10 @@ mutate(status = as.integer(status == 1),
        kk = factor(as.integer(pat.karno >= 70)),
        kk1 = factor(as.integer(pat.karno >= 60))) -> lung
 
-TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = T)
-```
+#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = TRUE)
 
-    ##   Variable Count Percent Point Estimate Lower Upper    0    1 P value
-    ## 1  Overall   228     100           1.91  1.14   3.2 41.3 58.7   0.014
-    ## 2     <NA>  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
-    ## 3       kk  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
-    ## 4        0    38      38           2.88  0.31 26.49   20   80    0.35
-    ## 5        1   187     187           1.84  1.08  3.14 43.1 56.9   0.026
-    ## 6     <NA>  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
-    ## 7      kk1  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
-    ## 8        0     8       8           <NA>  <NA>  <NA>    0  100    <NA>
-    ## 9        1   217     217           1.88  1.12  3.17 42.6 57.4   0.018
-    ##   P for interaction
-    ## 1              <NA>
-    ## 2              <NA>
-    ## 3             0.525
-    ## 4              <NA>
-    ## 5              <NA>
-    ## 6              <NA>
-    ## 7             0.997
-    ## 8              <NA>
-    ## 9              <NA>
-
-``` r
 ## Survey data
 library(survey)
 data.design <- svydesign(id = ~1, data = lung)
-TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = F)
+#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = FALSE)
 ```
-
-    ## Independent Sampling design (with replacement)
-    ## svydesign(id = ~1, data = lung)
-    ## Independent Sampling design (with replacement)
-    ## svydesign(id = ~1, data = lung)
-    ## Independent Sampling design (with replacement)
-    ## subset(data, get(var_subgroup) == .)
-    ## Independent Sampling design (with replacement)
-    ## subset(data, get(var_subgroup) == .)
-    ## Independent Sampling design (with replacement)
-    ## svydesign(id = ~1, data = lung)
-    ## Independent Sampling design (with replacement)
-    ## subset(data, get(var_subgroup) == .)
-
-    ##   Variable Count Percent Point Estimate Lower Upper    0    1 P value
-    ## 1  Overall   228     100           1.91  1.14  3.19 41.3 58.7   0.013
-    ## 2       kk  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
-    ## 3        0    38      38           2.88  0.31  27.1   20   80   0.355
-    ## 4        1   187     187           1.84  1.08  3.11 43.1 56.9   0.024
-    ## 5      kk1  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
-    ## 6        0  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
-    ## 7        1   217     217           1.88  1.12  3.15 42.6 57.4   0.017
-    ##   P for interaction
-    ## 1              <NA>
-    ## 2             0.523
-    ## 3              <NA>
-    ## 4              <NA>
-    ## 5            <0.001
-    ## 6              <NA>
-    ## 7              <NA>
