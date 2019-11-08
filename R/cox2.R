@@ -33,21 +33,16 @@ cox2.display <- function (cox.obj.withmodel, dec = 2)
     mtype <- "frailty"
     xc <- setdiff(xf.old, xf)
     xc.vn <- strsplit(strsplit(xc, "frailty\\(")[[1]][2], "\\)")[[1]][1]
-  } else if(!is.null(attr(model$terms, "specials")$cluster)){
+  } else if(!(is.null(model$call$cluster))){
     mtype <- "cluster"
     #xfull <-  strsplit(as.character(model$call[[2]][3]), " \\+ ")[[1]]
     #xc <- setdiff(xfull, xf)
-    xf <- xf[-grep("cluster\\(",xf)]
-    xc <- setdiff(xf.old, xf)
-    xc.vn <- strsplit(strsplit(xc, "cluster\\(")[[1]][2], "\\)")[[1]][1]
-    
-    # a robust variance is often, but not always, the result of +cluster()
-    #  in the formula.  If that is the case, remove it from our copy
-    #if (!is.null(attr(model$terms, "specials")$cluster)) {
-    #  xf <- xf[-grep("cluster\\(",xf)]
-    #  xc <- setdiff(xf.old, xf)
-    #  xc.vn <- strsplit(strsplit(xc, "cluster\\(")[[1]][2], "\\)")[[1]][1]
-    #}
+    #xf <- ifelse(length(grep("cluster\\(",xf)) > 0, xf[-grep("cluster\\(",xf)], xf)
+    #xc <- setdiff(xf.old, xf)
+    xc <- as.character(model$call$cluster)
+    xc.vn <- xc
+    #xc.vn <- strsplit(strsplit(xc, "cluster\\(")[[1]][2], "\\)")[[1]][1]
+
   }
    
   formula.surv <- as.character(model$formula)[2]
@@ -140,16 +135,17 @@ cox2.display <- function (cox.obj.withmodel, dec = 2)
   ranef.mat = NULL
   if (mtype == "cluster"){
     ranef.mat <- cbind(c(NA, NA), matrix(NA, length(xc) + 1, ncol(fix.all) - 1))
-    clname = strsplit(xc, "\\(")[[1]]
-    cvname = strsplit(paste(clname[-1], collapse = "("), "\\)")[[1]]
-    cvname = paste(cvname[length(cvname)], collapse = ")")
-    rownames(ranef.mat) = c(clname[1], cvname)
+    #clname = strsplit(xc, "\\(")[[1]]
+    clname <- c("cluster", xc)
+    cvname <- strsplit(paste(clname[-1], collapse = "("), "\\)")[[1]]
+    cvname <- paste(cvname[length(cvname)], collapse = ")")
+    rownames(ranef.mat) <- c(clname[1], cvname)
   } else if (mtype == "frailty"){
     ranef.mat <- cbind(c(NA, NA), matrix(NA, length(xc) + 1, ncol(fix.all) - 1))
-    clname = strsplit(xc, "\\(")[[1]]
-    cvname = strsplit(paste(clname[-1], collapse = "("), "\\)")[[1]]
-    cvname = paste(cvname[length(cvname)], collapse = ")")
-    rownames(ranef.mat) = c(clname[1], cvname)
+    clname <- strsplit(xc, "\\(")[[1]]
+    cvname <- strsplit(paste(clname[-1], collapse = "("), "\\)")[[1]]
+    cvname <- paste(cvname[length(cvname)], collapse = ")")
+    rownames(ranef.mat) <- c(clname[1], cvname)
   }
   
 

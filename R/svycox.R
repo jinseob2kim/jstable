@@ -37,7 +37,8 @@ svycox.display <- function(svycoxph.obj, decimal = 2){
   design.model <- model$survey.design
   
   if(length(xf) == 1){
-    uni.res <- data.frame(summary(survey::svycoxph(as.formula(paste(formula.surv, "~", xf, sep="")), design = design.model))$coefficients)
+    uni.res <- data.frame(summary(model)$coefficients)
+    #uni.res <- data.frame(summary(survey::svycoxph(as.formula(paste(formula.surv, "~", xf, sep="")), design = design.model))$coefficients)
     names(uni.res)[ncol(uni.res)] <- "p"
     uni.res2 <- uni.res[, c(1, 3, 4, 5)]
     

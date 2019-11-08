@@ -59,10 +59,10 @@ geeglm.display(gee02)
 
 ```{r}
 library(lme4)
-l1 = lmer(Weight ~ Time + Cu + (1|Pig) + (1|Evit), data = dietox) 
+l1 = lmer(Weight ~ Time + Cu + (1|Pig), data = dietox) 
 lmer.display(l1, ci.ranef = T)
 
-l2 = glmer(ddn ~ Weight + Time + (1|Pig), data= dietox, family= "binomial")
+l2 = glmer(ddn ~  Time + Cu + (1|Pig), data= dietox, family= "binomial")
 lmer.display(l2)
 ```
 
@@ -71,7 +71,7 @@ lmer.display(l2)
 
 ```{r}
 library(survival)
-fit1 <- coxph(Surv(time, status) ~ ph.ecog + age + cluster(inst), lung, model = T)  ## model = T: to extract original data
+fit1 <- coxph(Surv(time, status) ~ ph.ecog + age, cluster = inst, lung, model = T)  ## model = T: to extract original data
 fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frailty(inst), lung, model = T)
 cox2.display(fit1)
 cox2.display(fit2)
@@ -94,8 +94,8 @@ apistrat$tt = c(rep(1, 20), rep(0, nrow(apistrat) -20))
 apistrat$tt2 = factor(c(rep(0, 40), rep(1, nrow(apistrat) -40)))
 
 dstrat<-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
-ds <- svyglm(api00~ell+meals+cname+mobility + tt2, design=dstrat)
-ds2 <- svyglm(tt~ell+meals+cname+mobility + tt2, design=dstrat, family = quasibinomial())
+ds <- svyglm(api00~ell+meals + tt2, design=dstrat)
+ds2 <- svyglm(tt~ell+meals+ tt2, design=dstrat, family = quasibinomial())
 svyregress.display(ds)
 svyregress.display(ds2)
 ```
@@ -132,6 +132,6 @@ mutate(status = as.integer(status == 1),
 
 ## Survey data
 library(survey)
-data.design <- svydesign(id = ~1, data = lung)
+data.design <- svydesign(id = ~1, data = lung, weights = ~1)
 #TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = F)
 ```
