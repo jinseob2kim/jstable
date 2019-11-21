@@ -1,10 +1,7 @@
-# jstable 0.9.1
-
-* Bug fix: match with **survival3.1-x**.
 
 # jstable 0.9.0
 
-* Updates: match with **survival3.1-x**.
+* Updates & Bug fix: match with **survival3.1-x**.
 
 # jstable 0.8.6
 
