@@ -71,6 +71,9 @@ cox2.display <- function (cox.obj.withmodel, dec = 2)
     uni.res2 <- NULL
     if (mtype == "normal"){
       uni.res2 <- uni.res[, c(1, 3, 4, 5)]
+      if (length(grep("robust.se", names(uni.res))) > 0){
+        uni.res2 <- uni.res[, c(1, 4, 5, 6)]
+      }
     } else if (mtype == "cluster"){
       uni.res2 <- uni.res[, c(1, 4, 5, 6)]
     } else {
