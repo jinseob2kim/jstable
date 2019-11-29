@@ -85,7 +85,7 @@ cox2.display <- function (cox.obj.withmodel, dec = 2)
     rownames(fix.all) <-  names(model$coefficients)
   } else{
     mdata2 <- cbind(matrix(sapply(mdata[, 1], `[[`, 1), ncol = 2), mdata[, -1])
-    names(mdata2)[1:2] <- as.character(model$call[[2]][[2]][2:3])
+    names(mdata2)[1:2] <- as.character(model$formula[[2]][2:3])
     if (!is.null(xc.vn)){
       names(mdata2)[ncol(mdata2)] <- xc.vn 
     }
