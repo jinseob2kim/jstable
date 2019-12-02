@@ -4,16 +4,36 @@
 \alias{CreateTableOneJS}
 \title{CreateTableOneJS: Modified CreateTableOne function in tableone package}
 \usage{
-CreateTableOneJS(vars, strata = NULL, strata2 = NULL, data,
-  factorVars = NULL, includeNA = F, test = T,
-  testApprox = chisq.test, argsApprox = list(correct = TRUE),
-  testExact = fisher.test, argsExact = list(workspace = 2 * 10^5),
-  testNormal = oneway.test, argsNormal = list(var.equal = F),
-  testNonNormal = kruskal.test, argsNonNormal = list(NULL),
-  showAllLevels = T, printToggle = F, quote = F, smd = F,
-  Labels = F, exact = NULL, nonnormal = NULL, catDigits = 1,
-  contDigits = 2, pDigits = 3, labeldata = NULL, psub = T,
-  minMax = F)
+CreateTableOneJS(
+  vars,
+  strata = NULL,
+  strata2 = NULL,
+  data,
+  factorVars = NULL,
+  includeNA = F,
+  test = T,
+  testApprox = chisq.test,
+  argsApprox = list(correct = TRUE),
+  testExact = fisher.test,
+  argsExact = list(workspace = 2 * 10^5),
+  testNormal = oneway.test,
+  argsNormal = list(var.equal = F),
+  testNonNormal = kruskal.test,
+  argsNonNormal = list(NULL),
+  showAllLevels = T,
+  printToggle = F,
+  quote = F,
+  smd = F,
+  Labels = F,
+  exact = NULL,
+  nonnormal = NULL,
+  catDigits = 1,
+  contDigits = 2,
+  pDigits = 3,
+  labeldata = NULL,
+  psub = T,
+  minMax = F
+)
 }
 \arguments{
 \item{vars}{Variables to be summarized given as a character vector. Factors are handled as categorical variables, whereas numeric variables are handled as continuous variables. If empty, all variables in the data frame specified in the data argument are used.}

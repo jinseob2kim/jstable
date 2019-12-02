@@ -4,11 +4,27 @@
 \alias{svyCreateTableOneJS}
 \title{svyCreateTableOneJS: Modified CreateTableOne function in tableone package}
 \usage{
-svyCreateTableOneJS(vars, strata = NULL, strata2 = NULL, data,
-  factorVars = NULL, includeNA = F, test = T, showAllLevels = T,
-  printToggle = F, quote = F, smd = F, Labels = F,
-  nonnormal = NULL, catDigits = 1, contDigits = 2, pDigits = 3,
-  labeldata = NULL, psub = T, minMax = F)
+svyCreateTableOneJS(
+  vars,
+  strata = NULL,
+  strata2 = NULL,
+  data,
+  factorVars = NULL,
+  includeNA = F,
+  test = T,
+  showAllLevels = T,
+  printToggle = F,
+  quote = F,
+  smd = F,
+  Labels = F,
+  nonnormal = NULL,
+  catDigits = 1,
+  contDigits = 2,
+  pDigits = 3,
+  labeldata = NULL,
+  psub = T,
+  minMax = F
+)
 }
 \arguments{
 \item{vars}{Variables to be summarized given as a character vector. Factors are handled as categorical variables, whereas numeric variables are handled as continuous variables. If empty, all variables in the data frame specified in the data argument are used.}

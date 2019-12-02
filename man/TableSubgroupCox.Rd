@@ -4,9 +4,16 @@
 \alias{TableSubgroupCox}
 \title{TableSubgroupCox: Sub-group analysis table for Cox/svycox model.}
 \usage{
-TableSubgroupCox(formula, var_subgroup = NULL, var_cov = NULL, data,
-  time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1,
-  decimal.pvalue = 3)
+TableSubgroupCox(
+  formula,
+  var_subgroup = NULL,
+  var_cov = NULL,
+  data,
+  time_eventrate = 3 * 365,
+  decimal.hr = 2,
+  decimal.percent = 1,
+  decimal.pvalue = 3
+)
 }
 \arguments{
 \item{formula}{formula with survival analysis.}

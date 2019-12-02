@@ -4,10 +4,25 @@
 \alias{svyCreateTableOne2}
 \title{svyCreateTableOne2: Modified svyCreateTableOne function in tableone package}
 \usage{
-svyCreateTableOne2(data, strata, vars, factorVars, includeNA = F,
-  test = T, showAllLevels = T, printToggle = F, quote = F,
-  smd = F, nonnormal = NULL, catDigits = 1, contDigits = 2,
-  pDigits = 3, Labels = F, labeldata = NULL, minMax = F)
+svyCreateTableOne2(
+  data,
+  strata,
+  vars,
+  factorVars,
+  includeNA = F,
+  test = T,
+  showAllLevels = T,
+  printToggle = F,
+  quote = F,
+  smd = F,
+  nonnormal = NULL,
+  catDigits = 1,
+  contDigits = 2,
+  pDigits = 3,
+  Labels = F,
+  labeldata = NULL,
+  minMax = F
+)
 }
 \arguments{
 \item{data}{A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.}

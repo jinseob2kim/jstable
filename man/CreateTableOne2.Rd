@@ -4,14 +4,34 @@
 \alias{CreateTableOne2}
 \title{CreateTableOne2: Modified CreateTableOne function in tableone package}
 \usage{
-CreateTableOne2(data, strata, vars, factorVars, includeNA = F,
-  test = T, testApprox = chisq.test, argsApprox = list(correct =
-  TRUE), testExact = fisher.test, argsExact = list(workspace = 2 *
-  10^5), testNormal = oneway.test, argsNormal = list(var.equal = F),
-  testNonNormal = kruskal.test, argsNonNormal = list(NULL),
-  showAllLevels = T, printToggle = F, quote = F, smd = F,
-  Labels = F, exact = NULL, nonnormal = NULL, catDigits = 1,
-  contDigits = 2, pDigits = 3, labeldata = NULL, minMax = F)
+CreateTableOne2(
+  data,
+  strata,
+  vars,
+  factorVars,
+  includeNA = F,
+  test = T,
+  testApprox = chisq.test,
+  argsApprox = list(correct = TRUE),
+  testExact = fisher.test,
+  argsExact = list(workspace = 2 * 10^5),
+  testNormal = oneway.test,
+  argsNormal = list(var.equal = F),
+  testNonNormal = kruskal.test,
+  argsNonNormal = list(NULL),
+  showAllLevels = T,
+  printToggle = F,
+  quote = F,
+  smd = F,
+  Labels = F,
+  exact = NULL,
+  nonnormal = NULL,
+  catDigits = 1,
+  contDigits = 2,
+  pDigits = 3,
+  labeldata = NULL,
+  minMax = F
+)
 }
 \arguments{
 \item{data}{A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.}
