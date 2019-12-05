@@ -93,7 +93,7 @@ svyregress.display <- function(svyglm.obj, decimal = 2){
   varnum.2fac <- which(xs %in% names(model$xlevels)[lapply(model$xlevels, length) == 2])
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xs[x], ": ", model$xlevels[[xs[x]]][2], " vs ", model$xlevels[[xs[x]]][1], sep="")})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xs[x],": ref.=", model$xlevels[[xs[x]]][1], sep=""), gsub(xs[x],"   ", rn.list[[x]]))})
-  if (class(fix.all.unlist) == "character"){
+  if (class(fix.all.unlist)[1] == "character"){
     fix.all.unlist <- t(data.frame(fix.all.unlist))
   }
   rownames(fix.all.unlist) <- unlist(rn.list)
