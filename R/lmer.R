@@ -12,7 +12,7 @@
 
 
 lmerExp = function(lmer.coef, family ="binomial", dec){
-  if (class(lmer.coef) == "numeric"){
+  if (class(lmer.coef)[1] == "numeric"){
     lmer.coef = t(data.frame(lmer.coef))
   }
   pv = 2*(1-pnorm(abs(lmer.coef[,3])))
