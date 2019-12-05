@@ -74,7 +74,7 @@ svycox.display <- function(svycoxph.obj, decimal = 2){
   varnum.2fac <- which(xf %in% names(model$xlevels)[lapply(model$xlevels, length) == 2])
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xf[x], ": ", model$xlevels[[xf[x]]][2], " vs ", model$xlevels[[xf[x]]][1], sep="")})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xf[x],": ref.=", model$xlevels[[xf[x]]][1], sep=""), gsub(xf[x],"   ", rn.list[[x]]))})
-  if (class(fix.all.unlist) == "character"){
+  if (class(fix.all.unlist)[1] == "character"){
     fix.all.unlist <- t(data.frame(fix.all.unlist))
   }
   rownames(fix.all.unlist) <- unlist(rn.list)
