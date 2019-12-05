@@ -1,6 +1,10 @@
 # jstable 0.9.1
 
+## Bug fix
+
 * Additional bug fix: match with **survival3.1-x**.
+
+* `class` issue: https://developer.r-project.org/Blog/public/2019/11/09/when-you-think-class.-think-again/index.html
 
 # jstable 0.9.0
 
