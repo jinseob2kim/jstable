@@ -110,7 +110,7 @@ lmer.display = function(lmerMod.obj, dec = 2, ci.ranef = F){
   varnum.2fac = which(lapply(xf, function(x){length(sapply(mdata, levels)[[x]])}) == 2)
   lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep="")})
   lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xf[x],": ref.=", levels(mdata[, xf[x]])[1], sep=""), gsub(xf[x],"   ", rn.list[[x]]))})
-  if (class(fix.all.unlist) == "character"){
+  if (class(fix.all.unlist)[1] == "character"){
     fix.all.unlist = t(data.frame(fix.all.unlist))
   }
   rownames(fix.all.unlist) = unlist(rn.list)
