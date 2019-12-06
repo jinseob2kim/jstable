@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.1</span>
       </span>
     </div>
 
@@ -132,14 +132,34 @@
     <p>Combine CreateTableOne &amp; print function in tableone package</p>
     </div>
 
-    <pre class="usage"><span class='fu'>CreateTableOne2</span>(<span class='no'>data</span>, <span class='no'>strata</span>, <span class='no'>vars</span>, <span class='no'>factorVars</span>, <span class='kw'>includeNA</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='kw'>test</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>testApprox</span> <span class='kw'>=</span> <span class='no'>chisq.test</span>, <span class='kw'>argsApprox</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>correct</span> <span class='kw'>=</span>
-  <span class='fl'>TRUE</span>), <span class='kw'>testExact</span> <span class='kw'>=</span> <span class='no'>fisher.test</span>, <span class='kw'>argsExact</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>workspace</span> <span class='kw'>=</span> <span class='fl'>2</span> *
-  <span class='fl'>10</span>^<span class='fl'>5</span>), <span class='kw'>testNormal</span> <span class='kw'>=</span> <span class='no'>oneway.test</span>, <span class='kw'>argsNormal</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>var.equal</span> <span class='kw'>=</span> <span class='no'>F</span>),
-  <span class='kw'>testNonNormal</span> <span class='kw'>=</span> <span class='no'>kruskal.test</span>, <span class='kw'>argsNonNormal</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>NULL</span>),
-  <span class='kw'>showAllLevels</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>printToggle</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>quote</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>smd</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='kw'>Labels</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>exact</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nonnormal</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>catDigits</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>contDigits</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>pDigits</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>labeldata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>minMax</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
+    <pre class="usage"><span class='fu'>CreateTableOne2</span>(
+  <span class='no'>data</span>,
+  <span class='no'>strata</span>,
+  <span class='no'>vars</span>,
+  <span class='no'>factorVars</span>,
+  <span class='kw'>includeNA</span> <span class='kw'>=</span> <span class='no'>F</span>,
+  <span class='kw'>test</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>testApprox</span> <span class='kw'>=</span> <span class='no'>chisq.test</span>,
+  <span class='kw'>argsApprox</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>correct</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
+  <span class='kw'>testExact</span> <span class='kw'>=</span> <span class='no'>fisher.test</span>,
+  <span class='kw'>argsExact</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>workspace</span> <span class='kw'>=</span> <span class='fl'>2</span> * <span class='fl'>10</span>^<span class='fl'>5</span>),
+  <span class='kw'>testNormal</span> <span class='kw'>=</span> <span class='no'>oneway.test</span>,
+  <span class='kw'>argsNormal</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>var.equal</span> <span class='kw'>=</span> <span class='no'>F</span>),
+  <span class='kw'>testNonNormal</span> <span class='kw'>=</span> <span class='no'>kruskal.test</span>,
+  <span class='kw'>argsNonNormal</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>NULL</span>),
+  <span class='kw'>showAllLevels</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>printToggle</span> <span class='kw'>=</span> <span class='no'>F</span>,
+  <span class='kw'>quote</span> <span class='kw'>=</span> <span class='no'>F</span>,
+  <span class='kw'>smd</span> <span class='kw'>=</span> <span class='no'>F</span>,
+  <span class='kw'>Labels</span> <span class='kw'>=</span> <span class='no'>F</span>,
+  <span class='kw'>exact</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>nonnormal</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>catDigits</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>contDigits</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>pDigits</span> <span class='kw'>=</span> <span class='fl'>3</span>,
+  <span class='kw'>labeldata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>minMax</span> <span class='kw'>=</span> <span class='no'>F</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -272,7 +292,7 @@
 #&gt; meal.cal   ""    "980.54 (413.26)" "840.70 (369.08)" " 0.020" ""   "**"
 #&gt; wt.loss    ""    " 11.22 (12.98)"  "  7.77 (13.18)"  " 0.060" ""   ""  </div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>

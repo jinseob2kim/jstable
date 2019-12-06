@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.1</span>
       </span>
     </div>
 
@@ -132,9 +132,17 @@
     <p>Multiple sub-group analysis table for Cox/svycox model.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>TableSubgroupMultiCox</span>(<span class='no'>formula</span>, <span class='kw'>var_subgroups</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>var_cov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>data</span>, <span class='kw'>time_eventrate</span> <span class='kw'>=</span> <span class='fl'>3</span> * <span class='fl'>365</span>, <span class='kw'>decimal.hr</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>decimal.percent</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>decimal.pvalue</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>line</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
+    <pre class="usage"><span class='fu'>TableSubgroupMultiCox</span>(
+  <span class='no'>formula</span>,
+  <span class='kw'>var_subgroups</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>var_cov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>data</span>,
+  <span class='kw'>time_eventrate</span> <span class='kw'>=</span> <span class='fl'>3</span> * <span class='fl'>365</span>,
+  <span class='kw'>decimal.hr</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>decimal.percent</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>decimal.pvalue</span> <span class='kw'>=</span> <span class='fl'>3</span>,
+  <span class='kw'>line</span> <span class='kw'>=</span> <span class='no'>F</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -246,7 +254,7 @@
 #&gt; 6              &lt;NA&gt;
 #&gt; 7              &lt;NA&gt;</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>

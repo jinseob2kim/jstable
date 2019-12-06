@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.1</span>
       </span>
     </div>
 
@@ -176,20 +176,20 @@
 <a class="sourceLine" id="cb9-3" data-line-number="3">## </a>
 <a class="sourceLine" id="cb9-4" data-line-number="4">## $table</a>
 <a class="sourceLine" id="cb9-5" data-line-number="5">##            crude OR(95%CI)    crude P value adj. OR(95%CI)    </a>
-<a class="sourceLine" id="cb9-6" data-line-number="6">## Time       "0.99 (0.96,1.03)" "0.785"       "0.99 (0.96,1.03)"</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">## Time       "1.01 (0.97,1.06)" "0.559"       "1.01 (0.97,1.06)"</a>
 <a class="sourceLine" id="cb9-7" data-line-number="7">## Cu: ref.=1 NA                 NA            NA                </a>
-<a class="sourceLine" id="cb9-8" data-line-number="8">##    2       "1.14 (0.79,1.65)" "0.485"       "1.14 (0.79,1.65)"</a>
-<a class="sourceLine" id="cb9-9" data-line-number="9">##    3       "1.06 (0.72,1.57)" "0.76"        "1.06 (0.72,1.57)"</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8">##    2       "0.79 (0.58,1.08)" "0.135"       "0.79 (0.58,1.07)"</a>
+<a class="sourceLine" id="cb9-9" data-line-number="9">##    3       "0.89 (0.67,1.18)" "0.421"       "0.89 (0.67,1.18)"</a>
 <a class="sourceLine" id="cb9-10" data-line-number="10">##            adj. P value</a>
-<a class="sourceLine" id="cb9-11" data-line-number="11">## Time       "0.783"     </a>
+<a class="sourceLine" id="cb9-11" data-line-number="11">## Time       "0.554"     </a>
 <a class="sourceLine" id="cb9-12" data-line-number="12">## Cu: ref.=1 NA          </a>
-<a class="sourceLine" id="cb9-13" data-line-number="13">##    2       "0.484"     </a>
-<a class="sourceLine" id="cb9-14" data-line-number="14">##    3       "0.76"      </a>
+<a class="sourceLine" id="cb9-13" data-line-number="13">##    2       "0.134"     </a>
+<a class="sourceLine" id="cb9-14" data-line-number="14">##    3       "0.42"      </a>
 <a class="sourceLine" id="cb9-15" data-line-number="15">## </a>
 <a class="sourceLine" id="cb9-16" data-line-number="16">## $metric</a>
 <a class="sourceLine" id="cb9-17" data-line-number="17">##                                  crude OR(95%CI) crude P value</a>
 <a class="sourceLine" id="cb9-18" data-line-number="18">##                                  NA              NA           </a>
-<a class="sourceLine" id="cb9-19" data-line-number="19">## Estimated correlation parameters "0.026"         NA           </a>
+<a class="sourceLine" id="cb9-19" data-line-number="19">## Estimated correlation parameters "-0.019"        NA           </a>
 <a class="sourceLine" id="cb9-20" data-line-number="20">## No. of clusters                  "72"            NA           </a>
 <a class="sourceLine" id="cb9-21" data-line-number="21">## No. of observations              "861"           NA           </a>
 <a class="sourceLine" id="cb9-22" data-line-number="22">##                                  adj. OR(95%CI) adj. P value</a>
@@ -202,58 +202,54 @@
 <h2 class="hasAnchor">
 <a href="#mixed-model-table-lmermod-or-glmermod-object-from-lme4-package" class="anchor"></a>Mixed model Table: <code>lmerMod</code> or <code>glmerMod</code> object from <strong>lme4</strong> package</h2>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(lme4)</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">l1 =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span>(Weight <span class="op">~</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>Cu <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Evit), <span class="dt">data =</span> dietox) </a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">l1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span>(Weight <span class="op">~</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>Cu <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig), <span class="dt">data =</span> dietox) </a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l1, <span class="dt">ci.ranef =</span> T)</a></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">## $table</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">##                       crude coeff(95%CI) crude P value adj. coeff(95%CI)</a>
-<a class="sourceLine" id="cb11-3" data-line-number="3">## Time                    6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)</a>
-<a class="sourceLine" id="cb11-4" data-line-number="4">## Cu: ref.=1                          &lt;NA&gt;            NA              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb11-5" data-line-number="5">##    2                  -0.57 (-4.66,3.52)     0.7837028 -0.81 (-4.42,2.8)</a>
-<a class="sourceLine" id="cb11-6" data-line-number="6">##    3                    1.9 (-2.23,6.04)     0.3666829 1.78 (-1.87,5.43)</a>
-<a class="sourceLine" id="cb11-7" data-line-number="7">## Random effects                      &lt;NA&gt;            NA              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb11-8" data-line-number="8">## Pig                  39.71 (27.82,54.93)            NA              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb11-9" data-line-number="9">## Evit                       0.9 (0,13.45)            NA              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb11-10" data-line-number="10">## Residual              11.37 (10.3,12.55)            NA              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb11-11" data-line-number="11">## Metrics                             &lt;NA&gt;            NA              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb11-12" data-line-number="12">## No. of groups (Pig)                   72            NA              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb11-13" data-line-number="13">## No. of groups (Evit)                   3            NA              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb11-14" data-line-number="14">## No. of observations                  861            NA              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb11-15" data-line-number="15">## Log-likelihood                  -2400.69            NA              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb11-16" data-line-number="16">## AIC value                        4801.38            NA              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb11-17" data-line-number="17">##                      adj. P value</a>
-<a class="sourceLine" id="cb11-18" data-line-number="18">## Time                    0.0000000</a>
-<a class="sourceLine" id="cb11-19" data-line-number="19">## Cu: ref.=1                     NA</a>
-<a class="sourceLine" id="cb11-20" data-line-number="20">##    2                    0.6598522</a>
-<a class="sourceLine" id="cb11-21" data-line-number="21">##    3                    0.3393579</a>
-<a class="sourceLine" id="cb11-22" data-line-number="22">## Random effects                 NA</a>
-<a class="sourceLine" id="cb11-23" data-line-number="23">## Pig                            NA</a>
-<a class="sourceLine" id="cb11-24" data-line-number="24">## Evit                           NA</a>
-<a class="sourceLine" id="cb11-25" data-line-number="25">## Residual                       NA</a>
-<a class="sourceLine" id="cb11-26" data-line-number="26">## Metrics                        NA</a>
-<a class="sourceLine" id="cb11-27" data-line-number="27">## No. of groups (Pig)            NA</a>
-<a class="sourceLine" id="cb11-28" data-line-number="28">## No. of groups (Evit)           NA</a>
-<a class="sourceLine" id="cb11-29" data-line-number="29">## No. of observations            NA</a>
-<a class="sourceLine" id="cb11-30" data-line-number="30">## Log-likelihood                 NA</a>
-<a class="sourceLine" id="cb11-31" data-line-number="31">## AIC value                      NA</a>
-<a class="sourceLine" id="cb11-32" data-line-number="32">## </a>
-<a class="sourceLine" id="cb11-33" data-line-number="33">## $caption</a>
-<a class="sourceLine" id="cb11-34" data-line-number="34">## [1] "Linear mixed model fit by REML : Weight ~ Time + Cu + (1 | Pig) + (1 | Evit)"</a></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">l2 =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/lme4/man/glmer.html">glmer</a></span>(ddn <span class="op">~</span><span class="st"> </span>Weight <span class="op">+</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig), <span class="dt">data=</span> dietox, <span class="dt">family=</span> <span class="st">"binomial"</span>)</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">##                      crude coeff(95%CI) crude P value adj. coeff(95%CI)</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">## Time                   6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4">## Cu: ref.=1                         &lt;NA&gt;            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">##    2                 -0.58 (-4.67,3.51)     0.7811327 -0.84 (-4.47,2.8)</a>
+<a class="sourceLine" id="cb11-6" data-line-number="6">##    3                   1.9 (-2.23,6.04)     0.3670740  1.77 (-1.9,5.45)</a>
+<a class="sourceLine" id="cb11-7" data-line-number="7">## Random effects                     &lt;NA&gt;            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-8" data-line-number="8">## Pig                 40.34 (28.08,54.95)            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-9" data-line-number="9">## Residual             11.37 (10.3,12.55)            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-10" data-line-number="10">## Metrics                            &lt;NA&gt;            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-11" data-line-number="11">## No. of groups (Pig)                  72            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-12" data-line-number="12">## No. of observations                 861            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-13" data-line-number="13">## Log-likelihood                  -2400.8            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-14" data-line-number="14">## AIC value                        4801.6            NA              &lt;NA&gt;</a>
+<a class="sourceLine" id="cb11-15" data-line-number="15">##                     adj. P value</a>
+<a class="sourceLine" id="cb11-16" data-line-number="16">## Time                   0.0000000</a>
+<a class="sourceLine" id="cb11-17" data-line-number="17">## Cu: ref.=1                    NA</a>
+<a class="sourceLine" id="cb11-18" data-line-number="18">##    2                   0.6527264</a>
+<a class="sourceLine" id="cb11-19" data-line-number="19">##    3                   0.3442310</a>
+<a class="sourceLine" id="cb11-20" data-line-number="20">## Random effects                NA</a>
+<a class="sourceLine" id="cb11-21" data-line-number="21">## Pig                           NA</a>
+<a class="sourceLine" id="cb11-22" data-line-number="22">## Residual                      NA</a>
+<a class="sourceLine" id="cb11-23" data-line-number="23">## Metrics                       NA</a>
+<a class="sourceLine" id="cb11-24" data-line-number="24">## No. of groups (Pig)           NA</a>
+<a class="sourceLine" id="cb11-25" data-line-number="25">## No. of observations           NA</a>
+<a class="sourceLine" id="cb11-26" data-line-number="26">## Log-likelihood                NA</a>
+<a class="sourceLine" id="cb11-27" data-line-number="27">## AIC value                     NA</a>
+<a class="sourceLine" id="cb11-28" data-line-number="28">## </a>
+<a class="sourceLine" id="cb11-29" data-line-number="29">## $caption</a>
+<a class="sourceLine" id="cb11-30" data-line-number="30">## [1] "Linear mixed model fit by REML : Weight ~ Time + Cu + (1 | Pig)"</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">l2 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/lme4/man/glmer.html">glmer</a></span>(ddn <span class="op">~</span><span class="st"> </span>Weight <span class="op">+</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pig), <span class="dt">data=</span> dietox, <span class="dt">family=</span> <span class="st">"binomial"</span>)</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw"><a href="reference/lmer.display.html">lmer.display</a></span>(l2)</a></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">## $table</a>
-<a class="sourceLine" id="cb13-2" data-line-number="2">##                      crude OR(95%CI) crude P value   adj. OR(95%CI)</a>
-<a class="sourceLine" id="cb13-3" data-line-number="3">## Weight                 1 (0.99,1.01)     0.9358643 1.01 (0.99,1.03)</a>
-<a class="sourceLine" id="cb13-4" data-line-number="4">## Time                0.99 (0.96,1.03)     0.7905865  0.95 (0.81,1.1)</a>
-<a class="sourceLine" id="cb13-5" data-line-number="5">## Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;</a>
-<a class="sourceLine" id="cb13-6" data-line-number="6">## Pig                              0.1            NA             &lt;NA&gt;</a>
-<a class="sourceLine" id="cb13-7" data-line-number="7">## Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;</a>
-<a class="sourceLine" id="cb13-8" data-line-number="8">## No. of groups (Pig)               72            NA             &lt;NA&gt;</a>
-<a class="sourceLine" id="cb13-9" data-line-number="9">## No. of observations              861            NA             &lt;NA&gt;</a>
-<a class="sourceLine" id="cb13-10" data-line-number="10">## Log-likelihood                -594.2            NA             &lt;NA&gt;</a>
-<a class="sourceLine" id="cb13-11" data-line-number="11">## AIC value                     1196.4            NA             &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">##                      crude OR(95%CI) crude P value adj. OR(95%CI)</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">## Weight                    1 (1,1.01)     0.5059625  1 (0.98,1.02)</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">## Time                1.01 (0.97,1.05)     0.5173971  1 (0.88,1.15)</a>
+<a class="sourceLine" id="cb13-5" data-line-number="5">## Random effects                  &lt;NA&gt;            NA           &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-6" data-line-number="6">## Pig                                0            NA           &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-7" data-line-number="7">## Metrics                         &lt;NA&gt;            NA           &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-8" data-line-number="8">## No. of groups (Pig)               72            NA           &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-9" data-line-number="9">## No. of observations              861            NA           &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-10" data-line-number="10">## Log-likelihood                -595.5            NA           &lt;NA&gt;</a>
+<a class="sourceLine" id="cb13-11" data-line-number="11">## AIC value                    1199.01            NA           &lt;NA&gt;</a>
 <a class="sourceLine" id="cb13-12" data-line-number="12">##                     adj. P value</a>
-<a class="sourceLine" id="cb13-13" data-line-number="13">## Weight                 0.4925311</a>
-<a class="sourceLine" id="cb13-14" data-line-number="14">## Time                   0.4642975</a>
+<a class="sourceLine" id="cb13-13" data-line-number="13">## Weight                 0.8751956</a>
+<a class="sourceLine" id="cb13-14" data-line-number="14">## Time                   0.9718584</a>
 <a class="sourceLine" id="cb13-15" data-line-number="15">## Random effects                NA</a>
 <a class="sourceLine" id="cb13-16" data-line-number="16">## Pig                           NA</a>
 <a class="sourceLine" id="cb13-17" data-line-number="17">## Metrics                       NA</a>
@@ -269,13 +265,13 @@
 <h2 class="hasAnchor">
 <a href="#cox-model-with-frailty-or-cluster-options" class="anchor"></a>Cox model with <code>frailty</code> or <code>cluster</code> options</h2>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(survival)</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">fit1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survival/man/cluster.html">cluster</a></span>(inst), lung, <span class="dt">model =</span> T)  ## model = T: to extract original data</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">fit1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age, <span class="dt">cluster =</span> inst, lung, <span class="dt">model =</span> T)  ## model = T: to extract original data</a>
 <a class="sourceLine" id="cb14-3" data-line-number="3">fit2 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>ph.ecog <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survival/man/frailty.html">frailty</a></span>(inst), lung, <span class="dt">model =</span> T)</a>
 <a class="sourceLine" id="cb14-4" data-line-number="4"><span class="kw"><a href="reference/cox2.display.html">cox2.display</a></span>(fit1)</a></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">## $table</a>
 <a class="sourceLine" id="cb15-2" data-line-number="2">##         crude HR(95%CI)    crude P value adj. HR(95%CI)  adj. P value</a>
 <a class="sourceLine" id="cb15-3" data-line-number="3">## ph.ecog "1.61 (1.25,2.08)" "&lt; 0.001"     "1.56 (1.22,2)" "&lt; 0.001"   </a>
-<a class="sourceLine" id="cb15-4" data-line-number="4">## age     "1.02 (1.01,1.03)" "0.007"       "1.01 (1,1.02)" "0.085"     </a>
+<a class="sourceLine" id="cb15-4" data-line-number="4">## age     "1.02 (1,1.03)"    "0.008"       "1.01 (1,1.02)" "0.085"     </a>
 <a class="sourceLine" id="cb15-5" data-line-number="5">## </a>
 <a class="sourceLine" id="cb15-6" data-line-number="6">## $ranef</a>
 <a class="sourceLine" id="cb15-7" data-line-number="7">##         [,1] [,2] [,3] [,4]</a>
@@ -294,7 +290,7 @@
 <div class="sourceCode" id="cb17"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">## $table</a>
 <a class="sourceLine" id="cb17-2" data-line-number="2">##         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value</a>
 <a class="sourceLine" id="cb17-3" data-line-number="3">## ph.ecog "1.64 (1.31,2.05)" "&lt; 0.001"     "1.58 (1.26,1.99)" "&lt; 0.001"   </a>
-<a class="sourceLine" id="cb17-4" data-line-number="4">## age     "1.02 (1,1.04)"    "0.041"       "1.01 (0.99,1.03)" "0.225"     </a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">## age     "1.02 (1,1.04)"    "0.043"       "1.01 (0.99,1.03)" "0.225"     </a>
 <a class="sourceLine" id="cb17-5" data-line-number="5">## </a>
 <a class="sourceLine" id="cb17-6" data-line-number="6">## $ranef</a>
 <a class="sourceLine" id="cb17-7" data-line-number="7">##         [,1] [,2] [,3] [,4]</a>
@@ -460,65 +456,17 @@
 <a class="sourceLine" id="cb26-5" data-line-number="5">       <span class="dt">kk =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(pat.karno <span class="op">&gt;=</span><span class="st"> </span><span class="dv">70</span>)),</a>
 <a class="sourceLine" id="cb26-6" data-line-number="6">       <span class="dt">kk1 =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(pat.karno <span class="op">&gt;=</span><span class="st"> </span><span class="dv">60</span>))) -&gt;<span class="st"> </span>lung</a>
 <a class="sourceLine" id="cb26-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb26-8" data-line-number="8"><span class="kw"><a href="reference/TableSubgroupMultiCox.html">TableSubgroupMultiCox</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>sex, <span class="dt">var_subgroups =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"kk"</span>, <span class="st">"kk1"</span>), <span class="dt">data=</span>lung, <span class="dt">line =</span> T)</a></code></pre></div>
-<div class="sourceCode" id="cb27"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">##   Variable Count Percent Point Estimate Lower Upper    0    1 P value</a>
-<a class="sourceLine" id="cb27-2" data-line-number="2">## 1  Overall   228     100           1.91  1.14   3.2 41.3 58.7   0.014</a>
-<a class="sourceLine" id="cb27-3" data-line-number="3">## 2     &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
-<a class="sourceLine" id="cb27-4" data-line-number="4">## 3       kk  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
-<a class="sourceLine" id="cb27-5" data-line-number="5">## 4        0    38      38           2.88  0.31 26.49   20   80    0.35</a>
-<a class="sourceLine" id="cb27-6" data-line-number="6">## 5        1   187     187           1.84  1.08  3.14 43.1 56.9   0.026</a>
-<a class="sourceLine" id="cb27-7" data-line-number="7">## 6     &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
-<a class="sourceLine" id="cb27-8" data-line-number="8">## 7      kk1  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
-<a class="sourceLine" id="cb27-9" data-line-number="9">## 8        0     8       8           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    0  100    &lt;NA&gt;</a>
-<a class="sourceLine" id="cb27-10" data-line-number="10">## 9        1   217     217           1.88  1.12  3.17 42.6 57.4   0.018</a>
-<a class="sourceLine" id="cb27-11" data-line-number="11">##   P for interaction</a>
-<a class="sourceLine" id="cb27-12" data-line-number="12">## 1              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb27-13" data-line-number="13">## 2              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb27-14" data-line-number="14">## 3             0.525</a>
-<a class="sourceLine" id="cb27-15" data-line-number="15">## 4              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb27-16" data-line-number="16">## 5              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb27-17" data-line-number="17">## 6              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb27-18" data-line-number="18">## 7             0.997</a>
-<a class="sourceLine" id="cb27-19" data-line-number="19">## 8              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb27-20" data-line-number="20">## 9              &lt;NA&gt;</a></code></pre></div>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">## Survey data</a>
-<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(survey)</a>
-<a class="sourceLine" id="cb28-3" data-line-number="3">data.design &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survey/man/svydesign.html">svydesign</a></span>(<span class="dt">id =</span> <span class="op">~</span><span class="dv">1</span>, <span class="dt">data =</span> lung)</a>
-<a class="sourceLine" id="cb28-4" data-line-number="4"><span class="kw"><a href="reference/TableSubgroupMultiCox.html">TableSubgroupMultiCox</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(time, status) <span class="op">~</span><span class="st"> </span>sex, <span class="dt">var_subgroups =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"kk"</span>, <span class="st">"kk1"</span>), <span class="dt">data =</span> data.design, <span class="dt">line =</span> F)</a></code></pre></div>
-<div class="sourceCode" id="cb29"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">## Independent Sampling design (with replacement)</a>
-<a class="sourceLine" id="cb29-2" data-line-number="2">## svydesign(id = ~1, data = lung)</a>
-<a class="sourceLine" id="cb29-3" data-line-number="3">## Independent Sampling design (with replacement)</a>
-<a class="sourceLine" id="cb29-4" data-line-number="4">## svydesign(id = ~1, data = lung)</a>
-<a class="sourceLine" id="cb29-5" data-line-number="5">## Independent Sampling design (with replacement)</a>
-<a class="sourceLine" id="cb29-6" data-line-number="6">## subset(data, get(var_subgroup) == .)</a>
-<a class="sourceLine" id="cb29-7" data-line-number="7">## Independent Sampling design (with replacement)</a>
-<a class="sourceLine" id="cb29-8" data-line-number="8">## subset(data, get(var_subgroup) == .)</a>
-<a class="sourceLine" id="cb29-9" data-line-number="9">## Independent Sampling design (with replacement)</a>
-<a class="sourceLine" id="cb29-10" data-line-number="10">## svydesign(id = ~1, data = lung)</a>
-<a class="sourceLine" id="cb29-11" data-line-number="11">## Independent Sampling design (with replacement)</a>
-<a class="sourceLine" id="cb29-12" data-line-number="12">## subset(data, get(var_subgroup) == .)</a>
-<a class="sourceLine" id="cb29-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb29-14" data-line-number="14">##   Variable Count Percent Point Estimate Lower Upper    0    1 P value</a>
-<a class="sourceLine" id="cb29-15" data-line-number="15">## 1  Overall   228     100           1.91  1.14  3.19 41.3 58.7   0.013</a>
-<a class="sourceLine" id="cb29-16" data-line-number="16">## 2       kk  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
-<a class="sourceLine" id="cb29-17" data-line-number="17">## 3        0    38      38           2.88  0.31  27.1   20   80   0.355</a>
-<a class="sourceLine" id="cb29-18" data-line-number="18">## 4        1   187     187           1.84  1.08  3.11 43.1 56.9   0.024</a>
-<a class="sourceLine" id="cb29-19" data-line-number="19">## 5      kk1  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
-<a class="sourceLine" id="cb29-20" data-line-number="20">## 6        0  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;</a>
-<a class="sourceLine" id="cb29-21" data-line-number="21">## 7        1   217     217           1.88  1.12  3.15 42.6 57.4   0.017</a>
-<a class="sourceLine" id="cb29-22" data-line-number="22">##   P for interaction</a>
-<a class="sourceLine" id="cb29-23" data-line-number="23">## 1              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb29-24" data-line-number="24">## 2             0.523</a>
-<a class="sourceLine" id="cb29-25" data-line-number="25">## 3              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb29-26" data-line-number="26">## 4              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb29-27" data-line-number="27">## 5            &lt;0.001</a>
-<a class="sourceLine" id="cb29-28" data-line-number="28">## 6              &lt;NA&gt;</a>
-<a class="sourceLine" id="cb29-29" data-line-number="29">## 7              &lt;NA&gt;</a></code></pre></div>
+<a class="sourceLine" id="cb26-8" data-line-number="8"><span class="co">#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = TRUE)</span></a>
+<a class="sourceLine" id="cb26-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb26-10" data-line-number="10">## Survey data</a>
+<a class="sourceLine" id="cb26-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(survey)</a>
+<a class="sourceLine" id="cb26-12" data-line-number="12">data.design &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/survey/man/svydesign.html">svydesign</a></span>(<span class="dt">id =</span> <span class="op">~</span><span class="dv">1</span>, <span class="dt">data =</span> lung)</a>
+<a class="sourceLine" id="cb26-13" data-line-number="13"><span class="co">#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = FALSE)</span></a></code></pre></div>
 </div>
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
@@ -546,20 +494,7 @@
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://travis-ci.org/jinseob2kim/jstable"><img src="https://travis-ci.org/jinseob2kim/jstable.svg?branch=master" alt="Build Status"></a></li>
-<li><a href="https://ci.appveyor.com/project/jinseob2kim/jstable"><img src="https://ci.appveyor.com/api/projects/status/github/jinseob2kim/jstable?branch=master&amp;svg=true" alt="AppVeyor build status"></a></li>
-<li><a href="https://cran.r-project.org/package=jstable"><img src="https://www.r-pkg.org/badges/version/jstable" alt="CRAN_Status_Badge"></a></li>
-<li><a href="https://CRAN.R-project.org/package=jstable"><img src="https://cranlogs.r-pkg.org/badges/jstable" alt="CRAN_Download_Badge"></a></li>
-<li><a href="https://codecov.io/github/jinseob2kim/jstable"><img src="https://codecov.io/github/jinseob2kim/jstable/branch/master/graphs/badge.svg" alt="codecov"></a></li>
-<li><a href="https://github.com/jinseob2kim/jstable/issues"><img src="https://img.shields.io/github/issues/jinseob2kim/jstable.svg" alt="GitHub issues"></a></li>
-<li><a href="https://github.com/jinseob2kim/jstable/stargazers"><img src="https://img.shields.io/github/stars/jinseob2kim/jstable.svg" alt="GitHub stars"></a></li>
-<li><a href="https://github.com/jinseob2kim/jstable/blob/master/LICENSE"><img src="https://img.shields.io/github/license/jinseob2kim/jstable.svg" alt="GitHub license"></a></li>
-</ul>
-</div>
-</div>
+  </div>
 </div>
 
 
