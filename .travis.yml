@@ -10,6 +10,7 @@ matrix:
   - r: release
     r_packages:
     - covr
+    - survival
     r_github_packages:
     - r-lib/pkgdown
     - jinseob2kim/jstable
