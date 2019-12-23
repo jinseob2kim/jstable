@@ -1,3 +1,10 @@
+# jstable 0.9.2
+
+## Bug fix
+
+* Column name fix: Run `CreateTableOneJS` with 2 level strata & `psub = F`.
+
+
 # jstable 0.9.1
 
 ## Bug fix

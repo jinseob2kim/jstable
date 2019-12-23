@@ -275,7 +275,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     
     # Column name
     if (Labels & !is.null(labeldata)){
-      val_combination <- data.table::CJ(labeldata[variable == strata, val_label], labeldata[variable == strata2, val_label])
+      val_combination <- data.table::CJ(labeldata[variable == strata, val_label], labeldata[variable == strata2, val_label], sorted = F)
       colname.group_var <- val_combination[, paste(V1, ":", V2, sep="")] 
       colname.group_index <- paste(labeldata[variable == strata, var_label][1], ":", labeldata[variable == strata2, var_label][1], sep = "")
       if (showAllLevels == T){
