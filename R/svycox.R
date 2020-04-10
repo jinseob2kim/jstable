@@ -40,7 +40,7 @@ svycox.display <- function(svycoxph.obj, decimal = 2){
     uni.res <- data.frame(summary(model)$coefficients)
     #uni.res <- data.frame(summary(survey::svycoxph(as.formula(paste(formula.surv, "~", xf, sep="")), design = design.model))$coefficients)
     names(uni.res)[ncol(uni.res)] <- "p"
-    uni.res2 <- uni.res[, c(1, 3, 4, 5)]
+    uni.res2 <- uni.res[, c("coef", grep("se", colnames(uni.res), value = T)[length(grep("se", colnames(uni.res)))], "z", "p")]
     
     fix.all = coxExp(uni.res2, dec = decimal)
     colnames(fix.all) <- c("HR(95%CI)", "P value")
@@ -50,7 +50,7 @@ svycox.display <- function(svycoxph.obj, decimal = 2){
     unis <- lapply(xf, function(x){
     uni.res <- data.frame(summary(survey::svycoxph(as.formula(paste(formula.surv, "~", x, sep="")), design = design.model))$coefficients)
     names(uni.res)[ncol(uni.res)] <- "p"
-    uni.res2 <- uni.res[, c(1, 3, 4, 5)]
+    uni.res2 <- uni.res[, c("coef", grep("se", colnames(uni.res), value = T)[length(grep("se", colnames(uni.res)))], "z", "p")]
     return(uni.res2)
     })
     

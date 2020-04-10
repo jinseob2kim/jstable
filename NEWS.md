@@ -1,3 +1,7 @@
+# jstable 0.9.3
+
+* Update `svycox.display`: compatible with upcoming survival pacakge update.
+
 # jstable 0.9.2
 
 ## Bug fix
