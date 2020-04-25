@@ -49,10 +49,10 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   
   if (any(class(data) == "survey.design" & !is.null(var_subgroup))){
     if (is.numeric(data$variables[[var_subgroup]])) stop("var_subgroup must categorical.")
-    if (length(unique(data$variables[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
+    if (length(levels(data$variables[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
   } else if(any(class(data) == "data.frame" & !is.null(var_subgroup))){
     if (is.numeric(data[[var_subgroup]])) stop("var_subgroup must categorical.")
-    if (length(unique(data[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
+    if (length(levels(data[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
   }
   
   

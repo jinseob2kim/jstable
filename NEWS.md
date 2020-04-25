@@ -1,3 +1,8 @@
+# jstable 0.9.4
+
+* Bugfix `TableSubgroupCox`: error with factor variable including `NA`.
+
+
 # jstable 0.9.3
 
 * Update `svycox.display`: compatible with upcoming survival pacakge update.
