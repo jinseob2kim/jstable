@@ -166,8 +166,8 @@
  <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>dietox</span>)
  <span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
  <span class='no'>gee.uni</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='geeUni.html'>geeUni</a></span>(<span class='st'>"Weight"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Time"</span>, <span class='st'>"Cu"</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>, <span class='kw'>id.vec</span> <span class='kw'>=</span> <span class='no'>dietox</span>$<span class='no'>Pig</span>,
-                   <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"gaussian"</span>, <span class='kw'>cor.type</span> <span class='kw'>=</span> <span class='st'>"exchangeable"</span>)
- <span class='no'>gee.exp</span> <span class='kw'>&lt;-</span> <span class='fu'>geeExp</span>(<span class='no'>gee.uni</span>, <span class='st'>"binomial"</span>, <span class='fl'>2</span>)</div></pre>
+                   <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"gaussian"</span>, <span class='kw'>cor.type</span> <span class='kw'>=</span> <span class='st'>"exchangeable"</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
+#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='input'> <span class='no'>gee.exp</span> <span class='kw'>&lt;-</span> <span class='fu'>geeExp</span>(<span class='no'>gee.uni</span>, <span class='st'>"binomial"</span>, <span class='fl'>2</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
