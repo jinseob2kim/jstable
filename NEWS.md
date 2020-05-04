@@ -2,6 +2,7 @@
 
 * Bugfix `TableSubgroupCox`: error with factor variable including `NA`.
 
+* Update `TableSubgroupCox`: compatible with upcoming survival pacakge update.
 
 # jstable 0.9.3
 
