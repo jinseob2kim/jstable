@@ -1,3 +1,7 @@
+# jstable 0.9.5
+
+* Bugfix `TableSubgroupCox`: error with too large **time_eventrate**     
+
 # jstable 0.9.4
 
 * Bugfix `TableSubgroupCox`: error with factor variable including `NA`.

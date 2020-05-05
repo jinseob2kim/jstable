@@ -154,7 +154,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         pv_anova <- car::Anova(model.int, test.statistics = "Wald")
         pv_int <- round(pv_anova[nrow(pv_anova), 3], decimal.pvalue)
       }
-      res.kap.times <- data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~survival::survfit(formula.km, data = .)) %>% purrr::map(~summary(., times = time_eventrate))
+      res.kap.times <- data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~survival::survfit(formula.km, data = .)) %>% purrr::map(~summary(., times = time_eventrate, extend = T))
       prop <- res.kap.times %>% purrr::map(~round(100 * (1 - .[["surv"]]), decimal.percent)) %>% dplyr::bind_cols() %>% t
       colnames(prop) <- xlev[[1]]
     }
