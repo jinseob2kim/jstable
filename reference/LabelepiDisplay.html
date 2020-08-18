@@ -135,7 +135,7 @@
     <p>Apply label information to epiDisplay.object using label data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>LabelepiDisplay</span>(<span class='no'>epiDisplay.obj</span>, <span class='kw'>label</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='no'>ref</span>)</pre>
+    <pre class="usage"><span class='fu'>LabelepiDisplay</span>(<span class='kw'>epiDisplay.obj</span>, label = <span class='kw'>F</span>, <span class='kw'>ref</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -162,10 +162,10 @@
     <p>DETAILS</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='no'>Sepal.Length</span> ~ <span class='no'>Sepal.Width</span> + <span class='no'>Species</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>iris</span>)
- <span class='no'>fit.table</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='glmshow.display.html'>glmshow.display</a></span>(<span class='no'>fit</span>)
- <span class='no'>iris.label</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mk.lev.html'>mk.lev</a></span>(<span class='no'>iris</span>)
- <span class='fu'>LabelepiDisplay</span>(<span class='no'>fit.table</span>, <span class='kw'>label</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>ref</span> <span class='kw'>=</span> <span class='no'>iris.label</span>)</div><div class='output co'>#&gt;                      crude coeff.(95%CI)  crude P value adj. coeff.(95%CI)
+    <pre class="examples"><div class='input'> <span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='kw'>Sepal.Length</span> <span class='op'>~</span> <span class='kw'>Sepal.Width</span> <span class='op'>+</span> <span class='kw'>Species</span>, data = <span class='kw'>iris</span>)
+ <span class='kw'>fit.table</span> <span class='op'>&lt;-</span> <span class='fu'><a href='glmshow.display.html'>glmshow.display</a></span>(<span class='kw'>fit</span>)
+ <span class='kw'>iris.label</span> <span class='op'>&lt;-</span> <span class='fu'><a href='mk.lev.html'>mk.lev</a></span>(<span class='kw'>iris</span>)
+ <span class='fu'>LabelepiDisplay</span>(<span class='kw'>fit.table</span>, label = <span class='fl'>TRUE</span>, ref = <span class='kw'>iris.label</span>)</div><div class='output co'>#&gt;                      crude coeff.(95%CI)  crude P value adj. coeff.(95%CI)
 #&gt; Sepal.Width          "-0.22 (-0.53,0.08)" "0.152"       "0.8 (0.6,1.01)"  
 #&gt; Species: ref.=setosa NA                   NA            NA                
 #&gt;    versicolor        "0.93 (0.73,1.13)"   "&lt; 0.001"     "1.46 (1.24,1.68)"

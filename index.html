@@ -88,19 +88,23 @@
 <div id="install" class="section level2">
 <h2 class="hasAnchor">
 <a href="#install" class="anchor"></a>Install</h2>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"jstable"</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"jstable"</span>)
 
 
 <span class="co">## From github: latest version</span>
-<span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">'jinseob2kim/jstable'</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">jstable</span>)</pre></div>
+<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">'jinseob2kim/jstable'</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/jinseob2kim/jstable">jstable</a></span>)
+</pre></div>
 </div>
 <div id="glm-table" class="section level2">
 <h2 class="hasAnchor">
 <a href="#glm-table" class="anchor"></a>GLM Table</h2>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="co">## Gaussian</span>
-<span class="no">glm_gaussian</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="no">mpg</span>~<span class="no">cyl</span> + <span class="no">disp</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">mtcars</span>)
-<span class="fu"><a href="reference/glmshow.display.html">glmshow.display</a></span>(<span class="no">glm_gaussian</span>, <span class="kw">decimal</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="co">## Gaussian</span>
+<span class="kw">glm_gaussian</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="kw">mpg</span><span class="op">~</span><span class="kw">cyl</span> <span class="op">+</span> <span class="kw">disp</span>, data = <span class="kw">mtcars</span>)
+<span class="fu"><a href="reference/glmshow.display.html">glmshow.display</a></span>(<span class="kw">glm_gaussian</span>, decimal = <span class="fl">2</span>)
+</pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">## $first.line</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">## [1] "Linear regression predicting mpg\n"</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">## </a>
@@ -117,9 +121,11 @@
 <a class="sourceLine" id="cb3-14" data-line-number="14">## </a>
 <a class="sourceLine" id="cb3-15" data-line-number="15">## attr(,"class")</a>
 <a class="sourceLine" id="cb3-16" data-line-number="16">## [1] "display" "list"</a></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="co">## Binomial</span>
-<span class="no">glm_binomial</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="no">vs</span>~<span class="no">cyl</span> + <span class="no">disp</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">mtcars</span>, <span class="kw">family</span> <span class="kw">=</span> <span class="no">binomial</span>)
-<span class="fu"><a href="reference/glmshow.display.html">glmshow.display</a></span>(<span class="no">glm_binomial</span>, <span class="kw">decimal</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="co">## Binomial</span>
+<span class="kw">glm_binomial</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="kw">vs</span><span class="op">~</span><span class="kw">cyl</span> <span class="op">+</span> <span class="kw">disp</span>, data = <span class="kw">mtcars</span>, family = <span class="kw">binomial</span>)
+<span class="fu"><a href="reference/glmshow.display.html">glmshow.display</a></span>(<span class="kw">glm_binomial</span>, decimal = <span class="fl">2</span>)
+</pre></div>
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">## $first.line</a>
 <a class="sourceLine" id="cb5-2" data-line-number="2">## [1] "Logistic regression predicting vs\n"</a>
 <a class="sourceLine" id="cb5-3" data-line-number="3">## </a>
@@ -137,12 +143,14 @@
 <div id="gee-table-from-geeglm-object-from-geepack-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#gee-table-from-geeglm-object-from-geepack-package" class="anchor"></a>GEE Table: from <code>geeglm</code> object from <strong>geepack</strong> package</h2>
-<div class="sourceCode" id="cb6"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">geepack</span>)  <span class="co">## for dietox data</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">dietox</span>)
-<span class="no">dietox</span>$<span class="no">Cu</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">dietox</span>$<span class="no">Cu</span>)
-<span class="no">dietox</span>$<span class="no">ddn</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">dietox</span>)) <span class="kw">&gt;</span> <span class="fl">0</span>)
-<span class="no">gee01</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/geepack/man/geeglm.html">geeglm</a></span> (<span class="no">Weight</span> ~ <span class="no">Time</span> + <span class="no">Cu</span> , <span class="kw">id</span> <span class="kw">=</span> <span class="no">Pig</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">dietox</span>, <span class="kw">family</span> <span class="kw">=</span> <span class="no">gaussian</span>, <span class="kw">corstr</span> <span class="kw">=</span> <span class="st">"ex"</span>)
-<span class="fu"><a href="reference/geeglm.display.html">geeglm.display</a></span>(<span class="no">gee01</span>)</pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">geepack</span>)  <span class="co">## for dietox data</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">dietox</span>)
+<span class="kw">dietox</span><span class="op">$</span><span class="kw">Cu</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="kw">dietox</span><span class="op">$</span><span class="kw">Cu</span>)
+<span class="kw">dietox</span><span class="op">$</span><span class="kw">ddn</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">dietox</span>)) <span class="op">&gt;</span> <span class="fl">0</span>)
+<span class="kw">gee01</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/geepack/man/geeglm.html">geeglm</a></span> (<span class="kw">Weight</span> <span class="op">~</span> <span class="kw">Time</span> <span class="op">+</span> <span class="kw">Cu</span> , id = <span class="kw">Pig</span>, data = <span class="kw">dietox</span>, family = <span class="kw">gaussian</span>, corstr = <span class="st">"ex"</span>)
+<span class="fu"><a href="reference/geeglm.display.html">geeglm.display</a></span>(<span class="kw">gee01</span>)
+</pre></div>
 <div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">## $caption</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2">## [1] "GEE(gaussian) predicting Weight by Time, Cu - Group Pig"</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3">## </a>
@@ -169,8 +177,10 @@
 <a class="sourceLine" id="cb7-24" data-line-number="24">## Estimated correlation parameters NA                NA          </a>
 <a class="sourceLine" id="cb7-25" data-line-number="25">## No. of clusters                  NA                NA          </a>
 <a class="sourceLine" id="cb7-26" data-line-number="26">## No. of observations              NA                NA</a></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="r"><span class="no">gee02</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/geepack/man/geeglm.html">geeglm</a></span> (<span class="no">ddn</span> ~ <span class="no">Time</span> + <span class="no">Cu</span> , <span class="kw">id</span> <span class="kw">=</span> <span class="no">Pig</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">dietox</span>, <span class="kw">family</span> <span class="kw">=</span> <span class="no">binomial</span>, <span class="kw">corstr</span> <span class="kw">=</span> <span class="st">"ex"</span>)
-<span class="fu"><a href="reference/geeglm.display.html">geeglm.display</a></span>(<span class="no">gee02</span>)</pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="kw">gee02</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/geepack/man/geeglm.html">geeglm</a></span> (<span class="kw">ddn</span> <span class="op">~</span> <span class="kw">Time</span> <span class="op">+</span> <span class="kw">Cu</span> , id = <span class="kw">Pig</span>, data = <span class="kw">dietox</span>, family = <span class="kw">binomial</span>, corstr = <span class="st">"ex"</span>)
+<span class="fu"><a href="reference/geeglm.display.html">geeglm.display</a></span>(<span class="kw">gee02</span>)
+</pre></div>
 <div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">## $caption</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2">## [1] "GEE(binomial) predicting ddn by Time, Cu - Group Pig"</a>
 <a class="sourceLine" id="cb9-3" data-line-number="3">## </a>
@@ -201,9 +211,11 @@
 <div id="mixed-model-table-lmermod-or-glmermod-object-from-lme4-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mixed-model-table-lmermod-or-glmermod-object-from-lme4-package" class="anchor"></a>Mixed model Table: <code>lmerMod</code> or <code>glmerMod</code> object from <strong>lme4</strong> package</h2>
-<div class="sourceCode" id="cb10"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">lme4</span>)
-<span class="no">l1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span>(<span class="no">Weight</span> ~ <span class="no">Time</span> + <span class="no">Cu</span> + (<span class="fl">1</span><span class="kw">|</span><span class="no">Pig</span>), <span class="kw">data</span> <span class="kw">=</span> <span class="no">dietox</span>)
-<span class="fu"><a href="reference/lmer.display.html">lmer.display</a></span>(<span class="no">l1</span>, <span class="kw">ci.ranef</span> <span class="kw">=</span> <span class="no">T</span>)</pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/lme4/lme4">lme4</a></span>)
+<span class="kw">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span>(<span class="kw">Weight</span> <span class="op">~</span> <span class="kw">Time</span> <span class="op">+</span> <span class="kw">Cu</span> <span class="op">+</span> (<span class="fl">1</span><span class="op">|</span><span class="kw">Pig</span>), data = <span class="kw">dietox</span>) 
+<span class="fu"><a href="reference/lmer.display.html">lmer.display</a></span>(<span class="kw">l1</span>, ci.ranef = <span class="kw">T</span>)
+</pre></div>
 <div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">## $table</a>
 <a class="sourceLine" id="cb11-2" data-line-number="2">##                      crude coeff(95%CI) crude P value adj. coeff(95%CI)</a>
 <a class="sourceLine" id="cb11-3" data-line-number="3">## Time                   6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)</a>
@@ -234,8 +246,10 @@
 <a class="sourceLine" id="cb11-28" data-line-number="28">## </a>
 <a class="sourceLine" id="cb11-29" data-line-number="29">## $caption</a>
 <a class="sourceLine" id="cb11-30" data-line-number="30">## [1] "Linear mixed model fit by REML : Weight ~ Time + Cu + (1 | Pig)"</a></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="r"><span class="no">l2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/glmer.html">glmer</a></span>(<span class="no">ddn</span> ~ <span class="no">Weight</span> + <span class="no">Time</span> + (<span class="fl">1</span><span class="kw">|</span><span class="no">Pig</span>), <span class="kw">data</span><span class="kw">=</span> <span class="no">dietox</span>, <span class="kw">family</span><span class="kw">=</span> <span class="st">"binomial"</span>)
-<span class="fu"><a href="reference/lmer.display.html">lmer.display</a></span>(<span class="no">l2</span>)</pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="kw">l2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/glmer.html">glmer</a></span>(<span class="kw">ddn</span> <span class="op">~</span> <span class="kw">Weight</span> <span class="op">+</span> <span class="kw">Time</span> <span class="op">+</span> (<span class="fl">1</span><span class="op">|</span><span class="kw">Pig</span>), data= <span class="kw">dietox</span>, family= <span class="st">"binomial"</span>)
+<span class="fu"><a href="reference/lmer.display.html">lmer.display</a></span>(<span class="kw">l2</span>)
+</pre></div>
 <div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">## $table</a>
 <a class="sourceLine" id="cb13-2" data-line-number="2">##                      crude OR(95%CI) crude P value adj. OR(95%CI)</a>
 <a class="sourceLine" id="cb13-3" data-line-number="3">## Weight                    1 (1,1.01)     0.5059625  1 (0.98,1.02)</a>
@@ -264,10 +278,12 @@
 <div id="cox-model-with-frailty-or-cluster-options" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cox-model-with-frailty-or-cluster-options" class="anchor"></a>Cox model with <code>frailty</code> or <code>cluster</code> options</h2>
-<div class="sourceCode" id="cb14"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">survival</span>)
-<span class="no">fit1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="no">time</span>, <span class="no">status</span>) ~ <span class="no">ph.ecog</span> + <span class="no">age</span>, <span class="kw">cluster</span> <span class="kw">=</span> <span class="no">inst</span>, <span class="no">lung</span>, <span class="kw">model</span> <span class="kw">=</span> <span class="no">T</span>)  <span class="co">## model = T: to extract original data</span>
-<span class="no">fit2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="no">time</span>, <span class="no">status</span>) ~ <span class="no">ph.ecog</span> + <span class="no">age</span> + <span class="fu"><a href="https://rdrr.io/pkg/survival/man/frailty.html">frailty</a></span>(<span class="no">inst</span>), <span class="no">lung</span>, <span class="kw">model</span> <span class="kw">=</span> <span class="no">T</span>)
-<span class="fu"><a href="reference/cox2.display.html">cox2.display</a></span>(<span class="no">fit1</span>)</pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/therneau/survival">survival</a></span>)
+<span class="kw">fit1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="kw">time</span>, <span class="kw">status</span>) <span class="op">~</span> <span class="kw">ph.ecog</span> <span class="op">+</span> <span class="kw">age</span>, cluster = <span class="kw">inst</span>, <span class="kw">lung</span>, model = <span class="kw">T</span>)  <span class="co">## model = T: to extract original data</span>
+<span class="kw">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="kw">time</span>, <span class="kw">status</span>) <span class="op">~</span> <span class="kw">ph.ecog</span> <span class="op">+</span> <span class="kw">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/frailty.html">frailty</a></span>(<span class="kw">inst</span>), <span class="kw">lung</span>, model = <span class="kw">T</span>)
+<span class="fu"><a href="reference/cox2.display.html">cox2.display</a></span>(<span class="kw">fit1</span>)
+</pre></div>
 <div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">## $table</a>
 <a class="sourceLine" id="cb15-2" data-line-number="2">##         crude HR(95%CI)    crude P value adj. HR(95%CI)  adj. P value</a>
 <a class="sourceLine" id="cb15-3" data-line-number="3">## ph.ecog "1.61 (1.25,2.08)" "&lt; 0.001"     "1.56 (1.22,2)" "&lt; 0.001"   </a>
@@ -286,7 +302,9 @@
 <a class="sourceLine" id="cb15-16" data-line-number="16">## </a>
 <a class="sourceLine" id="cb15-17" data-line-number="17">## $caption</a>
 <a class="sourceLine" id="cb15-18" data-line-number="18">## [1] "Marginal Cox model on time ('time') to event ('status') - Group inst"</a></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="r"><span class="fu"><a href="reference/cox2.display.html">cox2.display</a></span>(<span class="no">fit2</span>)</pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit">
+<span class="fu"><a href="reference/cox2.display.html">cox2.display</a></span>(<span class="kw">fit2</span>)
+</pre></div>
 <div class="sourceCode" id="cb17"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">## $table</a>
 <a class="sourceLine" id="cb17-2" data-line-number="2">##         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value</a>
 <a class="sourceLine" id="cb17-3" data-line-number="3">## ph.ecog "1.64 (1.31,2.05)" "&lt; 0.001"     "1.58 (1.26,1.99)" "&lt; 0.001"   </a>
@@ -309,9 +327,11 @@
 <div id="cox-mixed-effect-model-table-coxme-object-from-coxme-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cox-mixed-effect-model-table-coxme-object-from-coxme-package" class="anchor"></a>Cox mixed effect model Table: <code>coxme</code> object from <strong>coxme</strong> package</h2>
-<div class="sourceCode" id="cb18"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">coxme</span>)
-<span class="no">fit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/coxme/man/coxme.html">coxme</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="no">time</span>, <span class="no">status</span>) ~ <span class="no">ph.ecog</span> + <span class="no">age</span> + (<span class="fl">1</span><span class="kw">|</span><span class="no">inst</span>), <span class="no">lung</span>)
-<span class="fu"><a href="reference/coxme.display.html">coxme.display</a></span>(<span class="no">fit</span>)</pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">coxme</span>)
+<span class="kw">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/coxme/man/coxme.html">coxme</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="kw">time</span>, <span class="kw">status</span>) <span class="op">~</span> <span class="kw">ph.ecog</span> <span class="op">+</span> <span class="kw">age</span> <span class="op">+</span> (<span class="fl">1</span><span class="op">|</span><span class="kw">inst</span>), <span class="kw">lung</span>)
+<span class="fu"><a href="reference/coxme.display.html">coxme.display</a></span>(<span class="kw">fit</span>) 
+</pre></div>
 <div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">## $table</a>
 <a class="sourceLine" id="cb19-2" data-line-number="2">##         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value</a>
 <a class="sourceLine" id="cb19-3" data-line-number="3">## ph.ecog "1.66 (1.32,2.09)" "&lt; 0.001"     "1.61 (1.27,2.03)" "&lt; 0.001"   </a>
@@ -335,15 +355,17 @@
 <div id="glm-for-survey-data-svyglm-object-from-survey-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#glm-for-survey-data-svyglm-object-from-survey-package" class="anchor"></a>GLM for survey data : <code>svyglm</code> object from <strong>survey</strong> package</h2>
-<div class="sourceCode" id="cb20"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">survey</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">api</span>)
-<span class="no">apistrat</span>$<span class="no">tt</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>, <span class="fl">20</span>), <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">apistrat</span>) -<span class="fl">20</span>))
-<span class="no">apistrat</span>$<span class="no">tt2</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="fl">40</span>), <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">apistrat</span>) -<span class="fl">40</span>)))
+<div class="sourceCode" id="cb20"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://r-survey.r-forge.r-project.org/survey">survey</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">api</span>)
+<span class="kw">apistrat</span><span class="op">$</span><span class="kw">tt</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>, <span class="fl">20</span>), <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">apistrat</span>) <span class="op">-</span><span class="fl">20</span>))
+<span class="kw">apistrat</span><span class="op">$</span><span class="kw">tt2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="fl">40</span>), <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">apistrat</span>) <span class="op">-</span><span class="fl">40</span>)))
 
-<span class="no">dstrat</span><span class="kw">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/survey/man/svydesign.html">svydesign</a></span>(<span class="kw">id</span><span class="kw">=</span>~<span class="fl">1</span>,<span class="kw">strata</span><span class="kw">=</span>~<span class="no">stype</span>, <span class="kw">weights</span><span class="kw">=</span>~<span class="no">pw</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">apistrat</span>, <span class="kw">fpc</span><span class="kw">=</span>~<span class="no">fpc</span>)
-<span class="no">ds</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survey/man/svyglm.html">svyglm</a></span>(<span class="no">api00</span>~<span class="no">ell</span>+<span class="no">meals</span>+<span class="no">mobility</span> + <span class="no">tt2</span>, <span class="kw">design</span><span class="kw">=</span><span class="no">dstrat</span>)
-<span class="no">ds2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survey/man/svyglm.html">svyglm</a></span>(<span class="no">tt</span>~<span class="no">ell</span>+<span class="no">meals</span>+<span class="no">mobility</span> + <span class="no">tt2</span>, <span class="kw">design</span><span class="kw">=</span><span class="no">dstrat</span>, <span class="kw">family</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">quasibinomial</a></span>())
-<span class="fu"><a href="reference/svyglm.display.html">svyregress.display</a></span>(<span class="no">ds</span>)</pre></div>
+<span class="kw">dstrat</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/survey/man/svydesign.html">svydesign</a></span>(id=<span class="op">~</span><span class="fl">1</span>,strata=<span class="op">~</span><span class="kw">stype</span>, weights=<span class="op">~</span><span class="kw">pw</span>, data=<span class="kw">apistrat</span>, fpc=<span class="op">~</span><span class="kw">fpc</span>)
+<span class="kw">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survey/man/svyglm.html">svyglm</a></span>(<span class="kw">api00</span><span class="op">~</span><span class="kw">ell</span><span class="op">+</span><span class="kw">meals</span><span class="op">+</span><span class="kw">mobility</span> <span class="op">+</span> <span class="kw">tt2</span>, design=<span class="kw">dstrat</span>)
+<span class="kw">ds2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survey/man/svyglm.html">svyglm</a></span>(<span class="kw">tt</span><span class="op">~</span><span class="kw">ell</span><span class="op">+</span><span class="kw">meals</span><span class="op">+</span><span class="kw">mobility</span> <span class="op">+</span> <span class="kw">tt2</span>, design=<span class="kw">dstrat</span>, family = <span class="fu"><a href="https://rdrr.io/r/stats/family.html">quasibinomial</a></span>())
+<span class="fu"><a href="reference/svyregress.display.html">svyregress.display</a></span>(<span class="kw">ds</span>)
+</pre></div>
 <div class="sourceCode" id="cb21"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">## $first.line</a>
 <a class="sourceLine" id="cb21-2" data-line-number="2">## [1] "Linear regression predicting api00- weighted data\n"</a>
 <a class="sourceLine" id="cb21-3" data-line-number="3">## </a>
@@ -364,7 +386,9 @@
 <a class="sourceLine" id="cb21-18" data-line-number="18">## </a>
 <a class="sourceLine" id="cb21-19" data-line-number="19">## attr(,"class")</a>
 <a class="sourceLine" id="cb21-20" data-line-number="20">## [1] "display" "list"</a></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="r"><span class="fu"><a href="reference/svyglm.display.html">svyregress.display</a></span>(<span class="no">ds2</span>)</pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit">
+<span class="fu"><a href="reference/svyregress.display.html">svyregress.display</a></span>(<span class="kw">ds2</span>)
+</pre></div>
 <div class="sourceCode" id="cb23"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">## $first.line</a>
 <a class="sourceLine" id="cb23-2" data-line-number="2">## [1] "Logistic regression predicting tt- weighted data\n"</a>
 <a class="sourceLine" id="cb23-3" data-line-number="3">## </a>
@@ -389,19 +413,21 @@
 <div id="cox-model-for-survey-data-svycoxph-object-from-survey-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cox-model-for-survey-data-svycoxph-object-from-survey-package" class="anchor"></a>Cox model for survey data :<code>svycoxph</code> object from <strong>survey</strong> package</h2>
-<div class="sourceCode" id="cb24"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">pbc</span>, <span class="kw">package</span><span class="kw">=</span><span class="st">"survival"</span>)
-<span class="no">pbc</span>$<span class="no">sex</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">pbc</span>$<span class="no">sex</span>)
-<span class="no">pbc</span>$<span class="no">stage</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">pbc</span>$<span class="no">stage</span>)
-<span class="no">pbc</span>$<span class="no">randomized</span><span class="kw">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">pbc</span>, !<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">trt</span>) <span class="kw">&amp;</span> <span class="no">trt</span><span class="kw">&gt;</span><span class="fl">0</span>)
-<span class="no">biasmodel</span><span class="kw">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="no">randomized</span>~<span class="no">age</span>*<span class="no">edema</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">pbc</span>,<span class="kw">family</span><span class="kw">=</span><span class="no">binomial</span>)
-<span class="no">pbc</span>$<span class="no">randprob</span><span class="kw">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html">fitted</a></span>(<span class="no">biasmodel</span>)
+<div class="sourceCode" id="cb24"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">pbc</span>, package=<span class="st">"survival"</span>)
+<span class="kw">pbc</span><span class="op">$</span><span class="kw">sex</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">pbc</span><span class="op">$</span><span class="kw">sex</span>)
+<span class="kw">pbc</span><span class="op">$</span><span class="kw">stage</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">pbc</span><span class="op">$</span><span class="kw">stage</span>)
+<span class="kw">pbc</span><span class="op">$</span><span class="kw">randomized</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="kw">pbc</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">trt</span>) <span class="op">&amp;</span> <span class="kw">trt</span><span class="op">&gt;</span><span class="fl">0</span>)
+<span class="kw">biasmodel</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span>(<span class="kw">randomized</span><span class="op">~</span><span class="kw">age</span><span class="op">*</span><span class="kw">edema</span>,data=<span class="kw">pbc</span>,family=<span class="kw">binomial</span>)
+<span class="kw">pbc</span><span class="op">$</span><span class="kw">randprob</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html">fitted</a></span>(<span class="kw">biasmodel</span>)
 
-<span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span>(<span class="no">pbc</span>$<span class="no">albumin</span>)) <span class="no">pbc</span>$<span class="no">albumin</span><span class="kw">&lt;-</span><span class="no">pbc</span>$<span class="no">alb</span> <span class="co">##pre2.9.0</span>
+<span class="co">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span>(<span class="kw">pbc</span><span class="op">$</span><span class="kw">albumin</span>)) <span class="kw">pbc</span><span class="op">$</span><span class="kw">albumin</span><span class="op">&lt;-</span><span class="kw">pbc</span><span class="op">$</span><span class="kw">alb</span> <span class="co">##pre2.9.0</span>
 
-<span class="no">dpbc</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survey/man/svydesign.html">svydesign</a></span>(<span class="kw">id</span><span class="kw">=</span>~<span class="fl">1</span>, <span class="kw">prob</span><span class="kw">=</span>~<span class="no">randprob</span>, <span class="kw">strata</span><span class="kw">=</span>~<span class="no">edema</span>, <span class="kw">data</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="no">pbc</span>,<span class="no">randomized</span>))
+<span class="kw">dpbc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survey/man/svydesign.html">svydesign</a></span>(id=<span class="op">~</span><span class="fl">1</span>, prob=<span class="op">~</span><span class="kw">randprob</span>, strata=<span class="op">~</span><span class="kw">edema</span>, data=<span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="kw">pbc</span>,<span class="kw">randomized</span>))
 
-<span class="no">model</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survey/man/svycoxph.html">svycoxph</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="no">time</span>,<span class="no">status</span><span class="kw">&gt;</span><span class="fl">0</span>)~ <span class="no">sex</span> + <span class="no">protime</span> + <span class="no">albumin</span> + <span class="no">stage</span>,<span class="kw">design</span><span class="kw">=</span><span class="no">dpbc</span>)
-<span class="fu"><a href="reference/svycox.display.html">svycox.display</a></span>(<span class="no">model</span>)</pre></div>
+<span class="kw">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survey/man/svycoxph.html">svycoxph</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="kw">time</span>,<span class="kw">status</span><span class="op">&gt;</span><span class="fl">0</span>)<span class="op">~</span> <span class="kw">sex</span> <span class="op">+</span> <span class="kw">protime</span> <span class="op">+</span> <span class="kw">albumin</span> <span class="op">+</span> <span class="kw">stage</span>,design=<span class="kw">dpbc</span>)
+<span class="fu"><a href="reference/svycox.display.html">svycox.display</a></span>(<span class="kw">model</span>)
+</pre></div>
 <div class="sourceCode" id="cb25"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">## Stratified Independent Sampling design (with replacement)</a>
 <a class="sourceLine" id="cb25-2" data-line-number="2">## svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, </a>
 <a class="sourceLine" id="cb25-3" data-line-number="3">##     randomized))</a>
@@ -449,19 +475,21 @@
 <div id="sub-group-analysis-for-coxsvycox-model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#sub-group-analysis-for-coxsvycox-model" class="anchor"></a>Sub-group analysis for Cox/svycox model</h2>
-<div class="sourceCode" id="cb26"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">survival</span>); <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
-<span class="no">lung</span> <span class="kw">%&gt;%</span>
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">status</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="no">status</span> <span class="kw">==</span> <span class="fl">1</span>),
-       <span class="kw">sex</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">sex</span>),
-       <span class="kw">kk</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="no">pat.karno</span> <span class="kw">&gt;=</span> <span class="fl">70</span>)),
-       <span class="kw">kk1</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="no">pat.karno</span> <span class="kw">&gt;=</span> <span class="fl">60</span>))) <span class="kw">-&gt;</span> <span class="no">lung</span>
+<div class="sourceCode" id="cb26"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/therneau/survival">survival</a></span>); <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org">dplyr</a></span>)
+<span class="kw">lung</span> <span class="op">%&gt;%</span> 
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(status = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw">status</span> <span class="op">==</span> <span class="fl">1</span>),
+       sex = <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">sex</span>),
+       kk = <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw">pat.karno</span> <span class="op">&gt;=</span> <span class="fl">70</span>)),
+       kk1 = <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw">pat.karno</span> <span class="op">&gt;=</span> <span class="fl">60</span>))) <span class="op">-&gt;</span> <span class="kw">lung</span>
 
 <span class="co">#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = TRUE)</span>
 
 <span class="co">## Survey data</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">survey</span>)
-<span class="no">data.design</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survey/man/svydesign.html">svydesign</a></span>(<span class="kw">id</span> <span class="kw">=</span> ~<span class="fl">1</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">lung</span>)
-<span class="co">#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = FALSE)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://r-survey.r-forge.r-project.org/survey">survey</a></span>)
+<span class="kw">data.design</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survey/man/svydesign.html">svydesign</a></span>(id = <span class="op">~</span><span class="fl">1</span>, data = <span class="kw">lung</span>)
+<span class="co">#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = FALSE)</span>
+</pre></div>
 </div>
 </div>
   </div>

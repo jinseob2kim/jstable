@@ -136,14 +136,14 @@
     </div>
 
     <pre class="usage"><span class='fu'>TableSubgroupCox</span>(
-  <span class='no'>formula</span>,
-  <span class='kw'>var_subgroup</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>var_cov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>data</span>,
-  <span class='kw'>time_eventrate</span> <span class='kw'>=</span> <span class='fl'>3</span> * <span class='fl'>365</span>,
-  <span class='kw'>decimal.hr</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>decimal.percent</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>decimal.pvalue</span> <span class='kw'>=</span> <span class='fl'>3</span>
+  <span class='kw'>formula</span>,
+  var_subgroup = <span class='kw'>NULL</span>,
+  var_cov = <span class='kw'>NULL</span>,
+  <span class='kw'>data</span>,
+  time_eventrate = <span class='fl'>3</span> <span class='op'>*</span> <span class='fl'>365</span>,
+  decimal.hr = <span class='fl'>2</span>,
+  decimal.percent = <span class='fl'>1</span>,
+  decimal.pvalue = <span class='fl'>3</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -197,20 +197,22 @@
  <code><a href='https://rdrr.io/r/stats/confint.html'>confint</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>survival</span>);<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>dplyr</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/therneau/survival'>survival</a></span>);<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>)</div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='no'>lung</span> <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>status</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='no'>status</span> <span class='kw'>==</span> <span class='fl'>1</span>),
-         <span class='kw'>sex</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='no'>sex</span>),
-         <span class='kw'>kk</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='no'>pat.karno</span> <span class='kw'>&gt;=</span> <span class='fl'>70</span>))) <span class='kw'>-&gt;</span> <span class='no'>lung</span>
-<span class='fu'>TableSubgroupCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>sex</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>lung</span>, <span class='kw'>time_eventrate</span> <span class='kw'>=</span> <span class='fl'>100</span>)</div><div class='output co'>#&gt;   Variable Count Percent Point Estimate Lower Upper 1   2 P value
+#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='kw'>lung</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(status = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='kw'>status</span> <span class='op'>==</span> <span class='fl'>1</span>),
+         sex = <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='kw'>sex</span>),
+         kk = <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='kw'>pat.karno</span> <span class='op'>&gt;=</span> <span class='fl'>70</span>))) <span class='op'>-&gt;</span> <span class='kw'>lung</span>
+<span class='fu'>TableSubgroupCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>, <span class='kw'>status</span>) <span class='op'>~</span> <span class='kw'>sex</span>, data = <span class='kw'>lung</span>, time_eventrate = <span class='fl'>100</span>)</div><div class='output co'>#&gt;   Variable Count Percent Point Estimate Lower Upper 1   2 P value
 #&gt; 1  Overall   228     100           1.91  1.14   3.2 0 1.2   0.014
 #&gt;   P for interaction
-#&gt; 1                NA</div><div class='input'><span class='fu'>TableSubgroupCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>sex</span>, <span class='kw'>var_subgroup</span> <span class='kw'>=</span> <span class='st'>"kk"</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>lung</span>,
-                 <span class='kw'>time_eventrate</span> <span class='kw'>=</span> <span class='fl'>100</span>)</div><div class='output co'>#&gt;   Variable Count Percent Point Estimate Lower Upper    1    2 P value
+#&gt; 1                NA</div><div class='input'><span class='fu'>TableSubgroupCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>, <span class='kw'>status</span>) <span class='op'>~</span> <span class='kw'>sex</span>, var_subgroup = <span class='st'>"kk"</span>, data = <span class='kw'>lung</span>, 
+                 time_eventrate = <span class='fl'>100</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
+#&gt; <span class='message'>* NA -&gt; ...1</span>
+#&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt;   Variable Count Percent Point Estimate Lower Upper    1    2 P value
 #&gt; 1       kk  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
 #&gt; 2        0    38    16.9           2.88  0.31 26.49    0    0    0.35
 #&gt; 3        1   187    83.1           1.84  1.08  3.14    0  1.5   0.026
@@ -219,17 +221,18 @@
 #&gt; 2              &lt;NA&gt;
 #&gt; 3              &lt;NA&gt;</div><div class='input'>
 <span class='co'>## survey design</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>survey</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: grid</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: Matrix</span></div><div class='output co'>#&gt; <span class='message'></span>
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://r-survey.r-forge.r-project.org/survey'>survey</a></span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: grid</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: Matrix</span></div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>Attaching package: ‘survey’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:graphics’:</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'>    dotchart</span></div><div class='input'><span class='no'>data.design</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(<span class='kw'>id</span> <span class='kw'>=</span> ~<span class='fl'>1</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>lung</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No weights or probabilities supplied, assuming equal probability</span></div><div class='input'><span class='fu'>TableSubgroupCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>sex</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>data.design</span>, <span class='kw'>time_eventrate</span> <span class='kw'>=</span> <span class='fl'>100</span>)</div><div class='output co'>#&gt; Independent Sampling design (with replacement)
+#&gt; <span class='message'>    dotchart</span></div><div class='input'><span class='kw'>data.design</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(id = <span class='op'>~</span><span class='fl'>1</span>, data = <span class='kw'>lung</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No weights or probabilities supplied, assuming equal probability</span></div><div class='input'><span class='fu'>TableSubgroupCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>, <span class='kw'>status</span>) <span class='op'>~</span> <span class='kw'>sex</span>, data = <span class='kw'>data.design</span>, time_eventrate = <span class='fl'>100</span>)</div><div class='output co'>#&gt; Independent Sampling design (with replacement)
 #&gt; svydesign(id = ~1, data = lung)</div><div class='output co'>#&gt;   Variable Count Percent Point Estimate Lower Upper 1   2 P value
 #&gt; 1  Overall   228     100           1.91  1.14  3.19 0 1.2   0.013
 #&gt;   P for interaction
-#&gt; 1                NA</div><div class='input'><span class='fu'>TableSubgroupCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>sex</span>, <span class='kw'>var_subgroup</span> <span class='kw'>=</span> <span class='st'>"kk"</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>data.design</span>,
-                 <span class='kw'>time_eventrate</span> <span class='kw'>=</span> <span class='fl'>100</span>)</div><div class='output co'>#&gt; Independent Sampling design (with replacement)
-#&gt; svydesign(id = ~1, data = lung)
-#&gt; Independent Sampling design (with replacement)
+#&gt; 1                NA</div><div class='input'><span class='fu'>TableSubgroupCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>, <span class='kw'>status</span>) <span class='op'>~</span> <span class='kw'>sex</span>, var_subgroup = <span class='st'>"kk"</span>, data = <span class='kw'>data.design</span>,
+                 time_eventrate = <span class='fl'>100</span>)</div><div class='output co'>#&gt; Independent Sampling design (with replacement)
+#&gt; svydesign(id = ~1, data = lung)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
+#&gt; <span class='message'>* NA -&gt; ...1</span>
+#&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt; Independent Sampling design (with replacement)
 #&gt; subset(data, get(var_subgroup) == .)
 #&gt; Independent Sampling design (with replacement)
 #&gt; subset(data, get(var_subgroup) == .)</div><div class='output co'>#&gt;   Variable Count Percent Point Estimate Lower Upper    1    2 P value

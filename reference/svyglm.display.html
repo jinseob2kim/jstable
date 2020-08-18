@@ -135,7 +135,7 @@
     <p>table for svyglm.object (survey package).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>svyregress.display</span>(<span class='no'>svyglm.obj</span>, <span class='kw'>decimal</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>svyregress.display</span>(<span class='kw'>svyglm.obj</span>, decimal = <span class='fl'>2</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -158,12 +158,12 @@
     <p>DETAILS</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>survey</span>);<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>api</span>)
- <span class='no'>apistrat</span>$<span class='no'>tt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>20</span>), <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>apistrat</span>) -<span class='fl'>20</span>))
- <span class='no'>dstrat</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(<span class='kw'>id</span><span class='kw'>=</span>~<span class='fl'>1</span>,<span class='kw'>strata</span><span class='kw'>=</span>~<span class='no'>stype</span>, <span class='kw'>weights</span><span class='kw'>=</span>~<span class='no'>pw</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>apistrat</span>, <span class='kw'>fpc</span><span class='kw'>=</span>~<span class='no'>fpc</span>)
- <span class='no'>ds</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svyglm.html'>svyglm</a></span>(<span class='no'>api00</span>~<span class='no'>ell</span>+<span class='no'>meals</span>+<span class='no'>cname</span>+<span class='no'>mobility</span>, <span class='kw'>design</span><span class='kw'>=</span><span class='no'>dstrat</span>)
- <span class='no'>ds2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svyglm.html'>svyglm</a></span>(<span class='no'>tt</span>~<span class='no'>ell</span>+<span class='no'>meals</span>+<span class='no'>cname</span>+<span class='no'>mobility</span>, <span class='kw'>design</span><span class='kw'>=</span><span class='no'>dstrat</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/family.html'>quasibinomial</a></span>())
- <span class='fu'>svyregress.display</span>(<span class='no'>ds</span>)</div><div class='output co'>#&gt; $first.line
+    <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://r-survey.r-forge.r-project.org/survey'>survey</a></span>);<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>api</span>)
+ <span class='kw'>apistrat</span><span class='op'>$</span><span class='kw'>tt</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>20</span>), <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>apistrat</span>) <span class='op'>-</span><span class='fl'>20</span>))
+ <span class='kw'>dstrat</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(id=<span class='op'>~</span><span class='fl'>1</span>,strata=<span class='op'>~</span><span class='kw'>stype</span>, weights=<span class='op'>~</span><span class='kw'>pw</span>, data=<span class='kw'>apistrat</span>, fpc=<span class='op'>~</span><span class='kw'>fpc</span>)
+ <span class='kw'>ds</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svyglm.html'>svyglm</a></span>(<span class='kw'>api00</span><span class='op'>~</span><span class='kw'>ell</span><span class='op'>+</span><span class='kw'>meals</span><span class='op'>+</span><span class='kw'>cname</span><span class='op'>+</span><span class='kw'>mobility</span>, design=<span class='kw'>dstrat</span>)
+ <span class='kw'>ds2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svyglm.html'>svyglm</a></span>(<span class='kw'>tt</span><span class='op'>~</span><span class='kw'>ell</span><span class='op'>+</span><span class='kw'>meals</span><span class='op'>+</span><span class='kw'>cname</span><span class='op'>+</span><span class='kw'>mobility</span>, design=<span class='kw'>dstrat</span>, family = <span class='fu'><a href='https://rdrr.io/r/stats/family.html'>quasibinomial</a></span>())
+ <span class='fu'>svyregress.display</span>(<span class='kw'>ds</span>)</div><div class='output co'>#&gt; $first.line
 #&gt; [1] "Linear regression predicting api00- weighted data\n"
 #&gt; 
 #&gt; $table
@@ -260,7 +260,7 @@
 #&gt; [1] "No. of observations = 200\nAIC value = 2333.5397\n\n"
 #&gt; 
 #&gt; attr(,"class")
-#&gt; [1] "display" "list"   </div><div class='input'> <span class='fu'>svyregress.display</span>(<span class='no'>ds2</span>)</div><div class='output co'>#&gt; $first.line
+#&gt; [1] "display" "list"   </div><div class='input'> <span class='fu'>svyregress.display</span>(<span class='kw'>ds2</span>)</div><div class='output co'>#&gt; $first.line
 #&gt; [1] "Logistic regression predicting tt- weighted data\n"
 #&gt; 
 #&gt; $table

@@ -135,7 +135,7 @@
     <p>Make gee results from "geeglm" object</p>
     </div>
 
-    <pre class="usage"><span class='fu'>geeglm.display</span>(<span class='no'>geeglm.obj</span>, <span class='kw'>decimal</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>geeglm.display</span>(<span class='kw'>geeglm.obj</span>, decimal = <span class='fl'>2</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -162,12 +162,12 @@
  <code><a href='https://rdrr.io/r/stats/complete.cases.html'>complete.cases</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>geepack</span>)
- <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>dietox</span>)
- <span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
- <span class='no'>gee01</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/geepack/man/geeglm.html'>geeglm</a></span> (<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> , <span class='kw'>id</span> <span class='kw'>=</span><span class='no'>Pig</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>,
-                <span class='kw'>family</span><span class='kw'>=</span><span class='no'>gaussian</span>,<span class='kw'>corstr</span><span class='kw'>=</span><span class='st'>"ex"</span>)
- <span class='fu'>geeglm.display</span>(<span class='no'>gee01</span>)</div><div class='output co'>#&gt; $caption
+    <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'>geepack</span>)
+ <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>dietox</span>)
+ <span class='kw'>dietox</span><span class='op'>$</span><span class='kw'>Cu</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='kw'>dietox</span><span class='op'>$</span><span class='kw'>Cu</span>)
+ <span class='kw'>gee01</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/geepack/man/geeglm.html'>geeglm</a></span> (<span class='kw'>Weight</span> <span class='op'>~</span> <span class='kw'>Time</span> <span class='op'>+</span> <span class='kw'>Cu</span> , id =<span class='kw'>Pig</span>, data = <span class='kw'>dietox</span>,
+                family=<span class='kw'>gaussian</span>,corstr=<span class='st'>"ex"</span>)
+ <span class='fu'>geeglm.display</span>(<span class='kw'>gee01</span>)</div><div class='output co'>#&gt; $caption
 #&gt; [1] "GEE(gaussian) predicting Weight by Time, Cu - Group Pig"
 #&gt; 
 #&gt; $table
