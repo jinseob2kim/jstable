@@ -74,7 +74,7 @@ mk.lev = function(data){
 
 LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
   
-  variable <- level <- val_label <- NULL
+  lv2 <- variable <- level <- val_label <- NULL
   
   tb.main <- epiDisplay.obj$table
   tb.compact <- tb.main[!rownames(tb.main)=="", ]
@@ -85,14 +85,15 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
   
   ## Var label
   tb.rn = gsub(" \\(cont. var.\\)", "", rownames(tb.compact))
-  rownames(tb.compact) = tb.rn
+  rownames(tb.compact) <- tb.rn
  
   if (nrow(tb.main) < 2 & label == T){
     vname <- strsplit(rownames(tb.compact)[1], ":")[[1]][1]
+    cond.lv2 <- grepl(":", rownames(tb.compact)[1]) & grepl("vs", rownames(tb.compact)[1])
     rownames(tb.compact) <- gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
-    if (length(ref[variable == vname, level]) == 2){
-      vll <- ref[variable == vname, c("level", "val_label")]
-      rownames(tb.compact) <- gsub(paste(vll[2, 1], " vs ", vll[1,1], sep=""), paste(vll[2, 2], " vs ", vll[1,2], sep=""), rownames(tb.compact))
+    if (cond.lv2){
+      vll <- ref[variable == vname & level %in% lv2, c("level", "val_label")]
+      rownames(tb.compact) <- gsub(paste(vll[level == lv2[1], level], " vs ", vll[level == lv2[2], level], sep=""), paste(vll[level == lv2[1], val_label], " vs ", vll[level == lv2[2], val_label], sep=""), rownames(tb.compact))
     }
   }
   
@@ -102,13 +103,15 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
     vl <- lapply(1:length(vn), function(x){tb.rn[vns[x]:(vns[x+1]-1)]})
     vl_label <- lapply(vl, function(x){
       vname <- strsplit(x[1], ":")[[1]][1]
+      cond.lv2 <- grepl(":", x[1]) & grepl("vs", x[1])
       #x[1] <- gsub(vname, ref[variable == vname, var_label][1], x[1])
-      if (length(ref[variable == vname, level]) == 2){
-        vll = ref[variable == vname, c("level", "val_label")]
-        x <- paste(ref[variable == vname, var_label][1], ": ", vll[2, 2], " vs ", vll[1, 2], sep = "")
+      if (cond.lv2){
+        lv2 <- strsplit(strsplit(x[1], ": ")[[1]][[2]], " vs ")[[1]]
+        vll <- ref[variable == vname & level %in% lv2, c("level", "val_label")]
+        x <- paste(ref[variable == vname, var_label][1], ": ", vll[level == lv2[1], val_label], " vs ", vll[level == lv2[2], val_label], sep = "")
         #x = gsub(paste(vll[2, 1], " vs ", vll[1,1], sep=""), paste(vll[2, 2], " vs ", vll[1,2], sep=""), x)
       } else if (ref[variable == vname, class][1] %in% c("factor", "character")){
-        x[1] <- paste(ref[variable == vname, var_label][1], ": ref.=", ref[variable == vname, val_label][1], sep = "")
+        x[1] <- paste(ref[variable == vname, var_label][1], ": ref.=", ref[variable == vname & level == strsplit(x[1], "\\.\\=")[[1]][2], val_label], sep = "")
         for (k in 2:length(x)){
           x[k] <- paste("   ", ref[variable == vname & level == strsplit(x[k], "   ")[[1]][2], val_label], sep = "")
         }
@@ -120,24 +123,24 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
     rownames(tb.compact) <- unlist(vl_label)
   }
   
-  ll = strsplit(epiDisplay.obj$last.lines,"\n")[[1]]
-  ll.vec = matrix(unlist(lapply(ll,function(x){strsplit(x," = ")})), ncol =2, byrow=T)
-  ll.mat = matrix(rep("", nrow(ll.vec)* ncol(tb.compact)), nrow = nrow(ll.vec))  
+  ll <- strsplit(epiDisplay.obj$last.lines,"\n")[[1]]
+  ll.vec <- matrix(unlist(lapply(ll,function(x){strsplit(x," = ")})), ncol =2, byrow=T)
+  ll.mat <- matrix(rep("", nrow(ll.vec)* ncol(tb.compact)), nrow = nrow(ll.vec))  
   ll.mat[,1] = ll.vec[,2]
-  rownames(ll.mat) = ll.vec[,1]
-  out = rbind(tb.compact, rep("", ncol(tb.compact)), ll.mat)
+  rownames(ll.mat) <- ll.vec[,1]
+  out <- rbind(tb.compact, rep("", ncol(tb.compact)), ll.mat)
   
   if (nrow(tb.main) == 2){
-    out = rbind(tb.compact, ll.mat)
+    out <- rbind(tb.compact, ll.mat)
   }
   
-  p.colnum = which(colnames(out) %in% c("P value", "adj. P value", "P(t-test)", "P(Wald's test)")) 
-  p.colnum = p.colnum[length(p.colnum)]
+  p.colnum <- which(colnames(out) %in% c("P value", "adj. P value", "P(t-test)", "P(Wald's test)")) 
+  p.colnum <- p.colnum[length(p.colnum)]
   
-  pn = gsub("< ","", out[, p.colnum])
+  pn <- gsub("< ","", out[, p.colnum])
   
-  colnames(out)[p.colnum] = ifelse(colnames(out)[p.colnum] == "P value", "P value", "adj. P value")
-  sig = ifelse(as.numeric(pn) <= 0.05, "**", "")
+  colnames(out)[p.colnum] <- ifelse(colnames(out)[p.colnum] == "P value", "P value", "adj. P value")
+  sig <- ifelse(as.numeric(pn) <= 0.05, "**", "")
   return(cbind(out,sig))
 }
 
@@ -163,36 +166,42 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
 
 LabeljsTable = function(obj.table, ref){
   
-  variable <- level <- val_label <- NULL
+  lv2 <- variable <- level <- val_label <- NULL
   
   tb.main <- obj.table
   tb.compact <- tb.main
   
   ## Var label
-  tb.rn = rownames(tb.compact)
+  tb.rn <- rownames(tb.compact)
 
   if (nrow(tb.main) == 1){
-    vname = strsplit(rownames(tb.compact)[1], ":")[[1]][1]
-    rownames(tb.compact) = gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
-    if (length(ref[variable == vname, level]) == 2){
-      vll = ref[variable == vname, c("level", "val_label")]
-      rownames(tb.compact) = gsub(paste(vll[2, 1], " vs ", vll[1,1], sep=""), paste(vll[2, 2], " vs ", vll[1,2], sep=""), rownames(tb.compact))
+    
+    vname <- strsplit(rownames(tb.compact)[1], ":")[[1]][1]
+    cond.lv2 <- grepl(":", rownames(tb.compact)[1]) & grepl("vs", rownames(tb.compact)[1])
+    rownames(tb.compact) <- gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
+    if (cond.lv2){
+      vll <- ref[variable == vname & level %in% lv2, c("level", "val_label")]
+      rownames(tb.compact) <- gsub(paste(vll[level == lv2[1], level], " vs ", vll[level == lv2[2], level], sep=""), paste(vll[level == lv2[1], val_label], " vs ", vll[level == lv2[2], val_label], sep=""), rownames(tb.compact))
     }
+    
   }
   
   if (nrow(tb.main) > 1){
-    vn = which(substr(tb.rn, 1, 1) != " ")
-    vns = c(vn, length(tb.rn)+1 )
-    vl = lapply(1:length(vn), function(x){tb.rn[vns[x]:(vns[x+1]-1)]})
+    vn <- which(substr(tb.rn, 1, 1) != " ")
+    vns <- c(vn, length(tb.rn)+1 )
+    vl <- lapply(1:length(vn), function(x){tb.rn[vns[x]:(vns[x+1]-1)]})
     vl_label = lapply(vl, function(x){
       vname <- strsplit(x[1], ":")[[1]][1]
       x[1] <- gsub(vname, ref[variable == vname, var_label][1], x[1])
-      if (length(ref[variable == vname, level]) == 2){
-        vll = ref[variable == vname, c("level", "val_label")]
-        x <- paste(ref[variable == vname, var_label][1], ": ", vll[2, 2], " vs ", vll[1, 2], sep = "")
+      cond.lv2 <- grepl(":", x[1]) & grepl("vs", x[1])
+      #x[1] <- gsub(vname, ref[variable == vname, var_label][1], x[1])
+      if (cond.lv2){
+        lv2 <- strsplit(strsplit(x[1], ": ")[[1]][[2]], " vs ")[[1]]
+        vll <- ref[variable == vname & level %in% lv2, c("level", "val_label")]
+        x <- paste(ref[variable == vname, var_label][1], ": ", vll[level == lv2[1], val_label], " vs ", vll[level == lv2[2], val_label], sep = "")
         #x = gsub(paste(vll[2, 1], " vs ", vll[1,1], sep=""), paste(vll[2, 2], " vs ", vll[1,2], sep=""), x)
       } else if (ref[variable == vname, class][1] %in% c("factor", "character")){
-        x[1] <- paste(ref[variable == vname, var_label][1], ": ref.=", ref[variable == vname, val_label][1], sep = "")
+        x[1] <- paste(ref[variable == vname, var_label][1], ": ref.=", ref[variable == vname & level == strsplit(x[1], "\\.\\=")[[1]][2], val_label], sep = "")
         for (k in 2:length(x)){
           x[k] <- paste("   ", ref[variable == vname & level == strsplit(x[k], "   ")[[1]][2], val_label], sep = "")
         }
@@ -204,7 +213,7 @@ LabeljsTable = function(obj.table, ref){
     rownames(tb.compact) = unlist(vl_label)
   }
   
-  out = tb.compact
+  out <- tb.compact
   #sig.colnum = which(colnames(out) %in% c("P value", "adj. P value")) 
   #pn = gsub("< ","", out[, sig.colnum])
   #sig = ifelse(as.numeric(pn) <= 0.05, "**", "")

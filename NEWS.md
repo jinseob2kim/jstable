@@ -1,3 +1,7 @@
+# jstable 0.9.6
+
+* Bugfix `LabelepiDisplay`, `LabeljsTable`: label error.     
+
 # jstable 0.9.5
 
 * Bugfix `TableSubgroupCox`: error with too large **time_eventrate**     
