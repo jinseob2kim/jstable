@@ -78,7 +78,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.7</span>
       </span>
     </div>
 
@@ -154,7 +154,8 @@
   pDigits = <span class='fl'>3</span>,
   labeldata = <span class='kw'>NULL</span>,
   psub = <span class='kw'>T</span>,
-  minMax = <span class='kw'>F</span>
+  minMax = <span class='kw'>F</span>,
+  showpm = <span class='kw'>F</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -235,6 +236,10 @@
     <tr>
       <th>minMax</th>
       <td><p>Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.</p></td>
+    </tr>
+    <tr>
+      <th>showpm</th>
+      <td><p>Logical, show normal distributed continuous variables as Mean ± SD. Default: F</p></td>
     </tr>
     </table>
 
