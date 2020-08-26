@@ -32,7 +32,8 @@ CreateTableOneJS(
   pDigits = 3,
   labeldata = NULL,
   psub = T,
-  minMax = F
+  minMax = F,
+  showpm = F
 )
 }
 \arguments{
@@ -80,7 +81,7 @@ CreateTableOneJS(
 
 \item{nonnormal}{A character vector to specify the variables for which the p-values should be those of nonparametric tests. By default all p-values are from normal assumption-based tests (oneway.test)., Default: NULL}
 
-\item{catDigits}{Number of digits to print for proportions., Default: 1}
+\item{catDigits}{Number of digits to print for proportions. Default: 1}
 
 \item{contDigits}{Number of digits to print for continuous variables. Default 2.}
 
@@ -91,6 +92,8 @@ CreateTableOneJS(
 \item{psub}{show sub-group p-values, Default: F}
 
 \item{minMax}{Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.}
+
+\item{showpm}{Logical, show normal distributed continuous variables as Mean ± SD. Default: F}
 }
 \value{
 A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.

@@ -149,12 +149,13 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
 #' @param Labels Use Label, Default: F
 #' @param exact A character vector to specify the variables for which the p-values should be those of exact tests. By default all p-values are from large sample approximation tests (chisq.test)., Default: NULL
 #' @param nonnormal A character vector to specify the variables for which the p-values should be those of nonparametric tests. By default all p-values are from normal assumption-based tests (oneway.test)., Default: NULL
-#' @param catDigits Number of digits to print for proportions., Default: 1
+#' @param catDigits Number of digits to print for proportions. Default: 1
 #' @param contDigits Number of digits to print for continuous variables. Default 2.
 #' @param pDigits Number of digits to print for p-values (also used for standardized mean differences), Default: 3
 #' @param labeldata labeldata to use, Default: NULL
 #' @param psub show sub-group p-values, Default: F
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
+#' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: F 
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
@@ -175,7 +176,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
                             testNormal = oneway.test, argsNormal = list(var.equal = F),
                             testNonNormal = kruskal.test, argsNonNormal = list(NULL), 
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, exact = NULL, nonnormal = NULL, 
-                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F){
+                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = F){
   
   . <- level <- variable <- val_label <- V1 <- V2 <- NULL
   #if (Labels & !is.null(labeldata)){
@@ -213,6 +214,10 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
                  showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
                  catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
+    if (showpm){
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+    }
     cap.tb1 <- "Total"
     #if (Labels & !is.null(labeldata)){
     #  ptb1[,1] <- vals.tb1
@@ -226,6 +231,11 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
                            testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
                            showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal, exact = exact,
                            catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax)
+    
+    if (showpm){
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+    }
     
     cap.tb1 <- paste("Stratified by ", strata, sep="")
     
@@ -251,6 +261,10 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       ptb1.cbind <- Reduce(cbind, c(list(ptb1.list[[1]]), lapply(2:length(ptb1.list), function(x){ptb1.list[[x]][,-1]})))
     } else{
       ptb1.cbind <- Reduce(cbind, ptb1.list)
+    }
+    if (showpm){
+      ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] )
+      ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] <- gsub("\\)", "", ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] )
     }
     
     #colnum.test = which(colnames(ptb1.cbind) == "test")
@@ -334,6 +348,11 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
     sig <- ifelse(sig <= 0.05, "**", "")
     ptb1 <- cbind(ptb1, sig)
     cap.tb1 <- paste("Table 1: Stratified by ", strata, " and ",strata2,  sep="")
+    
+    if (showpm){
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+    }
     
     # Column name
     if (Labels & !is.null(labeldata)){

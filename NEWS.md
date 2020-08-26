@@ -1,3 +1,7 @@
+# jstable 0.9.7
+
+* Add option to show normal distributed continuous variables as Mean ± SD in `CreateTableOneJS` `svyCreateTableOneJS`.
+
 # jstable 0.9.6
 
 * Bugfix `LabelepiDisplay`, `LabeljsTable`: label error.     

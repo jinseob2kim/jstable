@@ -121,6 +121,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 #' @param labeldata labeldata to use, Default: NULL
 #' @param psub show sub-group p-values, Default: F
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
+#' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: F 
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
@@ -139,7 +140,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 
 svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVars = NULL, includeNA = F, test = T,
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, nonnormal = NULL, 
-                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F){
+                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = F){
   
   . <- level <- variable <- val_label <- V1 <- V2 <- NULL
   
@@ -174,6 +175,12 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
                   catDigits = catDigits, contDigits = contDigits, minMax = minMax)
     
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
+    
+    if (showpm){
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+    }
+    
     cap.tb1 <- "Total - weighted data"
     #if (Labels & !is.null(labeldata)){
     #  ptb1[,1] <- vals.tb1
@@ -185,6 +192,10 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
                             catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax)
     
     cap.tb1 <- paste("Stratified by ", strata, "- weighted data", sep="")
+    if (showpm){
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+    }
     
     if (Labels & !is.null(labeldata)){
       cap.tb1 <- paste("Stratified by ", labeldata[get("variable") == strata, "var_label"][1], "- weighted data", sep="")
@@ -204,6 +215,10 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
       ptb1.cbind <- Reduce(cbind, c(list(ptb1.list[[1]]), lapply(2:length(ptb1.list), function(x){ptb1.list[[x]][,-1]})))
     } else{
       ptb1.cbind <- Reduce(cbind, ptb1.list)
+    }
+    if (showpm){
+      ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] )
+      ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] <- gsub("\\)", "", ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] )
     }
     
     #colnum.test = which(colnames(ptb1.cbind) == "test")
@@ -272,6 +287,11 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     sig <- ifelse(sig <= 0.05, "**", "")
     ptb1 <- cbind(ptb1, sig)
     cap.tb1 <- paste("Stratified by ", strata, " and ",strata2, "- weighted data",  sep="")
+    
+    if (showpm){
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+    }
     
     # Column name
     if (Labels & !is.null(labeldata)){
