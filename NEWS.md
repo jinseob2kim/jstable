@@ -1,6 +1,9 @@
 # jstable 0.9.7
 
-* Add option to show normal distributed continuous variables as Mean ± SD in `CreateTableOneJS` `svyCreateTableOneJS`.
+* Bugfix `TableSubgroupCox`: apply `extend = T` option to `summary.survfit` 
+
+* Update `CreateTableOneJS`, `svyCreateTableOneJS`: Add option to show normal distributed continuous variables as Mean ± SD.
+
 
 # jstable 0.9.6
 

@@ -82,7 +82,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       model <- survival::coxph(formula, data = data, x= TRUE)
       if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       res.kap <- survival::survfit(formula.km, data = data)
-      res.kap.times <- summary(res.kap, times = time_eventrate)
+      res.kap.times <- summary(res.kap, times = time_eventrate, extend = T)
       prop <- round(100 * (1 - res.kap.times[["surv"]]), decimal.percent)
       names(prop) <- model$xlevels[[1]]
       #out.kap <- paste(res.kap.times[["n.event"]], " (", round(100 * (1 - res.kap.times[["surv"]]), decimal.percent), ")", sep = "")
