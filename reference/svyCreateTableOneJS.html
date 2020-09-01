@@ -256,7 +256,8 @@
  <span class='kw'>nhanesSvy</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(ids = <span class='op'>~</span> <span class='kw'>SDMVPSU</span>, strata = <span class='op'>~</span> <span class='kw'>SDMVSTRA</span>, weights = <span class='op'>~</span> <span class='kw'>WTMEC2YR</span>, 
                         nest = <span class='fl'>TRUE</span>, data = <span class='kw'>nhanes</span>)
  <span class='fu'>svyCreateTableOneJS</span>(vars = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"HI_CHOL"</span>,<span class='st'>"race"</span>,<span class='st'>"agecat"</span>,<span class='st'>"RIAGENDR"</span>), 
-                     strata = <span class='st'>"RIAGENDR"</span>, data = <span class='kw'>nhanesSvy</span>)</div><div class='output co'>#&gt; $table
+                     strata = <span class='st'>"RIAGENDR"</span>, data = <span class='kw'>nhanesSvy</span>)
+</div><div class='output co'>#&gt; $table
 #&gt;            level      1                      2                      p       
 #&gt; n          ""         "134944553.92"         "141591892.00"         ""      
 #&gt; HI_CHOL    ""         "        0.10 (0.30)"  "        0.12 (0.33)"  " 0.009"

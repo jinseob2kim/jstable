@@ -161,7 +161,8 @@
     <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/therneau/survival'>survival</a></span>);<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>lung</span>)
  <span class='kw'>fit1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survival/man/coxph.html'>coxph</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>, <span class='kw'>status</span>) <span class='op'>~</span> <span class='kw'>ph.ecog</span> <span class='op'>+</span> <span class='kw'>age</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/pkg/survival/man/cluster.html'>cluster</a></span>(<span class='kw'>inst</span>), data = <span class='kw'>lung</span>, model = <span class='fl'>TRUE</span>)
  <span class='kw'>fit2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survival/man/coxph.html'>coxph</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>, <span class='kw'>status</span>) <span class='op'>~</span> <span class='kw'>ph.ecog</span> <span class='op'>+</span> <span class='kw'>age</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/pkg/survival/man/frailty.html'>frailty</a></span>(<span class='kw'>inst</span>), data = <span class='kw'>lung</span>, model = <span class='fl'>TRUE</span>)
- <span class='fu'>cox2.display</span>(<span class='kw'>fit1</span>)</div><div class='output co'>#&gt; $table
+ <span class='fu'>cox2.display</span>(<span class='kw'>fit1</span>)
+</div><div class='output co'>#&gt; $table
 #&gt;         crude HR(95%CI)    crude P value adj. HR(95%CI)  adj. P value
 #&gt; ph.ecog "1.61 (1.25,2.08)" "&lt; 0.001"     "1.56 (1.22,2)" "&lt; 0.001"   
 #&gt; age     "1.02 (1.01,1.03)" "0.007"       "1.01 (1,1.02)" "0.085"     
@@ -179,7 +180,8 @@
 #&gt; 
 #&gt; $caption
 #&gt; [1] "Marginal Cox model on time ('time') to event ('status') - Group inst"
-#&gt; </div><div class='input'> <span class='fu'>cox2.display</span>(<span class='kw'>fit2</span>)</div><div class='output co'>#&gt; $table
+#&gt; </div><div class='input'> <span class='fu'>cox2.display</span>(<span class='kw'>fit2</span>)
+</div><div class='output co'>#&gt; $table
 #&gt;         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value
 #&gt; ph.ecog "1.64 (1.31,2.05)" "&lt; 0.001"     "1.58 (1.26,1.99)" "&lt; 0.001"   
 #&gt; age     "1.02 (1,1.04)"    "0.041"       "1.01 (0.99,1.03)" "0.225"     

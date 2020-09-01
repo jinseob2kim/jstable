@@ -174,7 +174,8 @@
  <span class='kw'>dpbc</span> <span class='op'>&lt;-</span> <span class='kw'>survey</span>::<span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(id=<span class='op'>~</span><span class='fl'>1</span>, prob=<span class='op'>~</span><span class='kw'>randprob</span>, strata=<span class='op'>~</span><span class='kw'>edema</span>, data=<span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='kw'>pbc</span>,<span class='kw'>randomized</span>))
  
  <span class='kw'>model</span> <span class='op'>&lt;-</span> <span class='kw'>survey</span>::<span class='fu'><a href='https://rdrr.io/pkg/survey/man/svycoxph.html'>svycoxph</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>,<span class='kw'>status</span><span class='op'>&gt;</span><span class='fl'>0</span>)<span class='op'>~</span> <span class='kw'>sex</span> <span class='op'>+</span> <span class='kw'>protime</span> <span class='op'>+</span> <span class='kw'>albumin</span> <span class='op'>+</span> <span class='kw'>stage</span>,design=<span class='kw'>dpbc</span>)
- <span class='fu'>svycox.display</span>(<span class='kw'>model</span>)</div><div class='output co'>#&gt; Stratified Independent Sampling design (with replacement)
+ <span class='fu'>svycox.display</span>(<span class='kw'>model</span>)
+</div><div class='output co'>#&gt; Stratified Independent Sampling design (with replacement)
 #&gt; survey::svydesign(id = ~1, prob = ~randprob, strata = ~edema, 
 #&gt;     data = subset(pbc, randomized))
 #&gt; Stratified Independent Sampling design (with replacement)

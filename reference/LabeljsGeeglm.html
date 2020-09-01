@@ -164,7 +164,8 @@
  <span class='kw'>gee01</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/geepack/man/geeglm.html'>geeglm</a></span> (<span class='kw'>Weight</span> <span class='op'>~</span> <span class='kw'>Time</span> <span class='op'>+</span> <span class='kw'>Cu</span> , id =<span class='kw'>Pig</span>, data = <span class='kw'>dietox</span>,
                 family=<span class='kw'>gaussian</span>,corstr=<span class='st'>"ex"</span>)
  <span class='kw'>g1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='geeglm.display.html'>geeglm.display</a></span>(<span class='kw'>gee01</span>)
- <span class='fu'>LabeljsGeeglm</span>(<span class='kw'>g1</span>, ref = <span class='fu'><a href='mk.lev.html'>mk.lev</a></span>(<span class='kw'>dietox</span>))</div><div class='output co'>#&gt; $table
+ <span class='fu'>LabeljsGeeglm</span>(<span class='kw'>g1</span>, ref = <span class='fu'><a href='mk.lev.html'>mk.lev</a></span>(<span class='kw'>dietox</span>))
+</div><div class='output co'>#&gt; $table
 #&gt;                crude coeff(95%CI)   crude P value adj. coeff(95%CI)  
 #&gt; Time           "6.94 (6.79,7.1)"    "&lt; 0.001"     "6.94 (6.79,7.1)"  
 #&gt; Cu: ref.=Cu000 NA                   NA            NA                 

@@ -207,7 +207,8 @@
          kk = <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='kw'>pat.karno</span> <span class='op'>&gt;=</span> <span class='fl'>70</span>)),
          kk1 = <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='kw'>pat.karno</span> <span class='op'>&gt;=</span> <span class='fl'>60</span>))) <span class='op'>-&gt;</span> <span class='kw'>lung</span>
 <span class='fu'>TableSubgroupMultiCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>, <span class='kw'>status</span>) <span class='op'>~</span> <span class='kw'>sex</span>, var_subgroups = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"kk"</span>, <span class='st'>"kk1"</span>), 
-                      data=<span class='kw'>lung</span>, time_eventrate = <span class='fl'>100</span>, line = <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
+                      data=<span class='kw'>lung</span>, time_eventrate = <span class='fl'>100</span>, line = <span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* NA -&gt; ...1</span>
 #&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Loglik converged before variable  1,2,3 ; coefficient may be infinite. </span></div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* NA -&gt; ...1</span>
@@ -233,8 +234,10 @@
 #&gt; 9              &lt;NA&gt;</div><div class='input'>
 <span class='co'>## survey design</span>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://r-survey.r-forge.r-project.org/survey'>survey</a></span>)
-<span class='kw'>data.design</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(id = <span class='op'>~</span><span class='fl'>1</span>, data = <span class='kw'>lung</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No weights or probabilities supplied, assuming equal probability</span></div><div class='input'><span class='fu'>TableSubgroupMultiCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>, <span class='kw'>status</span>) <span class='op'>~</span> <span class='kw'>sex</span>, var_subgroups = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"kk"</span>, <span class='st'>"kk1"</span>), 
-                      data = <span class='kw'>data.design</span>, time_eventrate = <span class='fl'>100</span>)</div><div class='output co'>#&gt; Independent Sampling design (with replacement)
+<span class='kw'>data.design</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(id = <span class='op'>~</span><span class='fl'>1</span>, data = <span class='kw'>lung</span>)
+</div><div class='output co'>#&gt; <span class='warning'>Warning: No weights or probabilities supplied, assuming equal probability</span></div><div class='input'><span class='fu'>TableSubgroupMultiCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='kw'>time</span>, <span class='kw'>status</span>) <span class='op'>~</span> <span class='kw'>sex</span>, var_subgroups = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"kk"</span>, <span class='st'>"kk1"</span>), 
+                      data = <span class='kw'>data.design</span>, time_eventrate = <span class='fl'>100</span>)
+</div><div class='output co'>#&gt; Independent Sampling design (with replacement)
 #&gt; svydesign(id = ~1, data = lung)
 #&gt; Independent Sampling design (with replacement)
 #&gt; svydesign(id = ~1, data = lung)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
