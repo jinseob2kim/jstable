@@ -33,7 +33,7 @@ CreateTableOneJS(
   labeldata = NULL,
   psub = T,
   minMax = F,
-  showpm = F
+  showpm = T
 )
 }
 \arguments{
@@ -93,7 +93,7 @@ CreateTableOneJS(
 
 \item{minMax}{Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.}
 
-\item{showpm}{Logical, show normal distributed continuous variables as Mean ± SD. Default: F}
+\item{showpm}{Logical, show normal distributed continuous variables as Mean ± SD. Default: T}
 }
 \value{
 A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.

@@ -121,7 +121,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 #' @param labeldata labeldata to use, Default: NULL
 #' @param psub show sub-group p-values, Default: F
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
-#' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: F 
+#' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T 
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
