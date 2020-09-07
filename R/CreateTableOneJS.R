@@ -215,8 +215,8 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
                  catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
     if (showpm){
-      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
-      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
+      ptb1[!grepl("(%)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)), ] )
+      ptb1[!grepl("(%)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)), ] )
     }
     cap.tb1 <- "Total"
     #if (Labels & !is.null(labeldata)){
