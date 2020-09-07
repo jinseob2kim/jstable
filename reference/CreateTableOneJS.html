@@ -164,7 +164,7 @@
   labeldata = <span class='kw'>NULL</span>,
   psub = <span class='kw'>T</span>,
   minMax = <span class='kw'>F</span>,
-  showpm = <span class='kw'>F</span>
+  showpm = <span class='kw'>T</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -284,7 +284,7 @@
     </tr>
     <tr>
       <th>showpm</th>
-      <td><p>Logical, show normal distributed continuous variables as Mean ± SD. Default: F</p></td>
+      <td><p>Logical, show normal distributed continuous variables as Mean ± SD. Default: T</p></td>
     </tr>
     </table>
 
@@ -301,16 +301,16 @@
 </div><div class='output co'>#&gt; $table
 #&gt;            level 1                 2                 p        test sig 
 #&gt; n          ""    "   138"          "    90"          ""       ""   NA  
-#&gt; inst       ""    " 10.56 (7.80)"   " 11.89 (9.00)"   " 0.254" ""   ""  
-#&gt; time       ""    "283.23 (213.05)" "338.97 (203.47)" " 0.049" ""   "**"
-#&gt; status     ""    "  1.81 (0.39)"   "  1.59 (0.49)"   "&lt;0.001" ""   "**"
-#&gt; age        ""    " 63.34 (9.14)"   " 61.08 (8.85)"   " 0.064" ""   ""  
-#&gt; sex        ""    "  1.00 (0.00)"   "  2.00 (0.00)"   "   NaN" ""   NA  
-#&gt; ph.ecog    ""    "  0.96 (0.71)"   "  0.93 (0.73)"   " 0.759" ""   ""  
-#&gt; ph.karno   ""    " 81.82 (12.38)"  " 82.11 (12.32)"  " 0.864" ""   ""  
-#&gt; pat.karno  ""    " 79.41 (14.29)"  " 80.79 (15.17)"  " 0.497" ""   ""  
-#&gt; meal.cal   ""    "980.54 (413.26)" "840.70 (369.08)" " 0.020" ""   "**"
-#&gt; wt.loss    ""    " 11.22 (12.98)"  "  7.77 (13.18)"  " 0.060" ""   ""  
+#&gt; inst       ""    " 10.56 ± 7.80"   " 11.89 ± 9.00"   " 0.254" ""   ""  
+#&gt; time       ""    "283.23 ± 213.05" "338.97 ± 203.47" " 0.049" ""   "**"
+#&gt; status     ""    "  1.81 ± 0.39"   "  1.59 ± 0.49"   "&lt;0.001" ""   "**"
+#&gt; age        ""    " 63.34 ± 9.14"   " 61.08 ± 8.85"   " 0.064" ""   ""  
+#&gt; sex        ""    "  1.00 ± 0.00"   "  2.00 ± 0.00"   "   NaN" ""   NA  
+#&gt; ph.ecog    ""    "  0.96 ± 0.71"   "  0.93 ± 0.73"   " 0.759" ""   ""  
+#&gt; ph.karno   ""    " 81.82 ± 12.38"  " 82.11 ± 12.32"  " 0.864" ""   ""  
+#&gt; pat.karno  ""    " 79.41 ± 14.29"  " 80.79 ± 15.17"  " 0.497" ""   ""  
+#&gt; meal.cal   ""    "980.54 ± 413.26" "840.70 ± 369.08" " 0.020" ""   "**"
+#&gt; wt.loss    ""    " 11.22 ± 12.98"  "  7.77 ± 13.18"  " 0.060" ""   ""  
 #&gt; 
 #&gt; $caption
 #&gt; [1] "Stratified by sex"

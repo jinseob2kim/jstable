@@ -155,7 +155,7 @@
   labeldata = <span class='kw'>NULL</span>,
   psub = <span class='kw'>T</span>,
   minMax = <span class='kw'>F</span>,
-  showpm = <span class='kw'>F</span>
+  showpm = <span class='kw'>T</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -239,7 +239,7 @@
     </tr>
     <tr>
       <th>showpm</th>
-      <td><p>Logical, show normal distributed continuous variables as Mean ± SD. Default: F</p></td>
+      <td><p>Logical, show normal distributed continuous variables as Mean ± SD. Default: T</p></td>
     </tr>
     </table>
 
@@ -260,13 +260,13 @@
 </div><div class='output co'>#&gt; $table
 #&gt;            level      1                      2                      p       
 #&gt; n          ""         "134944553.92"         "141591892.00"         ""      
-#&gt; HI_CHOL    ""         "        0.10 (0.30)"  "        0.12 (0.33)"  " 0.009"
-#&gt; race       ""         "        2.09 (0.73)"  "        2.14 (0.75)"  " 0.015"
+#&gt; HI_CHOL    ""         "        0.10 ± 0.30"  "        0.12 ± 0.33"  " 0.009"
+#&gt; race       ""         "        2.09 ± 0.73"  "        2.14 ± 0.75"  " 0.015"
 #&gt; agecat (%) "(0,19]"   "  29299546.1 (21.7) " "  28150760.5 (19.9) " " 0.001"
 #&gt;            "(19,39]"  "  40497613.1 (30.0) " "  40640361.5 (28.7) " ""      
 #&gt;            "(39,59]"  "  41053579.4 (30.4) " "  42817044.0 (30.2) " ""      
 #&gt;            "(59,Inf]" "  24093815.3 (17.9) " "  29983725.9 (21.2) " ""      
-#&gt; RIAGENDR   ""         "        1.00 (0.00)"  "        2.00 (0.00)"  "&lt;0.001"
+#&gt; RIAGENDR   ""         "        1.00 ± 0.00"  "        2.00 ± 0.00"  "&lt;0.001"
 #&gt;            test sig 
 #&gt; n          ""   NA  
 #&gt; HI_CHOL    ""   "**"
