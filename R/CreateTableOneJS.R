@@ -176,7 +176,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
                             testNormal = oneway.test, argsNormal = list(var.equal = F),
                             testNonNormal = kruskal.test, argsNonNormal = list(NULL), 
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, exact = NULL, nonnormal = NULL, 
-                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = F){
+                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = T){
   
   . <- level <- variable <- val_label <- V1 <- V2 <- NULL
   #if (Labels & !is.null(labeldata)){

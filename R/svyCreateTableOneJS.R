@@ -140,7 +140,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 
 svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVars = NULL, includeNA = F, test = T,
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, nonnormal = NULL, 
-                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = F){
+                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = T){
   
   . <- level <- variable <- val_label <- V1 <- V2 <- NULL
   
