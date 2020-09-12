@@ -92,8 +92,9 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
     cond.lv2 <- grepl(":", rownames(tb.compact)[1]) & grepl("vs", rownames(tb.compact)[1])
     rownames(tb.compact) <- gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
     if (cond.lv2){
+      lv2 <- strsplit(strsplit(rownames(tb.compact)[1], ": ")[[1]][[2]], " vs ")[[1]]
       vll <- ref[variable == vname & level %in% lv2, c("level", "val_label")]
-      rownames(tb.compact) <- gsub(paste(vll[level == lv2[1], level], " vs ", vll[level == lv2[2], level], sep=""), paste(vll[level == lv2[1], val_label], " vs ", vll[level == lv2[2], val_label], sep=""), rownames(tb.compact))
+      rownames(tb.compact) <- paste(ref[variable == vname, var_label][1], ": ", vll[level == lv2[1], val_label], " vs ", vll[level == lv2[2], val_label], sep = "")
     }
   }
   
@@ -180,9 +181,10 @@ LabeljsTable = function(obj.table, ref){
     cond.lv2 <- grepl(":", rownames(tb.compact)[1]) & grepl("vs", rownames(tb.compact)[1])
     rownames(tb.compact) <- gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
     if (cond.lv2){
+      lv2 <- strsplit(strsplit(rownames(tb.compact)[1], ": ")[[1]][[2]], " vs ")[[1]]
       vll <- ref[variable == vname & level %in% lv2, c("level", "val_label")]
-      rownames(tb.compact) <- gsub(paste(vll[level == lv2[1], level], " vs ", vll[level == lv2[2], level], sep=""), paste(vll[level == lv2[1], val_label], " vs ", vll[level == lv2[2], val_label], sep=""), rownames(tb.compact))
-    }
+      rownames(tb.compact) <- paste(ref[variable == vname, var_label][1], ": ", vll[level == lv2[1], val_label], " vs ", vll[level == lv2[2], val_label], sep = "")
+      }
     
   }
   
