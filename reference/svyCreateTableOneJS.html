@@ -78,19 +78,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/jstable.html">Get started</a>
 </li>
 <li>
@@ -135,28 +129,28 @@
     <p>Combine svyCreateTableOne &amp; print function in tableone package</p>
     </div>
 
-    <pre class="usage"><span class='fu'>svyCreateTableOneJS</span>(
-  <span class='kw'>vars</span>,
-  strata = <span class='kw'>NULL</span>,
-  strata2 = <span class='kw'>NULL</span>,
-  <span class='kw'>data</span>,
-  factorVars = <span class='kw'>NULL</span>,
-  includeNA = <span class='kw'>F</span>,
-  test = <span class='kw'>T</span>,
-  showAllLevels = <span class='kw'>T</span>,
-  printToggle = <span class='kw'>F</span>,
-  quote = <span class='kw'>F</span>,
-  smd = <span class='kw'>F</span>,
-  Labels = <span class='kw'>F</span>,
-  nonnormal = <span class='kw'>NULL</span>,
-  catDigits = <span class='fl'>1</span>,
-  contDigits = <span class='fl'>2</span>,
-  pDigits = <span class='fl'>3</span>,
-  labeldata = <span class='kw'>NULL</span>,
-  psub = <span class='kw'>T</span>,
-  minMax = <span class='kw'>F</span>,
-  showpm = <span class='kw'>T</span>
-)</pre>
+    <pre class="usage"><span class='fu'>svyCreateTableOneJS</span><span class='op'>(</span>
+  <span class='va'>vars</span>,
+  strata <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strata2 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>data</span>,
+  factorVars <span class='op'>=</span> <span class='cn'>NULL</span>,
+  includeNA <span class='op'>=</span> <span class='cn'>F</span>,
+  test <span class='op'>=</span> <span class='cn'>T</span>,
+  showAllLevels <span class='op'>=</span> <span class='cn'>T</span>,
+  printToggle <span class='op'>=</span> <span class='cn'>F</span>,
+  quote <span class='op'>=</span> <span class='cn'>F</span>,
+  smd <span class='op'>=</span> <span class='cn'>F</span>,
+  Labels <span class='op'>=</span> <span class='cn'>F</span>,
+  nonnormal <span class='op'>=</span> <span class='cn'>NULL</span>,
+  catDigits <span class='op'>=</span> <span class='fl'>1</span>,
+  contDigits <span class='op'>=</span> <span class='fl'>2</span>,
+  pDigits <span class='op'>=</span> <span class='fl'>3</span>,
+  labeldata <span class='op'>=</span> <span class='cn'>NULL</span>,
+  psub <span class='op'>=</span> <span class='cn'>T</span>,
+  minMax <span class='op'>=</span> <span class='cn'>F</span>,
+  showpm <span class='op'>=</span> <span class='cn'>T</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -251,12 +245,12 @@
     <p>DETAILS</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://r-survey.r-forge.r-project.org/survey'>survey</a></span>);<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>nhanes</span>)
- <span class='kw'>nhanes</span><span class='op'>$</span><span class='kw'>SDMVPSU</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='kw'>nhanes</span><span class='op'>$</span><span class='kw'>SDMVPSU</span>)
- <span class='kw'>nhanesSvy</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(ids = <span class='op'>~</span> <span class='kw'>SDMVPSU</span>, strata = <span class='op'>~</span> <span class='kw'>SDMVSTRA</span>, weights = <span class='op'>~</span> <span class='kw'>WTMEC2YR</span>, 
-                        nest = <span class='fl'>TRUE</span>, data = <span class='kw'>nhanes</span>)
- <span class='fu'>svyCreateTableOneJS</span>(vars = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"HI_CHOL"</span>,<span class='st'>"race"</span>,<span class='st'>"agecat"</span>,<span class='st'>"RIAGENDR"</span>), 
-                     strata = <span class='st'>"RIAGENDR"</span>, data = <span class='kw'>nhanesSvy</span>)
+    <pre class="examples"><div class='input'> <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://r-survey.r-forge.r-project.org/survey/'>survey</a></span><span class='op'>)</span>;<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>nhanes</span><span class='op'>)</span>
+ <span class='va'>nhanes</span><span class='op'>$</span><span class='va'>SDMVPSU</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span><span class='op'>(</span><span class='va'>nhanes</span><span class='op'>$</span><span class='va'>SDMVPSU</span><span class='op'>)</span>
+ <span class='va'>nhanesSvy</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span><span class='op'>(</span>ids <span class='op'>=</span> <span class='op'>~</span> <span class='va'>SDMVPSU</span>, strata <span class='op'>=</span> <span class='op'>~</span> <span class='va'>SDMVSTRA</span>, weights <span class='op'>=</span> <span class='op'>~</span> <span class='va'>WTMEC2YR</span>, 
+                        nest <span class='op'>=</span> <span class='cn'>TRUE</span>, data <span class='op'>=</span> <span class='va'>nhanes</span><span class='op'>)</span>
+ <span class='fu'>svyCreateTableOneJS</span><span class='op'>(</span>vars <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"HI_CHOL"</span>,<span class='st'>"race"</span>,<span class='st'>"agecat"</span>,<span class='st'>"RIAGENDR"</span><span class='op'>)</span>, 
+                     strata <span class='op'>=</span> <span class='st'>"RIAGENDR"</span>, data <span class='op'>=</span> <span class='va'>nhanesSvy</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $table
 #&gt;            level      1                      2                      p       
 #&gt; n          ""         "134944553.92"         "141591892.00"         ""      
@@ -295,7 +289,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

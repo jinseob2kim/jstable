@@ -78,19 +78,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/jstable.html">Get started</a>
 </li>
 <li>
@@ -135,7 +129,7 @@
     <p>table for svyglm.object (survey package).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>svyregress.display</span>(<span class='kw'>svyglm.obj</span>, decimal = <span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>svyregress.display</span><span class='op'>(</span><span class='va'>svyglm.obj</span>, decimal <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -158,12 +152,12 @@
     <p>DETAILS</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://r-survey.r-forge.r-project.org/survey'>survey</a></span>);<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>api</span>)
- <span class='kw'>apistrat</span><span class='op'>$</span><span class='kw'>tt</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>20</span>), <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>apistrat</span>) <span class='op'>-</span><span class='fl'>20</span>))
- <span class='kw'>dstrat</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(id=<span class='op'>~</span><span class='fl'>1</span>,strata=<span class='op'>~</span><span class='kw'>stype</span>, weights=<span class='op'>~</span><span class='kw'>pw</span>, data=<span class='kw'>apistrat</span>, fpc=<span class='op'>~</span><span class='kw'>fpc</span>)
- <span class='kw'>ds</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svyglm.html'>svyglm</a></span>(<span class='kw'>api00</span><span class='op'>~</span><span class='kw'>ell</span><span class='op'>+</span><span class='kw'>meals</span><span class='op'>+</span><span class='kw'>cname</span><span class='op'>+</span><span class='kw'>mobility</span>, design=<span class='kw'>dstrat</span>)
- <span class='kw'>ds2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svyglm.html'>svyglm</a></span>(<span class='kw'>tt</span><span class='op'>~</span><span class='kw'>ell</span><span class='op'>+</span><span class='kw'>meals</span><span class='op'>+</span><span class='kw'>cname</span><span class='op'>+</span><span class='kw'>mobility</span>, design=<span class='kw'>dstrat</span>, family = <span class='fu'><a href='https://rdrr.io/r/stats/family.html'>quasibinomial</a></span>())
- <span class='fu'>svyregress.display</span>(<span class='kw'>ds</span>)
+    <pre class="examples"><div class='input'> <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://r-survey.r-forge.r-project.org/survey/'>survey</a></span><span class='op'>)</span>;<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>api</span><span class='op'>)</span>
+ <span class='va'>apistrat</span><span class='op'>$</span><span class='va'>tt</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>20</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>apistrat</span><span class='op'>)</span> <span class='op'>-</span><span class='fl'>20</span><span class='op'>)</span><span class='op'>)</span>
+ <span class='va'>dstrat</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span><span class='op'>(</span>id<span class='op'>=</span><span class='op'>~</span><span class='fl'>1</span>,strata<span class='op'>=</span><span class='op'>~</span><span class='va'>stype</span>, weights<span class='op'>=</span><span class='op'>~</span><span class='va'>pw</span>, data<span class='op'>=</span><span class='va'>apistrat</span>, fpc<span class='op'>=</span><span class='op'>~</span><span class='va'>fpc</span><span class='op'>)</span>
+ <span class='va'>ds</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svyglm.html'>svyglm</a></span><span class='op'>(</span><span class='va'>api00</span><span class='op'>~</span><span class='va'>ell</span><span class='op'>+</span><span class='va'>meals</span><span class='op'>+</span><span class='va'>cname</span><span class='op'>+</span><span class='va'>mobility</span>, design<span class='op'>=</span><span class='va'>dstrat</span><span class='op'>)</span>
+ <span class='va'>ds2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svyglm.html'>svyglm</a></span><span class='op'>(</span><span class='va'>tt</span><span class='op'>~</span><span class='va'>ell</span><span class='op'>+</span><span class='va'>meals</span><span class='op'>+</span><span class='va'>cname</span><span class='op'>+</span><span class='va'>mobility</span>, design<span class='op'>=</span><span class='va'>dstrat</span>, family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/family.html'>quasibinomial</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+ <span class='fu'>svyregress.display</span><span class='op'>(</span><span class='va'>ds</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $first.line
 #&gt; [1] "Linear regression predicting api00- weighted data\n"
 #&gt; 
@@ -261,7 +255,7 @@
 #&gt; [1] "No. of observations = 200\nAIC value = 2333.5397\n\n"
 #&gt; 
 #&gt; attr(,"class")
-#&gt; [1] "display" "list"   </div><div class='input'> <span class='fu'>svyregress.display</span>(<span class='kw'>ds2</span>)
+#&gt; [1] "display" "list"   </div><div class='input'> <span class='fu'>svyregress.display</span><span class='op'>(</span><span class='va'>ds2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $first.line
 #&gt; [1] "Logistic regression predicting tt- weighted data\n"
 #&gt; 
@@ -375,7 +369,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
