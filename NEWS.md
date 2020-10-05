@@ -1,3 +1,9 @@
+# jstable 0.9.8
+
+## Bugfix
+
+* `showpm` option with `showAllLevels = F` when no strata.
+
 # jstable 0.9.7
 
 ## Bugfix 
