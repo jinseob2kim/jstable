@@ -20,6 +20,7 @@
 #' @param pDigits Number of digits to print for p-values (also used for standardized mean differences), Default: 3
 #' @param labeldata labeldata to use, Default: NULL
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
+#' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T 
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
@@ -37,7 +38,7 @@
 
 svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test = T,
                            showAllLevels = T, printToggle = F, quote = F, smd = F, nonnormal = NULL, 
-                           catDigits = 1, contDigits = 2, pDigits = 3, Labels = F, labeldata = NULL, minMax = F){
+                           catDigits = 1, contDigits = 2, pDigits = 3, Labels = F, labeldata = NULL, minMax = F, showpm = T){
   
   setkey <- variable <- level <- . <- val_label <- NULL
   
@@ -73,6 +74,12 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
   ptb1 <- print(res,
                 showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
                 catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
+  
+  if (showpm){
+    ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
+    ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] )
+  }
+  
   rownames(ptb1) = gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
   if (Labels & !is.null(labeldata)){
     rownames(ptb1) <- ptb1.rn
@@ -174,12 +181,12 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
                   showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
                   catDigits = catDigits, contDigits = contDigits, minMax = minMax)
     
-    rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
-    
     if (showpm){
-      ptb1[!grepl("(%)", rownames(ptb1)) & rownames(ptb1) != "" & substr(rownames(ptb1), 1, 3) != "   ", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & rownames(ptb1) != "" & substr(rownames(ptb1), 1, 3) != "   ", ] )
-      ptb1[!grepl("(%)", rownames(ptb1)) & rownames(ptb1) != "" & substr(rownames(ptb1), 1, 3) != "   ", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & rownames(ptb1) != "" & substr(rownames(ptb1), 1, 3) != "   ", ] )
+      ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
+      ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] )
     }
+    
+    rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
     
     cap.tb1 <- "Total - weighted data"
     #if (Labels & !is.null(labeldata)){
@@ -189,13 +196,9 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
   } else if (is.null(strata2)){
     ptb1 <- svyCreateTableOne2(strata = strata, vars =vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
                             showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal,
-                            catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax)
+                            catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm)
     
     cap.tb1 <- paste("Stratified by ", strata, "- weighted data", sep="")
-    if (showpm){
-      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
-      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
-    }
     
     if (Labels & !is.null(labeldata)){
       cap.tb1 <- paste("Stratified by ", labeldata[get("variable") == strata, "var_label"][1], "- weighted data", sep="")
@@ -204,21 +207,17 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     }
     return(list(table = ptb1, caption = cap.tb1))
   } else if (psub ==T){
-    data.strata <-  lapply(levels(data$variable[[strata]]), function(x){subset(data, get(strata) == x)})
+    data.strata <-  lapply(setdiff(unique(data$variable[[strata]]), NA), function(x){subset(data, get(strata) == x)})
     ptb1.list <- lapply(data.strata, svyCreateTableOne2,
                         vars =vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
                         showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal, 
-                        catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
+                        catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm)
     
     
     if (showAllLevels == T){
       ptb1.cbind <- Reduce(cbind, c(list(ptb1.list[[1]]), lapply(2:length(ptb1.list), function(x){ptb1.list[[x]][,-1]})))
     } else{
       ptb1.cbind <- Reduce(cbind, ptb1.list)
-    }
-    if (showpm){
-      ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] )
-      ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] <- gsub("\\)", "", ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] )
     }
     
     #colnum.test = which(colnames(ptb1.cbind) == "test")
@@ -275,6 +274,11 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
                   showAllLevels=showAllLevels,
                   printToggle=F, quote=F, smd = smd, varLabels = T,  nonnormal = nonnormal,
                   catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
+    
+    if (showpm){
+      ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
+      ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] )
+    }
     
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
     if (Labels & !is.null(labeldata)){

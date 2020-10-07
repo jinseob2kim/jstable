@@ -29,6 +29,7 @@
 #' @param pDigits Number of digits to print for p-values (also used for standardized mean differences), Default: 3
 #' @param labeldata labeldata to use, Default: NULL
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
+#' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T 
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples 
@@ -48,7 +49,7 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
                            testNormal = oneway.test, argsNormal = list(var.equal = F),
                            testNonNormal = kruskal.test, argsNonNormal = list(NULL), 
                            showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, exact = NULL, nonnormal = NULL, 
-                           catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, minMax = F){
+                           catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, minMax = F, showpm = T){
   
   setkey <- variable <- level <- . <- val_label <- NULL
   
@@ -94,6 +95,10 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
   ptb1 <- print(res,
                showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal, exact = exact,
                catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
+  if (showpm){
+    ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
+    ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] )
+  }
   
   rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
   if (Labels & !is.null(labeldata)){
@@ -213,11 +218,13 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
     ptb1 <- print(res,
                  showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
                  catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
-    rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
+    
     if (showpm){
-      ptb1[!grepl("(%)", rownames(ptb1)) & rownames(ptb1) != "" & substr(rownames(ptb1), 1, 3) != "   ", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & rownames(ptb1) != "" & substr(rownames(ptb1), 1, 3) != "   ", ] )
-      ptb1[!grepl("(%)", rownames(ptb1)) & rownames(ptb1) != "" & substr(rownames(ptb1), 1, 3) != "   ", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & rownames(ptb1) != "" & substr(rownames(ptb1), 1, 3) != "   ", ] )
+      ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
+      ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] )
     }
+    
+    rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
     cap.tb1 <- "Total"
     #if (Labels & !is.null(labeldata)){
     #  ptb1[,1] <- vals.tb1
@@ -230,12 +237,8 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
                            testNormal = testNormal, argsNormal = argsNormal,
                            testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
                            showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal, exact = exact,
-                           catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax)
+                           catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm)
     
-    if (showpm){
-      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
-      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
-    }
     
     cap.tb1 <- paste("Stratified by ", strata, sep="")
     
@@ -255,17 +258,14 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
                        testNormal = testNormal, argsNormal = argsNormal,
                        testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
                        showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal, exact = exact,
-                       catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
+                       catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = T)
     
     if (showAllLevels == T){
       ptb1.cbind <- Reduce(cbind, c(list(ptb1.list[[1]]), lapply(2:length(ptb1.list), function(x){ptb1.list[[x]][,-1]})))
     } else{
       ptb1.cbind <- Reduce(cbind, ptb1.list)
     }
-    if (showpm){
-      ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] )
-      ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] <- gsub("\\)", "", ptb1.cbind[!grepl("(%)", rownames(ptb1.cbind)) & ptb1.cbind[, "p"] != "", ] )
-    }
+   
     
     #colnum.test = which(colnames(ptb1.cbind) == "test")
     #ptb1.2group = ptb1.cbind[, c(setdiff(1:ncol(ptb1.cbind), colnum.test), colnum.test[1])]
@@ -336,6 +336,11 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
                 printToggle=F, quote=F, smd = smd, varLabels = Labels, exact = exact, nonnormal = nonnormal,
                 catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax)
     
+    if (showpm){
+      ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
+      ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] )
+    }
+    
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed=T)
     if (Labels & !is.null(labeldata)){
       rownames(ptb1) <- ptb1.rn
@@ -349,10 +354,6 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
     ptb1 <- cbind(ptb1, sig)
     cap.tb1 <- paste("Table 1: Stratified by ", strata, " and ",strata2,  sep="")
     
-    if (showpm){
-      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\(", "\u00B1 ", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
-      ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] <- gsub("\\)", "", ptb1[!grepl("(%)", rownames(ptb1)) & ptb1[, "p"] != "", ] )
-    }
     
     # Column name
     if (Labels & !is.null(labeldata)){
