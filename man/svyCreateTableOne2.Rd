@@ -21,7 +21,8 @@ svyCreateTableOne2(
   pDigits = 3,
   Labels = F,
   labeldata = NULL,
-  minMax = F
+  minMax = F,
+  showpm = T
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ svyCreateTableOne2(
 \item{labeldata}{labeldata to use, Default: NULL}
 
 \item{minMax}{Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.}
+
+\item{showpm}{Logical, show normal distributed continuous variables as Mean ± SD. Default: T}
 }
 \value{
 A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
