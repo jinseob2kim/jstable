@@ -1,3 +1,7 @@
+# jstable 1.0.0
+
+* Add `TableSubgroupGLM`, `TableSubgroupMultiGLM`: subgroup analysis for GLM(gaussian, logistic)
+
 # jstable 0.9.8
 
 ## Bugfix
