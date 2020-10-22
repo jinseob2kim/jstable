@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>TableSubgroupMultiCox: Multiple sub-group analysis table for Cox/svycox model. — TableSubgroupMultiCox • jstable</title>
+<title>TableSubgroupGLM: Sub-group analysis table for GLM. — TableSubgroupGLM • jstable</title>
 
 
 <!-- jquery -->
@@ -45,8 +45,8 @@
 
 
 
-<meta property="og:title" content="TableSubgroupMultiCox: Multiple sub-group analysis table for Cox/svycox model. — TableSubgroupMultiCox" />
-<meta property="og:description" content="Multiple sub-group analysis table for Cox/svycox model." />
+<meta property="og:title" content="TableSubgroupGLM: Sub-group analysis table for GLM. — TableSubgroupGLM" />
+<meta property="og:description" content="Sub-group analysis table for GLM." />
 
 
 
@@ -120,25 +120,24 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>TableSubgroupMultiCox: Multiple sub-group analysis table for Cox/svycox model.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/forestcox.R'><code>R/forestcox.R</code></a></small>
-    <div class="hidden name"><code>TableSubgroupMultiCox.Rd</code></div>
+    <h1>TableSubgroupGLM: Sub-group analysis table for GLM.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/forestglm.R'><code>R/forestglm.R</code></a></small>
+    <div class="hidden name"><code>TableSubgroupGLM.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Multiple sub-group analysis table for Cox/svycox model.</p>
+    <p>Sub-group analysis table for GLM.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>TableSubgroupMultiCox</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>TableSubgroupGLM</span><span class='op'>(</span>
   <span class='va'>formula</span>,
-  var_subgroups <span class='op'>=</span> <span class='cn'>NULL</span>,
+  var_subgroup <span class='op'>=</span> <span class='cn'>NULL</span>,
   var_cov <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>data</span>,
-  time_eventrate <span class='op'>=</span> <span class='fl'>3</span> <span class='op'>*</span> <span class='fl'>365</span>,
-  decimal.hr <span class='op'>=</span> <span class='fl'>2</span>,
+  family <span class='op'>=</span> <span class='st'>"binomial"</span>,
+  decimal.estimate <span class='op'>=</span> <span class='fl'>2</span>,
   decimal.percent <span class='op'>=</span> <span class='fl'>1</span>,
-  decimal.pvalue <span class='op'>=</span> <span class='fl'>3</span>,
-  line <span class='op'>=</span> <span class='cn'>F</span>
+  decimal.pvalue <span class='op'>=</span> <span class='fl'>3</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -149,8 +148,8 @@
       <td><p>formula with survival analysis.</p></td>
     </tr>
     <tr>
-      <th>var_subgroups</th>
-      <td><p>Multiple sub-group variables for analysis, Default: NULL</p></td>
+      <th>var_subgroup</th>
+      <td><p>1 sub-group variable for analysis, Default: NULL</p></td>
     </tr>
     <tr>
       <th>var_cov</th>
@@ -161,12 +160,12 @@
       <td><p>Data or svydesign in survey package.</p></td>
     </tr>
     <tr>
-      <th>time_eventrate</th>
-      <td><p>Time for kaplan-meier based event rate calculation, Default = 365 * 3</p></td>
+      <th>family</th>
+      <td><p>family, "gaussian" or "binomial"</p></td>
     </tr>
     <tr>
-      <th>decimal.hr</th>
-      <td><p>Decimal for hazard ratio, Default: 2</p></td>
+      <th>decimal.estimate</th>
+      <td><p>Decimal for estimate, Default: 2</p></td>
     </tr>
     <tr>
       <th>decimal.percent</th>
@@ -176,89 +175,44 @@
       <th>decimal.pvalue</th>
       <td><p>Decimal for pvalue, Default: 3</p></td>
     </tr>
-    <tr>
-      <th>line</th>
-      <td><p>Include new-line between sub-group variables, Default: F</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Multiple sub-group analysis table.</p>
+    <p>Sub-group analysis table.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This result is used to make forestplot.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></code>
- <code><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://purrr.tidyverse.org/reference/safely.html'>safely</a></code>,<code><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></code>,<code><a href='https://purrr.tidyverse.org/reference/map2.html'>map2</a></code>
+ <code><a href='https://rdrr.io/r/stats/glm.html'>glm</a></code>
+ <code><a href='https://rdrr.io/pkg/survey/man/svyglm.html'>svyglm</a></code>
+ <code><a href='https://rdrr.io/r/stats/confint.html'>confint</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/therneau/survival'>survival</a></span><span class='op'>)</span>;<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
 <span class='va'>lung</span> <span class='op'>%&gt;%</span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>status <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>status</span> <span class='op'>==</span> <span class='fl'>1</span><span class='op'>)</span>,
          sex <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span>,
-         kk <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>pat.karno</span> <span class='op'>&gt;=</span> <span class='fl'>70</span><span class='op'>)</span><span class='op'>)</span>,
-         kk1 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>pat.karno</span> <span class='op'>&gt;=</span> <span class='fl'>60</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>-&gt;</span> <span class='va'>lung</span>
-<span class='fu'>TableSubgroupMultiCox</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span><span class='op'>(</span><span class='va'>time</span>, <span class='va'>status</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>sex</span>, var_subgroups <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"kk"</span>, <span class='st'>"kk1"</span><span class='op'>)</span>, 
-                      data<span class='op'>=</span><span class='va'>lung</span>, time_eventrate <span class='op'>=</span> <span class='fl'>100</span>, line <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* NA -&gt; ...1</span>
-#&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Loglik converged before variable  1,2,3 ; coefficient may be infinite. </span></div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* NA -&gt; ...1</span>
-#&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt;   Variable Count Percent Point Estimate Lower Upper    1    2 P value
-#&gt; 1  Overall   228     100           1.91  1.14   3.2    0  1.2   0.014
-#&gt; 2     &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
-#&gt; 3       kk  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
-#&gt; 4        0    38    16.9           2.88  0.31 26.49    0    0    0.35
-#&gt; 5        1   187    83.1           1.84  1.08  3.14    0  1.5   0.026
-#&gt; 6     &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
-#&gt; 7      kk1  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
-#&gt; 8        0     8     3.6           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    0    0    &lt;NA&gt;
-#&gt; 9        1   217    96.4           1.88  1.12  3.17    0  1.3   0.018
-#&gt;   P for interaction
-#&gt; 1              &lt;NA&gt;
-#&gt; 2              &lt;NA&gt;
-#&gt; 3             0.525
-#&gt; 4              &lt;NA&gt;
-#&gt; 5              &lt;NA&gt;
-#&gt; 6              &lt;NA&gt;
-#&gt; 7             0.997
-#&gt; 8              &lt;NA&gt;
-#&gt; 9              &lt;NA&gt;</div><div class='input'>
+         kk <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>pat.karno</span> <span class='op'>&gt;=</span> <span class='fl'>70</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>-&gt;</span> <span class='va'>lung</span>
+<span class='fu'>TableSubgroupGLM</span><span class='op'>(</span><span class='va'>status</span> <span class='op'>~</span> <span class='va'>sex</span>, data <span class='op'>=</span> <span class='va'>lung</span>, family <span class='op'>=</span> <span class='st'>"binomial"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt;   Variable Count Percent Point.Estimate Lower Upper P value P for interaction
+#&gt; 1  Overall   228     100           3.01  1.66  5.52  &lt;0.001                NA</div><div class='input'><span class='fu'>TableSubgroupGLM</span><span class='op'>(</span><span class='va'>status</span> <span class='op'>~</span> <span class='va'>sex</span>, var_subgroup <span class='op'>=</span> <span class='st'>"kk"</span>, data <span class='op'>=</span> <span class='va'>lung</span>, family <span class='op'>=</span> <span class='st'>"binomial"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt;   Variable Count Percent Point.Estimate Lower  Upper P value P for interaction
+#&gt; 1       kk  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;             0.476
+#&gt; 2        0    38    16.9              7  0.91 145.62   0.003              &lt;NA&gt;
+#&gt; 3        1   187    83.1           2.94  1.56   5.62  &lt;0.001              &lt;NA&gt;</div><div class='input'>
 <span class='co'>## survey design</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://r-survey.r-forge.r-project.org/survey/'>survey</a></span><span class='op'>)</span>
 <span class='va'>data.design</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span><span class='op'>(</span>id <span class='op'>=</span> <span class='op'>~</span><span class='fl'>1</span>, data <span class='op'>=</span> <span class='va'>lung</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: No weights or probabilities supplied, assuming equal probability</span></div><div class='input'><span class='fu'>TableSubgroupMultiCox</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span><span class='op'>(</span><span class='va'>time</span>, <span class='va'>status</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>sex</span>, var_subgroups <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"kk"</span>, <span class='st'>"kk1"</span><span class='op'>)</span>, 
-                      data <span class='op'>=</span> <span class='va'>data.design</span>, time_eventrate <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Independent Sampling design (with replacement)
-#&gt; svydesign(id = ~1, data = lung)
-#&gt; Independent Sampling design (with replacement)
-#&gt; svydesign(id = ~1, data = lung)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* NA -&gt; ...1</span>
-#&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt; Independent Sampling design (with replacement)
-#&gt; subset(data, get(var_subgroup) == .)
-#&gt; Independent Sampling design (with replacement)
-#&gt; subset(data, get(var_subgroup) == .)</div><div class='output co'>#&gt; <span class='warning'>Warning: Loglik converged before variable  1,2,3 ; coefficient may be infinite. </span></div><div class='output co'>#&gt; Independent Sampling design (with replacement)
-#&gt; svydesign(id = ~1, data = lung)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* NA -&gt; ...1</span>
-#&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt; Independent Sampling design (with replacement)
-#&gt; subset(data, get(var_subgroup) == .)</div><div class='output co'>#&gt;   Variable Count Percent Point Estimate Lower Upper    1    2 P value
-#&gt; 1  Overall   228     100           1.91  1.14  3.19    0  1.2   0.013
-#&gt; 2       kk  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
-#&gt; 3        0    38    16.9           2.88  0.31  27.1    0    0   0.355
-#&gt; 4        1   187    83.1           1.84  1.08  3.11    0  2.9   0.024
-#&gt; 5      kk1  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
-#&gt; 6        0  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    0    0    &lt;NA&gt;
-#&gt; 7        1   217    &lt;NA&gt;           1.88  1.12  3.15    0  1.3   0.017
-#&gt;   P for interaction
-#&gt; 1              &lt;NA&gt;
-#&gt; 2             0.523
-#&gt; 3              &lt;NA&gt;
-#&gt; 4              &lt;NA&gt;
-#&gt; 5            &lt;0.001
-#&gt; 6              &lt;NA&gt;
-#&gt; 7              &lt;NA&gt;</div></pre>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: No weights or probabilities supplied, assuming equal probability</span></div><div class='input'><span class='fu'>TableSubgroupGLM</span><span class='op'>(</span><span class='va'>status</span> <span class='op'>~</span> <span class='va'>sex</span>, data <span class='op'>=</span> <span class='va'>data.design</span>, family <span class='op'>=</span> <span class='st'>"binomial"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;   Variable Count Percent Point.Estimate Lower Upper P value P for interaction
+#&gt; 1  Overall   228     100           3.01  1.65  5.48  &lt;0.001                NA</div><div class='input'><span class='fu'>TableSubgroupGLM</span><span class='op'>(</span><span class='va'>status</span> <span class='op'>~</span> <span class='va'>sex</span>, var_subgroup <span class='op'>=</span> <span class='st'>"kk"</span>, data <span class='op'>=</span> <span class='va'>data.design</span>, family <span class='op'>=</span> <span class='st'>"binomial"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;   Variable Count Percent Point.Estimate Lower Upper P value P for interaction
+#&gt; 1       kk  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;             0.478
+#&gt; 2        0    38    16.9              7   0.7  70.4   0.005              &lt;NA&gt;
+#&gt; 3        1   187    83.1           2.94  1.55  5.58  &lt;0.001              &lt;NA&gt;</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

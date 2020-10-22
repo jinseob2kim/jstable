@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -72,13 +72,14 @@
 
       
 
-      </header><div class="row">
+      </header><link href="jstable_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="jstable_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduce jstable</h1>
                         <h4 class="author">Jinseob Kim</h4>
             
-            <h4 class="date">2020-10-08</h4>
+            <h4 class="date">2020-10-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jinseob2kim/jstable/blob/master/vignettes/jstable.Rmd"><code>vignettes/jstable.Rmd</code></a></small>
       <div class="hidden name"><code>jstable.Rmd</code></div>
@@ -177,15 +178,15 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $table</span>
 <span class="co">#&gt;                crude OR(95%CI)    crude P value adj. OR(95%CI)     adj. P value</span>
-<span class="co">#&gt; Time           "1.02 (0.98,1.06)" "0.347"       "1.02 (0.98,1.06)" "0.344"     </span>
+<span class="co">#&gt; Time           "1.02 (0.98,1.05)" "0.396"       "1.02 (0.98,1.05)" "0.399"     </span>
 <span class="co">#&gt; Cu: ref.=Cu000 NA                 NA            NA                 NA          </span>
-<span class="co">#&gt;       035      "0.86 (0.65,1.14)" "0.307"       "0.86 (0.65,1.14)" "0.305"     </span>
-<span class="co">#&gt;       175      "1.19 (0.83,1.7)"  "0.335"       "1.19 (0.83,1.7)"  "0.336"     </span>
+<span class="co">#&gt;       035      "1.21 (0.85,1.72)" "0.291"       "1.21 (0.85,1.72)" "0.293"     </span>
+<span class="co">#&gt;       175      "1.07 (0.75,1.51)" "0.722"       "1.07 (0.75,1.51)" "0.724"     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $metric</span>
 <span class="co">#&gt;                                  crude OR(95%CI) crude P value adj. OR(95%CI)</span>
 <span class="co">#&gt;                                  NA              NA            NA            </span>
-<span class="co">#&gt; Estimated correlation parameters "-0.006"        NA            NA            </span>
+<span class="co">#&gt; Estimated correlation parameters "0.012"         NA            NA            </span>
 <span class="co">#&gt; No. of clusters                  "72"            NA            NA            </span>
 <span class="co">#&gt; No. of observations              "861"           NA            NA            </span>
 <span class="co">#&gt;                                  adj. P value</span>
@@ -236,22 +237,22 @@
 <span class="fu"><a href="../reference/lmer.display.html">lmer.display</a></span><span class="op">(</span><span class="va">l2</span><span class="op">)</span>
 <span class="co">#&gt; $table</span>
 <span class="co">#&gt;                      crude OR(95%CI) crude P value   adj. OR(95%CI)</span>
-<span class="co">#&gt; Time                1.02 (0.98,1.06)     0.3654942 1.02 (0.98,1.06)</span>
+<span class="co">#&gt; Time                1.02 (0.98,1.06)     0.4311348 1.02 (0.98,1.06)</span>
 <span class="co">#&gt; Cu: ref.=Cu000                  &lt;NA&gt;            NA             &lt;NA&gt;</span>
-<span class="co">#&gt;       035            0.86 (0.62,1.2)     0.3839186  0.86 (0.62,1.2)</span>
-<span class="co">#&gt;       175           1.19 (0.86,1.66)     0.3003772 1.19 (0.85,1.66)</span>
+<span class="co">#&gt;       035           1.21 (0.85,1.72)     0.2839695 1.21 (0.85,1.72)</span>
+<span class="co">#&gt;       175           1.07 (0.75,1.52)     0.7222050 1.07 (0.75,1.52)</span>
 <span class="co">#&gt; Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;</span>
-<span class="co">#&gt; Pig                                0            NA             &lt;NA&gt;</span>
+<span class="co">#&gt; Pig                             0.05            NA             &lt;NA&gt;</span>
 <span class="co">#&gt; Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;</span>
 <span class="co">#&gt; No. of groups (Pig)               72            NA             &lt;NA&gt;</span>
 <span class="co">#&gt; No. of observations              861            NA             &lt;NA&gt;</span>
-<span class="co">#&gt; Log-likelihood               -594.49            NA             &lt;NA&gt;</span>
-<span class="co">#&gt; AIC value                    1198.99            NA             &lt;NA&gt;</span>
+<span class="co">#&gt; Log-likelihood                -595.3            NA             &lt;NA&gt;</span>
+<span class="co">#&gt; AIC value                    1200.61            NA             &lt;NA&gt;</span>
 <span class="co">#&gt;                     adj. P value</span>
-<span class="co">#&gt; Time                   0.3622489</span>
+<span class="co">#&gt; Time                   0.4340302</span>
 <span class="co">#&gt; Cu: ref.=Cu000                NA</span>
-<span class="co">#&gt;       035              0.3813318</span>
-<span class="co">#&gt;       175              0.3011900</span>
+<span class="co">#&gt;       035              0.2856256</span>
+<span class="co">#&gt;       175              0.7235706</span>
 <span class="co">#&gt; Random effects                NA</span>
 <span class="co">#&gt; Pig                           NA</span>
 <span class="co">#&gt; Metrics                       NA</span>
