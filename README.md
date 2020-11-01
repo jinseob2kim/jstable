@@ -1,12 +1,24 @@
 jstable
 ================
 
-[![Build Status](https://travis-ci.org/jinseob2kim/jstable.svg?branch=master)](https://travis-ci.org/jinseob2kim/jstable) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/jinseob2kim/jstable?branch=master&svg=true)](https://ci.appveyor.com/project/jinseob2kim/jstable) [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/jstable)](https://cran.r-project.org/package=jstable) [![CRAN\_Download\_Badge](https://cranlogs.r-pkg.org/badges/jstable)](https://CRAN.R-project.org/package=jstable) [![codecov](https://codecov.io/github/jinseob2kim/jstable/branch/master/graphs/badge.svg)](https://codecov.io/github/jinseob2kim/jstable) [![GitHub issues](https://img.shields.io/github/issues/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/issues) [![GitHub stars](https://img.shields.io/github/stars/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/stargazers) [![GitHub license](https://img.shields.io/github/license/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/blob/master/LICENSE)
+[![Build
+Status](https://travis-ci.org/jinseob2kim/jstable.svg?branch=master)](https://travis-ci.org/jinseob2kim/jstable)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/jinseob2kim/jstable?branch=master&svg=true)](https://ci.appveyor.com/project/jinseob2kim/jstable)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/jstable)](https://cran.r-project.org/package=jstable)
+[![CRAN\_Download\_Badge](https://cranlogs.r-pkg.org/badges/jstable)](https://CRAN.R-project.org/package=jstable)
+[![codecov](https://codecov.io/github/jinseob2kim/jstable/branch/master/graphs/badge.svg)](https://codecov.io/github/jinseob2kim/jstable)
+[![GitHub
+issues](https://img.shields.io/github/issues/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/issues)
+[![GitHub
+stars](https://img.shields.io/github/stars/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/stargazers)
+[![GitHub
+license](https://img.shields.io/github/license/jinseob2kim/jstable.svg)](https://github.com/jinseob2kim/jstable/blob/master/LICENSE)
 
-Regression Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results for Publication.
+Regression Tables from ‘GLM’, ‘GEE’, ‘GLMM’, ‘Cox’ and ‘survey’ Results
+for Publication.
 
-Install
--------
+## Install
 
 ``` r
 install.packages("jstable")
@@ -17,8 +29,7 @@ remotes::install_github('jinseob2kim/jstable')
 library(jstable)
 ```
 
-GLM Table
----------
+## GLM Table
 
 ``` r
 ## Gaussian
@@ -30,12 +41,9 @@ glmshow.display(glm_gaussian, decimal = 2)
     ## [1] "Linear regression predicting mpg\n"
     ## 
     ## $table
-    ##      crude coeff.(95%CI)   crude P value adj. coeff.(95%CI)   
-    ## cyl  "-2.88 (-3.51,-2.24)" "< 0.001"     "-1.59 (-2.98,-0.19)"
-    ## disp "-0.04 (-0.05,-0.03)" "< 0.001"     "-0.02 (-0.04,0)"    
-    ##      adj. P value
-    ## cyl  "0.034"     
-    ## disp "0.054"     
+    ##      crude coeff.(95%CI)   crude P value adj. coeff.(95%CI)    adj. P value
+    ## cyl  "-2.88 (-3.51,-2.24)" "< 0.001"     "-1.59 (-2.98,-0.19)" "0.034"     
+    ## disp "-0.04 (-0.05,-0.03)" "< 0.001"     "-0.02 (-0.04,0)"     "0.054"     
     ## 
     ## $last.lines
     ## [1] "No. of observations = 32\nR-squared = 0.7596\nAIC value = 167.1456\n\n"
@@ -63,14 +71,13 @@ glmshow.display(glm_binomial, decimal = 2)
     ## attr(,"class")
     ## [1] "display" "list"
 
-GEE Table: from `geeglm` object from **geepack** package
---------------------------------------------------------
+## GEE Table: from `geeglm` object from **geepack** package
 
 ``` r
 library(geepack)  ## for dietox data
 data(dietox)
 dietox$Cu <- as.factor(dietox$Cu)
-dietox$ddn = as.numeric(rnorm(nrow(dietox)) > 0)
+dietox$ddn <- as.numeric(rnorm(nrow(dietox)) > 0)
 gee01 <- geeglm (Weight ~ Time + Cu , id = Pig, data = dietox, family = gaussian, corstr = "ex")
 geeglm.display(gee01)
 ```
@@ -79,16 +86,16 @@ geeglm.display(gee01)
     ## [1] "GEE(gaussian) predicting Weight by Time, Cu - Group Pig"
     ## 
     ## $table
-    ##            crude coeff(95%CI)   crude P value adj. coeff(95%CI)  
-    ## Time       "6.94 (6.79,7.1)"    "< 0.001"     "6.94 (6.79,7.1)"  
-    ## Cu: ref.=1 NA                   NA            NA                 
-    ##    2       "-0.59 (-3.73,2.54)" "0.711"       "-0.84 (-3.9,2.23)"
-    ##    3       "1.9 (-1.87,5.66)"   "0.324"       "1.77 (-1.9,5.45)" 
-    ##            adj. P value
-    ## Time       "< 0.001"   
-    ## Cu: ref.=1 NA          
-    ##    2       "0.593"     
-    ##    3       "0.345"     
+    ##                crude coeff(95%CI)   crude P value adj. coeff(95%CI)  
+    ## Time           "6.94 (6.79,7.1)"    "< 0.001"     "6.94 (6.79,7.1)"  
+    ## Cu: ref.=Cu000 NA                   NA            NA                 
+    ##       035      "-0.59 (-3.73,2.54)" "0.711"       "-0.84 (-3.9,2.23)"
+    ##       175      "1.9 (-1.87,5.66)"   "0.324"       "1.77 (-1.9,5.45)" 
+    ##                adj. P value
+    ## Time           "< 0.001"   
+    ## Cu: ref.=Cu000 NA          
+    ##       035      "0.593"     
+    ##       175      "0.345"     
     ## 
     ## $metric
     ##                                  crude coeff(95%CI) crude P value
@@ -111,31 +118,25 @@ geeglm.display(gee02)
     ## [1] "GEE(binomial) predicting ddn by Time, Cu - Group Pig"
     ## 
     ## $table
-    ##            crude OR(95%CI)    crude P value adj. OR(95%CI)    
-    ## Time       "1.01 (0.97,1.06)" "0.559"       "1.01 (0.97,1.06)"
-    ## Cu: ref.=1 NA                 NA            NA                
-    ##    2       "0.79 (0.58,1.08)" "0.135"       "0.79 (0.58,1.07)"
-    ##    3       "0.89 (0.67,1.18)" "0.421"       "0.89 (0.67,1.18)"
-    ##            adj. P value
-    ## Time       "0.554"     
-    ## Cu: ref.=1 NA          
-    ##    2       "0.134"     
-    ##    3       "0.42"      
+    ##                crude OR(95%CI)    crude P value adj. OR(95%CI)     adj. P value
+    ## Time           "1.02 (0.98,1.07)" "0.399"       "1.02 (0.98,1.07)" "0.395"     
+    ## Cu: ref.=Cu000 NA                 NA            NA                 NA          
+    ##       035      "0.77 (0.58,1.04)" "0.091"       "0.77 (0.57,1.04)" "0.09"      
+    ##       175      "0.8 (0.59,1.09)"  "0.154"       "0.8 (0.59,1.09)"  "0.154"     
     ## 
     ## $metric
-    ##                                  crude OR(95%CI) crude P value
-    ##                                  NA              NA           
-    ## Estimated correlation parameters "-0.019"        NA           
-    ## No. of clusters                  "72"            NA           
-    ## No. of observations              "861"           NA           
-    ##                                  adj. OR(95%CI) adj. P value
-    ##                                  NA             NA          
-    ## Estimated correlation parameters NA             NA          
-    ## No. of clusters                  NA             NA          
-    ## No. of observations              NA             NA
+    ##                                  crude OR(95%CI) crude P value adj. OR(95%CI)
+    ##                                  NA              NA            NA            
+    ## Estimated correlation parameters "-0.023"        NA            NA            
+    ## No. of clusters                  "72"            NA            NA            
+    ## No. of observations              "861"           NA            NA            
+    ##                                  adj. P value
+    ##                                  NA          
+    ## Estimated correlation parameters NA          
+    ## No. of clusters                  NA          
+    ## No. of observations              NA
 
-Mixed model Table: `lmerMod` or `glmerMod` object from **lme4** package
------------------------------------------------------------------------
+## Mixed model Table: `lmerMod` or `glmerMod` object from **lme4** package
 
 ``` r
 library(lme4)
@@ -146,9 +147,9 @@ lmer.display(l1, ci.ranef = T)
     ## $table
     ##                      crude coeff(95%CI) crude P value adj. coeff(95%CI)
     ## Time                   6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)
-    ## Cu: ref.=1                         <NA>            NA              <NA>
-    ##    2                 -0.58 (-4.67,3.51)     0.7811327 -0.84 (-4.47,2.8)
-    ##    3                   1.9 (-2.23,6.04)     0.3670740  1.77 (-1.9,5.45)
+    ## Cu: ref.=Cu000                     <NA>            NA              <NA>
+    ##       035            -0.58 (-4.67,3.51)     0.7811327 -0.84 (-4.47,2.8)
+    ##       175              1.9 (-2.23,6.04)     0.3670740  1.77 (-1.9,5.45)
     ## Random effects                     <NA>            NA              <NA>
     ## Pig                 40.34 (28.08,54.95)            NA              <NA>
     ## Residual             11.37 (10.3,12.55)            NA              <NA>
@@ -159,9 +160,9 @@ lmer.display(l1, ci.ranef = T)
     ## AIC value                        4801.6            NA              <NA>
     ##                     adj. P value
     ## Time                   0.0000000
-    ## Cu: ref.=1                    NA
-    ##    2                   0.6527264
-    ##    3                   0.3442310
+    ## Cu: ref.=Cu000                NA
+    ##       035              0.6527264
+    ##       175              0.3442309
     ## Random effects                NA
     ## Pig                           NA
     ## Residual                      NA
@@ -180,19 +181,19 @@ lmer.display(l2)
 ```
 
     ## $table
-    ##                      crude OR(95%CI) crude P value adj. OR(95%CI)
-    ## Weight                    1 (1,1.01)     0.5059625  1 (0.98,1.02)
-    ## Time                1.01 (0.97,1.05)     0.5173971  1 (0.88,1.15)
-    ## Random effects                  <NA>            NA           <NA>
-    ## Pig                                0            NA           <NA>
-    ## Metrics                         <NA>            NA           <NA>
-    ## No. of groups (Pig)               72            NA           <NA>
-    ## No. of observations              861            NA           <NA>
-    ## Log-likelihood                -595.5            NA           <NA>
-    ## AIC value                    1199.01            NA           <NA>
+    ##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
+    ## Weight                    1 (1,1.01)     0.2291091 1.01 (0.99,1.03)
+    ## Time                1.02 (0.98,1.06)     0.3396930 0.95 (0.83,1.09)
+    ## Random effects                  <NA>            NA             <NA>
+    ## Pig                                0            NA             <NA>
+    ## Metrics                         <NA>            NA             <NA>
+    ## No. of groups (Pig)               72            NA             <NA>
+    ## No. of observations              861            NA             <NA>
+    ## Log-likelihood               -595.84            NA             <NA>
+    ## AIC value                    1199.67            NA             <NA>
     ##                     adj. P value
-    ## Weight                 0.8751956
-    ## Time                   0.9718584
+    ## Weight                 0.3147911
+    ## Time                   0.4903734
     ## Random effects                NA
     ## Pig                           NA
     ## Metrics                       NA
@@ -204,8 +205,7 @@ lmer.display(l2)
     ## $caption
     ## [1] "Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) : ddn ~ Weight + Time + (1 | Pig)"
 
-Cox model with `frailty` or `cluster` options
----------------------------------------------
+## Cox model with `frailty` or `cluster` options
 
 ``` r
 library(survival)
@@ -217,7 +217,7 @@ cox2.display(fit1)
     ## $table
     ##         crude HR(95%CI)    crude P value adj. HR(95%CI)  adj. P value
     ## ph.ecog "1.61 (1.25,2.08)" "< 0.001"     "1.56 (1.22,2)" "< 0.001"   
-    ## age     "1.02 (1,1.03)"    "0.008"       "1.01 (1,1.02)" "0.085"     
+    ## age     "1.02 (1.01,1.03)" "0.007"       "1.01 (1,1.02)" "0.085"     
     ## 
     ## $ranef
     ##         [,1] [,2] [,3] [,4]
@@ -240,7 +240,7 @@ cox2.display(fit2)
     ## $table
     ##         crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value
     ## ph.ecog "1.64 (1.31,2.05)" "< 0.001"     "1.58 (1.26,1.99)" "< 0.001"   
-    ## age     "1.02 (1,1.04)"    "0.043"       "1.01 (0.99,1.03)" "0.225"     
+    ## age     "1.02 (1,1.04)"    "0.041"       "1.01 (0.99,1.03)" "0.225"     
     ## 
     ## $ranef
     ##         [,1] [,2] [,3] [,4]
@@ -256,8 +256,7 @@ cox2.display(fit2)
     ## $caption
     ## [1] "Frailty Cox model on time ('time') to event ('status') - Group inst"
 
-Cox mixed effect model Table: `coxme` object from **coxme** package
--------------------------------------------------------------------
+## Cox mixed effect model Table: `coxme` object from **coxme** package
 
 ``` r
 library(coxme)
@@ -285,16 +284,15 @@ coxme.display(fit)
     ## $caption
     ## [1] "Mixed effects Cox model on time ('time') to event ('status') - Group inst"
 
-GLM for survey data : `svyglm` object from **survey** package
--------------------------------------------------------------
+## GLM for survey data : `svyglm` object from **survey** package
 
 ``` r
 library(survey)
 data(api)
-apistrat$tt = c(rep(1, 20), rep(0, nrow(apistrat) -20))
-apistrat$tt2 = factor(c(rep(0, 40), rep(1, nrow(apistrat) -40)))
+apistrat$tt <- c(rep(1, 20), rep(0, nrow(apistrat) -20))
+apistrat$tt2 <- factor(c(rep(0, 40), rep(1, nrow(apistrat) -40)))
 
-dstrat<-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
+dstrat <-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
 ds <- svyglm(api00~ell+meals+mobility + tt2, design=dstrat)
 ds2 <- svyglm(tt~ell+meals+mobility + tt2, design=dstrat, family = quasibinomial())
 svyregress.display(ds)
@@ -329,16 +327,11 @@ svyregress.display(ds2)
     ## [1] "Logistic regression predicting tt- weighted data\n"
     ## 
     ## $table
-    ##             crude OR.(95%CI)   crude P value adj. OR.(95%CI)   
-    ## ell         "1.02 (1,1.05)"    "0.047"       "1.11 (1.03,1.21)"
-    ## meals       "1.01 (0.99,1.03)" "0.255"       "0.95 (0.91,1)"   
-    ## mobility    "1.01 (0.98,1.03)" "0.506"       "1.1 (0.98,1.23)" 
-    ## tt2: 1 vs 0 "0 (0,0)"          "< 0.001"     "0 (0,0)"         
-    ##             adj. P value
-    ## ell         "0.009"     
-    ## meals       "0.068"     
-    ## mobility    "0.114"     
-    ## tt2: 1 vs 0 "< 0.001"   
+    ##             crude OR.(95%CI)   crude P value adj. OR.(95%CI)    adj. P value
+    ## ell         "1.02 (1,1.05)"    "0.047"       "1.11 (1.03,1.21)" "0.009"     
+    ## meals       "1.01 (0.99,1.03)" "0.255"       "0.95 (0.91,1)"    "0.068"     
+    ## mobility    "1.01 (0.98,1.03)" "0.506"       "1.1 (0.98,1.23)"  "0.114"     
+    ## tt2: 1 vs 0 "0 (0,0)"          "< 0.001"     "0 (0,0)"          "< 0.001"   
     ## 
     ## $last.lines
     ## [1] "No. of observations = 200\n\n"
@@ -346,18 +339,17 @@ svyregress.display(ds2)
     ## attr(,"class")
     ## [1] "display" "list"
 
-Cox model for survey data :`svycoxph` object from **survey** package
---------------------------------------------------------------------
+## Cox model for survey data :`svycoxph` object from **survey** package
 
 ``` r
 data(pbc, package="survival")
-pbc$sex = factor(pbc$sex)
-pbc$stage = factor(pbc$stage)
-pbc$randomized<-with(pbc, !is.na(trt) & trt>0)
-biasmodel<-glm(randomized~age*edema,data=pbc,family=binomial)
-pbc$randprob<-fitted(biasmodel)
+pbc$sex <- factor(pbc$sex)
+pbc$stage <- factor(pbc$stage)
+pbc$randomized <- with(pbc, !is.na(trt) & trt>0)
+biasmodel <- glm(randomized~age*edema,data=pbc,family=binomial)
+pbc$randprob <- fitted(biasmodel)
 
-if (is.null(pbc$albumin)) pbc$albumin<-pbc$alb ##pre2.9.0
+if (is.null(pbc$albumin)) pbc$albumin <- pbc$alb ##pre2.9.0
 
 dpbc <- svydesign(id=~1, prob=~randprob, strata=~edema, data=subset(pbc,randomized))
 
@@ -404,26 +396,109 @@ svycox.display(model)
     ## <NA>                     NA   NA   NA   NA
     ## No. of observations  312.00   NA   NA   NA
     ## No. of events        144.00   NA   NA   NA
-    ## AIC                 1483.12   NA   NA   NA
+    ## AIC                 1480.29   NA   NA   NA
     ## 
     ## $caption
     ## [1] "Survey cox model on time ('time') to event ('status > 0')"
 
-Sub-group analysis for Cox/svycox model
----------------------------------------
+## Sub-group analysis for Cox/svycox model
 
 ``` r
-library(survival); library(dplyr)
+library(dplyr)
 lung %>% 
-mutate(status = as.integer(status == 1),
-       sex = factor(sex),
-       kk = factor(as.integer(pat.karno >= 70)),
-       kk1 = factor(as.integer(pat.karno >= 60))) -> lung
+  mutate(status = as.integer(status == 1),
+         sex = factor(sex),
+         kk = factor(as.integer(pat.karno >= 70)),
+         kk1 = factor(as.integer(pat.karno >= 60))) -> lung
 
-#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = TRUE)
+TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = lung, line = TRUE)
+```
 
+    ##   Variable Count Percent Point Estimate Lower Upper    1    2 P value
+    ## 1  Overall   228     100           1.91  1.14   3.2  100  100   0.014
+    ## 2     <NA>  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 3       kk  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 4        0    38    16.9           2.88  0.31 26.49   10  100    0.35
+    ## 5        1   187    83.1           1.84  1.08  3.14  100  100   0.026
+    ## 6     <NA>  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 7      kk1  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 8        0     8     3.6           <NA>  <NA>  <NA>    0  100    <NA>
+    ## 9        1   217    96.4           1.88  1.12  3.17  100  100   0.018
+    ##   P for interaction
+    ## 1              <NA>
+    ## 2              <NA>
+    ## 3             0.525
+    ## 4              <NA>
+    ## 5              <NA>
+    ## 6              <NA>
+    ## 7             0.997
+    ## 8              <NA>
+    ## 9              <NA>
+
+``` r
 ## Survey data
 library(survey)
 data.design <- svydesign(id = ~1, data = lung)
-#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = FALSE)
+TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = FALSE)
 ```
+
+    ## Independent Sampling design (with replacement)
+    ## svydesign(id = ~1, data = lung)
+    ## Independent Sampling design (with replacement)
+    ## svydesign(id = ~1, data = lung)
+    ## Independent Sampling design (with replacement)
+    ## subset(data, get(var_subgroup) == .)
+    ## Independent Sampling design (with replacement)
+    ## subset(data, get(var_subgroup) == .)
+    ## Independent Sampling design (with replacement)
+    ## svydesign(id = ~1, data = lung)
+    ## Independent Sampling design (with replacement)
+    ## subset(data, get(var_subgroup) == .)
+
+    ##   Variable Count Percent Point Estimate Lower Upper    1    2 P value
+    ## 1  Overall   228     100           1.91  1.14  3.19  100  100   0.013
+    ## 2       kk  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 3        0    38    16.9           2.88  0.31  27.1   10  100   0.355
+    ## 4        1   187    83.1           1.84  1.08  3.11  100  100   0.024
+    ## 5      kk1  <NA>    <NA>           <NA>  <NA>  <NA> <NA> <NA>    <NA>
+    ## 6        0  <NA>    <NA>           <NA>  <NA>  <NA>    0  100    <NA>
+    ## 7        1   217    <NA>           1.88  1.12  3.15  100  100   0.017
+    ##   P for interaction
+    ## 1              <NA>
+    ## 2             0.523
+    ## 3              <NA>
+    ## 4              <NA>
+    ## 5            <0.001
+    ## 6              <NA>
+    ## 7              <NA>
+
+## Sub-group analysis for GLM
+
+``` r
+TableSubgroupMultiGLM(status ~ sex, var_subgroups = c("kk", "kk1"), data = lung, family = "binomial")
+```
+
+    ##   Variable Count Percent           OR Lower  Upper P value P for interaction
+    ## 1  Overall   228     100         3.01  1.66   5.52  <0.001              <NA>
+    ## 2       kk  <NA>    <NA>         <NA>  <NA>   <NA>    <NA>             0.476
+    ## 3        0    38    16.9            7  0.91 145.62   0.003              <NA>
+    ## 4        1   187    83.1         2.94  1.56   5.62  <0.001              <NA>
+    ## 5      kk1  <NA>    <NA>         <NA>  <NA>   <NA>    <NA>             0.984
+    ## 6        0     8     3.6 314366015.19     0   <NA>   0.997              <NA>
+    ## 7        1   217    96.4         2.85  1.56   5.29  <0.001              <NA>
+
+``` r
+## Survey data
+TableSubgroupMultiGLM(pat.karno ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, family = "gaussian", line = TRUE)
+```
+
+    ##   Variable Count Percent Point.Estimate  Lower Upper P value P for interaction
+    ## 1  Overall   225     100           1.37  -2.58  5.33   0.496              <NA>
+    ## 2     <NA>  <NA>    <NA>           <NA>   <NA>  <NA>    <NA>              <NA>
+    ## 3       kk  <NA>    <NA>           <NA>   <NA>  <NA>    <NA>             0.231
+    ## 4        0    38    16.9          -1.19   -6.5  4.11  <0.001              <NA>
+    ## 5        1   187    83.1           2.53  -0.42  5.47  <0.001              <NA>
+    ## 6     <NA>  <NA>    <NA>           <NA>   <NA>  <NA>    <NA>              <NA>
+    ## 7      kk1  <NA>    <NA>           <NA>   <NA>  <NA>    <NA>             0.738
+    ## 8        0     8     3.6              0 -11.52 11.52  <0.001              <NA>
+    ## 9        1   217    96.4           2.06  -1.43  5.55  <0.001              <NA>

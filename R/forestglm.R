@@ -103,6 +103,10 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     data.frame(Variable = "Overall", Count = length(model$y), Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2]) %>% 
     dplyr::mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
     
+    if (family == "binomial"){
+      names(out)[4] <- "OR"
+    }
+    
     return(out)
   } else if (length(var_subgroup) > 1 | any(grepl(var_subgroup, formula))){
     stop("Please input correct subgroup variable.")
@@ -159,8 +163,11 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     model %>% purrr::map(possible_pv) %>% purrr::map_dbl(~round(., decimal.pvalue)) -> pv
     
     
-    data.frame(Variable = paste("  ", label_val) , Count = Count, Percent = round(Count/sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2]) %>%
+    data.frame(Variable = paste("  ", label_val) , Count = Count, Percent = round(Count/sum(Count) * 100, decimal.percent), "Point Estimate" = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2]) %>%
       dplyr::mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
+    if (family == "binomial"){
+      names(out)[4] <- "OR"
+    }
     
     return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
   }
@@ -209,12 +216,12 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 TableSubgroupMultiGLM <- function(formula, var_subgroups = NULL, var_cov = NULL, data, family = "binomial", decimal.estimate = 2, decimal.percent = 1, decimal.pvalue = 3, line = F){
   
   . <- NULL
-  out.all <- TableSubgroupGLM(formula, var_subgroup = NULL, var_cov = var_cov, data = data, decimal.estimate = decimal.estimate, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue)
+  out.all <- TableSubgroupGLM(formula, var_subgroup = NULL, var_cov = var_cov, data = data, family = family, decimal.estimate = decimal.estimate, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue)
   
   if (is.null(var_subgroups)){
     return(out.all)
   } else {
-    out.list <- purrr::map(var_subgroups, ~TableSubgroupGLM(formula, var_subgroup = ., var_cov = var_cov,  data = data, decimal.estimate = decimal.estimate, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue))
+    out.list <- purrr::map(var_subgroups, ~TableSubgroupGLM(formula, var_subgroup = ., var_cov = var_cov, data = data, family = family, decimal.estimate = decimal.estimate, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue))
     if (line){
       out.newline <- out.list %>% purrr::map(~rbind(NA, .))
       return(rbind(out.all, out.newline %>% dplyr::bind_rows()))
