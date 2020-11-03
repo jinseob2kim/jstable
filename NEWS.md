@@ -1,3 +1,8 @@
+# jstable 1.0.1
+
+* Bugfix `TableSubgroupGLM`, `TableSubgroupMultiGLM`: p value
+
+
 # jstable 1.0.0
 
 * Add `TableSubgroupGLM`, `TableSubgroupMultiGLM`: subgroup analysis for GLM(gaussian, logistic)
