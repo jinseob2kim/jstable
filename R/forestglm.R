@@ -81,11 +81,11 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     }
     
     
-    Point.Estimate <- round(coef(model), decimal.estimate)[-1]
-    CI <- round(confint(model)[-1, ], decimal.estimate)
+    Point.Estimate <- round(coef(model), decimal.estimate)[2]
+    CI <- round(confint(model)[2, ], decimal.estimate)
     if(family == "binomial"){
-      Point.Estimate <- round(exp(coef(model)), decimal.estimate)[-1]
-      CI <- round(exp(confint(model)[-1, ]), decimal.estimate)
+      Point.Estimate <- round(exp(coef(model)), decimal.estimate)[2]
+      CI <- round(exp(confint(model)[2, ]), decimal.estimate)
     }
     
     
