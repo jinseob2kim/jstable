@@ -78,7 +78,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
       </span>
     </div>
 
@@ -201,8 +201,8 @@
 #&gt; 1  Overall   228     100 3.01  1.66  5.52  &lt;0.001                NA</div><div class='input'><span class='fu'>TableSubgroupGLM</span><span class='op'>(</span><span class='va'>status</span> <span class='op'>~</span> <span class='va'>sex</span>, var_subgroup <span class='op'>=</span> <span class='st'>"kk"</span>, data <span class='op'>=</span> <span class='va'>lung</span>, family <span class='op'>=</span> <span class='st'>"binomial"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt;   Variable Count Percent   OR Lower  Upper P value P for interaction
 #&gt; 1       kk  &lt;NA&gt;    &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;             0.476
-#&gt; 2        0    38    16.9    7  0.91 145.62   0.003              &lt;NA&gt;
-#&gt; 3        1   187    83.1 2.94  1.56   5.62  &lt;0.001              &lt;NA&gt;</div><div class='input'>
+#&gt; 2        0    38    16.9    7  0.91 145.62   0.098              &lt;NA&gt;
+#&gt; 3        1   187    83.1 2.94  1.56   5.62   0.001              &lt;NA&gt;</div><div class='input'>
 <span class='co'>## survey design</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://r-survey.r-forge.r-project.org/survey/'>survey</a></span><span class='op'>)</span>
 <span class='va'>data.design</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span><span class='op'>(</span>id <span class='op'>=</span> <span class='op'>~</span><span class='fl'>1</span>, data <span class='op'>=</span> <span class='va'>lung</span><span class='op'>)</span>
@@ -211,8 +211,8 @@
 #&gt; 1  Overall   228     100 3.01  1.65  5.48  &lt;0.001                NA</div><div class='input'><span class='fu'>TableSubgroupGLM</span><span class='op'>(</span><span class='va'>status</span> <span class='op'>~</span> <span class='va'>sex</span>, var_subgroup <span class='op'>=</span> <span class='st'>"kk"</span>, data <span class='op'>=</span> <span class='va'>data.design</span>, family <span class='op'>=</span> <span class='st'>"binomial"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   Variable Count Percent   OR Lower Upper P value P for interaction
 #&gt; 1       kk  &lt;NA&gt;    &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;             0.478
-#&gt; 2        0    38    16.9    7   0.7  70.4   0.005              &lt;NA&gt;
-#&gt; 3        1   187    83.1 2.94  1.55  5.58  &lt;0.001              &lt;NA&gt;</div></pre>
+#&gt; 2        0    38    16.9    7   0.7  70.4   0.107              &lt;NA&gt;
+#&gt; 3        1   187    83.1 2.94  1.55  5.58   0.001              &lt;NA&gt;</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
