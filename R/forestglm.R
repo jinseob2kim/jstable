@@ -55,12 +55,12 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   ## functions with error
   possible_table <- purrr::possibly(table, NA)
   possible_prop.table <- purrr::possibly(function(x){prop.table(x, 1)[2, ] * 100}, NA) 
-  possible_pv <- purrr::possibly(function(x){summary(x)[["coefficients"]][1, ] %>% tail(1)}, NA)
+  possible_pv <- purrr::possibly(function(x){summary(x)[["coefficients"]][2, ] %>% tail(1)}, NA)
   possible_glm <- purrr::possibly(stats::glm, NA)
   possible_svyglm <- purrr::possibly(survey::svyglm, NA)
   possible_confint <- purrr::possibly(stats::confint, NA)
   possible_modely <- purrr::possibly(function(x){purrr::map_dbl(x, .[["y"]], 1)}, NA)
-  possible_rowone <- purrr::possibly(function(x){x[-1, ]}, NA)
+  possible_rowone <- purrr::possibly(function(x){x[2, ]}, NA)
   
 
   var_cov <- setdiff(var_cov, c(as.character(formula[[3]]), var_subgroup))
@@ -98,7 +98,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     
     #event <- model$y
     #prop <- round(prop.table(table(event, model$x[, 1]), 2)[2, ] * 100, decimal.percent)
-    pv <- round(tail(summary(model)$coefficients[-1, ], 1), decimal.pvalue)
+    pv <- round(tail(summary(model)$coefficients[2, ], 1), decimal.pvalue)
     
     data.frame(Variable = "Overall", Count = length(model$y), Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2]) %>% 
     dplyr::mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
