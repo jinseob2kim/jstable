@@ -5,6 +5,8 @@ jstable
 Status](https://travis-ci.org/jinseob2kim/jstable.svg?branch=master)](https://travis-ci.org/jinseob2kim/jstable)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/jinseob2kim/jstable?branch=master&svg=true)](https://ci.appveyor.com/project/jinseob2kim/jstable)
+[![Github
+action](https://github.com/jinseob2kim/jstable/workflows/R-CMD-check/badge.svg)](https://github.com/jinseob2kim/jstable/actions)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/jstable)](https://cran.r-project.org/package=jstable)
 [![CRAN\_Download\_Badge](https://cranlogs.r-pkg.org/badges/jstable)](https://CRAN.R-project.org/package=jstable)
 [![codecov](https://codecov.io/github/jinseob2kim/jstable/branch/master/graphs/badge.svg)](https://codecov.io/github/jinseob2kim/jstable)
@@ -119,15 +121,15 @@ geeglm.display(gee02)
     ## 
     ## $table
     ##                crude OR(95%CI)    crude P value adj. OR(95%CI)     adj. P value
-    ## Time           "1.02 (0.98,1.07)" "0.399"       "1.02 (0.98,1.07)" "0.395"     
+    ## Time           "0.99 (0.96,1.03)" "0.729"       "0.99 (0.96,1.03)" "0.727"     
     ## Cu: ref.=Cu000 NA                 NA            NA                 NA          
-    ##       035      "0.77 (0.58,1.04)" "0.091"       "0.77 (0.57,1.04)" "0.09"      
-    ##       175      "0.8 (0.59,1.09)"  "0.154"       "0.8 (0.59,1.09)"  "0.154"     
+    ##       035      "1.2 (0.81,1.78)"  "0.364"       "1.2 (0.81,1.78)"  "0.364"     
+    ##       175      "1.03 (0.71,1.48)" "0.889"       "1.03 (0.71,1.48)" "0.889"     
     ## 
     ## $metric
     ##                                  crude OR(95%CI) crude P value adj. OR(95%CI)
     ##                                  NA              NA            NA            
-    ## Estimated correlation parameters "-0.023"        NA            NA            
+    ## Estimated correlation parameters "0.031"         NA            NA            
     ## No. of clusters                  "72"            NA            NA            
     ## No. of observations              "861"           NA            NA            
     ##                                  adj. P value
@@ -182,18 +184,18 @@ lmer.display(l2)
 
     ## $table
     ##                      crude OR(95%CI) crude P value   adj. OR(95%CI)
-    ## Weight                    1 (1,1.01)     0.2291091 1.01 (0.99,1.03)
-    ## Time                1.02 (0.98,1.06)     0.3396930 0.95 (0.83,1.09)
+    ## Weight                    1 (0.99,1)     0.5477787 0.99 (0.97,1.01)
+    ## Time                0.99 (0.96,1.03)     0.7532531 1.09 (0.93,1.27)
     ## Random effects                  <NA>            NA             <NA>
-    ## Pig                                0            NA             <NA>
+    ## Pig                             0.11            NA             <NA>
     ## Metrics                         <NA>            NA             <NA>
     ## No. of groups (Pig)               72            NA             <NA>
     ## No. of observations              861            NA             <NA>
-    ## Log-likelihood               -595.84            NA             <NA>
-    ## AIC value                    1199.67            NA             <NA>
+    ## Log-likelihood               -594.08            NA             <NA>
+    ## AIC value                    1196.16            NA             <NA>
     ##                     adj. P value
-    ## Weight                 0.3147911
-    ## Time                   0.4903734
+    ## Weight                 0.2256157
+    ## Time                   0.2754273
     ## Random effects                NA
     ## Pig                           NA
     ## Metrics                       NA
@@ -481,11 +483,11 @@ TableSubgroupMultiGLM(status ~ sex, var_subgroups = c("kk", "kk1"), data = lung,
     ##   Variable Count Percent           OR Lower  Upper P value P for interaction
     ## 1  Overall   228     100         3.01  1.66   5.52  <0.001              <NA>
     ## 2       kk  <NA>    <NA>         <NA>  <NA>   <NA>    <NA>             0.476
-    ## 3        0    38    16.9            7  0.91 145.62   0.003              <NA>
-    ## 4        1   187    83.1         2.94  1.56   5.62  <0.001              <NA>
+    ## 3        0    38    16.9            7  0.91 145.62   0.098              <NA>
+    ## 4        1   187    83.1         2.94  1.56   5.62   0.001              <NA>
     ## 5      kk1  <NA>    <NA>         <NA>  <NA>   <NA>    <NA>             0.984
     ## 6        0     8     3.6 314366015.19     0   <NA>   0.997              <NA>
-    ## 7        1   217    96.4         2.85  1.56   5.29  <0.001              <NA>
+    ## 7        1   217    96.4         2.85  1.56   5.29   0.001              <NA>
 
 ``` r
 ## Survey data
@@ -496,9 +498,9 @@ TableSubgroupMultiGLM(pat.karno ~ sex, var_subgroups = c("kk", "kk1"), data = da
     ## 1  Overall   225     100           1.37  -2.58  5.33   0.496              <NA>
     ## 2     <NA>  <NA>    <NA>           <NA>   <NA>  <NA>    <NA>              <NA>
     ## 3       kk  <NA>    <NA>           <NA>   <NA>  <NA>    <NA>             0.231
-    ## 4        0    38    16.9          -1.19   -6.5  4.11  <0.001              <NA>
-    ## 5        1   187    83.1           2.53  -0.42  5.47  <0.001              <NA>
+    ## 4        0    38    16.9          -1.19   -6.5  4.11   0.662              <NA>
+    ## 5        1   187    83.1           2.53  -0.42  5.47   0.094              <NA>
     ## 6     <NA>  <NA>    <NA>           <NA>   <NA>  <NA>    <NA>              <NA>
     ## 7      kk1  <NA>    <NA>           <NA>   <NA>  <NA>    <NA>             0.738
-    ## 8        0     8     3.6              0 -11.52 11.52  <0.001              <NA>
-    ## 9        1   217    96.4           2.06  -1.43  5.55  <0.001              <NA>
+    ## 8        0     8     3.6              0 -11.52 11.52       1              <NA>
+    ## 9        1   217    96.4           2.06  -1.43  5.55   0.249              <NA>
