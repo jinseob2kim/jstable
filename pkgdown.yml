@@ -1,7 +1,6 @@
-pandoc: '2.2'
-pkgdown: 1.6.1.9000
-pkgdown_sha: e1e46f2e13c7efdb17bc4eae40bc3779c2b0b517
+pandoc: 2.7.3
+pkgdown: 1.4.1.9000
+pkgdown_sha: 732fb5b9ccc0ef87a73dfd0772ae661a4039b2a8
 articles:
   jstable: jstable.html
-last_built: 2020-11-03T01:29Z
 
