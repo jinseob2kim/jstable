@@ -1,3 +1,8 @@
+# jstable 1.0.2
+
+* Bugfix `CreateTableOneJS`, `svyCreateTableOneJS`: when with labeldata, variables other than numeric or factor types are excluded.  
+
+
 # jstable 1.0.1
 
 * Bugfix `TableSubgroupGLM`, `TableSubgroupMultiGLM`: p value

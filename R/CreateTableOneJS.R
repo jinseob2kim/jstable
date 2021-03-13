@@ -57,6 +57,13 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
     stop("Please select only 1 strata")
   }
   
+  vars.ex <- names(which(sapply(vars, function(x){!(class(data[[x]]) %in% c("integer", "numeric", "factor", "character"))})))
+  
+  if (length(vars.ex) > 0){
+    warning("Variables other than numeric or factor types are excluded.")
+    vars <- setdiff(vars, vars.ex)
+  }
+  
   
   res <- tableone::CreateTableOne(vars =vars, strata = strata, data = data, factorVars = factorVars, includeNA = includeNA, test = test, 
                        testApprox = testApprox, argsApprox = argsApprox,

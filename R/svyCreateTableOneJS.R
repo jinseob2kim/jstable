@@ -45,6 +45,13 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
   if (length(strata) != 1){
     stop("Please select only 1 strata")
   }
+  
+  vars.ex <- names(which(sapply(vars, function(x){!(class(data$variables[[x]]) %in% c("integer", "numeric", "factor", "character"))})))
+  
+  if (length(vars.ex) > 0){
+    warning("Variables other than numeric or factor types are excluded.")
+    vars <- setdiff(vars, vars.ex)
+  }
 
   
   res <- tableone::svyCreateTableOne(vars =vars, strata = strata, data = data, factorVars = factorVars, includeNA = includeNA, test = test, 
