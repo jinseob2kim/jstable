@@ -1,3 +1,9 @@
+# jstable 1.0.3
+
+* Remove dependency with `car` packages
+
+
+
 # jstable 1.0.2
 
 * Bugfix `CreateTableOneJS`, `svyCreateTableOneJS`: when with labeldata, variables other than numeric or factor types are excluded.  
