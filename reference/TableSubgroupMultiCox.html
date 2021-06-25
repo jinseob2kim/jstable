@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.4</span>
       </span>
     </div>
 
@@ -204,30 +204,26 @@
          <span class='kw'>kk</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='no'>pat.karno</span> <span class='kw'>&gt;=</span> <span class='fl'>70</span>)),
          <span class='kw'>kk1</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='no'>pat.karno</span> <span class='kw'>&gt;=</span> <span class='fl'>60</span>))) <span class='kw'>-&gt;</span> <span class='no'>lung</span>
 <span class='fu'>TableSubgroupMultiCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>sex</span>, <span class='kw'>var_subgroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"kk"</span>, <span class='st'>"kk1"</span>),
-                      <span class='kw'>data</span><span class='kw'>=</span><span class='no'>lung</span>, <span class='kw'>time_eventrate</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>line</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* NA -&gt; ...1</span>
-#&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Loglik converged before variable  1,2,3 ; coefficient may be infinite. </span></div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* NA -&gt; ...1</span>
-#&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt;        Variable Count Percent Point Estimate Lower Upper    1    2 P value
+                      <span class='kw'>data</span><span class='kw'>=</span><span class='no'>lung</span>, <span class='kw'>time_eventrate</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>line</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Loglik converged before variable  1,2,3 ; coefficient may be infinite. </span></div><div class='output co'>#&gt;        Variable Count Percent Point Estimate Lower Upper    1    2 P value
 #&gt; 1       Overall   228     100           1.91  1.14   3.2    0  1.2   0.014
 #&gt; 1...1      &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
-#&gt; 11...2       kk  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
-#&gt; ...3          0    38    16.9           2.88  0.31 26.49    0    0    0.35
-#&gt; ...4          1   187    83.1           1.84  1.08  3.14    0  1.5   0.026
+#&gt; 12...2       kk  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
+#&gt; 0...3         0    38    16.9           2.88  0.31 26.49    0    0    0.35
+#&gt; 11...4        1   187    83.1           1.84  1.08  3.14    0  1.5   0.026
 #&gt; 1...5      &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
-#&gt; 11...6      kk1  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
-#&gt; ...7          0     8     3.6           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    0    0    &lt;NA&gt;
-#&gt; ...8          1   217    96.4           1.88  1.12  3.17    0  1.3   0.018
+#&gt; 12...6      kk1  &lt;NA&gt;    &lt;NA&gt;           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;    &lt;NA&gt;
+#&gt; 0...7         0     8     3.6           &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    0    0    &lt;NA&gt;
+#&gt; 11...8        1   217    96.4           1.88  1.12  3.17    0  1.3   0.018
 #&gt;        P for interaction
 #&gt; 1                   &lt;NA&gt;
 #&gt; 1...1               &lt;NA&gt;
-#&gt; 11...2             0.525
-#&gt; ...3                &lt;NA&gt;
-#&gt; ...4                &lt;NA&gt;
+#&gt; 12...2             0.525
+#&gt; 0...3               &lt;NA&gt;
+#&gt; 11...4              &lt;NA&gt;
 #&gt; 1...5               &lt;NA&gt;
-#&gt; 11...6             0.997
-#&gt; ...7                &lt;NA&gt;
-#&gt; ...8                &lt;NA&gt;</div><div class='input'>
+#&gt; 12...6             0.997
+#&gt; 0...7               &lt;NA&gt;
+#&gt; 11...8              &lt;NA&gt;</div><div class='input'>
 <span class='co'>## survey design</span>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>survey</span>)
 <span class='no'>data.design</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(<span class='kw'>id</span> <span class='kw'>=</span> ~<span class='fl'>1</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>lung</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No weights or probabilities supplied, assuming equal probability</span></div><div class='input'><span class='fu'>TableSubgroupMultiCox</span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>sex</span>, <span class='kw'>var_subgroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"kk"</span>, <span class='st'>"kk1"</span>),
