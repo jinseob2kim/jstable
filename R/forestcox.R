@@ -34,7 +34,7 @@
 #' @rdname TableSubgroupCox
 #' @export 
 #' @importFrom purrr possibly map_dbl map map2
-#' @importFrom dplyr group_split select filter mutate bind_cols
+#' @importFrom dplyr select filter mutate bind_cols
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble
 #' @importFrom survival coxph
@@ -138,7 +138,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       colnames(prop) <- xlev[[1]]
       
     } else{
-      data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~possible_coxph(formula, data = ., x= T)) -> model
+      data %>% filter(!is.na(get(var_subgroup))) %>% split(.[[var_subgroup]]) %>% purrr::map(~possible_coxph(formula, data = ., x= T)) -> model
       data %>% filter(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
       xlev <- survival::coxph(formula, data = data)$xlevels
       xlabel <- names(attr(model[[which(!is.na(model))[1]]]$x, "contrast"))[1]
@@ -153,7 +153,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         pv_anova <- anova(model.int)
         pv_int <- round(pv_anova[nrow(pv_anova), 4], decimal.pvalue)
       }
-      res.kap.times <- data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~survival::survfit(formula.km, data = .)) %>% purrr::map(~summary(., times = time_eventrate, extend = T))
+      res.kap.times <- data %>% filter(!is.na(get(var_subgroup))) %>% split(.[[var_subgroup]]) %>% purrr::map(~survival::survfit(formula.km, data = .)) %>% purrr::map(~summary(., times = time_eventrate, extend = T))
       prop <- res.kap.times %>% purrr::map(~round(100 * (1 - .[["surv"]]), decimal.percent)) %>% dplyr::bind_cols() %>% t
       colnames(prop) <- xlev[[1]]
     }

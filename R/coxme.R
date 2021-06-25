@@ -16,7 +16,7 @@
 
 coxmeTable <- function (mod){
   if(!any(class(mod)=="coxme")){stop("Model not from mixed effects Cox model")}
-  beta <- fixef(mod)
+  beta <- coxme::fixef(mod)
   nvar <- length(beta)
   nfrail <- nrow(mod$variance) - nvar
   se <- sqrt(diag(as.matrix(mod$variance))[nfrail + 1:nvar])

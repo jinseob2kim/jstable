@@ -1,7 +1,10 @@
+# jstable 1.0.4
+
+* Remove dependency with `group_split` function (**dplyr** package)
+
 # jstable 1.0.3
 
-* Remove dependency with `car` packages
-
+* Remove dependency with **car** packages
 
 
 # jstable 1.0.2
