@@ -38,7 +38,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble
 #' @importFrom survival coxph
-#' @importFrom survey svycoxph
+#' @importFrom survey svycoxph regTermTest
 #' @importFrom stats confint coefficients
 #' @importFrom utils tail
 
@@ -116,18 +116,15 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       label_val %>% purrr::map(~possible_svycoxph(formula, design = subset(data, get(var_subgroup) == .), x = TRUE)) -> model
       xlev <- survey::svycoxph(formula, design = data)$xlevels
       xlabel <- names(attr(model[[which(!is.na(model))[1]]]$x, "contrast"))[1]
-      pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), design = data) %>% summary %>% coefficients
+      pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data) %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
       if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       
       
       if (length(label_val) > 2){
-        data.int <- data$variables
-        model.int <- survival::coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data.int, weights = get(names(data$allprob)), robust =T)
-        model.int$call$formula <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula)))
-        model.int$call$data <- as.name("data.int")
-        pv_anova <- anova(model.int)
-        pv_int <- pv_anova[nrow(pv_anova), 4]
+        model.int <- survey::svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data)
+        pv_anova <- survey::regTermTest(model.int, as.formula(paste0("~", xlabel, ":", var_subgroup)))
+        pv_int <- round(pv_anova$p[1], decimal.pvalue)
       }
       res.kap <- purrr::map(label_val, ~survey::svykm(formula.km, design = subset(data, get(var_subgroup) == . )))
       mkz <- function(reskap){
@@ -142,13 +139,13 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data %>% filter(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
       xlev <- survival::coxph(formula, data = data)$xlevels
       xlabel <- names(attr(model[[which(!is.na(model))[1]]]$x, "contrast"))[1]
-      model.int <- possible_coxph(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data)  
+      model.int <- possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data)  
       pvs_int <- model.int %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
       if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       
       if (length(label_val) > 2){
-        model.int$call$formula <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula)))
+        model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
         model.int$call$data <- as.name("data")
         pv_anova <- anova(model.int)
         pv_int <- round(pv_anova[nrow(pv_anova), 4], decimal.pvalue)

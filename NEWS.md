@@ -2,6 +2,8 @@
 
 * Remove dependency with `group_split` function (**dplyr** package)
 
+* Use `survey::regTermTest` for interaction p calculation with `survey::svycoxph`.   
+
 # jstable 1.0.3
 
 * Remove dependency with **car** packages
