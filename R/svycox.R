@@ -87,7 +87,17 @@ svycox.display <- function(svycoxph.obj, decimal = 2){
   ## metric
   no.obs <- model$n
   no.event <- model$nevent
-  aic <- round(stats::AIC(model)[2], decimal)
+  
+  ## From survey package
+  extractAIC.svycoxph<-function (fit, scale, k = 2, ...) 
+  {
+    Delta<-solve(fit$inv.info, fit$var)
+    deltabar <- mean(diag(Delta))
+    d <- -2*fit$ll[1]
+    c(eff.p = sum(diag(Delta)), AIC = d + k * sum(diag(Delta)), deltabar = deltabar)
+  }
+  
+  aic <- round(extractAIC.svycoxph(model, k = 2)[2], decimal)
   metric.mat <- cbind(c(NA, no.obs, no.event, aic), matrix(NA, 4, ncol(fix.all) - 1))
   rownames(metric.mat) <- c(NA, "No. of observations", "No. of events", "AIC")
   

@@ -1,3 +1,8 @@
+# jstable 1.0.5
+
+* Bugfix `svycox.display`
+
+
 # jstable 1.0.4
 
 * Remove dependency with `group_split` function (**dplyr** package)
