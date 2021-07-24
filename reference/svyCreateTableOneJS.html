@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.6</span>
       </span>
     </div>
 
@@ -253,25 +253,36 @@
  <span class='no'>nhanesSvy</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(<span class='kw'>ids</span> <span class='kw'>=</span> ~ <span class='no'>SDMVPSU</span>, <span class='kw'>strata</span> <span class='kw'>=</span> ~ <span class='no'>SDMVSTRA</span>, <span class='kw'>weights</span> <span class='kw'>=</span> ~ <span class='no'>WTMEC2YR</span>,
                         <span class='kw'>nest</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>nhanes</span>)
  <span class='fu'>svyCreateTableOneJS</span>(<span class='kw'>vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"HI_CHOL"</span>,<span class='st'>"race"</span>,<span class='st'>"agecat"</span>,<span class='st'>"RIAGENDR"</span>),
-                     <span class='kw'>strata</span> <span class='kw'>=</span> <span class='st'>"RIAGENDR"</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>nhanesSvy</span>)</div><div class='output co'>#&gt; $table
-#&gt;            level      1                      2                      p       
-#&gt; n          ""         "134944553.92"         "141591892.00"         ""      
-#&gt; HI_CHOL    ""         "        0.10 ± 0.30"  "        0.12 ± 0.33"  " 0.009"
-#&gt; race       ""         "        2.09 ± 0.73"  "        2.14 ± 0.75"  " 0.015"
-#&gt; agecat (%) "(0,19]"   "  29299546.1 (21.7) " "  28150760.5 (19.9) " " 0.001"
-#&gt;            "(19,39]"  "  40497613.1 (30.0) " "  40640361.5 (28.7) " ""      
-#&gt;            "(39,59]"  "  41053579.4 (30.4) " "  42817044.0 (30.2) " ""      
-#&gt;            "(59,Inf]" "  24093815.3 (17.9) " "  29983725.9 (21.2) " ""      
-#&gt; RIAGENDR   ""         "        1.00 ± 0.00"  "        2.00 ± 0.00"  "&lt;0.001"
-#&gt;            test sig 
-#&gt; n          ""   NA  
-#&gt; HI_CHOL    ""   "**"
-#&gt; race       ""   "**"
-#&gt; agecat (%) ""   "**"
-#&gt;            ""   NA  
-#&gt;            ""   NA  
-#&gt;            ""   NA  
-#&gt; RIAGENDR   ""   "**"
+                     <span class='kw'>strata</span> <span class='kw'>=</span> <span class='st'>"RIAGENDR"</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>nhanesSvy</span>,
+                     <span class='kw'>factorVars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"HI_CHOL"</span>, <span class='st'>"race"</span>, <span class='st'>"RIAGENDR"</span>))</div><div class='output co'>#&gt; $table
+#&gt;              level      1                      2                      p       
+#&gt; n            ""         "134944553.9"          "141591892.0"          ""      
+#&gt; HI_CHOL (%)  "0"        "112307738.4 ( 89.9) " "114402926.5 ( 87.7) " " 0.010"
+#&gt;              "1"        " 12579208.9 ( 10.1) " " 16056036.4 ( 12.3) " ""      
+#&gt; race (%)     "1"        " 21381884.2 ( 15.8) " " 20251367.4 ( 14.3) " " 0.042"
+#&gt;              "2"        " 89315751.4 ( 66.2) " " 92486945.1 ( 65.3) " ""      
+#&gt;              "3"        " 15045455.5 ( 11.1) " " 17967228.3 ( 12.7) " ""      
+#&gt;              "4"        "  9201462.9 (  6.8) " " 10886351.1 (  7.7) " ""      
+#&gt; agecat (%)   "(0,19]"   " 29299546.1 ( 21.7) " " 28150760.5 ( 19.9) " " 0.001"
+#&gt;              "(19,39]"  " 40497613.1 ( 30.0) " " 40640361.5 ( 28.7) " ""      
+#&gt;              "(39,59]"  " 41053579.4 ( 30.4) " " 42817044.0 ( 30.2) " ""      
+#&gt;              "(59,Inf]" " 24093815.3 ( 17.9) " " 29983725.9 ( 21.2) " ""      
+#&gt; RIAGENDR (%) "1"        "134944553.9 (100.0) " "        0.0 (  0.0) " "&lt;0.001"
+#&gt;              "2"        "        0.0 (  0.0) " "141591892.0 (100.0) " ""      
+#&gt;              test sig 
+#&gt; n            ""   NA  
+#&gt; HI_CHOL (%)  ""   "**"
+#&gt;              ""   NA  
+#&gt; race (%)     ""   "**"
+#&gt;              ""   NA  
+#&gt;              ""   NA  
+#&gt;              ""   NA  
+#&gt; agecat (%)   ""   "**"
+#&gt;              ""   NA  
+#&gt;              ""   NA  
+#&gt;              ""   NA  
+#&gt; RIAGENDR (%) ""   "**"
+#&gt;              ""   NA  
 #&gt; 
 #&gt; $caption
 #&gt; [1] "Stratified by RIAGENDR- weighted data"
