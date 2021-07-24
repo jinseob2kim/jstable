@@ -29,11 +29,11 @@ test_that("Run SvyCreateOneTableJS", {
   expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","RIAGENDR"),
                                 strata = "SDMVPSU", strata2 = "agecat", data = nhanesSvy, factorVars = c("HI_CHOL", "race", "RIAGENDR"), labeldata = a.label, Labels = T, showAllLevels = F), "list")
   
-  expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","RIAGENDR"), data = nhanesSvy, labeldata = a.label, Labels = T,
+  expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","RIAGENDR"), data = nhanesSvy, factorVars = c("HI_CHOL", "race", "RIAGENDR"), labeldata = a.label, Labels = T,
                                 includeNA = F, showAllLevels = T, printToggle = F, quote = F, nonnormal = NULL, catDigits = 2, contDigits = 2
                                 ), "list")
   
-  expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","RIAGENDR"), data = nhanesSvy, labeldata = a.label, Labels = T,
+  expect_is(svyCreateTableOneJS(vars = c("HI_CHOL","race","RIAGENDR"), data = nhanesSvy, factorVars = c("HI_CHOL", "race", "RIAGENDR"), labeldata = a.label, Labels = T,
                                 includeNA = F, showAllLevels = F, printToggle = F, quote = F, nonnormal = NULL, catDigits = 2, contDigits = 2
   ), "list")
 })
