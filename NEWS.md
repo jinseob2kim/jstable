@@ -1,7 +1,10 @@
+# jstable 1.0.6
+
+* Bugfix `svyCreateTableOneJS` in example/test.
+
 # jstable 1.0.5
 
 * Bugfix `svycox.display`
-
 
 # jstable 1.0.4
 
