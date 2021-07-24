@@ -29,7 +29,8 @@
 #'  nhanesSvy <- svydesign(ids = ~ SDMVPSU, strata = ~ SDMVSTRA, weights = ~ WTMEC2YR, 
 #'                         nest = TRUE, data = nhanes)
 #'  svyCreateTableOne2(vars = c("HI_CHOL","race","agecat","RIAGENDR"), 
-#'                     strata = "RIAGENDR", data = nhanesSvy)
+#'                     strata = "RIAGENDR", data = nhanesSvy,
+#'                     factorVars = c("HI_CHOL", "race", "RIAGENDR"))
 #' @rdname svyCreateTableOne2
 #' @importFrom data.table data.table :=
 #' @importFrom tableone svyCreateTableOne 
