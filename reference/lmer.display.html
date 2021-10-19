@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.7</span>
       </span>
     </div>
 
@@ -163,7 +163,7 @@
  <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>dietox</span>)
  <span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
  <span class='no'>l1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span>(<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Pig</span>) + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Evit</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>)
- <span class='fu'>lmer.display</span>(<span class='no'>l1</span>)</div><div class='output co'>#&gt; <span class='message'>boundary (singular) fit: see ?isSingular</span></div><div class='output co'>#&gt; $table
+ <span class='fu'>lmer.display</span>(<span class='no'>l1</span>)</div><div class='output co'>#&gt; <span class='message'>boundary (singular) fit: see ?isSingular</span></div><div class='output co'>#&gt; <span class='message'>boundary (singular) fit: see ?isSingular</span></div><div class='output co'>#&gt; $table
 #&gt;                      crude coeff(95%CI) crude P value adj. coeff(95%CI)
 #&gt; Time                   6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)
 #&gt; Cu: ref.=Cu000                     &lt;NA&gt;            NA              &lt;NA&gt;
