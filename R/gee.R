@@ -16,11 +16,11 @@
 #'                    family = "gaussian", cor.type = "exchangeable")
 #' @rdname geeUni
 #' @importFrom geepack geeglm 
-#' @importFrom stats as.formula
+#' @importFrom stats as.formula update
 #' @export
 
 
-geeUni = function(y, x, data, id.vec, family, cor.type = "exchangeable"){
+geeUni <- function(y, x, data, id.vec, family, cor.type = "exchangeable"){
   form <- as.formula(paste(y, "~", x))
   res <- geepack::geeglm(form, data = data, family = family, id = id.vec, corstr = cor.type)
   coef <- summary(res)$coefficients[-1, -3]
@@ -47,7 +47,7 @@ geeUni = function(y, x, data, id.vec, family, cor.type = "exchangeable"){
 #' @export
 
 
-geeExp = function(gee.coef, family ="binomial", dec){
+geeExp <- function(gee.coef, family ="binomial", dec){
   if (family == "binomial"){
     OR <- paste(round(exp(gee.coef[,1]), dec), " (", round(exp(gee.coef[,1] - 1.96*gee.coef[,2]), dec), ",", round(exp(gee.coef[,1] + 1.96*gee.coef[,2]), dec),")", sep="")
     return(cbind(OR, gee.coef[,3]))
@@ -81,17 +81,19 @@ geeExp = function(gee.coef, family ="binomial", dec){
 #' @rdname geeglm.display
 #' @export 
 #' @importFrom data.table data.table
-#' @importFrom stats complete.cases
+#' @importFrom stats complete.cases update formula
 
-geeglm.display = function(geeglm.obj, decimal = 2){
+geeglm.display <- function(geeglm.obj, decimal = 2){
   family.gee <- geeglm.obj$family[[1]]
   corstr.gee <- geeglm.obj$corstr
   y <- as.character(geeglm.obj$terms[[2]])
   xs <- names(geeglm.obj$model)[-1]
   ## rownames
   geeglm.obj$data <- data.table::data.table(geeglm.obj$data)
-  nomiss <- stats::complete.cases(geeglm.obj$data[, c(y, xs), with = F])
-  gee.uni.list <- lapply(xs, function(x){geeUni(y, x, data = geeglm.obj$data[nomiss, ], id.vec = geeglm.obj$id, family = family.gee, cor.type = corstr.gee)})
+  #nomiss <- stats::complete.cases(geeglm.obj$data[, c(y, xs), with = F])
+  basemodel <- stats::update(geeglm.obj, stats::formula(paste(c(". ~ .", xs), collapse=' - ')), data = geeglm.obj$data)
+  #gee.uni.list <- lapply(xs, function(x){geeUni(y, x, data = geeglm.obj$data[nomiss, ], id.vec = geeglm.obj$id, family = family.gee, cor.type = corstr.gee)})
+  gee.uni.list <- lapply(xs, function(x){summary(stats::update(basemodel, stats::formula(paste0(". ~ . +", x)), data = geeglm.obj$data))$coefficients[-1, -3]})
   rn.uni <- lapply(gee.uni.list, rownames)
   gee.uni <- Reduce(rbind, gee.uni.list)
   

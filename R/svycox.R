@@ -25,7 +25,7 @@
 #' @rdname svycox.display
 #' @export 
 #' @importFrom survey svycoxph
-#' @importFrom stats AIC
+#' @importFrom stats AIC update
  
 
 svycox.display <- function(svycoxph.obj, decimal = 2){
@@ -48,10 +48,10 @@ svycox.display <- function(svycoxph.obj, decimal = 2){
     rownames(fix.all) <-  names(model$coefficients)
     } else {
     unis <- lapply(xf, function(x){
-    uni.res <- data.frame(summary(survey::svycoxph(as.formula(paste(formula.surv, "~", x, sep="")), design = design.model))$coefficients)
-    names(uni.res)[ncol(uni.res)] <- "p"
-    uni.res2 <- uni.res[, c("coef", grep("se", colnames(uni.res), value = T)[length(grep("se", colnames(uni.res)))], "z", "p")]
-    return(uni.res2)
+      uni.res <- data.frame(summary(stats::update(model, formula(paste(paste(c(". ~ .", xf), collapse=' - '), " + ", x)), design = design.model))$coefficients)
+      names(uni.res)[ncol(uni.res)] <- "p"
+      uni.res2 <- uni.res[, c("coef", grep("se", colnames(uni.res), value = T)[length(grep("se", colnames(uni.res)))], "z", "p")]
+      return(uni.res2)
     })
     
    unis2 <- Reduce(rbind, unis)

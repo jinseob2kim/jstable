@@ -89,9 +89,9 @@ cox2.display <- function (cox.obj.withmodel, dec = 2)
     if (!is.null(xc.vn)){
       names(mdata2)[ncol(mdata2)] <- xc.vn 
     }
-    basemodel <- update(model, formula(paste(c(". ~ .", xf), collapse=' - ')), data = mdata2)
+    basemodel <- update(model, stats::formula(paste(c(". ~ .", xf), collapse=' - ')), data = mdata2)
     unis <- lapply(xf, function(x){
-      newfit <- update(basemodel, formula(paste0(". ~ . +", x)), data= mdata2)
+      newfit <- update(basemodel, stats::formula(paste0(". ~ . +", x)), data= mdata2)
       uni.res <- data.frame(summary(newfit)$coefficients)
       uni.res <- uni.res[grep(x, rownames(uni.res)), ]
       #uni.res <- uni.res[c(2:nrow(uni.res), 1), ]

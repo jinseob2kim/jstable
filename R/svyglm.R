@@ -16,6 +16,7 @@
 #' @rdname svyglm.display
 #' @export 
 #' @importFrom survey svyglm
+#' @importFrom stats update
 
 
 svyregress.display <- function(svyglm.obj, decimal = 2){
@@ -29,7 +30,7 @@ svyregress.display <- function(svyglm.obj, decimal = 2){
   if (length(xs) == 0){
     stop("No independent variable")
   } else if (length(xs) ==1){
-    uni <- data.frame(coefNA(survey::svyglm(as.formula(paste(y, " ~ ", xs)), design = design.model, family = model$family)))[-1, ]
+    uni <- data.frame(coefNA(model))[-1, ]
     rn.uni <- lapply(list(uni), rownames)
     #uni <- data.frame(summary(survey::svyglm(as.formula(paste(y, " ~ ", xs)), design = design.model, family = model$family))$coefficients)[-1, ]
     if (gaussianT){
@@ -46,7 +47,7 @@ svyregress.display <- function(svyglm.obj, decimal = 2){
     
   } else{
     uni <- lapply(xs, function(v){
-      data.frame(coefNA(survey::svyglm(as.formula(paste(y, " ~ ", v)), design = design.model, family = model$family)))[-1, ]
+      data.frame(coefNA(stats::update(model, formula(paste(paste(c(". ~ .", xs), collapse=' - '), " + ", v)), design = design.model)))[-1, ]
     })
     #uni <- lapply(xs, function(v){
     #  summary(survey::svyglm(as.formula(paste(y, " ~ ", v)), design = design.model))$coefficients[-1, ]

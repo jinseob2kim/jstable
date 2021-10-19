@@ -30,7 +30,7 @@ coefNA <- function(model){
 #'  \code{\link[stats]{glm}}
 #' @rdname glmshow.display
 #' @export
-#' @importFrom stats glm cor predict
+#' @importFrom stats glm cor predict formula
 
 glmshow.display <- function (glm.object, decimal = 2){
   model <- glm.object
@@ -45,7 +45,7 @@ glmshow.display <- function (glm.object, decimal = 2){
   if (length(xs) == 0){
     stop("No independent variable")
   } else if (length(xs) ==1){
-    uni <- data.frame(coefNA(stats::glm(as.formula(paste(y, " ~ ", xs)), data = data, family = model$family)))[-1, ]
+    uni <- data.frame(coefNA(glm.object))[-1, ]
     rn.uni <- lapply(list(uni), rownames)
     if (gaussianT){
       summ <- paste(round(uni[,1], decimal), " (", round(uni[, 1] - 1.96*uni[, 2], decimal), "," ,round(uni[, 1] + 1.96*uni[, 2], decimal), ")", sep ="")
@@ -60,8 +60,11 @@ glmshow.display <- function (glm.object, decimal = 2){
     res <- uni.res
     
   } else{
+    basemodel <- stats::update(model, formula(paste(c(". ~ .", xs), collapse=' - ')), data = data)
+    
     uni <- lapply(xs, function(v){
-      data.frame(coefNA(stats::glm(as.formula(paste(y, " ~ ", v)), data = data, family = model$family)))[-1, ]
+      data.frame(coefNA(stats::update(basemodel, formula(paste0(". ~ . +", v)), data = data)))
+      #data.frame(coefNA(stats::glm(as.formula(paste(y, " ~ ", v)), data = data, family = model$family)))[-1, ]
     })
     rn.uni <- lapply(uni, rownames)
     uni <- Reduce(rbind, uni)

@@ -1,3 +1,7 @@
+# jstable 1.0.7
+
+* Update `*.display`: univariate analysis with `stats::update`
+
 # jstable 1.0.6
 
 * Bugfix `svyCreateTableOneJS` in example/test.
