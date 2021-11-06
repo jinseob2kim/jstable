@@ -48,10 +48,10 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   
   if (any(class(data) == "survey.design" & !is.null(var_subgroup))){
     if (is.numeric(data$variables[[var_subgroup]])) stop("var_subgroup must categorical.")
-    if (length(levels(data$variables[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
+    #if (length(levels(data$variables[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
   } else if(any(class(data) == "data.frame" & !is.null(var_subgroup))){
     if (is.numeric(data[[var_subgroup]])) stop("var_subgroup must categorical.")
-    if (length(levels(data[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
+    #if (length(levels(data[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
   }
   
   
@@ -73,13 +73,13 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     }
     if (any(class(data) == "survey.design")){
       model <- survey::svycoxph(formula, design = data, x= T)
-      if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      #if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       res.kap <- survey::svykm(formula.km, design = data)
       prop <- round(100 * sapply(res.kap, function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent)
       names(prop) <- model$xlevels[[1]]
     } else{
       model <- survival::coxph(formula, data = data, x= TRUE)
-      if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      #if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       res.kap <- survival::survfit(formula.km, data = data)
       res.kap.times <- summary(res.kap, times = time_eventrate, extend = T)
       prop <- round(100 * (1 - res.kap.times[["surv"]]), decimal.percent)
@@ -100,9 +100,14 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     #prop <- round(prop.table(table(event, model$x[, 1]), 2)[2, ] * 100, decimal.percent)
     pv <- round(summary(model)$coefficients[1, "Pr(>|z|)"], decimal.pvalue)
     
-    tibble::tibble(Variable = "Overall", Count = model$n, Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2]) %>% 
-      cbind(t(prop)) %>% 
-      mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
+    out <- data.frame(Variable = "Overall", Count = model$n, Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2], check.names = F) %>% 
+      mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
+             
+    if (!is.null(names(prop))){
+      out <- data.frame(Variable = "Overall", Count = model$n, Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2], check.names = F) %>% 
+        cbind(t(prop)) %>% 
+        mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) 
+    }         
     
     return(out)
   } else if (length(var_subgroup) > 1 | any(grepl(var_subgroup, formula))){
@@ -115,44 +120,55 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data$variables[[var_subgroup]] %>% table %>% names -> label_val
       label_val %>% purrr::map(~possible_svycoxph(formula, design = subset(data, get(var_subgroup) == .), x = TRUE)) -> model
       xlev <- survey::svycoxph(formula, design = data)$xlevels
-      xlabel <- names(attr(model[[which(!is.na(model))[1]]]$x, "contrast"))[1]
+      xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
       pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data) %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
-      if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      #if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       
       
-      if (length(label_val) > 2){
+      if (length(label_val) > 2 | length(xlev) > 2){
         model.int <- survey::svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data)
         pv_anova <- survey::regTermTest(model.int, as.formula(paste0("~", xlabel, ":", var_subgroup)))
         pv_int <- round(pv_anova$p[1], decimal.pvalue)
       }
-      res.kap <- purrr::map(label_val, ~survey::svykm(formula.km, design = subset(data, get(var_subgroup) == . )))
-      mkz <- function(reskap){
-        round(100 * sapply(reskap, function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent)
-      }  
-      prop <- purrr::map(res.kap, mkz)  %>% dplyr::bind_cols() %>% t
-      #prop <- purrr::map(res.kap, ~round(100 * sapply(., function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent))
-      colnames(prop) <- xlev[[1]]
+       
+      if (!is.numeric(data$variables[[xlabel]])){
+        res.kap <- purrr::map(label_val, ~survey::svykm(formula.km, design = subset(data, get(var_subgroup) == . )))
+        mkz <- function(reskap){
+          round(100 * sapply(reskap, function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent)
+        } 
+        prop <- purrr::map(res.kap, mkz)  %>% dplyr::bind_cols() %>% t
+        #prop <- purrr::map(res.kap, ~round(100 * sapply(., function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent))
+        colnames(prop) <- xlev[[1]]
+      } else{
+        prop <- NULL
+      }
+      
       
     } else{
       data %>% filter(!is.na(get(var_subgroup))) %>% split(.[[var_subgroup]]) %>% purrr::map(~possible_coxph(formula, data = ., x= T)) -> model
       data %>% filter(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
       xlev <- survival::coxph(formula, data = data)$xlevels
-      xlabel <- names(attr(model[[which(!is.na(model))[1]]]$x, "contrast"))[1]
+      xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
       model.int <- possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data)  
       pvs_int <- model.int %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
-      if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      #if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       
-      if (length(label_val) > 2){
+      if (length(label_val) > 2 | length(xlev) > 2){
         model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
         model.int$call$data <- as.name("data")
         pv_anova <- anova(model.int)
         pv_int <- round(pv_anova[nrow(pv_anova), 4], decimal.pvalue)
       }
-      res.kap.times <- data %>% filter(!is.na(get(var_subgroup))) %>% split(.[[var_subgroup]]) %>% purrr::map(~survival::survfit(formula.km, data = .)) %>% purrr::map(~summary(., times = time_eventrate, extend = T))
-      prop <- res.kap.times %>% purrr::map(~round(100 * (1 - .[["surv"]]), decimal.percent)) %>% dplyr::bind_cols() %>% t
-      colnames(prop) <- xlev[[1]]
+      
+      if (!is.numeric(data[[xlabel]])){
+        res.kap.times <- data %>% filter(!is.na(get(var_subgroup))) %>% split(.[[var_subgroup]]) %>% purrr::map(~survival::survfit(formula.km, data = .)) %>% purrr::map(~summary(., times = time_eventrate, extend = T))
+        prop <- res.kap.times %>% purrr::map(~round(100 * (1 - .[["surv"]]), decimal.percent)) %>% dplyr::bind_cols() %>% t
+        colnames(prop) <- xlev[[1]]
+      } else{
+        prop <- NULL
+      }
     }
     
     model %>% purrr::map_dbl("n", .default = NA) -> Count
@@ -162,10 +178,15 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     #purrr::map2(event, model, ~possible_table(.x, .y[["x"]][, 1])) %>% purrr::map(possible_prop.table) %>% purrr::map(~round(., decimal.percent)) %>% Reduce(rbind, .) -> prop
     model %>% purrr::map(possible_pv) %>% purrr::map_dbl(~round(., decimal.pvalue)) -> pv
     
+    out <- data.frame(Variable = paste("  ", label_val) , Count = Count, Percent = round(Count/sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F) %>%
+      mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
     
-    tibble::tibble(Variable = paste("  ", label_val) , Count = Count, Percent = round(Count/sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2]) %>%
-      cbind(prop) %>% 
-      mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
+    if (!is.null(prop)){
+      out <- data.frame(Variable = paste("  ", label_val) , Count = Count, Percent = round(Count/sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F) %>%
+        cbind(prop) %>% 
+        mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
+    }  
+    
     
     return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
   }

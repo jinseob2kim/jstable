@@ -45,10 +45,8 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   if (length(formula[[3]]) > 1) stop("Formula must contains only 1 independent variable")
   if (any(class(data) == "survey.design" & !is.null(var_subgroup))){
     if (is.numeric(data$variables[[var_subgroup]])) stop("var_subgroup must categorical.")
-    if (length(levels(data$variables[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
   } else if(any(class(data) == "data.frame" & !is.null(var_subgroup))){
     if (is.numeric(data[[var_subgroup]])) stop("var_subgroup must categorical.")
-    if (length(levels(data[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
   }
   
   
@@ -74,18 +72,18 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     
     if (any(class(data) == "survey.design")){
       model <- survey::svyglm(formula, design = data, x= T, family = family.svyglm)
-      if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      #if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
     } else{
-      model <- stats::glm(formula, data = data, x= TRUE, family = family)
-      if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      model <- stats::glm(formula, data = data, x= T, family = family)
+      #if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
     }
     
     
-    Point.Estimate <- round(coef(model), decimal.estimate)[2]
-    CI <- round(confint(model)[2, ], decimal.estimate)
+    Point.Estimate <- round(stats::coef(model), decimal.estimate)[2]
+    CI <- round(stats::confint(model)[2, ], decimal.estimate)
     if(family == "binomial"){
-      Point.Estimate <- round(exp(coef(model)), decimal.estimate)[2]
-      CI <- round(exp(confint(model)[2, ]), decimal.estimate)
+      Point.Estimate <- round(exp(stats::coef(model)), decimal.estimate)[2]
+      CI <- round(exp(stats::confint(model)[2, ]), decimal.estimate)
     }
     
     
@@ -108,7 +106,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     }
     
     return(out)
-  } else if (length(var_subgroup) > 1 | any(grepl(var_subgroup, formula))){
+  } else if (length(var_subgroup) >= 2 | any(grepl(var_subgroup, formula))){
     stop("Please input correct subgroup variable.")
   } else{
     if (!is.null(var_cov)){
@@ -118,30 +116,30 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data$variables[[var_subgroup]] %>% table %>% names -> label_val
       label_val %>% purrr::map(~possible_svyglm(formula, design = subset(data, get(var_subgroup) == .), x = TRUE, family = family.svyglm)) -> model
       xlev <- survey::svyglm(formula, design = data)$xlevels
-      xlabel <- names(attr(model[[which(!is.na(model))[1]]]$x, "contrast"))[1]
+      xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
       pvs_int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), design = data, family = family.svyglm) %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
-      if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      #if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       
       
-      if (length(label_val) > 2){
+      if (length(label_val) > 2 | length(xlev) > 2){
         model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), design = data, family = family.svyglm)
         pv_anova <- anova(model.int, method = "Wald")
-        pv_int <- pv_anova[[length(pv_anova)]][[7]]
+        pv_int <- round(pv_anova[[length(pv_anova)]][[7]], decimal.pvalue)
       }
       Count <- as.vector(table(data$variables[[var_subgroup]]))
       
     } else{
-      data %>% filter(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~possible_glm(formula, data = ., x= T, family = family)) -> model
-      data %>% filter(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
+      data %>% subset(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~possible_glm(formula, data = ., x= T, family = family)) -> model
+      data %>% subset(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
       xlev <- stats::glm(formula, data = data)$xlevels
-      xlabel <- names(attr(model[[which(!is.na(model))[1]]]$x, "contrast"))[1]
+      xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
       model.int <- possible_glm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data, family = family)  
       pvs_int <- model.int %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
-      if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      #if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       
-      if (length(label_val) > 2){
+      if (length(label_val) > 2 | length(xlev) > 2){
         pv_anova <- anova(model.int, test = "Chisq")
         pv_int <- round(pv_anova[nrow(pv_anova), 5], decimal.pvalue)
       }
