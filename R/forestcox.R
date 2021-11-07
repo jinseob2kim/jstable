@@ -67,6 +67,11 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   
   formula.km <- formula
   var_cov <- setdiff(var_cov, c(as.character(formula[[3]]), var_subgroup))
+  xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
+  
+  ncoef <- ifelse(any(class(data) == "survey.design"), ifelse(length(levels(data$variables[[xlabel]])) <= 2, 1,  length(levels(data$variables[[xlabel]])) - 1),
+    ifelse(length(levels(data[[xlabel]])) <= 2, 1,  length(levels(data[[xlabel]])) - 1))
+  
   if (is.null(var_subgroup)){
     if (!is.null(var_cov)){
       formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
@@ -87,27 +92,34 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       #out.kap <- paste(res.kap.times[["n.event"]], " (", round(100 * (1 - res.kap.times[["surv"]]), decimal.percent), ")", sep = "")
     }
     
-    Point.Estimate <- round(exp(coef(model)), decimal.hr)[1]
     
+    
+    Point.Estimate <- round(exp(coef(model)), decimal.hr)[1:ncoef]
     
     #if (length(Point.Estimate) > 1){
     #  stop("Formula must contain 1 independent variable only.")
     #}
     
     
-    CI <- round(exp(confint(model)[1, ]), decimal.hr)
+    CI <- round(exp(confint(model)[1:ncoef, ]), decimal.hr)
     event <- purrr::map_dbl(model$y, 1) %>% tail(model$n)
     #prop <- round(prop.table(table(event, model$x[, 1]), 2)[2, ] * 100, decimal.percent)
-    pv <- round(summary(model)$coefficients[1, "Pr(>|z|)"], decimal.pvalue)
+    pv <- round(summary(model)$coefficients[1:ncoef, "Pr(>|z|)"], decimal.pvalue)
     
-    out <- data.frame(Variable = "Overall", Count = model$n, Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2], check.names = F) %>% 
-      mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
-             
-    if (!is.null(names(prop))){
+    if (ncoef <= 2){
       out <- data.frame(Variable = "Overall", Count = model$n, Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2], check.names = F) %>% 
-        cbind(t(prop)) %>% 
-        mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) 
-    }         
+        mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
+      
+      if (!is.null(names(prop))){
+        out <- data.frame(Variable = "Overall", Count = model$n, Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2], check.names = F) %>% 
+          cbind(t(prop)) %>% 
+          mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) 
+      }     
+    } else{
+      out <- data.frame(Variable = c("Overall", rep("", length(Point.Estimate))), Subgroup = rep("", length(Point.Estimate) + 1), Levels =  levels(data[[xlabel]]), `Point Estimate` = c("Reference", Point.Estimate), Lower = c("", CI[, 1]), Upper = c("", CI[, 2]), check.names = F) %>% 
+        mutate(`P value` = c("", ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA)
+      rownames(out) <- NULL
+    }    
     
     return(out)
   } else if (length(var_subgroup) > 1 | any(grepl(var_subgroup, formula))){
@@ -120,14 +132,13 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data$variables[[var_subgroup]] %>% table %>% names -> label_val
       label_val %>% purrr::map(~possible_svycoxph(formula, design = subset(data, get(var_subgroup) == .), x = TRUE)) -> model
       xlev <- survey::svycoxph(formula, design = data)$xlevels
-      xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
       pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data) %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
       #if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      model.int <- survey::svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data)
       
-      
-      if (length(label_val) > 2 | length(xlev) > 2){
-        model.int <- survey::svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data)
+      if (sum(grepl(":", names(coef(model.int)))) > 1){
+        model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
         pv_anova <- survey::regTermTest(model.int, as.formula(paste0("~", xlabel, ":", var_subgroup)))
         pv_int <- round(pv_anova$p[1], decimal.pvalue)
       }
@@ -149,31 +160,34 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data %>% filter(!is.na(get(var_subgroup))) %>% split(.[[var_subgroup]]) %>% purrr::map(~possible_coxph(formula, data = ., x= T)) -> model
       data %>% filter(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
       xlev <- survival::coxph(formula, data = data)$xlevels
-      xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
       model.int <- possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data)  
-      pvs_int <- model.int %>% summary %>% coefficients
-      pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
-      #if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
-      
-      if (length(label_val) > 2 | length(xlev) > 2){
+      if (sum(grepl(":", names(coef(model.int)))) == 1){
+        pvs_int <- model.int %>% summary %>% coefficients
+        pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+        #if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+        if (!is.numeric(data[[xlabel]])){
+          res.kap.times <- data %>% filter(!is.na(get(var_subgroup))) %>% split(.[[var_subgroup]]) %>% purrr::map(~survival::survfit(formula.km, data = .)) %>% purrr::map(~summary(., times = time_eventrate, extend = T))
+          prop <- res.kap.times %>% purrr::map(~round(100 * (1 - .[["surv"]]), decimal.percent)) %>% dplyr::bind_cols() %>% t
+          colnames(prop) <- xlev[[1]]
+        } else{
+          prop <- NULL
+        }
+      } else{
         model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
         model.int$call$data <- as.name("data")
         pv_anova <- anova(model.int)
         pv_int <- round(pv_anova[nrow(pv_anova), 4], decimal.pvalue)
-      }
-      
-      if (!is.numeric(data[[xlabel]])){
-        res.kap.times <- data %>% filter(!is.na(get(var_subgroup))) %>% split(.[[var_subgroup]]) %>% purrr::map(~survival::survfit(formula.km, data = .)) %>% purrr::map(~summary(., times = time_eventrate, extend = T))
-        prop <- res.kap.times %>% purrr::map(~round(100 * (1 - .[["surv"]]), decimal.percent)) %>% dplyr::bind_cols() %>% t
-        colnames(prop) <- xlev[[1]]
-      } else{
         prop <- NULL
       }
+ 
+      
     }
     
     model %>% purrr::map_dbl("n", .default = NA) -> Count
-    model %>% purrr::map("coefficients", .default = NA) %>% purrr::map_dbl(1) %>% exp %>% round(decimal.hr) -> Point.Estimate
-    model %>% purrr::map(possible_confint) %>% purrr::map(possible_rowone) %>% Reduce(rbind, .) %>% exp %>% round(decimal.hr) -> CI
+    model %>% purrr::map("coefficients", .default = NA) %>% lapply(function(x){round(exp(x[1:ncoef]), decimal.hr)}) %>% unlist -> Point.Estimate
+    #model %>% purrr::map("coefficients", .default = NA) %>% purrr::map_dbl(1) %>% exp %>% round(decimal.hr) -> Point.Estimate
+    model %>% purrr::map(possible_confint)  %>% Reduce(rbind, .) %>% exp %>% round(decimal.hr) -> CI
+    #model %>% purrr::map(possible_confint) %>% purrr::map(possible_rowone) %>% Reduce(rbind, .) %>% exp %>% round(decimal.hr) -> CI
     #model %>% purrr::map("y") %>% purrr::map(~purrr::map_dbl(., 1)) %>% purrr::map(~tail(., length(.)/2)) -> event
     #purrr::map2(event, model, ~possible_table(.x, .y[["x"]][, 1])) %>% purrr::map(possible_prop.table) %>% purrr::map(~round(., decimal.percent)) %>% Reduce(rbind, .) -> prop
     model %>% purrr::map(possible_pv) %>% purrr::map_dbl(~round(., decimal.pvalue)) -> pv

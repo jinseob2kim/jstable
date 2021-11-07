@@ -60,7 +60,9 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   possible_modely <- purrr::possibly(function(x){purrr::map_dbl(x, .[["y"]], 1)}, NA)
   possible_rowone <- purrr::possibly(function(x){x[2, ]}, NA)
   
-
+  xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
+  ncoef <- ifelse(any(class(data) == "survey.design"), ifelse(length(levels(data$variables[[xlabel]])) <= 2, 1,  length(levels(data$variables[[xlabel]])) - 1),
+                  ifelse(length(levels(data[[xlabel]])) <= 2, 1,  length(levels(data[[xlabel]])) - 1))
   var_cov <- setdiff(var_cov, c(as.character(formula[[3]]), var_subgroup))
   family.svyglm <- gaussian()
   if (family  == "binomial") family.svyglm <- quasibinomial()
@@ -116,14 +118,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data$variables[[var_subgroup]] %>% table %>% names -> label_val
       label_val %>% purrr::map(~possible_svyglm(formula, design = subset(data, get(var_subgroup) == .), x = TRUE, family = family.svyglm)) -> model
       xlev <- survey::svyglm(formula, design = data)$xlevels
-      xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
       pvs_int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), design = data, family = family.svyglm) %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
       #if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+      model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), design = data, family = family.svyglm)
       
       
-      if (length(label_val) > 2 | length(xlev) > 2){
-        model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), design = data, family = family.svyglm)
+      if (sum(grepl(":", names(coef(model.int)))) > 1){
         pv_anova <- anova(model.int, method = "Wald")
         pv_int <- round(pv_anova[[length(pv_anova)]][[7]], decimal.pvalue)
       }
@@ -133,13 +134,12 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data %>% subset(!is.na(get(var_subgroup))) %>% group_split(get(var_subgroup)) %>% purrr::map(~possible_glm(formula, data = ., x= T, family = family)) -> model
       data %>% subset(!is.na(get(var_subgroup))) %>% select(var_subgroup) %>% table %>% names -> label_val
       xlev <- stats::glm(formula, data = data)$xlevels
-      xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
       model.int <- possible_glm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep=""), deparse(formula))), data = data, family = family)  
       pvs_int <- model.int %>% summary %>% coefficients
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
       #if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       
-      if (length(label_val) > 2 | length(xlev) > 2){
+      if (sum(grepl(":", names(coef(model.int)))) > 1){
         pv_anova <- anova(model.int, test = "Chisq")
         pv_int <- round(pv_anova[nrow(pv_anova), 5], decimal.pvalue)
       }
