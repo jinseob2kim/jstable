@@ -13,6 +13,7 @@ authors:
 
 
 template:
+  bootstrap: 5
   params:
     docsearch:
       api_key: f6ab1678f68371b7775614662cffcb9d
