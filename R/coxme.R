@@ -99,8 +99,9 @@ coxme.display = function(coxme.obj, dec =2){
   if(!any(class(model)=="coxme")){stop("Model not from mixed effects Cox model")}
   
   xf <- attr(model$terms, "term.labels") # Independent vars
-  if(length(grep("strata", xf)) > 0){
-    xf <- xf[-grep("strata",xf)]
+  xstrata <- grep("strata", xf, value = T)
+  if(length(xstrata) > 0){
+    xf <- xf[-grep("strata", xf)]
   }
   
   formula.surv = as.character(model$formulaList$fixed)[2]
@@ -108,13 +109,20 @@ coxme.display = function(coxme.obj, dec =2){
   mdata = data.frame(get(as.character(model$call)[3]))
   
   if(length(xf) == 1){
-    uni.res = coxmeTable(coxme(as.formula(paste(formula.surv, "~", xf," + ", formula.ranef, sep="")), data = mdata))
+    #uni.res = coxmeTable(coxme(as.formula(paste(formula.surv, "~", xf," + ", formula.ranef, sep="")), data = mdata))
+    uni.res <- coxmeTable(model)
     rn.uni <- lapply(list(uni.res), rownames)
     fix.all = coxExp(uni.res, dec = dec)
     colnames(fix.all) = c("HR(95%CI)", "P value")
     rownames(fix.all) = names(model$coefficients)
   } else{
-    unis <- lapply(xf, function(x){coxmeTable(coxme(as.formula(paste(formula.surv, "~", x," + ", formula.ranef, sep="")), data = mdata))})
+    unis <- lapply(xf, function(x){
+      forms <- paste0(formula.surv, "~", x," + ", formula.ranef)
+      if(length(xstrata) > 0){
+        forms <- paste0(forms, " + ", xstrata)
+      }
+      return(coxmeTable(coxme(as.formula(forms), data = mdata)))
+    })
     rn.uni <- lapply(unis, rownames)
     unis2 <- Reduce(rbind, unis)
     uni.res <- unis2

@@ -1,7 +1,7 @@
 Package: jstable
 Title: Create Tables from Different Types of Regression
-Version: 1.0.8
-Date: 2021-11-07
+Version: 1.0.9
+Date: 2022-04-07
 Authors@R: c(person("Jinseob", "Kim", email = "jinseob2kim@gmail.com", role = c("aut", "cre"),  comment = c(ORCID = "0000-0002-9403-605X")),
              person("Zarathu", role = c("cph", "fnd"))
              )
@@ -9,7 +9,7 @@ Description: Create regression tables from generalized linear model(GLM), genera
 Depends: R (>= 3.4.0)
 License: Apache License 2.0 
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Imports: geepack, lme4, stats, data.table, labelled, tableone, coxme, survival (>= 3.0.0), survey, methods, dplyr, purrr, magrittr, tibble
 URL: https://github.com/jinseob2kim/jstable
 BugReports: https://github.com/jinseob2kim/jstable/issues
