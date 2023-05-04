@@ -1,3 +1,7 @@
+# jstable 1.1.0
+
+* Bugfix `TableSubgroupCox`: thanks for `Ding-yuan Wan`
+
 # jstable 1.0.9
 
 * Bugfix `coxme.display`: thanks for `Cristina Ganuza Vallejo`

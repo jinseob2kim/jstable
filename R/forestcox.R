@@ -186,8 +186,8 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     model %>% purrr::map_dbl("n", .default = NA) -> Count
     model %>% purrr::map("coefficients", .default = NA) %>% lapply(function(x){round(exp(x[1:ncoef]), decimal.hr)}) %>% unlist -> Point.Estimate
     #model %>% purrr::map("coefficients", .default = NA) %>% purrr::map_dbl(1) %>% exp %>% round(decimal.hr) -> Point.Estimate
-    model %>% purrr::map(possible_confint)  %>% Reduce(rbind, .) %>% exp %>% round(decimal.hr) -> CI
-    #model %>% purrr::map(possible_confint) %>% purrr::map(possible_rowone) %>% Reduce(rbind, .) %>% exp %>% round(decimal.hr) -> CI
+    #model %>% purrr::map(possible_confint)  %>% Reduce(rbind, .) %>% exp %>% round(decimal.hr) -> CI
+    model %>% purrr::map(possible_confint) %>% purrr::map(possible_rowone) %>% Reduce(rbind, .) %>% exp %>% round(decimal.hr) -> CI
     #model %>% purrr::map("y") %>% purrr::map(~purrr::map_dbl(., 1)) %>% purrr::map(~tail(., length(.)/2)) -> event
     #purrr::map2(event, model, ~possible_table(.x, .y[["x"]][, 1])) %>% purrr::map(possible_prop.table) %>% purrr::map(~round(., decimal.percent)) %>% Reduce(rbind, .) -> prop
     model %>% purrr::map(possible_pv) %>% purrr::map_dbl(~round(., decimal.pvalue)) -> pv
