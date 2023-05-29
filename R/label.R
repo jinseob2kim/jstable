@@ -72,7 +72,7 @@ mk.lev = function(data){
 #' @importFrom data.table data.table :=
 
 
-LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
+LabelepiDisplay <- function(epiDisplay.obj, label = F, ref){
   
   lv2 <- variable <- level <- val_label <- NULL
   
@@ -84,12 +84,12 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
 
   
   ## Var label
-  tb.rn = gsub(" \\(cont. var.\\)", "", rownames(tb.compact))
+  tb.rn <- gsub(" \\(cont. var.\\)", "", rownames(tb.compact))
   rownames(tb.compact) <- tb.rn
  
   if (nrow(tb.main) < 2 & label == T){
-    vname <- strsplit(rownames(tb.compact)[1], ":")[[1]][1]
-    cond.lv2 <- grepl(":", rownames(tb.compact)[1]) & grepl("vs", rownames(tb.compact)[1])
+    vname <- strsplit(rownames(tb.compact)[1], ": ")[[1]][1]
+    cond.lv2 <- grepl(": ", rownames(tb.compact)[1]) & grepl(" vs ", rownames(tb.compact)[1])
     rownames(tb.compact) <- gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
     if (cond.lv2){
       lv2 <- strsplit(strsplit(rownames(tb.compact)[1], ": ")[[1]][[2]], " vs ")[[1]]
@@ -103,8 +103,8 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
     vns <- c(vn, length(tb.rn)+1 )
     vl <- lapply(1:length(vn), function(x){tb.rn[vns[x]:(vns[x+1]-1)]})
     vl_label <- lapply(vl, function(x){
-      vname <- strsplit(x[1], ":")[[1]][1]
-      cond.lv2 <- grepl(":", x[1]) & grepl("vs", x[1])
+      vname <- strsplit(x[1], ": ")[[1]][1]
+      cond.lv2 <- grepl(": ", x[1]) & grepl(" vs ", x[1])
       #x[1] <- gsub(vname, ref[variable == vname, var_label][1], x[1])
       if (cond.lv2){
         lv2 <- strsplit(strsplit(x[1], ": ")[[1]][[2]], " vs ")[[1]]
@@ -165,7 +165,7 @@ LabelepiDisplay = function(epiDisplay.obj, label = F, ref){
 #' @export 
 #' @importFrom data.table data.table :=
 
-LabeljsTable = function(obj.table, ref){
+LabeljsTable <- function(obj.table, ref){
   
   lv2 <- variable <- level <- val_label <- NULL
   
@@ -177,8 +177,8 @@ LabeljsTable = function(obj.table, ref){
 
   if (nrow(tb.main) == 1){
     
-    vname <- strsplit(rownames(tb.compact)[1], ":")[[1]][1]
-    cond.lv2 <- grepl(":", rownames(tb.compact)[1]) & grepl("vs", rownames(tb.compact)[1])
+    vname <- strsplit(rownames(tb.compact)[1], ": ")[[1]][1]
+    cond.lv2 <- grepl(":", rownames(tb.compact)[1]) & grepl(" vs ", rownames(tb.compact)[1])
     rownames(tb.compact) <- gsub(vname, ref[variable == vname, var_label][1], rownames(tb.compact))
     if (cond.lv2){
       lv2 <- strsplit(strsplit(rownames(tb.compact)[1], ": ")[[1]][[2]], " vs ")[[1]]
@@ -193,9 +193,9 @@ LabeljsTable = function(obj.table, ref){
     vns <- c(vn, length(tb.rn)+1 )
     vl <- lapply(1:length(vn), function(x){tb.rn[vns[x]:(vns[x+1]-1)]})
     vl_label = lapply(vl, function(x){
-      vname <- strsplit(x[1], ":")[[1]][1]
+      vname <- strsplit(x[1], ": ")[[1]][1]
       x[1] <- gsub(vname, ref[variable == vname, var_label][1], x[1])
-      cond.lv2 <- grepl(":", x[1]) & grepl("vs", x[1])
+      cond.lv2 <- grepl(": ", x[1]) & grepl(" vs ", x[1])
       #x[1] <- gsub(vname, ref[variable == vname, var_label][1], x[1])
       if (cond.lv2){
         lv2 <- strsplit(strsplit(x[1], ": ")[[1]][[2]], " vs ")[[1]]

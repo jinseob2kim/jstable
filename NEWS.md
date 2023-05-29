@@ -1,3 +1,7 @@
+# jstable 1.1.1
+
+* Bugfix `LabelepiDisplay`: thanks for `thisis05`
+
 # jstable 1.1.0
 
 * Bugfix `TableSubgroupCox`: thanks for `Ding-yuan Wan`
