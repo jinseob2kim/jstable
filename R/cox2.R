@@ -1,112 +1,113 @@
 #' @title cox2.display: table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model
-#' @description Table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model  
+#' @description Table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model
 #' @param cox.obj.withmodel coxph.object with model option: TRUE
 #' @param dec Decimal point, Default: 2
 #' @return Table, cluster/frailty info, metrics, caption
 #' @details GEE like - cluster, Mixed effect model like - frailty
-#' @examples 
-#'  library(survival);data(lung)
-#'  fit1 <- coxph(Surv(time, status) ~ ph.ecog + age + cluster(inst), data = lung, model = TRUE)
-#'  fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frailty(inst), data = lung, model = TRUE)
-#'  cox2.display(fit1)
-#'  cox2.display(fit2)
+#' @examples
+#' library(survival)
+#' data(lung)
+#' fit1 <- coxph(Surv(time, status) ~ ph.ecog + age + cluster(inst), data = lung, model = TRUE)
+#' fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frailty(inst), data = lung, model = TRUE)
+#' cox2.display(fit1)
+#' cox2.display(fit2)
 #' @rdname cox2.display
-#' @export 
+#' @export
 #' @importFrom survival coxph cluster frailty
 #' @importFrom stats formula update
 
-cox2.display <- function (cox.obj.withmodel, dec = 2) 
-{
+cox2.display <- function(cox.obj.withmodel, dec = 2) {
   model <- cox.obj.withmodel
-  if(!any(class(model)=="coxph")){stop("Model not from Cox model")}
-  
+  if (!any(class(model) == "coxph")) {
+    stop("Model not from Cox model")
+  }
+
   xf <- attr(model$terms, "term.labels") # Independent vars
   xf.old <- xf
   xc <- NULL
   xc.vn <- NULL
   mtype <- "normal"
-  
-  if(length(grep("strata", xf)) > 0){
-    xf <- xf[-grep("strata",xf)]
-  } else if(length(grep("frailty\\(", xf)) > 0){
-    xf <- xf[-grep("frailty\\(",xf)]
+
+  if (length(grep("strata", xf)) > 0) {
+    xf <- xf[-grep("strata", xf)]
+  } else if (length(grep("frailty\\(", xf)) > 0) {
+    xf <- xf[-grep("frailty\\(", xf)]
     mtype <- "frailty"
     xc <- setdiff(xf.old, xf)
     xc.vn <- strsplit(strsplit(xc, "frailty\\(")[[1]][2], "\\)")[[1]][1]
-  } else if(!(is.null(model$call$cluster))){
+  } else if (!(is.null(model$call$cluster))) {
     mtype <- "cluster"
-    #xfull <-  strsplit(as.character(model$call[[2]][3]), " \\+ ")[[1]]
-    #xc <- setdiff(xfull, xf)
-    #xf <- ifelse(length(grep("cluster\\(",xf)) > 0, xf[-grep("cluster\\(",xf)], xf)
-    #xc <- setdiff(xf.old, xf)
+    # xfull <-  strsplit(as.character(model$call[[2]][3]), " \\+ ")[[1]]
+    # xc <- setdiff(xfull, xf)
+    # xf <- ifelse(length(grep("cluster\\(",xf)) > 0, xf[-grep("cluster\\(",xf)], xf)
+    # xc <- setdiff(xf.old, xf)
     xc <- as.character(model$call$cluster)
     xc.vn <- xc
-    #xc.vn <- strsplit(strsplit(xc, "cluster\\(")[[1]][2], "\\)")[[1]][1]
-
+    # xc.vn <- strsplit(strsplit(xc, "cluster\\(")[[1]][2], "\\)")[[1]][1]
   }
-   
+
   formula.surv <- as.character(model$formula)[2]
   formula.ranef <- paste(" + ", xc, sep = "")
   mdata <- model$model
-  
-  if (length(xc) == 0){ 
+
+  if (length(xc) == 0) {
     formula.ranef <- NULL
-  } else{
-      names(mdata)[names(mdata) == xc] <- xc.vn
-    }
-  
-  #if (is.null(data)){
+  } else {
+    names(mdata)[names(mdata) == xc] <- xc.vn
+  }
+
+  # if (is.null(data)){
   #  mdata = data.frame(get(as.character(model$call)[3]))
-  #} else{
+  # } else{
   #  mdata = data.frame(data)
-  #} 
-  
-  
-  
-  if(length(xf) == 1){
+  # }
+
+
+
+  if (length(xf) == 1) {
     uni.res <- data.frame(summary(model)$coefficients)
-    #uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
+    # uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
     rn.uni <- lapply(list(uni.res), rownames)
     names(uni.res)[ncol(uni.res)] <- "p"
     uni.res2 <- NULL
-    if (mtype == "normal"){
+    if (mtype == "normal") {
       uni.res2 <- uni.res[, c(1, 3, 4, 5)]
-      if (length(grep("robust.se", names(uni.res))) > 0){
+      if (length(grep("robust.se", names(uni.res))) > 0) {
         uni.res2 <- uni.res[, c(1, 4, 5, 6)]
       }
-    } else if (mtype == "cluster"){
+    } else if (mtype == "cluster") {
       uni.res2 <- uni.res[, c(1, 4, 5, 6)]
     } else {
       uni.res2 <- uni.res[-nrow(uni.res), c(1, 3, 4, 6)]
     }
     fix.all <- coxExp(uni.res2, dec = dec)
     colnames(fix.all) <- c("HR(95%CI)", "P value")
-    #rownames(fix.all) = ifelse(mtype == "frailty", names(model$coefficients)[-length(model$coefficients)], names(model$coefficients))
-    rownames(fix.all) <-  names(model$coefficients)
-  } else{
+    # rownames(fix.all) = ifelse(mtype == "frailty", names(model$coefficients)[-length(model$coefficients)], names(model$coefficients))
+    rownames(fix.all) <- names(model$coefficients)
+  } else {
     mdata2 <- cbind(matrix(sapply(mdata[, 1], `[[`, 1), ncol = 2), mdata[, -1])
     names(mdata2)[1:2] <- as.character(model$formula[[2]][2:3])
-    if (!is.null(xc.vn)){
-      names(mdata2)[ncol(mdata2)] <- xc.vn 
+    if (!is.null(xc.vn)) {
+      names(mdata2)[ncol(mdata2)] <- xc.vn
     }
-    basemodel <- update(model, stats::formula(paste(c(". ~ .", xf), collapse=' - ')), data = mdata2)
-    unis <- lapply(xf, function(x){
-      newfit <- update(basemodel, stats::formula(paste0(". ~ . +", x)), data= mdata2)
+    basemodel <- update(model, stats::formula(paste(c(". ~ .", xf), collapse = " - ")), data = mdata2)
+    unis <- lapply(xf, function(x) {
+      newfit <- update(basemodel, stats::formula(paste0(". ~ . +", x)), data = mdata2)
       uni.res <- data.frame(summary(newfit)$coefficients)
       uni.res <- uni.res[grep(x, rownames(uni.res)), ]
-      #uni.res <- uni.res[c(2:nrow(uni.res), 1), ]
-      #uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", x, formula.ranef, sep="")), data = mdata))$coefficients)
+      # uni.res <- uni.res[c(2:nrow(uni.res), 1), ]
+      # uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", x, formula.ranef, sep="")), data = mdata))$coefficients)
       names(uni.res)[ncol(uni.res)] <- "p"
       uni.res2 <- NULL
-      if (mtype == "normal"){
+      if (mtype == "normal") {
         uni.res2 <- uni.res[, c(1, 3, 4, 5)]
-      } else if (mtype == "cluster"){
+      } else if (mtype == "cluster") {
         uni.res2 <- uni.res[, c(1, 4, 5, 6)]
       } else {
         uni.res2 <- uni.res[, c(1, 3, 4, 6)]
       }
       return(uni.res2)
-      })
+    })
     rn.uni <- lapply(unis, rownames)
     unis2 <- Reduce(rbind, unis)
     uni.res <- unis2
@@ -117,75 +118,89 @@ cox2.display <- function (cox.obj.withmodel, dec = 2)
     colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
     rownames(fix.all) <- rownames(uni.res)
   }
-  
+
   ## rownames
-  fix.all.list <- lapply(1:length(xf), function(x){fix.all[rownames(fix.all) %in% rn.uni[[x]], ]})      
+  fix.all.list <- lapply(1:length(xf), function(x) {
+    fix.all[rownames(fix.all) %in% rn.uni[[x]], ]
+  })
   varnum.mfac <- which(lapply(fix.all.list, length) > ncol(fix.all))
-  lapply(varnum.mfac, function(x){fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])})
+  lapply(varnum.mfac, function(x) {
+    fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])
+  })
   fix.all.unlist <- Reduce(rbind, fix.all.list)
-  
-  rn.list <- lapply(1:length(xf), function(x){rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]})
-  varnum.2fac <- which(lapply(xf, function(x){length(sapply(mdata, levels)[[x]])}) == 2)
-  lapply(varnum.2fac, function(x){rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep="")})
-  lapply(varnum.mfac, function(x){rn.list[[x]] <<- c(paste(xf[x],": ref.=", levels(mdata[, xf[x]])[1], sep=""), gsub(xf[x],"   ", rn.list[[x]]))})
-  if (class(fix.all.unlist)[1] == "character"){
+
+  rn.list <- lapply(1:length(xf), function(x) {
+    rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]
+  })
+  varnum.2fac <- which(lapply(xf, function(x) {
+    length(sapply(mdata, levels)[[x]])
+  }) == 2)
+  lapply(varnum.2fac, function(x) {
+    rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep = "")
+  })
+  lapply(varnum.mfac, function(x) {
+    rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+  })
+  if (class(fix.all.unlist)[1] == "character") {
     fix.all.unlist <- t(data.frame(fix.all.unlist))
   }
   rownames(fix.all.unlist) <- unlist(rn.list)
   pv.colnum <- which(colnames(fix.all.unlist) %in% c("P value", "crude P value", "adj. P value"))
-  for (i in pv.colnum){
+  for (i in pv.colnum) {
     fix.all.unlist[, i] <- ifelse(as.numeric(fix.all.unlist[, i]) < 0.001, "< 0.001", round(as.numeric(fix.all.unlist[, i]), dec + 1))
   }
-  
-  
+
+
   ## random effect
-  #ranef = unlist(model$vcoef)
-  #ranef.out = round(ranef, dec)
-  ranef.mat = NULL
-  if (mtype == "cluster"){
+  # ranef = unlist(model$vcoef)
+  # ranef.out = round(ranef, dec)
+  ranef.mat <- NULL
+  if (mtype == "cluster") {
     ranef.mat <- cbind(c(NA, NA), matrix(NA, length(xc) + 1, ncol(fix.all) - 1))
-    #clname = strsplit(xc, "\\(")[[1]]
+    # clname = strsplit(xc, "\\(")[[1]]
     clname <- c("cluster", xc)
     cvname <- strsplit(paste(clname[-1], collapse = "("), "\\)")[[1]]
     cvname <- paste(cvname[length(cvname)], collapse = ")")
     rownames(ranef.mat) <- c(clname[1], cvname)
-  } else if (mtype == "frailty"){
+  } else if (mtype == "frailty") {
     ranef.mat <- cbind(c(NA, NA), matrix(NA, length(xc) + 1, ncol(fix.all) - 1))
     clname <- strsplit(xc, "\\(")[[1]]
     cvname <- strsplit(paste(clname[-1], collapse = "("), "\\)")[[1]]
     cvname <- paste(cvname[length(cvname)], collapse = ")")
     rownames(ranef.mat) <- c(clname[1], cvname)
   }
-  
+
 
   ## metric
-  #no.grp = unlist(lapply(model$frail, length))
-  no.obs = model$n
-  no.event = model$nevent
-  metric.mat = cbind(c(NA, no.obs, no.event), matrix(NA, 3, ncol(fix.all) - 1))
-  rownames(metric.mat) = c(NA, "No. of observations", "No. of events")
-  
+  # no.grp = unlist(lapply(model$frail, length))
+  no.obs <- model$n
+  no.event <- model$nevent
+  metric.mat <- cbind(c(NA, no.obs, no.event), matrix(NA, 3, ncol(fix.all) - 1))
+  rownames(metric.mat) <- c(NA, "No. of observations", "No. of events")
+
   ## Integrated ll
-  #ll = model$loglik[2]
-  #aic = -2 * ll -2*model$df[1] 
-  
+  # ll = model$loglik[2]
+  # aic = -2 * ll -2*model$df[1]
+
   ## caption
   surv.string <- as.character(attr(model$terms, "variables")[[2]])
   time.var.name <- surv.string[2]
-  status.var.name <-  surv.string[3]
-  intro <- paste("Cox model on time ('", time.var.name, "') to event ('", status.var.name, "')", sep="")
-  if (mtype == "cluster"){
+  status.var.name <- surv.string[3]
+  intro <- paste("Cox model on time ('", time.var.name, "') to event ('", status.var.name, "')", sep = "")
+  if (mtype == "cluster") {
     intro <- paste("Marginal", intro, "- Group", cvname)
-  } else if (mtype == "frailty"){
+  } else if (mtype == "frailty") {
     intro <- paste("Frailty", intro, "- Group", cvname)
   }
-  
+
   var.names0 <- attr(model$terms, "term.labels")
-  if(length(grep("strata", var.names0))>0) {intro <- paste(intro, " with '", var.names0[grep("strata", var.names0)], "'", sep="" )}
-  
-  if (is.null(ranef.mat)){
+  if (length(grep("strata", var.names0)) > 0) {
+    intro <- paste(intro, " with '", var.names0[grep("strata", var.names0)], "'", sep = "")
+  }
+
+  if (is.null(ranef.mat)) {
     return(list(table = fix.all.unlist, metric = metric.mat, caption = intro))
-  } else{
-    return(list(table = fix.all.unlist, ranef = ranef.mat, metric = metric.mat, caption = intro)) 
+  } else {
+    return(list(table = fix.all.unlist, ranef = ranef.mat, metric = metric.mat, caption = intro))
   }
 }
