@@ -1,0 +1,41 @@
+name: Style R
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  style:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: r-lib/actions/setup-r@v1
+      with:
+        r-version: 4.0.5
+
+    - name: Install dependencies
+      run: |
+        R -e "install.packages(c('styler', 'roxygen2', 'knitr'))"
+
+    - name: Style code
+      run: |
+        R -e 'styler::style_pkg()'
+
+    - name: Check if there are any changes
+      id: verify_diff
+      run: |
+        git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
+
+    - name: Commit changes
+      if: steps.verify_diff.outputs.changed == 'true'
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git commit -am "Apply automatic stylistic changes"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
