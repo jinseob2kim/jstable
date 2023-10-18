@@ -12,15 +12,15 @@
 #' @rdname mk.lev.var
 #' @export 
 
-mk.lev.var = function(data , vname){
-  v.vec = data[[vname]]
-  out = ""
+mk.lev.var <- function(data , vname){
+  v.vec <- data[[vname]]
+  out <- ""
   if (is.numeric(v.vec)){
-    out = c(vname, class(v.vec), NA)
+    out <- c(vname, class(v.vec), NA)
   } else{
-    v.level = levels(v.vec)
-    nr = length(v.level)
-    out = cbind(rep(vname, nr), rep(class(v.vec), nr), v.level)
+    v.level <- levels(v.vec)
+    nr <- length(v.level)
+    out <- cbind(rep(vname, nr), rep(class(v.vec), nr), v.level)
   }
   return(out)
 }
@@ -38,13 +38,16 @@ mk.lev.var = function(data , vname){
 #' @export 
 #' @importFrom data.table data.table :=
 
-mk.lev = function(data){
+mk.lev <- function(data){
   
   variable <- level <- val_label <- NULL
   
-  out.list = lapply(names(data), function(x){mk.lev.var(data, x)})
-  out.dt = data.table::data.table(Reduce(rbind, out.list))
-  names(out.dt) = c("variable", "class","level")
+  out.list <- lapply(names(data), function(x){mk.lev.var(data, x)})
+  out.dt <- data.table::data.table(Reduce(rbind, out.list))
+  if (length(out.list) == 1){
+    out.dt <- data.table::data.table(t(out.dt))
+  }
+  names(out.dt) <- c("variable", "class","level")
   out.dt[, var_label := variable]
   out.dt[, val_label := level]
   return(out.dt[])

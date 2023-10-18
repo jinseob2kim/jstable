@@ -25,7 +25,7 @@ Regression Tables from 'GLM', 'GEE', 'GLMM', 'Cox' and 'survey' Results for Publ
 ## Install
 
 ```{r, eval = F}
-remotes::install_github('jinseob2kim/jstable')
+remotes::install_github("jinseob2kim/jstable")
 library(jstable)
 ```
 
@@ -33,25 +33,25 @@ library(jstable)
 
 ```{r}
 ## Gaussian
-glm_gaussian <- glm(mpg~cyl + disp, data = mtcars)
+glm_gaussian <- glm(mpg ~ cyl + disp, data = mtcars)
 glmshow.display(glm_gaussian, decimal = 2)
 
 ## Binomial
-glm_binomial <- glm(vs~cyl + disp, data = mtcars, family = binomial)
+glm_binomial <- glm(vs ~ cyl + disp, data = mtcars, family = binomial)
 glmshow.display(glm_binomial, decimal = 2)
 ```
 
 ## GEE Table: from `geeglm` object from **geepack** package
 
 ```{r}
-library(geepack)  ## for dietox data
+library(geepack) ## for dietox data
 data(dietox)
 dietox$Cu <- as.factor(dietox$Cu)
-dietox$ddn = as.numeric(rnorm(nrow(dietox)) > 0)
-gee01 <- geeglm (Weight ~ Time + Cu , id = Pig, data = dietox, family = gaussian, corstr = "ex")
+dietox$ddn <- as.numeric(rnorm(nrow(dietox)) > 0)
+gee01 <- geeglm(Weight ~ Time + Cu, id = Pig, data = dietox, family = gaussian, corstr = "ex")
 geeglm.display(gee01)
 
-gee02 <- geeglm (ddn ~ Time + Cu , id = Pig, data = dietox, family = binomial, corstr = "ex")
+gee02 <- geeglm(ddn ~ Time + Cu, id = Pig, data = dietox, family = binomial, corstr = "ex")
 geeglm.display(gee02)
 ```
 
@@ -59,10 +59,10 @@ geeglm.display(gee02)
 
 ```{r}
 library(lme4)
-l1 = lmer(Weight ~ Time + Cu + (1|Pig), data = dietox) 
+l1 <- lmer(Weight ~ Time + Cu + (1 | Pig), data = dietox)
 lmer.display(l1, ci.ranef = T)
 
-l2 = glmer(ddn ~  Time + Cu + (1|Pig), data= dietox, family= "binomial")
+l2 <- glmer(ddn ~ Time + Cu + (1 | Pig), data = dietox, family = "binomial")
 lmer.display(l2)
 ```
 
@@ -71,7 +71,7 @@ lmer.display(l2)
 
 ```{r}
 library(survival)
-fit1 <- coxph(Surv(time, status) ~ ph.ecog + age, cluster = inst, lung, model = T)  ## model = T: to extract original data
+fit1 <- coxph(Surv(time, status) ~ ph.ecog + age, cluster = inst, lung, model = T) ## model = T: to extract original data
 fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frailty(inst), lung, model = T)
 cox2.display(fit1)
 cox2.display(fit2)
@@ -81,8 +81,8 @@ cox2.display(fit2)
 
 ```{r}
 library(coxme)
-fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
-coxme.display(fit) 
+fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1 | inst), lung)
+coxme.display(fit)
 ```
 
 ## GLM for survey data : `svyglm` object from **survey** package
@@ -90,12 +90,12 @@ coxme.display(fit)
 ```{r}
 library(survey)
 data(api)
-apistrat$tt = c(rep(1, 20), rep(0, nrow(apistrat) -20))
-apistrat$tt2 = factor(c(rep(0, 40), rep(1, nrow(apistrat) -40)))
+apistrat$tt <- c(rep(1, 20), rep(0, nrow(apistrat) - 20))
+apistrat$tt2 <- factor(c(rep(0, 40), rep(1, nrow(apistrat) - 40)))
 
-dstrat<-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
-ds <- svyglm(api00~ell+meals + tt2, design=dstrat)
-ds2 <- svyglm(tt~ell+meals+ tt2, design=dstrat, family = quasibinomial())
+dstrat <- svydesign(id = ~1, strata = ~stype, weights = ~pw, data = apistrat, fpc = ~fpc)
+ds <- svyglm(api00 ~ ell + meals + tt2, design = dstrat)
+ds2 <- svyglm(tt ~ ell + meals + tt2, design = dstrat, family = quasibinomial())
 svyregress.display(ds)
 svyregress.display(ds2)
 ```
@@ -103,18 +103,18 @@ svyregress.display(ds2)
 ## Cox model for survey data :`svycoxph` object from **survey** package
 
 ```{r}
-data(pbc, package="survival")
-pbc$sex = factor(pbc$sex)
-pbc$stage = factor(pbc$stage)
-pbc$randomized<-with(pbc, !is.na(trt) & trt>0)
-biasmodel<-glm(randomized~age*edema,data=pbc,family=binomial)
-pbc$randprob<-fitted(biasmodel)
+data(pbc, package = "survival")
+pbc$sex <- factor(pbc$sex)
+pbc$stage <- factor(pbc$stage)
+pbc$randomized <- with(pbc, !is.na(trt) & trt > 0)
+biasmodel <- glm(randomized ~ age * edema, data = pbc, family = binomial)
+pbc$randprob <- fitted(biasmodel)
 
-if (is.null(pbc$albumin)) pbc$albumin<-pbc$alb ##pre2.9.0
+if (is.null(pbc$albumin)) pbc$albumin <- pbc$alb ## pre2.9.0
 
-dpbc <- svydesign(id=~1, prob=~randprob, strata=~edema, data=subset(pbc,randomized))
+dpbc <- svydesign(id = ~1, prob = ~randprob, strata = ~edema, data = subset(pbc, randomized))
 
-model <- svycoxph(Surv(time,status>0)~ sex + protime + albumin + stage,design=dpbc)
+model <- svycoxph(Surv(time, status > 0) ~ sex + protime + albumin + stage, design = dpbc)
 svycox.display(model)
 ```
 
@@ -122,16 +122,18 @@ svycox.display(model)
 ## Sub-group analysis for Cox/svycox model
 ```{r}
 library(dplyr)
-lung %>% 
-mutate(status = as.integer(status == 1),
-       sex = factor(sex),
-       kk = factor(as.integer(pat.karno >= 70)),
-       kk1 = factor(as.integer(pat.karno >= 60))) -> lung
+lung %>%
+  mutate(
+    status = as.integer(status == 1),
+    sex = factor(sex),
+    kk = factor(as.integer(pat.karno >= 70)),
+    kk1 = factor(as.integer(pat.karno >= 60))
+  ) -> lung
 
-#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = T)
+# TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data=lung, line = T)
 
 ## Survey data
 library(survey)
 data.design <- svydesign(id = ~1, data = lung, weights = ~1)
-#TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = F)
+# TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, line = F)
 ```

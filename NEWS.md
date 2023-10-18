@@ -1,3 +1,7 @@
+# jstable 1.1.2
+
+* Bugfix `mk.lev`
+
 # jstable 1.1.1
 
 * Bugfix `LabelepiDisplay`: thanks for `thisis05`

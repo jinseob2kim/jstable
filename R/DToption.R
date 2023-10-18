@@ -1,26 +1,30 @@
-
 #' @title datable option for data(DT package)
 #' @description DT::datatable option for data
 #' @param fname File name to download
 #' @return datatable option object
 #' @details DETAILS
-#' @examples 
+#' @examples
 #' opt.data("mtcars")
 #' @rdname opt.data
-#' @export 
+#' @export
 
-opt.data = function(fname){
+opt.data <- function(fname) {
   return(
-    list(dom = '<lf<rt>Bip>', lengthMenu = list(c(10, 25, -1), c('10', '25', 'All')), pageLength = 10,
-         buttons = list('copy', 
-                        'print', 
-                        list(extend = 'collection', 
-                             buttons = list(list(extend = 'csv', filename= fname),
-                                            list(extend = 'excel', filename= fname), 
-                                            list(extend = 'pdf', filename= fname)
-                             ), 
-                             text = 'Download')
-         )
+    list(
+      dom = "<lf<rt>Bip>", lengthMenu = list(c(10, 25, -1), c("10", "25", "All")), pageLength = 10,
+      buttons = list(
+        "copy",
+        "print",
+        list(
+          extend = "collection",
+          buttons = list(
+            list(extend = "csv", filename = fname),
+            list(extend = "excel", filename = fname),
+            list(extend = "pdf", filename = fname)
+          ),
+          text = "Download"
+        )
+      )
     )
   )
 }
@@ -31,23 +35,28 @@ opt.data = function(fname){
 #' @param fname File name to download
 #' @return datatable option object
 #' @details DETAILS
-#' @examples 
-#'  options = opt.tb1("mtcars")
+#' @examples
+#' options <- opt.tb1("mtcars")
 #' @rdname opt.tb1
-#' @export 
+#' @export
 
-opt.tb1 = function(fname){
+opt.tb1 <- function(fname) {
   return(
-    list(dom = '<lf<rt>Bip>', lengthMenu = list(c(10, 25, -1), c('10', '25', 'All')), pageLength = 25, ordering = F,
-         buttons = list('copy', 
-                        'print', 
-                        list(extend = 'collection', 
-                             buttons = list(list(extend = 'csv', filename= fname),
-                                            list(extend = 'excel', filename= fname), 
-                                            list(extend = 'pdf', filename= fname)
-                             ), 
-                             text = 'Download')
-         )
+    list(
+      dom = "<lf<rt>Bip>", lengthMenu = list(c(10, 25, -1), c("10", "25", "All")), pageLength = 25, ordering = F,
+      buttons = list(
+        "copy",
+        "print",
+        list(
+          extend = "collection",
+          buttons = list(
+            list(extend = "csv", filename = fname),
+            list(extend = "excel", filename = fname),
+            list(extend = "pdf", filename = fname)
+          ),
+          text = "Download"
+        )
+      )
     )
   )
 }
@@ -59,23 +68,28 @@ opt.tb1 = function(fname){
 #' @param fname File name to download
 #' @return datatable option object
 #' @details DETAILS
-#' @examples 
-#'  options = opt.tbreg("mtcars")
+#' @examples
+#' options <- opt.tbreg("mtcars")
 #' @rdname opt.tbreg
-#' @export 
+#' @export
 
-opt.tbreg = function(fname){
+opt.tbreg <- function(fname) {
   return(
-    list(dom = '<lf<rt>Bip>', lengthMenu = list(c(10, 25, -1), c('10', '25', 'All')), pageLength = -1, ordering=F,
-         buttons = list('copy', 
-                        'print', 
-                        list(extend = 'collection', 
-                             buttons = list(list(extend = 'csv', filename= fname),
-                                            list(extend = 'excel', filename= fname), 
-                                            list(extend = 'pdf', filename= fname)
-                             ), 
-                             text = 'Download')
-         )
+    list(
+      dom = "<lf<rt>Bip>", lengthMenu = list(c(10, 25, -1), c("10", "25", "All")), pageLength = -1, ordering = F,
+      buttons = list(
+        "copy",
+        "print",
+        list(
+          extend = "collection",
+          buttons = list(
+            list(extend = "csv", filename = fname),
+            list(extend = "excel", filename = fname),
+            list(extend = "pdf", filename = fname)
+          ),
+          text = "Download"
+        )
+      )
     )
   )
 }
@@ -85,23 +99,28 @@ opt.tbreg = function(fname){
 #' @param fname File name to download
 #' @return datatable option object
 #' @details DETAILS
-#' @examples 
-#'  options = opt.roc("mtcars")
+#' @examples
+#' options <- opt.roc("mtcars")
 #' @rdname opt.roc
-#' @export 
+#' @export
 
-opt.roc = function(fname){
+opt.roc <- function(fname) {
   return(
-    list(dom = '<<rt>Bip>', ordering=F,
-         buttons = list('copy', 
-                        'print', 
-                        list(extend = 'collection', 
-                             buttons = list(list(extend = 'csv', filename= fname),
-                                            list(extend = 'excel', filename= fname), 
-                                            list(extend = 'pdf', filename= fname)
-                             ), 
-                             text = 'Download')
-         )
+    list(
+      dom = "<<rt>Bip>", ordering = F,
+      buttons = list(
+        "copy",
+        "print",
+        list(
+          extend = "collection",
+          buttons = list(
+            list(extend = "csv", filename = fname),
+            list(extend = "excel", filename = fname),
+            list(extend = "pdf", filename = fname)
+          ),
+          text = "Download"
+        )
+      )
     )
   )
 }
@@ -113,23 +132,28 @@ opt.roc = function(fname){
 #' @param fname File name to download
 #' @return datatable option object
 #' @details DETAILS
-#' @examples 
-#'  options = opt.simpledown("mtcars")
+#' @examples
+#' options <- opt.simpledown("mtcars")
 #' @rdname opt.simpledown
-#' @export 
+#' @export
 
-opt.simpledown = function(fname){
+opt.simpledown <- function(fname) {
   return(
-    list(dom = '<<rt>B>', ordering=F, pageLength = -1,
-         buttons = list('copy', 
-                        'print', 
-                        list(extend = 'collection', 
-                             buttons = list(list(extend = 'csv', filename= fname),
-                                            list(extend = 'excel', filename= fname), 
-                                            list(extend = 'pdf', filename= fname)
-                             ), 
-                             text = 'Download')
-         )
+    list(
+      dom = "<<rt>B>", ordering = F, pageLength = -1,
+      buttons = list(
+        "copy",
+        "print",
+        list(
+          extend = "collection",
+          buttons = list(
+            list(extend = "csv", filename = fname),
+            list(extend = "excel", filename = fname),
+            list(extend = "pdf", filename = fname)
+          ),
+          text = "Download"
+        )
+      )
     )
   )
 }

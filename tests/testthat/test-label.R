@@ -14,7 +14,7 @@ test_that("LabelepiDisplay", {
 
 test_that("LabeljsTable", {
   library(coxme)
-  fit <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
+  fit <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1 | inst) + (1 | sex), lung)
   fit.table <- coxme.display(fit)
   lung.label <- mk.lev(lung)
   expect_is(LabeljsMixed(fit.table, ref = lung.label), "list")
@@ -32,10 +32,10 @@ test_that("LabeljsCox", {
 
 
 test_that("LabeljsGeeglm", {
-  library(geepack);data(dietox)
+  library(geepack)
+  data(dietox)
   dietox$Cu <- as.factor(dietox$Cu)
-  gee01 <- geeglm (Weight ~ Time + Cu , id =Pig, data = dietox, family=gaussian,corstr="ex")
+  gee01 <- geeglm(Weight ~ Time + Cu, id = Pig, data = dietox, family = gaussian, corstr = "ex")
   g1 <- geeglm.display(gee01)
   expect_is(LabeljsGeeglm(g1, ref = mk.lev(dietox)), "list")
 })
-
