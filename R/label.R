@@ -84,12 +84,12 @@ LabelepiDisplay <- function(epiDisplay.obj, label = F, ref){
   if (nrow(tb.main)  <= 2){
     tb.compact <- tb.main
   }
-
+  
   
   ## Var label
   tb.rn <- gsub(" \\(cont. var.\\)", "", rownames(tb.compact))
   rownames(tb.compact) <- tb.rn
- 
+  
   if (nrow(tb.main) < 2 & label == T){
     vname <- strsplit(rownames(tb.compact)[1], ": ")[[1]][1]
     cond.lv2 <- grepl(": ", rownames(tb.compact)[1]) & grepl(" vs ", rownames(tb.compact)[1])
@@ -177,7 +177,7 @@ LabeljsTable <- function(obj.table, ref){
   
   ## Var label
   tb.rn <- rownames(tb.compact)
-
+  
   if (nrow(tb.main) == 1){
     
     vname <- strsplit(rownames(tb.compact)[1], ": ")[[1]][1]
@@ -187,7 +187,7 @@ LabeljsTable <- function(obj.table, ref){
       lv2 <- strsplit(strsplit(rownames(tb.compact)[1], ": ")[[1]][[2]], " vs ")[[1]]
       vll <- ref[variable == vname & level %in% lv2, c("level", "val_label")]
       rownames(tb.compact) <- paste(ref[variable == vname, var_label][1], ": ", vll[level == lv2[1], val_label], " vs ", vll[level == lv2[2], val_label], sep = "")
-      }
+    }
     
   }
   
@@ -229,7 +229,7 @@ LabeljsTable <- function(obj.table, ref){
   #}
   return(out)
 }
-  
+
 
 
 
