@@ -159,11 +159,11 @@
     <p>DETAILS</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>geepack</span>)
- <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>dietox</span>)
- <span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
- <span class='no'>l1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span>(<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Pig</span>) + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>Evit</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>)
- <span class='fu'>lmer.display</span>(<span class='no'>l1</span>)</div><div class='output co'>#&gt; <span class='message'>boundary (singular) fit: see help('isSingular')</span></div><div class='output co'>#&gt; <span class='message'>boundary (singular) fit: see help('isSingular')</span></div><div class='output co'>#&gt; $table
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>geepack</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>dietox</span>)
+<span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
+<span class='no'>l1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span>(<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> + (<span class='fl'>1</span> <span class='kw'>|</span> <span class='no'>Pig</span>) + (<span class='fl'>1</span> <span class='kw'>|</span> <span class='no'>Evit</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>)
+<span class='fu'>lmer.display</span>(<span class='no'>l1</span>)</div><div class='output co'>#&gt; <span class='message'>boundary (singular) fit: see help('isSingular')</span></div><div class='output co'>#&gt; <span class='message'>boundary (singular) fit: see help('isSingular')</span></div><div class='output co'>#&gt; $table
 #&gt;                      crude coeff(95%CI) crude P value adj. coeff(95%CI)
 #&gt; Time                   6.94 (6.88,7.01)     0.0000000  6.94 (6.88,7.01)
 #&gt; Cu: ref.=Cu000                     &lt;NA&gt;            NA              &lt;NA&gt;

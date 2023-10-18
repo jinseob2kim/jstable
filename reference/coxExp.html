@@ -155,9 +155,9 @@
     <p>DETAILS</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>coxme</span>)
- <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/coxme/man/coxme.html'>coxme</a></span>(<span class='fu'>Surv</span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>ph.ecog</span> + <span class='no'>age</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>inst</span>), <span class='no'>lung</span>)
- <span class='kw pkg'>jstable</span><span class='kw ns'>:::</span><span class='fu'><a href='https://rdrr.io/pkg/jstable/man/coxExp.html'>coxExp</a></span>(<span class='kw pkg'>jstable</span><span class='kw ns'>:::</span><span class='fu'><a href='https://rdrr.io/pkg/jstable/man/coxmeTable.html'>coxmeTable</a></span>(<span class='no'>fit</span>))</div><div class='output co'>#&gt;      HR        pv                    
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>coxme</span>)
+<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/coxme/man/coxme.html'>coxme</a></span>(<span class='fu'>Surv</span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>ph.ecog</span> + <span class='no'>age</span> + (<span class='fl'>1</span> <span class='kw'>|</span> <span class='no'>inst</span>), <span class='no'>lung</span>)
+<span class='kw pkg'>jstable</span><span class='kw ns'>:::</span><span class='fu'><a href='https://rdrr.io/pkg/jstable/man/coxExp.html'>coxExp</a></span>(<span class='kw pkg'>jstable</span><span class='kw ns'>:::</span><span class='fu'><a href='https://rdrr.io/pkg/jstable/man/coxmeTable.html'>coxmeTable</a></span>(<span class='no'>fit</span>))</div><div class='output co'>#&gt;      HR        pv                    
 #&gt; [1,] "2 (1,2)" "7.17364842448553e-05"
 #&gt; [2,] "1 (1,1)" "0.226949744823602"   </div></pre>
   </div>

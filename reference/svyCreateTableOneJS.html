@@ -248,13 +248,18 @@
     <p>DETAILS</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>survey</span>);<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>nhanes</span>)
- <span class='no'>nhanes</span>$<span class='no'>SDMVPSU</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='no'>nhanes</span>$<span class='no'>SDMVPSU</span>)
- <span class='no'>nhanesSvy</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(<span class='kw'>ids</span> <span class='kw'>=</span> ~ <span class='no'>SDMVPSU</span>, <span class='kw'>strata</span> <span class='kw'>=</span> ~ <span class='no'>SDMVSTRA</span>, <span class='kw'>weights</span> <span class='kw'>=</span> ~ <span class='no'>WTMEC2YR</span>,
-                        <span class='kw'>nest</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>nhanes</span>)
- <span class='fu'>svyCreateTableOneJS</span>(<span class='kw'>vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"HI_CHOL"</span>,<span class='st'>"race"</span>,<span class='st'>"agecat"</span>,<span class='st'>"RIAGENDR"</span>),
-                     <span class='kw'>strata</span> <span class='kw'>=</span> <span class='st'>"RIAGENDR"</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>nhanesSvy</span>,
-                     <span class='kw'>factorVars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"HI_CHOL"</span>, <span class='st'>"race"</span>, <span class='st'>"RIAGENDR"</span>))</div><div class='output co'>#&gt; $table
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>survey</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>nhanes</span>)
+<span class='no'>nhanes</span>$<span class='no'>SDMVPSU</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='no'>nhanes</span>$<span class='no'>SDMVPSU</span>)
+<span class='no'>nhanesSvy</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(
+  <span class='kw'>ids</span> <span class='kw'>=</span> ~<span class='no'>SDMVPSU</span>, <span class='kw'>strata</span> <span class='kw'>=</span> ~<span class='no'>SDMVSTRA</span>, <span class='kw'>weights</span> <span class='kw'>=</span> ~<span class='no'>WTMEC2YR</span>,
+  <span class='kw'>nest</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>nhanes</span>
+)
+<span class='fu'>svyCreateTableOneJS</span>(
+  <span class='kw'>vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"HI_CHOL"</span>, <span class='st'>"race"</span>, <span class='st'>"agecat"</span>, <span class='st'>"RIAGENDR"</span>),
+  <span class='kw'>strata</span> <span class='kw'>=</span> <span class='st'>"RIAGENDR"</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>nhanesSvy</span>,
+  <span class='kw'>factorVars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"HI_CHOL"</span>, <span class='st'>"race"</span>, <span class='st'>"RIAGENDR"</span>)
+)</div><div class='output co'>#&gt; $table
 #&gt;              level      1                      2                      p       
 #&gt; n            ""         "134944553.9"          "141591892.0"          ""      
 #&gt; HI_CHOL (%)  "0"        "112307738.4 ( 89.9) " "114402926.5 ( 87.7) " " 0.010"
