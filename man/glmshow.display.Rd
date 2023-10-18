@@ -21,7 +21,7 @@ Show summary table of glm object(regression, logistic).
 DETAILS
 }
 \examples{
- glmshow.display(glm(mpg ~ wt + qsec, data = mtcars))
+glmshow.display(glm(mpg ~ wt + qsec, data = mtcars))
 }
 \seealso{
 \code{\link[stats]{glm}}

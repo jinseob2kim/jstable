@@ -23,5 +23,5 @@ Transform the unit of coefficients to "Coeff", "OR" or "RR"
 DETAILS
 }
 \examples{
-  #EXAMPLE1
+# EXAMPLE1
 }

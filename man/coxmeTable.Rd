@@ -19,7 +19,7 @@ Extract fixed effect table in coxme.object
 DETAILS
 }
 \examples{
- library(coxme)
- fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
- jstable:::coxmeTable(fit)
+library(coxme)
+fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1 | inst), lung)
+jstable:::coxmeTable(fit)
 }

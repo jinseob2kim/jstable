@@ -21,12 +21,14 @@ Make gee results from "geeglm" object
 DETAILS
 }
 \examples{
- library(geepack)
- data(dietox)
- dietox$Cu <- as.factor(dietox$Cu)
- gee01 <- geeglm (Weight ~ Time + Cu , id =Pig, data = dietox,
-                family=gaussian,corstr="ex")
- geeglm.display(gee01)
+library(geepack)
+data(dietox)
+dietox$Cu <- as.factor(dietox$Cu)
+gee01 <- geeglm(Weight ~ Time + Cu,
+  id = Pig, data = dietox,
+  family = gaussian, corstr = "ex"
+)
+geeglm.display(gee01)
 }
 \seealso{
 \code{\link[data.table]{data.table-package}}

@@ -19,5 +19,5 @@ DT::datatable option for glm, gee(geepack package), lmer/glmer(lme4 package)
 DETAILS
 }
 \examples{
- options = opt.tbreg("mtcars")
+options <- opt.tbreg("mtcars")
 }

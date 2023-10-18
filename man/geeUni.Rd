@@ -29,9 +29,11 @@ Extract the coefficients of univariate gee using geeglm function (geepack packag
 DETAILS
 }
 \examples{
- library(geepack)
- data(dietox)
- dietox$Cu <- as.factor(dietox$Cu)
- gee.uni <- geeUni("Weight", "Time", data = dietox, id.vec = dietox$Pig, 
-                   family = "gaussian", cor.type = "exchangeable")
+library(geepack)
+data(dietox)
+dietox$Cu <- as.factor(dietox$Cu)
+gee.uni <- geeUni("Weight", "Time",
+  data = dietox, id.vec = dietox$Pig,
+  family = "gaussian", cor.type = "exchangeable"
+)
 }

@@ -19,5 +19,5 @@ Simple download DT::datatable option - No filter, No page
 DETAILS
 }
 \examples{
- options = opt.simpledown("mtcars")
+options <- opt.simpledown("mtcars")
 }

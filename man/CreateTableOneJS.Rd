@@ -105,6 +105,6 @@ Combine CreateTableOne & print function in tableone package
 DETAILS
 }
 \examples{
- library(survival)
- CreateTableOneJS(vars = names(lung), strata = "sex", data = lung)
+library(survival)
+CreateTableOneJS(vars = names(lung), strata = "sex", data = lung)
 }

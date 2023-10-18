@@ -19,5 +19,5 @@ DT::datatable option for table 1
 DETAILS
 }
 \examples{
- options = opt.tb1("mtcars")
+options <- opt.tb1("mtcars")
 }

@@ -42,11 +42,14 @@ Sub-group analysis table for GLM.
 This result is used to make forestplot.
 }
 \examples{
-library(survival);library(dplyr)
-lung \%>\% 
-  mutate(status = as.integer(status == 1),
-         sex = factor(sex),
-         kk = factor(as.integer(pat.karno >= 70))) -> lung
+library(survival)
+library(dplyr)
+lung \%>\%
+  mutate(
+    status = as.integer(status == 1),
+    sex = factor(sex),
+    kk = factor(as.integer(pat.karno >= 70))
+  ) -> lung
 TableSubgroupGLM(status ~ sex, data = lung, family = "binomial")
 TableSubgroupGLM(status ~ sex, var_subgroup = "kk", data = lung, family = "binomial")
 

@@ -19,5 +19,5 @@ DT::datatable option for ROC result
 DETAILS
 }
 \examples{
- options = opt.roc("mtcars")
+options <- opt.roc("mtcars")
 }

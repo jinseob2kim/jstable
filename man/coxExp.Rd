@@ -21,7 +21,7 @@ Transform the unit of coefficients to "HR"
 DETAILS
 }
 \examples{
- library(coxme)
- fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1|inst), lung)
- jstable:::coxExp(jstable:::coxmeTable(fit))
+library(coxme)
+fit <- coxme(Surv(time, status) ~ ph.ecog + age + (1 | inst), lung)
+jstable:::coxExp(jstable:::coxmeTable(fit))
 }
