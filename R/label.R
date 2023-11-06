@@ -47,7 +47,7 @@ mk.lev <- function(data) {
     mk.lev.var(data, x)
   })
   out.dt <- data.table::data.table(Reduce(rbind, out.list))
-  if (length(out.list) == 1) {
+  if (ncol(out.dt) != 3) {
     out.dt <- data.table::data.table(t(out.dt))
   }
   names(out.dt) <- c("variable", "class", "level")
