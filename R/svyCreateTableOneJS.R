@@ -21,6 +21,7 @@
 #' @param labeldata labeldata to use, Default: NULL
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
 #' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T
+#' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples
@@ -44,7 +45,8 @@
 
 svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test = T,
                                showAllLevels = T, printToggle = F, quote = F, smd = F, nonnormal = NULL,
-                               catDigits = 1, contDigits = 2, pDigits = 3, Labels = F, labeldata = NULL, minMax = F, showpm = T) {
+                               catDigits = 1, contDigits = 2, pDigits = 3, Labels = F, labeldata = NULL, minMax = F, showpm = T,
+                               addOverall = F) {
   setkey <- variable <- level <- . <- val_label <- NULL
 
   if (length(strata) != 1) {
@@ -109,6 +111,9 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 
   if (Labels & !is.null(labeldata)) {
     colname.group_var <- unlist(labeldata[get("variable") == strata, "val_label"])
+    if (is.na(colname.group_var[1])){
+      colname.group_var[1] <- "Overall"
+    }
     if (showAllLevels == T) {
       # colname.group_var <- unlist(labeldata[get("variable") == strata, "val_label"])
       colnames(ptb1)[1:(length(colname.group_var) + 1)] <- unlist(c(labeldata[get("variable") == strata, "var_label"][1], colname.group_var))
@@ -148,6 +153,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 #' @param psub show sub-group p-values, Default: F
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
 #' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T
+#' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples
@@ -172,7 +178,8 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 
 svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVars = NULL, includeNA = F, test = T,
                                 showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, nonnormal = NULL,
-                                catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = T) {
+                                catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = T,
+                                addOverall = F) {
   . <- level <- variable <- val_label <- V1 <- V2 <- NULL
 
   # if (Labels & !is.null(labeldata)){
@@ -223,7 +230,8 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     ptb1 <- svyCreateTableOne2(
       strata = strata, vars = vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm
+      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm,
+      addOverall = addOverall
     )
 
     cap.tb1 <- paste("Stratified by ", strata, "- weighted data", sep = "")
@@ -240,7 +248,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     ptb1.list <- lapply(data.strata, svyCreateTableOne2,
       vars = vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm
+      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm, addOverall = addOverall
     )
 
 
@@ -286,7 +294,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
 
     return(list(table = ptb1.cbind, caption = cap.tb1))
   } else {
-    res <- tableone::svyCreateTableOne(vars = vars, strata = c(strata2, strata), data = data, factorVars = factorVars, includeNA = F, test = T)
+    res <- tableone::svyCreateTableOne(vars = vars, strata = c(strata2, strata), data = data, factorVars = factorVars, includeNA = F, test = T, addOverall = addOverall)
     factor_vars <- res[["MetaData"]][["varFactors"]]
 
     if (Labels & !is.null(labeldata)) {
@@ -348,9 +356,17 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
       colname.group_var <- val_combination[, paste(V1, ":", V2, sep = "")]
       colname.group_index <- paste(labeldata[variable == strata, var_label][1], ":", labeldata[variable == strata2, var_label][1], sep = "")
       if (showAllLevels == T) {
-        colnames(ptb1)[1:(length(colname.group_var) + 1)] <- c(colname.group_index, colname.group_var)
+        if (addOverall){
+          colnames(ptb1)[1:(length(colname.group_var) + 2)] <- c(colname.group_index, "Overall", colname.group_var)
+        } else{
+          colnames(ptb1)[1:(length(colname.group_var) + 1)] <- c(colname.group_index, colname.group_var)
+        }
       } else {
-        colnames(ptb1)[1:length(colname.group_var)] <- colname.group_var
+        if (addOverall){
+          colnames(ptb1)[1:length(colname.group_var) + 1] <- colname.group_var
+        } else{
+          colnames(ptb1)[1:length(colname.group_var)] <- colname.group_var
+        }
       }
       # caption
       cap.tb1 <- paste("Stratified by ", labeldata[variable == strata, var_label][1], " and ", labeldata[variable == strata2, var_label][1], "- weighted data", sep = "")

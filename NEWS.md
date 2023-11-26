@@ -1,3 +1,7 @@
+# jstable 1.1.3
+
+* Add `addOverall` options to `CreateTableOneJS` and `svyCreateTableOneJS` to add overall column.
+
 # jstable 1.1.2
 
 * Bugfix `mk.lev`

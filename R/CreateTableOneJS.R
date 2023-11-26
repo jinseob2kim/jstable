@@ -30,6 +30,7 @@
 #' @param labeldata labeldata to use, Default: NULL
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
 #' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T
+#' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples
@@ -49,7 +50,7 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
                             testNormal = oneway.test, argsNormal = list(var.equal = F),
                             testNonNormal = kruskal.test, argsNonNormal = list(NULL),
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, exact = NULL, nonnormal = NULL,
-                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, minMax = F, showpm = T) {
+                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, minMax = F, showpm = T, addOverall = F) {
   setkey <- variable <- level <- . <- val_label <- NULL
 
   if (length(strata) != 1) {
@@ -71,7 +72,7 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
     testApprox = testApprox, argsApprox = argsApprox,
     testExact = testExact, argsExact = argsExact,
     testNormal = testNormal, argsNormal = argsNormal,
-    testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd
+    testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd, addOverall = addOverall
   )
 
   # factor_vars <- vars[sapply(vars, function(x){class(data[[x]]) %in% c("factor", "character")})]
@@ -127,6 +128,9 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
 
   if (Labels & !is.null(labeldata)) {
     colname.group_var <- unlist(labeldata[.(strata, names(res$CatTable)), val_label])
+    if (is.na(colname.group_var[1])){
+      colname.group_var[1] <- "Overall"
+    }
     if (showAllLevels == T) {
       # colname.group_var <- unlist(labeldata[get("variable") == strata, "val_label"])
       colnames(ptb1)[1:(length(colname.group_var) + 1)] <- unlist(c(labeldata[get("variable") == strata, "var_label"][1], colname.group_var))
@@ -177,6 +181,7 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
 #' @param psub show sub-group p-values, Default: F
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
 #' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T
+#' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples
@@ -197,7 +202,8 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
                              testNormal = oneway.test, argsNormal = list(var.equal = F),
                              testNonNormal = kruskal.test, argsNonNormal = list(NULL),
                              showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, exact = NULL, nonnormal = NULL,
-                             catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = T) {
+                             catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = T,
+                             addOverall = F) {
   . <- level <- variable <- val_label <- V1 <- V2 <- NULL
   # if (Labels & !is.null(labeldata)){
   #  var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
@@ -257,7 +263,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       testNormal = testNormal, argsNormal = argsNormal,
       testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal, exact = exact,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm
+      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm, addOverall = addOverall
     )
 
 
@@ -278,7 +284,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       testNormal = testNormal, argsNormal = argsNormal,
       testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal, exact = exact,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = T
+      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = T, addOverall =F
     )
 
     if (showAllLevels == T) {
@@ -329,7 +335,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       testApprox = chisq.test, argsApprox = list(correct = TRUE),
       testExact = fisher.test, argsExact = list(workspace = 2 * 10^5),
       testNormal = oneway.test, argsNormal = list(var.equal = F),
-      testNonNormal = kruskal.test, argsNonNormal = list(NULL)
+      testNonNormal = kruskal.test, argsNonNormal = list(NULL), addOverall = addOverall
     )
 
     factor_vars <- res[["MetaData"]][["varFactors"]]
@@ -400,9 +406,18 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       colname.group_var <- val_combination[, paste(V1, ":", V2, sep = "")]
       colname.group_index <- paste(labeldata[variable == strata, var_label][1], ":", labeldata[variable == strata2, var_label][1], sep = "")
       if (showAllLevels == T) {
-        colnames(ptb1)[1:(length(colname.group_var) + 1)] <- c(colname.group_index, colname.group_var)
+        if (addOverall){
+          colnames(ptb1)[1:(length(colname.group_var) + 2)] <- c(colname.group_index, "Overall", colname.group_var)
+        } else{
+          colnames(ptb1)[1:(length(colname.group_var) + 1)] <- c(colname.group_index, colname.group_var)
+        }
       } else {
-        colnames(ptb1)[1:length(colname.group_var)] <- colname.group_var
+        if (addOverall){
+          colnames(ptb1)[1:length(colname.group_var) + 1] <- colname.group_var
+        } else{
+          colnames(ptb1)[1:length(colname.group_var)] <- colname.group_var
+        }
+       
       }
 
       # caption
