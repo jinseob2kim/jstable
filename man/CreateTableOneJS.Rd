@@ -33,7 +33,8 @@ CreateTableOneJS(
   labeldata = NULL,
   psub = T,
   minMax = F,
-  showpm = T
+  showpm = T,
+  addOverall = F
 )
 }
 \arguments{
@@ -94,6 +95,8 @@ CreateTableOneJS(
 \item{minMax}{Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.}
 
 \item{showpm}{Logical, show normal distributed continuous variables as Mean ± SD. Default: T}
+
+\item{addOverall}{(optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F}
 }
 \value{
 A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.

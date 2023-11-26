@@ -21,5 +21,7 @@ Export label and level: one variable
 DETAILS
 }
 \examples{
- lapply(names(iris), function(x){jstable::mk.lev.var(iris, x)})
+lapply(names(iris), function(x) {
+  jstable::mk.lev.var(iris, x)
+})
 }

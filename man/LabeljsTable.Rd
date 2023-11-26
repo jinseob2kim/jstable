@@ -21,9 +21,9 @@ Apply label information to table of geeglm.display, lmer.display, coxme.display 
 DETAILS
 }
 \examples{
- library(coxme)
- fit <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1|inst) +(1|sex), lung)
- fit.table <- coxme.display(fit)
- lung.label <- mk.lev(lung)
- LabeljsTable(fit.table$table, ref = lung.label)
+library(coxme)
+fit <- coxme(Surv(time, status) ~ sex + ph.ecog + ph.karno + (1 | inst) + (1 | sex), lung)
+fit.table <- coxme.display(fit)
+lung.label <- mk.lev(lung)
+LabeljsTable(fit.table$table, ref = lung.label)
 }

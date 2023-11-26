@@ -1,5 +1,6 @@
 ^appveyor\.yml$
 ^docs$
+^cla$
 ^_pkgdown\.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$

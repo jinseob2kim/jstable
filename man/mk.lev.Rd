@@ -19,5 +19,5 @@ Export label and level: multiple variable
 DETAILS
 }
 \examples{
- mk.lev(iris)
+mk.lev(iris)
 }
