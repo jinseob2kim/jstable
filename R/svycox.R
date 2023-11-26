@@ -15,11 +15,14 @@
 #'
 #' if (is.null(pbc$albumin)) pbc$albumin <- pbc$alb ## pre2.9.0
 #'
-#' dpbc <- survey::svydesign(id = ~1, prob = ~randprob, strata = ~edema, 
-#'                           data = subset(pbc, randomized))
+#' dpbc <- survey::svydesign(
+#'   id = ~1, prob = ~randprob, strata = ~edema,
+#'   data = subset(pbc, randomized)
+#' )
 #'
-#' model <- survey::svycoxph(Surv(time, status > 0) ~ sex + protime + albumin + stage, 
-#'                           design = dpbc)
+#' model <- survey::svycoxph(Surv(time, status > 0) ~ sex + protime + albumin + stage,
+#'   design = dpbc
+#' )
 #' svycox.display(model)
 #' @seealso
 #'  \code{\link[survey]{svycoxph}}
