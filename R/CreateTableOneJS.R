@@ -128,7 +128,7 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
 
   if (Labels & !is.null(labeldata)) {
     colname.group_var <- unlist(labeldata[.(strata, names(res$CatTable)), val_label])
-    if (is.na(colname.group_var[1])){
+    if (is.na(colname.group_var[1])) {
       colname.group_var[1] <- "Overall"
     }
     if (showAllLevels == T) {
@@ -284,7 +284,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       testNormal = testNormal, argsNormal = argsNormal,
       testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal, exact = exact,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = T, addOverall =F
+      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = T, addOverall = F
     )
 
     if (showAllLevels == T) {
@@ -406,18 +406,17 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       colname.group_var <- val_combination[, paste(V1, ":", V2, sep = "")]
       colname.group_index <- paste(labeldata[variable == strata, var_label][1], ":", labeldata[variable == strata2, var_label][1], sep = "")
       if (showAllLevels == T) {
-        if (addOverall){
+        if (addOverall) {
           colnames(ptb1)[1:(length(colname.group_var) + 2)] <- c(colname.group_index, "Overall", colname.group_var)
-        } else{
+        } else {
           colnames(ptb1)[1:(length(colname.group_var) + 1)] <- c(colname.group_index, colname.group_var)
         }
       } else {
-        if (addOverall){
+        if (addOverall) {
           colnames(ptb1)[1:length(colname.group_var) + 1] <- colname.group_var
-        } else{
+        } else {
           colnames(ptb1)[1:length(colname.group_var)] <- colname.group_var
         }
-       
       }
 
       # caption
