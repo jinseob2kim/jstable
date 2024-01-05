@@ -1,3 +1,7 @@
+# jstable 1.1.4
+
+* Fix: confidence interval calculation in `svyglm` ( thanks for `cyk0315`)
+
 # jstable 1.1.3
 
 * Add `addOverall` options to `CreateTableOneJS` and `svyCreateTableOneJS` to add overall column.
