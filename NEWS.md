@@ -1,3 +1,7 @@
+# jstable 1.1.5
+
+* Bugfix `TableSubgroupCox`: thanks for `ciciing`
+
 # jstable 1.1.4
 
 * Fix: confidence interval calculation in `svyglm` ( thanks for `cyk0315`)
