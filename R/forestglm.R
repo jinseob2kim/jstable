@@ -136,9 +136,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         coefficients()
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
       # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
-      model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data, family = family.svyglm)
-
-
+      data.design<-data
+      if(family=='binomial'){
+        model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = quasibinomial())
+      }
+      else{
+        model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = gaussian())
+      }
       if (sum(grepl(":", names(coef(model.int)))) > 1) {
         pv_anova <- anova(model.int, method = "Wald")
         pv_int <- round(pv_anova[[length(pv_anova)]][[7]], decimal.pvalue)

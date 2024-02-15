@@ -1,3 +1,7 @@
+# jstable 1.1.6
+
+* Bugfix `TableSubgroupGLM`: thanks for `weisx2022`
+
 # jstable 1.1.5
 
 * Bugfix `TableSubgroupCox`: thanks for `ciciing`
