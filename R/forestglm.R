@@ -43,15 +43,15 @@
 
 TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data, family = "binomial", decimal.estimate = 2, decimal.percent = 1, decimal.pvalue = 3) {
   . <- NULL
-  
+
   if (length(formula[[3]]) > 1) stop("Formula must contains only 1 independent variable")
   if (any(class(data) == "survey.design" & !is.null(var_subgroup))) {
     if (is.numeric(data$variables[[var_subgroup]])) stop("var_subgroup must categorical.")
   } else if (any(class(data) == "data.frame" & !is.null(var_subgroup))) {
     if (is.numeric(data[[var_subgroup]])) stop("var_subgroup must categorical.")
   }
-  
-  
+
+
   ## functions with error
   possible_table <- purrr::possibly(table, NA)
   possible_prop.table <- purrr::possibly(function(x) {
@@ -69,20 +69,20 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   possible_rowone <- purrr::possibly(function(x) {
     x[2, ]
   }, NA)
-  
+
   xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
   ncoef <- ifelse(any(class(data) == "survey.design"), ifelse(length(levels(data$variables[[xlabel]])) <= 2, 1, length(levels(data$variables[[xlabel]])) - 1),
-                  ifelse(length(levels(data[[xlabel]])) <= 2, 1, length(levels(data[[xlabel]])) - 1)
+    ifelse(length(levels(data[[xlabel]])) <= 2, 1, length(levels(data[[xlabel]])) - 1)
   )
   var_cov <- setdiff(var_cov, c(as.character(formula[[3]]), var_subgroup))
   family.svyglm <- gaussian()
   if (family == "binomial") family.svyglm <- quasibinomial()
-  
+
   if (is.null(var_subgroup)) {
     if (!is.null(var_cov)) {
       formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
     }
-    
+
     if (any(class(data) == "survey.design")) {
       model <- survey::svyglm(formula, design = data, x = T, family = family.svyglm)
       # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
@@ -90,34 +90,34 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       model <- stats::glm(formula, data = data, x = T, family = family)
       # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
     }
-    
-    
+
+
     Point.Estimate <- round(stats::coef(model), decimal.estimate)[2]
     CI <- round(stats::confint(model)[2, ], decimal.estimate)
     if (family == "binomial") {
       Point.Estimate <- round(exp(stats::coef(model)), decimal.estimate)[2]
       CI <- round(exp(stats::confint(model)[2, ]), decimal.estimate)
     }
-    
-    
-    
+
+
+
     # if (length(Point.Estimate) > 1){
     #  stop("Formula must contain 1 independent variable only.")
     # }
-    
-    
-    
+
+
+
     # event <- model$y
     # prop <- round(prop.table(table(event, model$x[, 1]), 2)[2, ] * 100, decimal.percent)
     pv <- round(tail(summary(model)$coefficients[2, ], 1), decimal.pvalue)
-    
+
     data.frame(Variable = "Overall", Count = length(model$y), Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2]) %>%
       dplyr::mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
-    
+
     if (family == "binomial") {
       names(out)[4] <- "OR"
     }
-    
+
     return(out)
   } else if (length(var_subgroup) >= 2 | any(grepl(var_subgroup, formula))) {
     stop("Please input correct subgroup variable.")
@@ -142,7 +142,6 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
       else{
         model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = gaussian())
-        
       }
       if (sum(grepl(":", names(coef(model.int)))) > 1) {
         pv_anova <- anova(model.int, method = "Wald")
@@ -166,17 +165,17 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         coefficients()
       pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
       # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
-      
+
       if (sum(grepl(":", names(coef(model.int)))) > 1) {
         pv_anova <- anova(model.int, test = "Chisq")
         pv_int <- round(pv_anova[nrow(pv_anova), 5], decimal.pvalue)
       }
-      
+
       Count <- as.vector(table(data[[var_subgroup]]))
     }
-    
-    
-    
+
+
+
     Estimate <- model %>%
       purrr::map("coefficients", .default = NA) %>%
       purrr::map_dbl(2, .default = NA)
@@ -190,18 +189,18 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       Point.Estimate <- round(exp(Estimate), decimal.estimate)
       CI <- round(exp(CI0), decimal.estimate)
     }
-    
+
     model %>%
       purrr::map(possible_pv) %>%
       purrr::map_dbl(~ round(., decimal.pvalue)) -> pv
-    
-    
+
+
     data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), "Point Estimate" = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2]) %>%
       dplyr::mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
     if (family == "binomial") {
       names(out)[4] <- "OR"
     }
-    
+
     return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
   }
 }
