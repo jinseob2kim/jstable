@@ -39,7 +39,9 @@ glmshow.display <- function(glm.object, decimal = 2) {
 
   xs <- attr(model$terms, "term.labels")
   y <- names(model$model)[1]
-  gaussianT <- ifelse(length(grep("gaussian", model$family)) == 1, T, F)
+  family<-ifelse(length(grep("gaussian", model$family)) == 1, 1, ifelse(length(grep("binomial", model$family)) >= 1,2,3))
+  
+  
   data <- model$data
 
   ## table
@@ -48,14 +50,18 @@ glmshow.display <- function(glm.object, decimal = 2) {
   } else if (length(xs) == 1) {
     uni <- data.frame(coefNA(glm.object))[-1, ]
     rn.uni <- lapply(list(uni), rownames)
-    if (gaussianT) {
+    if (family==1) {
       summ <- paste(round(uni[, 1], decimal), " (", round(uni[, 1] - 1.96 * uni[, 2], decimal), ",", round(uni[, 1] + 1.96 * uni[, 2], decimal), ")", sep = "")
       uni.res <- matrix(cbind(summ, ifelse(uni[, 4] <= 0.001, "< 0.001", as.character(round(uni[, 4], decimal + 1)))), nrow = nrow(uni))
       colnames(uni.res) <- c(paste("Coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "P value")
     } else {
       summ <- paste(round(exp(uni[, 1]), decimal), " (", round(exp(uni[, 1] - 1.96 * uni[, 2]), decimal), ",", round(exp(uni[, 1] + 1.96 * uni[, 2]), decimal), ")", sep = "")
       uni.res <- matrix(cbind(summ, ifelse(uni[, 4] <= 0.001, "< 0.001", as.character(round(uni[, 4], decimal + 1)))), nrow = nrow(uni))
-      colnames(uni.res) <- c(paste("OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "P value")
+      if(family==2){
+        colnames(uni.res) <- c(paste("OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "P value")
+      }else{
+        colnames(uni.res) <- c(paste("RR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "P value")
+        }
     }
     rownames(uni.res) <- rownames(uni)
     res <- uni.res
@@ -68,7 +74,7 @@ glmshow.display <- function(glm.object, decimal = 2) {
     })
     rn.uni <- lapply(uni, rownames)
     uni <- Reduce(rbind, uni)
-    if (gaussianT) {
+    if (family==1) {
       summ <- paste(round(uni[, 1], decimal), " (", round(uni[, 1] - 1.96 * uni[, 2], decimal), ",", round(uni[, 1] + 1.96 * uni[, 2], decimal), ")", sep = "")
       uni.res <- t(rbind(summ, ifelse(uni[, 4] <= 0.001, "< 0.001", as.character(round(uni[, 4], decimal + 1)))))
       colnames(uni.res) <- c(paste("crude coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "crude P value")
@@ -78,14 +84,16 @@ glmshow.display <- function(glm.object, decimal = 2) {
       mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
       colnames(mul.res) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
     } else {
+      k<-ifelse(family==2,'OR','RR')
+   
       summ <- paste(round(exp(uni[, 1]), decimal), " (", round(exp(uni[, 1] - 1.96 * uni[, 2]), decimal), ",", round(exp(uni[, 1] + 1.96 * uni[, 2]), decimal), ")", sep = "")
       uni.res <- t(rbind(summ, ifelse(uni[, 4] <= 0.001, "< 0.001", as.character(round(uni[, 4], decimal + 1)))))
-      colnames(uni.res) <- c(paste("crude OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "crude P value")
+      colnames(uni.res) <- c(paste("crude ",k,".(", 100 - 100 * 0.05, "%CI)", sep = ""), "crude P value")
       rownames(uni.res) <- rownames(uni)
       mul <- coefNA(model)[-1, ]
       mul.summ <- paste(round(exp(mul[, 1]), decimal), " (", round(exp(mul[, 1] - 1.96 * mul[, 2]), decimal), ",", round(exp(mul[, 1] + 1.96 * mul[, 2]), decimal), ")", sep = "")
       mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
-      colnames(mul.res) <- c(paste("adj. OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+      colnames(mul.res) <- c(paste("adj. ",k,".(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
     }
 
     res <- cbind(uni.res[rownames(uni.res) %in% rownames(mul.res), ], mul.res)
@@ -129,7 +137,7 @@ glmshow.display <- function(glm.object, decimal = 2) {
   outcome.name <- y
 
 
-  if (gaussianT) {
+  if (family==1) {
     first.line <- paste("Linear regression predicting ", outcome.name, sep = "", "\n")
     last.lines <- paste("No. of observations = ",
       length(model$y), "\n", "R-squared = ", round(cor(model$y, predict(model))^2, decimal + 2), "\n",
@@ -152,3 +160,35 @@ glmshow.display <- function(glm.object, decimal = 2) {
   class(results) <- c("display", "list")
   return(results)
 }
+
+#' @title DATASET_TITLE
+#' @description DATASET_DESCRIPTION
+#' @format A data frame with 17562 rows and 24 variables:
+#' \describe{
+#'   \item{\code{ccode}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{cname}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{yy}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{mm}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{dd}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{date}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{nonacc}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{cardio}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{respir}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{influenza}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{meanpm10}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{meanso2}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{meanno2}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{meanco}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{maxco}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{maxo3}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{meantemp}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{maxtemp}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{mintemp}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{meanhumi}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{meanpress}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{season}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{dow}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{sn}}{integer COLUMN_DESCRIPTION} 
+#'}
+#' @details DETAILS
+"mort"

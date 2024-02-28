@@ -4,7 +4,7 @@
 #' @param var_subgroup 1 sub-group variable for analysis, Default: NULL
 #' @param var_cov Variables for additional adjust, Default: NULL
 #' @param data Data or svydesign in survey package.
-#' @param family family, "gaussian" or "binomial"
+#' @param family family, "gaussian" or "binomial" or 'poisson' or 'quasipoisson'
 #' @param decimal.estimate Decimal for estimate, Default: 2
 #' @param decimal.percent Decimal for percent, Default: 1
 #' @param decimal.pvalue Decimal for pvalue, Default: 3
@@ -77,6 +77,8 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   var_cov <- setdiff(var_cov, c(as.character(formula[[3]]), var_subgroup))
   family.svyglm <- gaussian()
   if (family == "binomial") family.svyglm <- quasibinomial()
+  if (family == "poisson") family.svyglm <- poisson()
+  if (family == "quasipoisson") family.svyglm <- quasipoisson()
 
   if (is.null(var_subgroup)) {
     if (!is.null(var_cov)) {
@@ -94,7 +96,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 
     Point.Estimate <- round(stats::coef(model), decimal.estimate)[2]
     CI <- round(stats::confint(model)[2, ], decimal.estimate)
-    if (family == "binomial") {
+    if (family %in%  c("binomial",'poisson','quasipoisson')) {
       Point.Estimate <- round(exp(stats::coef(model)), decimal.estimate)[2]
       CI <- round(exp(stats::confint(model)[2, ]), decimal.estimate)
     }
@@ -116,6 +118,9 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 
     if (family == "binomial") {
       names(out)[4] <- "OR"
+    }
+    if (family %in% c('poisson','quasipoisson')) {
+      names(out)[4] <- "RR"
     }
 
     return(out)
@@ -139,9 +144,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data.design<-data
       if(family=='binomial'){
         model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = quasibinomial())
-      }
-      else{
+      }else if(family=='gaussian'){
         model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = gaussian())
+      }else if(family=='poisson'){
+        model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = poisson())
+      }else{
+        model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = quasipoisson())
+        
       }
       if (sum(grepl(":", names(coef(model.int)))) > 1) {
         pv_anova <- anova(model.int, method = "Wald")
@@ -185,7 +194,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       Reduce(rbind, .)
     Point.Estimate <- round(Estimate, decimal.estimate)
     CI <- round(CI0, decimal.estimate)
-    if (family == "binomial") {
+    if (family %in% c("binomial",'poisson','quasipoisson')) {
       Point.Estimate <- round(exp(Estimate), decimal.estimate)
       CI <- round(exp(CI0), decimal.estimate)
     }
@@ -200,6 +209,9 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if (family == "binomial") {
       names(out)[4] <- "OR"
     }
+    if (family %in% c("poisson",'quasipoisson')) {
+      names(out)[4] <- "RR"
+    }
 
     return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
   }
@@ -213,7 +225,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 #' @param var_subgroups Multiple sub-group variables for analysis, Default: NULL
 #' @param var_cov Variables for additional adjust, Default: NULL
 #' @param data Data or svydesign in survey package.
-#' @param family family, "gaussian" or "binomial"
+#' @param family family, "gaussian" or "binomial" or 'poisson' or 'quasipoisson'
 #' @param decimal.estimate Decimal for estimate, Default: 2
 #' @param decimal.percent Decimal for percent, Default: 1
 #' @param decimal.pvalue Decimal for pvalue, Default: 3
