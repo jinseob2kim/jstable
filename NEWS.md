@@ -1,6 +1,7 @@
 # jstable 1.1.7
 
 * Add family 'poisson', 'quasipoisson' in `glmshow.display` and `TableSubgroupMultiGLM`
+* Add data `mort`
 
 # jstable 1.1.6
 
