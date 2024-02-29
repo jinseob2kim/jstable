@@ -87,13 +87,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
     }
 
-    cc<-summary(model)$coefficients
+    cc <- summary(model)$coefficients
     Point.Estimate <- round(stats::coef(model), decimal.estimate)[2]
-    
-    CI<-round(c(cc[2, 1] - qnorm(0.975) * cc[2, 2],cc[2, 1] + qnorm(0.975) * cc[2, 2]),decimal.estimate)
-    if (family %in%  c("binomial",'poisson','quasipoisson')) {
+
+    CI <- round(c(cc[2, 1] - qnorm(0.975) * cc[2, 2], cc[2, 1] + qnorm(0.975) * cc[2, 2]), decimal.estimate)
+    if (family %in% c("binomial", "poisson", "quasipoisson")) {
       Point.Estimate <- round(exp(stats::coef(model)), decimal.estimate)[2]
-      CI<-round(exp(c(cc[2, 1] - qnorm(0.975) * cc[2, 2],cc[2, 1] + qnorm(0.975) * cc[2, 2])),decimal.estimate)
+      CI <- round(exp(c(cc[2, 1] - qnorm(0.975) * cc[2, 2], cc[2, 1] + qnorm(0.975) * cc[2, 2])), decimal.estimate)
     }
 
 
@@ -114,7 +114,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if (family == "binomial") {
       names(out)[4] <- "OR"
     }
-    if (family %in% c('poisson','quasipoisson')) {
+    if (family %in% c("poisson", "quasipoisson")) {
       names(out)[4] <- "RR"
     }
 
@@ -139,13 +139,12 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data.design <- data
       if (family == "binomial") {
         model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = quasibinomial())
-      }else if(family=='gaussian'){
+      } else if (family == "gaussian") {
         model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = gaussian())
-      }else if(family=='poisson'){
+      } else if (family == "poisson") {
         model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = poisson())
-      }else{
+      } else {
         model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = quasipoisson())
-        
       }
       if (sum(grepl(":", names(coef(model.int)))) > 1) {
         pv_anova <- anova(model.int, method = "Wald")
@@ -183,16 +182,16 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     Estimate <- model %>%
       purrr::map("coefficients", .default = NA) %>%
       purrr::map_dbl(2, .default = NA)
-   
+
     CI0 <- model %>%
-      purrr::map(function(model){
-        cc0<-summary(model)$coefficients
-        c(cc0[2, 1] - qnorm(0.975) * cc0[2, 2],cc0[2, 1] + qnorm(0.975) * cc0[2, 2])
+      purrr::map(function(model) {
+        cc0 <- summary(model)$coefficients
+        c(cc0[2, 1] - qnorm(0.975) * cc0[2, 2], cc0[2, 1] + qnorm(0.975) * cc0[2, 2])
       }) %>%
       Reduce(rbind, .)
     Point.Estimate <- round(Estimate, decimal.estimate)
     CI <- round(CI0, decimal.estimate)
-    if (family %in% c("binomial",'poisson','quasipoisson')) {
+    if (family %in% c("binomial", "poisson", "quasipoisson")) {
       Point.Estimate <- round(exp(Estimate), decimal.estimate)
       CI <- round(exp(CI0), decimal.estimate)
     }
@@ -207,7 +206,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if (family == "binomial") {
       names(out)[4] <- "OR"
     }
-    if (family %in% c("poisson",'quasipoisson')) {
+    if (family %in% c("poisson", "quasipoisson")) {
       names(out)[4] <- "RR"
     }
 
