@@ -31,14 +31,13 @@
 #'  \code{\link[purrr]{safely}},\code{\link[purrr]{map}},\code{\link[purrr]{map2}}
 #'  \code{\link[stats]{glm}}
 #'  \code{\link[survey]{svyglm}}
-#'  \code{\link[stats]{confint}}
 #' @rdname TableSubgroupGLM
 #' @export
 #' @importFrom purrr possibly map_dbl map map2
 #' @importFrom dplyr group_split select filter mutate bind_cols
 #' @importFrom magrittr %>%
 #' @importFrom survey svyglm
-#' @importFrom stats glm confint coefficients anova gaussian quasibinomial
+#' @importFrom stats glm coefficients anova gaussian quasibinomial
 #' @importFrom utils tail
 
 TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data, family = "binomial", decimal.estimate = 2, decimal.percent = 1, decimal.pvalue = 3) {
@@ -93,12 +92,14 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
     }
 
-
+    cc<-summary(model)$coefficients
     Point.Estimate <- round(stats::coef(model), decimal.estimate)[2]
-    CI <- round(stats::confint(model)[2, ], decimal.estimate)
+   # CI <- round(stats::confint(model)[2, ], decimal.estimate)
+    CI<-round(c(cc[2, 1] - qnorm(0.975) * cc[2, 2],cc[2, 1] + qnorm(0.975) * cc[2, 2]),decimal.estimate)
     if (family %in%  c("binomial",'poisson','quasipoisson')) {
       Point.Estimate <- round(exp(stats::coef(model)), decimal.estimate)[2]
-      CI <- round(exp(stats::confint(model)[2, ]), decimal.estimate)
+      # CI <- round(exp(stats::confint(model)[2, ]), decimal.estimate)
+      CI<-round(exp(c(cc[2, 1] - qnorm(0.975) * cc[2, 2],cc[2, 1] + qnorm(0.975) * cc[2, 2])),decimal.estimate)
     }
 
 
@@ -164,7 +165,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         purrr::map(~ possible_glm(formula, data = ., x = T, family = family)) -> model
       data %>%
         subset(!is.na(get(var_subgroup))) %>%
-        select(var_subgroup) %>%
+        select(all_of(var_subgroup)) %>%
         table() %>%
         names() -> label_val
       xlev <- stats::glm(formula, data = data)$xlevels
@@ -188,10 +189,8 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     Estimate <- model %>%
       purrr::map("coefficients", .default = NA) %>%
       purrr::map_dbl(2, .default = NA)
-    CI0 <- model %>%
-      purrr::map(possible_confint) %>%
-      purrr::map(possible_rowone) %>%
-      Reduce(rbind, .)
+    cc0<-summary(model)$coefficients
+    CI0 <- c(cc0[2, 1] - qnorm(0.975) * cc0[2, 2],cc0[2, 1] + qnorm(0.975) * cc0[2, 2])
     Point.Estimate <- round(Estimate, decimal.estimate)
     CI <- round(CI0, decimal.estimate)
     if (family %in% c("binomial",'poisson','quasipoisson')) {
