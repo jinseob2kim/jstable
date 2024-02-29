@@ -24,7 +24,7 @@ TableSubgroupGLM(
 
 \item{data}{Data or svydesign in survey package.}
 
-\item{family}{family, "gaussian" or "binomial"}
+\item{family}{family, "gaussian" or "binomial" or 'poisson' or 'quasipoisson'}
 
 \item{decimal.estimate}{Decimal for estimate, Default: 2}
 

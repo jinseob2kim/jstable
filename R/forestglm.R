@@ -4,7 +4,7 @@
 #' @param var_subgroup 1 sub-group variable for analysis, Default: NULL
 #' @param var_cov Variables for additional adjust, Default: NULL
 #' @param data Data or svydesign in survey package.
-#' @param family family, "gaussian" or "binomial"
+#' @param family family, "gaussian" or "binomial" or 'poisson' or 'quasipoisson'
 #' @param decimal.estimate Decimal for estimate, Default: 2
 #' @param decimal.percent Decimal for percent, Default: 1
 #' @param decimal.pvalue Decimal for pvalue, Default: 3
@@ -31,14 +31,13 @@
 #'  \code{\link[purrr]{safely}},\code{\link[purrr]{map}},\code{\link[purrr]{map2}}
 #'  \code{\link[stats]{glm}}
 #'  \code{\link[survey]{svyglm}}
-#'  \code{\link[stats]{confint}}
 #' @rdname TableSubgroupGLM
 #' @export
 #' @importFrom purrr possibly map_dbl map map2
 #' @importFrom dplyr group_split select filter mutate bind_cols
 #' @importFrom magrittr %>%
 #' @importFrom survey svyglm
-#' @importFrom stats glm confint coefficients anova gaussian quasibinomial
+#' @importFrom stats glm coefficients anova gaussian quasibinomial
 #' @importFrom utils tail
 
 TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data, family = "binomial", decimal.estimate = 2, decimal.percent = 1, decimal.pvalue = 3) {
@@ -62,14 +61,9 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   }, NA)
   possible_glm <- purrr::possibly(stats::glm, NA)
   possible_svyglm <- purrr::possibly(survey::svyglm, NA)
-  possible_confint <- purrr::possibly(stats::confint, NA)
   possible_modely <- purrr::possibly(function(x) {
     purrr::map_dbl(x, .[["y"]], 1)
   }, NA)
-  possible_rowone <- purrr::possibly(function(x) {
-    x[2, ]
-  }, NA)
-
   xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
   ncoef <- ifelse(any(class(data) == "survey.design"), ifelse(length(levels(data$variables[[xlabel]])) <= 2, 1, length(levels(data$variables[[xlabel]])) - 1),
     ifelse(length(levels(data[[xlabel]])) <= 2, 1, length(levels(data[[xlabel]])) - 1)
@@ -77,6 +71,8 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   var_cov <- setdiff(var_cov, c(as.character(formula[[3]]), var_subgroup))
   family.svyglm <- gaussian()
   if (family == "binomial") family.svyglm <- quasibinomial()
+  if (family == "poisson") family.svyglm <- poisson()
+  if (family == "quasipoisson") family.svyglm <- quasipoisson()
 
   if (is.null(var_subgroup)) {
     if (!is.null(var_cov)) {
@@ -91,12 +87,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
     }
 
-
+    cc<-summary(model)$coefficients
     Point.Estimate <- round(stats::coef(model), decimal.estimate)[2]
-    CI <- round(stats::confint(model)[2, ], decimal.estimate)
-    if (family == "binomial") {
+    
+    CI<-round(c(cc[2, 1] - qnorm(0.975) * cc[2, 2],cc[2, 1] + qnorm(0.975) * cc[2, 2]),decimal.estimate)
+    if (family %in%  c("binomial",'poisson','quasipoisson')) {
       Point.Estimate <- round(exp(stats::coef(model)), decimal.estimate)[2]
-      CI <- round(exp(stats::confint(model)[2, ]), decimal.estimate)
+      CI<-round(exp(c(cc[2, 1] - qnorm(0.975) * cc[2, 2],cc[2, 1] + qnorm(0.975) * cc[2, 2])),decimal.estimate)
     }
 
 
@@ -116,6 +113,9 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 
     if (family == "binomial") {
       names(out)[4] <- "OR"
+    }
+    if (family %in% c('poisson','quasipoisson')) {
+      names(out)[4] <- "RR"
     }
 
     return(out)
@@ -139,8 +139,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data.design <- data
       if (family == "binomial") {
         model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = quasibinomial())
-      } else {
+      }else if(family=='gaussian'){
         model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = gaussian())
+      }else if(family=='poisson'){
+        model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = poisson())
+      }else{
+        model.int <- survey::svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = quasipoisson())
+        
       }
       if (sum(grepl(":", names(coef(model.int)))) > 1) {
         pv_anova <- anova(model.int, method = "Wald")
@@ -154,7 +159,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         purrr::map(~ possible_glm(formula, data = ., x = T, family = family)) -> model
       data %>%
         subset(!is.na(get(var_subgroup))) %>%
-        select(var_subgroup) %>%
+        select(all_of(var_subgroup)) %>%
         table() %>%
         names() -> label_val
       xlev <- stats::glm(formula, data = data)$xlevels
@@ -178,13 +183,16 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     Estimate <- model %>%
       purrr::map("coefficients", .default = NA) %>%
       purrr::map_dbl(2, .default = NA)
+   
     CI0 <- model %>%
-      purrr::map(possible_confint) %>%
-      purrr::map(possible_rowone) %>%
+      purrr::map(function(model){
+        cc0<-summary(model)$coefficients
+        c(cc0[2, 1] - qnorm(0.975) * cc0[2, 2],cc0[2, 1] + qnorm(0.975) * cc0[2, 2])
+      }) %>%
       Reduce(rbind, .)
     Point.Estimate <- round(Estimate, decimal.estimate)
     CI <- round(CI0, decimal.estimate)
-    if (family == "binomial") {
+    if (family %in% c("binomial",'poisson','quasipoisson')) {
       Point.Estimate <- round(exp(Estimate), decimal.estimate)
       CI <- round(exp(CI0), decimal.estimate)
     }
@@ -199,6 +207,9 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if (family == "binomial") {
       names(out)[4] <- "OR"
     }
+    if (family %in% c("poisson",'quasipoisson')) {
+      names(out)[4] <- "RR"
+    }
 
     return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
   }
@@ -212,7 +223,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 #' @param var_subgroups Multiple sub-group variables for analysis, Default: NULL
 #' @param var_cov Variables for additional adjust, Default: NULL
 #' @param data Data or svydesign in survey package.
-#' @param family family, "gaussian" or "binomial"
+#' @param family family, "gaussian" or "binomial" or 'poisson' or 'quasipoisson'
 #' @param decimal.estimate Decimal for estimate, Default: 2
 #' @param decimal.percent Decimal for percent, Default: 1
 #' @param decimal.pvalue Decimal for pvalue, Default: 3
