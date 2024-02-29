@@ -61,14 +61,9 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   }, NA)
   possible_glm <- purrr::possibly(stats::glm, NA)
   possible_svyglm <- purrr::possibly(survey::svyglm, NA)
-  possible_confint <- purrr::possibly(stats::confint, NA)
   possible_modely <- purrr::possibly(function(x) {
     purrr::map_dbl(x, .[["y"]], 1)
   }, NA)
-  possible_rowone <- purrr::possibly(function(x) {
-    x[2, ]
-  }, NA)
-
   xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
   ncoef <- ifelse(any(class(data) == "survey.design"), ifelse(length(levels(data$variables[[xlabel]])) <= 2, 1, length(levels(data$variables[[xlabel]])) - 1),
     ifelse(length(levels(data[[xlabel]])) <= 2, 1, length(levels(data[[xlabel]])) - 1)
@@ -94,11 +89,10 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 
     cc<-summary(model)$coefficients
     Point.Estimate <- round(stats::coef(model), decimal.estimate)[2]
-   # CI <- round(stats::confint(model)[2, ], decimal.estimate)
+    
     CI<-round(c(cc[2, 1] - qnorm(0.975) * cc[2, 2],cc[2, 1] + qnorm(0.975) * cc[2, 2]),decimal.estimate)
     if (family %in%  c("binomial",'poisson','quasipoisson')) {
       Point.Estimate <- round(exp(stats::coef(model)), decimal.estimate)[2]
-      # CI <- round(exp(stats::confint(model)[2, ]), decimal.estimate)
       CI<-round(exp(c(cc[2, 1] - qnorm(0.975) * cc[2, 2],cc[2, 1] + qnorm(0.975) * cc[2, 2])),decimal.estimate)
     }
 
@@ -189,8 +183,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     Estimate <- model %>%
       purrr::map("coefficients", .default = NA) %>%
       purrr::map_dbl(2, .default = NA)
-    cc0<-summary(model)$coefficients
-    CI0 <- c(cc0[2, 1] - qnorm(0.975) * cc0[2, 2],cc0[2, 1] + qnorm(0.975) * cc0[2, 2])
+   
+    CI0 <- model %>%
+      purrr::map(function(model){
+        cc0<-summary(model)$coefficients
+        c(cc0[2, 1] - qnorm(0.975) * cc0[2, 2],cc0[2, 1] + qnorm(0.975) * cc0[2, 2])
+      }) %>%
+      Reduce(rbind, .)
     Point.Estimate <- round(Estimate, decimal.estimate)
     CI <- round(CI0, decimal.estimate)
     if (family %in% c("binomial",'poisson','quasipoisson')) {

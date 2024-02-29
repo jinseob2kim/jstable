@@ -4,6 +4,7 @@
 #' @return coefficient table with NA
 #' @details DETAILS
 #' @examples
+#' 
 #' coefNA(glm(mpg ~ wt + qsec, data = mtcars))
 #' @rdname coefNA
 #' @export
