@@ -30,7 +30,7 @@ A data frame with 17562 rows and 24 variables:
   \item{\code{meanpress}}{double COLUMN_DESCRIPTION}
   \item{\code{season}}{integer COLUMN_DESCRIPTION}
   \item{\code{dow}}{integer COLUMN_DESCRIPTION}
-  \item{\code{sn}}{integer COLUMN_DESCRIPTION} 
+  \item{\code{sn}}{integer COLUMN_DESCRIPTION}
 }
 }
 \usage{

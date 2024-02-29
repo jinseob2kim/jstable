@@ -63,5 +63,4 @@ TableSubgroupGLM(status ~ sex, var_subgroup = "kk", data = data.design, family =
 \code{\link[purrr]{safely}},\code{\link[purrr]{map}},\code{\link[purrr]{map2}}
  \code{\link[stats]{glm}}
  \code{\link[survey]{svyglm}}
- \code{\link[stats]{confint}}
 }

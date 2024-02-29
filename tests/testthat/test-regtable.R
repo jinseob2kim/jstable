@@ -10,7 +10,7 @@ test_that("Run glmshow.display", {
 
 test_that("Run cox2.display", {
   library(survival)
-  data(lung)
+  #data(lung)
   fit0 <- coxph(Surv(time, status) ~ ph.ecog + age, data = lung, model = TRUE)
   fit1 <- coxph(Surv(time, status) ~ ph.ecog + age + cluster(inst), data = lung, model = TRUE)
   fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frailty(inst), data = lung, model = TRUE)

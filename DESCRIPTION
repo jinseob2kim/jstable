@@ -10,7 +10,7 @@ Description: Create regression tables from generalized linear model(GLM), genera
 Depends: R (>= 3.4.0)
 License: Apache License 2.0 
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports: geepack, lme4, stats, data.table, labelled, tableone, coxme, survival (>= 3.0.0), survey, methods, dplyr, purrr, magrittr, tibble
 URL: https://github.com/jinseob2kim/jstable
 BugReports: https://github.com/jinseob2kim/jstable/issues

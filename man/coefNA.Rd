@@ -19,5 +19,6 @@ Make coefficient table with NA
 DETAILS
 }
 \examples{
+
 coefNA(glm(mpg ~ wt + qsec, data = mtcars))
 }

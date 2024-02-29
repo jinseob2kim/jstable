@@ -13,7 +13,7 @@ test_that("Run TableSubgroupMultiGLM", {
     ) -> lung
 
   expect_is(TableSubgroupMultiGLM(status ~ sex, data = lung, family = "binomial"), "data.frame")
-  expect_warning(TableSubgroupMultiGLM(status ~ sex, var_subgroups = c("kk", "kk1"), data = lung, family = "binomial"))
+  expect_is(TableSubgroupMultiGLM(status ~ sex, var_subgroups = c("kk", "kk1"), data = lung, family = "binomial"), "data.frame")
   expect_is(TableSubgroupMultiGLM(pat.karno ~ sex, var_subgroups = c("kk", "kk1"), data = lung, family = "gaussian", line = TRUE), "data.frame")
 
   ## Survey data

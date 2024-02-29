@@ -37,7 +37,7 @@
 #' @importFrom dplyr group_split select filter mutate bind_cols
 #' @importFrom magrittr %>%
 #' @importFrom survey svyglm
-#' @importFrom stats glm coefficients anova gaussian quasibinomial
+#' @importFrom stats glm coefficients anova gaussian quasibinomial poisson quasipoisson qnorm
 #' @importFrom utils tail
 
 TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data, family = "binomial", decimal.estimate = 2, decimal.percent = 1, decimal.pvalue = 3) {
@@ -158,7 +158,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         purrr::map(~ possible_glm(formula, data = ., x = T, family = family)) -> model
       data %>%
         subset(!is.na(get(var_subgroup))) %>%
-        select(all_of(var_subgroup)) %>%
+        select(dplyr::all_of(var_subgroup)) %>%
         table() %>%
         names() -> label_val
       xlev <- stats::glm(formula, data = data)$xlevels
@@ -186,7 +186,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     CI0 <- model %>%
       purrr::map(function(model) {
         cc0 <- summary(model)$coefficients
-        c(cc0[2, 1] - qnorm(0.975) * cc0[2, 2], cc0[2, 1] + qnorm(0.975) * cc0[2, 2])
+        c(cc0[2, 1] - stats::qnorm(0.975) * cc0[2, 2], cc0[2, 1] + stats::qnorm(0.975) * cc0[2, 2])
       }) %>%
       Reduce(rbind, .)
     Point.Estimate <- round(Estimate, decimal.estimate)
