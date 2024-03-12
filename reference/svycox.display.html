@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.7</span>
       </span>
     </div>
 
@@ -169,11 +169,14 @@
 
 <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='no'>pbc</span>$<span class='no'>albumin</span>)) <span class='no'>pbc</span>$<span class='no'>albumin</span> <span class='kw'>&lt;-</span> <span class='no'>pbc</span>$<span class='no'>alb</span> <span class='co'>## pre2.9.0</span>
 
-<span class='no'>dpbc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>survey</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(<span class='kw'>id</span> <span class='kw'>=</span> ~<span class='fl'>1</span>, <span class='kw'>prob</span> <span class='kw'>=</span> ~<span class='no'>randprob</span>, <span class='kw'>strata</span> <span class='kw'>=</span> ~<span class='no'>edema</span>,
-                          <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='no'>pbc</span>, <span class='no'>randomized</span>))
+<span class='no'>dpbc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>survey</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(
+  <span class='kw'>id</span> <span class='kw'>=</span> ~<span class='fl'>1</span>, <span class='kw'>prob</span> <span class='kw'>=</span> ~<span class='no'>randprob</span>, <span class='kw'>strata</span> <span class='kw'>=</span> ~<span class='no'>edema</span>,
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='no'>pbc</span>, <span class='no'>randomized</span>)
+)
 
 <span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>survey</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/survey/man/svycoxph.html'>svycoxph</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/survival/man/Surv.html'>Surv</a></span>(<span class='no'>time</span>, <span class='no'>status</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>) ~ <span class='no'>sex</span> + <span class='no'>protime</span> + <span class='no'>albumin</span> + <span class='no'>stage</span>,
-                          <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>dpbc</span>)
+  <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>dpbc</span>
+)
 <span class='fu'>svycox.display</span>(<span class='no'>model</span>)</div><div class='output co'>#&gt; Stratified Independent Sampling design (with replacement)
 #&gt; survey::svydesign(id = ~1, prob = ~randprob, strata = ~edema, 
 #&gt;     data = subset(pbc, randomized))
@@ -194,9 +197,9 @@
 #&gt; protime       "1.37 (1.09,1.72)"   "0.006"       "1.52 (1.2,1.91)"    
 #&gt; albumin       "0.2 (0.14,0.29)"    "&lt; 0.001"     "0.31 (0.2,0.47)"    
 #&gt; stage: ref.=1 NA                   NA            NA                   
-#&gt;    2          "5.67 (0.77,41.78)"  "0.089"       "10.94 (1.01,118.55)"
+#&gt;    2          "5.67 (0.77,41.78)"  "0.089"       "10.94 (1.01,118.54)"
 #&gt;    3          "9.78 (1.37,69.94)"  "0.023"       "17.03 (1.69,171.6)" 
-#&gt;    4          "22.89 (3.2,163.48)" "0.002"       "22.56 (2.25,226.42)"
+#&gt;    4          "22.89 (3.2,163.47)" "0.002"       "22.56 (2.25,226.41)"
 #&gt;               adj. P value
 #&gt; sex: f vs m   "0.017"     
 #&gt; protime       "&lt; 0.001"   
@@ -233,7 +236,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.zarathu.com'><img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" /></a>.</p>
+  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.zarathu.com'><img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" /></a>, Yoonkyoung Jeon.</p>
 </div>
 
 <div class="pkgdown">

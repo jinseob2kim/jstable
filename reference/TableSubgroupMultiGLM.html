@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.7</span>
       </span>
     </div>
 
@@ -165,7 +165,7 @@
     </tr>
     <tr>
       <th>family</th>
-      <td><p>family, "gaussian" or "binomial"</p></td>
+      <td><p>family, "gaussian" or "binomial" or 'poisson' or 'quasipoisson'</p></td>
     </tr>
     <tr>
       <th>decimal.estimate</th>
@@ -209,16 +209,16 @@
 <span class='fu'>TableSubgroupMultiGLM</span>(<span class='no'>status</span> ~ <span class='no'>sex</span>,
   <span class='kw'>var_subgroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"kk"</span>, <span class='st'>"kk1"</span>),
   <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>lung</span>, <span class='kw'>line</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>
-)</div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: algorithm did not converge</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='warning'>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></div><div class='output co'>#&gt; <span class='message'>Waiting for profiling to be done...</span></div><div class='output co'>#&gt;          Variable Count Percent           OR Lower  Upper P value
-#&gt; sex2      Overall   228     100         3.01  1.66   5.52  &lt;0.001
-#&gt; 1...1        &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;
-#&gt; 11...2         kk  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;
-#&gt; init...3        0    38    16.9            7  0.91 145.62   0.098
-#&gt; ...4            1   187    83.1         2.94  1.56   5.62   0.001
-#&gt; 1...5        &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;
-#&gt; 11...6        kk1  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;
-#&gt; init...7        0     8     3.6 314366015.19     0   &lt;NA&gt;   0.997
-#&gt; ...8            1   217    96.4         2.85  1.56   5.29   0.001
+)</div><div class='output co'>#&gt;          Variable Count Percent           OR Lower Upper P value
+#&gt; sex2      Overall   228     100         3.01  1.65  5.47  &lt;0.001
+#&gt; 1...1        &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;
+#&gt; 11...2         kk  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;
+#&gt; init...3        0    38    16.9            7   0.7 70.03   0.098
+#&gt; ...4            1   187    83.1         2.94  1.55  5.57   0.001
+#&gt; 1...5        &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;
+#&gt; 11...6        kk1  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;
+#&gt; init...7        0     8     3.6 314366015.19     0   Inf   0.997
+#&gt; ...8            1   217    96.4         2.85  1.55  5.25   0.001
 #&gt;          P for interaction
 #&gt; sex2                  &lt;NA&gt;
 #&gt; 1...1                 &lt;NA&gt;
@@ -234,14 +234,14 @@
 <span class='no'>data.design</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(<span class='kw'>id</span> <span class='kw'>=</span> ~<span class='fl'>1</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>lung</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No weights or probabilities supplied, assuming equal probability</span></div><div class='input'><span class='fu'>TableSubgroupMultiGLM</span>(<span class='no'>status</span> ~ <span class='no'>sex</span>,
   <span class='kw'>var_subgroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"kk"</span>, <span class='st'>"kk1"</span>),
   <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>data.design</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>
-)</div><div class='output co'>#&gt;          Variable Count Percent           OR       Lower        Upper P value
-#&gt; sex2      Overall   228     100         3.01        1.65          5.5  &lt;0.001
-#&gt; 1...1          kk  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;        &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;
-#&gt; init...2        0    38    16.9            7        0.64        76.28   0.107
-#&gt; ...3            1   187    83.1         2.94        1.54          5.6   0.001
-#&gt; 1...4         kk1  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;        &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;
-#&gt; init...5        0     8     3.6 314366015.19 20361023.24 4853684923.4  &lt;0.001
-#&gt; ...6            1   217    96.4         2.85        1.55         5.27   0.001
+)</div><div class='output co'>#&gt;          Variable Count Percent           OR       Lower         Upper P value
+#&gt; sex2      Overall   228     100         3.01        1.65          5.48  &lt;0.001
+#&gt; 1...1          kk  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;    &lt;NA&gt;
+#&gt; init...2        0    38    16.9            7         0.7          70.4   0.107
+#&gt; ...3            1   187    83.1         2.94        1.55          5.58   0.001
+#&gt; 1...4         kk1  &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;    &lt;NA&gt;
+#&gt; init...5        0     8     3.6 314366015.19 35102996.37 2815314979.23  &lt;0.001
+#&gt; ...6            1   217    96.4         2.85        1.55          5.25   0.001
 #&gt;          P for interaction
 #&gt; sex2                  &lt;NA&gt;
 #&gt; 1...1                0.478
@@ -267,7 +267,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.zarathu.com'><img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" /></a>.</p>
+  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.zarathu.com'><img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" /></a>, Yoonkyoung Jeon.</p>
 </div>
 
 <div class="pkgdown">

@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.7</span>
       </span>
     </div>
 
@@ -152,7 +152,8 @@
   <span class='kw'>labeldata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>psub</span> <span class='kw'>=</span> <span class='no'>T</span>,
   <span class='kw'>minMax</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='kw'>showpm</span> <span class='kw'>=</span> <span class='no'>T</span>
+  <span class='kw'>showpm</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>addOverall</span> <span class='kw'>=</span> <span class='no'>F</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -238,6 +239,10 @@
       <th>showpm</th>
       <td><p>Logical, show normal distributed continuous variables as Mean ± SD. Default: T</p></td>
     </tr>
+    <tr>
+      <th>addOverall</th>
+      <td><p>(optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -308,7 +313,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.zarathu.com'><img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" /></a>.</p>
+  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.zarathu.com'><img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" /></a>, Yoonkyoung Jeon.</p>
 </div>
 
 <div class="pkgdown">

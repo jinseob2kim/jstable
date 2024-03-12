@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Export label and level: multiple variable — mk.lev • jstable</title>
+<title>DATASET_TITLE — mort • jstable</title>
 
 
 <!-- jquery -->
@@ -41,8 +41,8 @@
 
 
 
-<meta property="og:title" content="Export label and level: multiple variable — mk.lev" />
-<meta property="og:description" content="Export label and level: multiple variable" />
+<meta property="og:title" content="DATASET_TITLE — mort" />
+<meta property="og:description" content="DATASET_DESCRIPTION" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -123,51 +123,58 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Export label and level: multiple variable</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/label.R'><code>R/label.R</code></a></small>
-    <div class="hidden name"><code>mk.lev.Rd</code></div>
+    <h1>DATASET_TITLE</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/glmshow.R'><code>R/glmshow.R</code></a></small>
+    <div class="hidden name"><code>mort.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Export label and level: multiple variable</p>
+    <p>DATASET_DESCRIPTION</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mk.lev</span>(<span class='no'>data</span>)</pre>
+    <pre class="usage"><span class='no'>mort</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>data</th>
-      <td><p>data</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>default label and level data</p>
+    <p>A data frame with 17562 rows and 24 variables:</p><dl class='dl-horizontal'>
+  <dt><code>ccode</code></dt><dd><p>integer COLUMN_DESCRIPTION</p></dd>
+  <dt><code>cname</code></dt><dd><p>character COLUMN_DESCRIPTION</p></dd>
+  <dt><code>yy</code></dt><dd><p>integer COLUMN_DESCRIPTION</p></dd>
+  <dt><code>mm</code></dt><dd><p>integer COLUMN_DESCRIPTION</p></dd>
+  <dt><code>dd</code></dt><dd><p>integer COLUMN_DESCRIPTION</p></dd>
+  <dt><code>date</code></dt><dd><p>character COLUMN_DESCRIPTION</p></dd>
+  <dt><code>nonacc</code></dt><dd><p>integer COLUMN_DESCRIPTION</p></dd>
+  <dt><code>cardio</code></dt><dd><p>integer COLUMN_DESCRIPTION</p></dd>
+  <dt><code>respir</code></dt><dd><p>integer COLUMN_DESCRIPTION</p></dd>
+  <dt><code>influenza</code></dt><dd><p>integer COLUMN_DESCRIPTION</p></dd>
+  <dt><code>meanpm10</code></dt><dd><p>double COLUMN_DESCRIPTION</p></dd>
+  <dt><code>meanso2</code></dt><dd><p>double COLUMN_DESCRIPTION</p></dd>
+  <dt><code>meanno2</code></dt><dd><p>double COLUMN_DESCRIPTION</p></dd>
+  <dt><code>meanco</code></dt><dd><p>double COLUMN_DESCRIPTION</p></dd>
+  <dt><code>maxco</code></dt><dd><p>double COLUMN_DESCRIPTION</p></dd>
+  <dt><code>maxo3</code></dt><dd><p>double COLUMN_DESCRIPTION</p></dd>
+  <dt><code>meantemp</code></dt><dd><p>double COLUMN_DESCRIPTION</p></dd>
+  <dt><code>maxtemp</code></dt><dd><p>double COLUMN_DESCRIPTION</p></dd>
+  <dt><code>mintemp</code></dt><dd><p>double COLUMN_DESCRIPTION</p></dd>
+  <dt><code>meanhumi</code></dt><dd><p>double COLUMN_DESCRIPTION</p></dd>
+  <dt><code>meanpress</code></dt><dd><p>double COLUMN_DESCRIPTION</p></dd>
+  <dt><code>season</code></dt><dd><p>integer COLUMN_DESCRIPTION</p></dd>
+  <dt><code>dow</code></dt><dd><p>integer COLUMN_DESCRIPTION</p></dd>
+  <dt><code>sn</code></dt><dd><p>integer COLUMN_DESCRIPTION</p></dd>
+
+</dl>
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>DETAILS</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>mk.lev</span>(<span class='no'>iris</span>)</div><div class='output co'>#&gt;        variable   class      level    var_label  val_label
-#&gt;          &lt;char&gt;  &lt;char&gt;     &lt;char&gt;       &lt;char&gt;     &lt;char&gt;
-#&gt; 1: Sepal.Length numeric       &lt;NA&gt; Sepal.Length       &lt;NA&gt;
-#&gt; 2:  Sepal.Width numeric       &lt;NA&gt;  Sepal.Width       &lt;NA&gt;
-#&gt; 3: Petal.Length numeric       &lt;NA&gt; Petal.Length       &lt;NA&gt;
-#&gt; 4:  Petal.Width numeric       &lt;NA&gt;  Petal.Width       &lt;NA&gt;
-#&gt; 5:      Species  factor     setosa      Species     setosa
-#&gt; 6:      Species  factor versicolor      Species versicolor
-#&gt; 7:      Species  factor  virginica      Species  virginica</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
+      <li><a href="#format">Format</a></li>
       <li><a href="#details">Details</a></li>
-      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>

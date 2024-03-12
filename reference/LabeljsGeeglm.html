@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.7</span>
       </span>
     </div>
 
@@ -155,13 +155,16 @@
     <p>DETAILS</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>geepack</span>);<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>jstable</span>)
- <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>dietox</span>)
- <span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
- <span class='no'>gee01</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/geepack/man/geeglm.html'>geeglm</a></span> (<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span> , <span class='kw'>id</span> <span class='kw'>=</span><span class='no'>Pig</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>,
-                <span class='kw'>family</span><span class='kw'>=</span><span class='no'>gaussian</span>,<span class='kw'>corstr</span><span class='kw'>=</span><span class='st'>"ex"</span>)
- <span class='no'>g1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='geeglm.display.html'>geeglm.display</a></span>(<span class='no'>gee01</span>)
- <span class='fu'>LabeljsGeeglm</span>(<span class='no'>g1</span>, <span class='kw'>ref</span> <span class='kw'>=</span> <span class='fu'><a href='mk.lev.html'>mk.lev</a></span>(<span class='no'>dietox</span>))</div><div class='output co'>#&gt; $table
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>geepack</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>jstable</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>dietox</span>)
+<span class='no'>dietox</span>$<span class='no'>Cu</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='no'>dietox</span>$<span class='no'>Cu</span>)
+<span class='no'>gee01</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/geepack/man/geeglm.html'>geeglm</a></span>(<span class='no'>Weight</span> ~ <span class='no'>Time</span> + <span class='no'>Cu</span>,
+  <span class='kw'>id</span> <span class='kw'>=</span> <span class='no'>Pig</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dietox</span>,
+  <span class='kw'>family</span> <span class='kw'>=</span> <span class='no'>gaussian</span>, <span class='kw'>corstr</span> <span class='kw'>=</span> <span class='st'>"ex"</span>
+)
+<span class='no'>g1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='geeglm.display.html'>geeglm.display</a></span>(<span class='no'>gee01</span>)
+<span class='fu'>LabeljsGeeglm</span>(<span class='no'>g1</span>, <span class='kw'>ref</span> <span class='kw'>=</span> <span class='fu'><a href='mk.lev.html'>mk.lev</a></span>(<span class='no'>dietox</span>))</div><div class='output co'>#&gt; $table
 #&gt;                crude coeff(95%CI)   crude P value adj. coeff(95%CI)  
 #&gt; Time           "6.94 (6.79,7.1)"    "&lt; 0.001"     "6.94 (6.79,7.1)"  
 #&gt; Cu: ref.=Cu000 NA                   NA            NA                 
@@ -204,7 +207,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.zarathu.com'><img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" /></a>.</p>
+  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.zarathu.com'><img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" /></a>, Yoonkyoung Jeon.</p>
 </div>
 
 <div class="pkgdown">

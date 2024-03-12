@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.7</span>
       </span>
     </div>
 
@@ -155,13 +155,13 @@
     <p>DETAILS</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>coxme</span>)
- <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/coxme/man/coxme.html'>coxme</a></span>(<span class='fu'>Surv</span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>sex</span> + <span class='no'>ph.ecog</span> + <span class='no'>ph.karno</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>inst</span>) +(<span class='fl'>1</span><span class='kw'>|</span><span class='no'>sex</span>), <span class='no'>lung</span>)
- <span class='no'>fit.table</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='coxme.display.html'>coxme.display</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>coxme</span>)
+<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/coxme/man/coxme.html'>coxme</a></span>(<span class='fu'>Surv</span>(<span class='no'>time</span>, <span class='no'>status</span>) ~ <span class='no'>sex</span> + <span class='no'>ph.ecog</span> + <span class='no'>ph.karno</span> + (<span class='fl'>1</span> <span class='kw'>|</span> <span class='no'>inst</span>) + (<span class='fl'>1</span> <span class='kw'>|</span> <span class='no'>sex</span>), <span class='no'>lung</span>)
+<span class='no'>fit.table</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='coxme.display.html'>coxme.display</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
 #&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using formula(x) is deprecated when x is a character vector of length &gt; 1.</span>
-#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='input'> <span class='no'>lung.label</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mk.lev.html'>mk.lev</a></span>(<span class='no'>lung</span>)
- <span class='fu'>LabeljsMixed</span>(<span class='no'>fit.table</span>, <span class='kw'>ref</span> <span class='kw'>=</span> <span class='no'>lung.label</span>)</div><div class='output co'>#&gt; $table
+#&gt; <span class='warning'>  Consider formula(paste(x, collapse = " ")) instead.</span></div><div class='input'><span class='no'>lung.label</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mk.lev.html'>mk.lev</a></span>(<span class='no'>lung</span>)
+<span class='fu'>LabeljsMixed</span>(<span class='no'>fit.table</span>, <span class='kw'>ref</span> <span class='kw'>=</span> <span class='no'>lung.label</span>)</div><div class='output co'>#&gt; $table
 #&gt;          crude HR(95%CI)    crude P value adj. HR(95%CI)     adj. P value
 #&gt; sex      "0.59 (0.42,0.82)" "0.002"       "0.56 (0.4,0.79)"  "&lt; 0.001"   
 #&gt; ph.ecog  "1.66 (1.32,2.09)" "&lt; 0.001"     "1.96 (1.38,2.8)"  "&lt; 0.001"   
@@ -200,7 +200,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.zarathu.com'><img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" /></a>.</p>
+  <p>Developed by <a href='https://github.com/jinseob2kim'>Jinseob Kim</a>, <a href='https://www.zarathu.com'><img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" /></a>, Yoonkyoung Jeon.</p>
 </div>
 
 <div class="pkgdown">
