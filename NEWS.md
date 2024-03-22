@@ -1,3 +1,7 @@
+# jstable 1.1.9
+
+* Fix: ref. for interaction terms in `glmshow`.
+
 # jstable 1.1.8
 
 * Add `normalityTest` option to `CreateTableOneJS` to perform the Shapiro test for all variables.
