@@ -122,7 +122,18 @@ glmshow.display <- function(glm.object, decimal = 2) {
     rn.list[[x]] <<- paste(xs[x], ": ", model$xlevels[[xs[x]]][2], " vs ", model$xlevels[[xs[x]]][1], sep = "")
   })
   lapply(varnum.mfac, function(x) {
-    rn.list[[x]] <<- c(paste(xs[x], ": ref.=", model$xlevels[[xs[x]]][1], sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
+    if (grepl(":", xs[x])){
+      a <- unlist(strsplit(xs[x], ":"))[1]
+      b <- unlist(strsplit(xs[x], ":"))[2]
+      if (a %in% xs && b %in% xs ){
+        ref <- paste0(a, model$xlevels[[a]][1], ":", b, model$xlevels[[b]][1])
+        rn.list[[x]] <<- c(paste(xs[x], ": ref.=", ref, sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
+      } else{
+        rn.list[[x]] <<- c(paste(xs[x], ": ref.=NA", model$xlevels[[xs[x]]][1], sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
+      }
+    } else{
+      rn.list[[x]] <<- c(paste(xs[x], ": ref.=", model$xlevels[[xs[x]]][1], sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
+    }
   })
   if (class(fix.all.unlist)[1] == "character") {
     fix.all.unlist <- t(data.frame(fix.all.unlist))
