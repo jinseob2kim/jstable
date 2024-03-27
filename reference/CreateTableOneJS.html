@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.9</span>
       </span>
     </div>
 
@@ -162,7 +162,8 @@
   <span class='kw'>psub</span> <span class='kw'>=</span> <span class='no'>T</span>,
   <span class='kw'>minMax</span> <span class='kw'>=</span> <span class='no'>F</span>,
   <span class='kw'>showpm</span> <span class='kw'>=</span> <span class='no'>T</span>,
-  <span class='kw'>addOverall</span> <span class='kw'>=</span> <span class='no'>F</span>
+  <span class='kw'>addOverall</span> <span class='kw'>=</span> <span class='no'>F</span>,
+  <span class='kw'>normalityTest</span> <span class='kw'>=</span> <span class='no'>F</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -287,6 +288,10 @@
     <tr>
       <th>addOverall</th>
       <td><p>(optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F</p></td>
+    </tr>
+    <tr>
+      <th>normalityTest</th>
+      <td><p>Logical, perform the Shapiro test for all variables. Default: F</p></td>
     </tr>
     </table>
 
