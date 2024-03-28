@@ -1,3 +1,7 @@
+# jstable 1.2.0
+
+* Fix: ref. for interaction terms in `cox2`.
+
 # jstable 1.1.9
 
 * Fix: ref. for interaction terms in `glmshow`.
