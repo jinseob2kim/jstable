@@ -1,3 +1,7 @@
+# jstable 1.2.1
+
+* Fix: error about interaction terms in `coxme`.
+
 # jstable 1.2.0
 
 * Fix: ref. for interaction terms in `cox2`.

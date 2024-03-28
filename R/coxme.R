@@ -127,6 +127,7 @@ coxme.display <- function(coxme.obj, dec = 2) {
     rn.uni <- lapply(unis, rownames)
     unis2 <- Reduce(rbind, unis)
     uni.res <- unis2
+    uni.res <- uni.res[rownames(uni.res) %in% rownames(summary(model)$coefficients), ]
     fix.all <- cbind(coxExp(uni.res, dec = dec), coxExp(coxmeTable(model), dec = dec))
     colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
     rownames(fix.all) <- names(model$coefficients)
@@ -152,7 +153,19 @@ coxme.display <- function(coxme.obj, dec = 2) {
     rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep = "")
   })
   lapply(varnum.mfac, function(x) {
-    rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+    if (grepl(":", xf[x])){
+      a <- unlist(strsplit(xf[x], ":"))[1]
+      b <- unlist(strsplit(xf[x], ":"))[2]
+      
+      if (a %in% xf && b %in% xf){
+        ref <- paste0(a, levels(mdata[, a])[1], ":", b, levels(mdata[, b])[1])
+        rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+      } else{
+        rn.list[[x]] <<- c(paste(xf[x], ": ref.=NA", model$xlevels[[xf[x]]][1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+      }
+    } else{
+      rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+    }
   })
   if (class(fix.all.unlist)[1] == "character") {
     fix.all.unlist <- t(data.frame(fix.all.unlist))
