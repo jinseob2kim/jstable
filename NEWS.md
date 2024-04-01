@@ -1,3 +1,7 @@
+# jstable 1.2.3
+
+* Fix: error and ref. for interaction terms in `svycox` and `svyglm`.
+
 # jstable 1.2.2
 
 * Fix: error and ref. for interaction terms in `lmer`.
