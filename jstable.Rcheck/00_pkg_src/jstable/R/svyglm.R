@@ -45,16 +45,9 @@ svyregress.display <- function(svyglm.obj, decimal = 2) {
     res <- uni.res
   } else {
     uni <- lapply(xs, function(v) {
-      coef.df <- data.frame(coefNA(stats::update(model, formula(paste(paste(c(". ~ .", xs), collapse = " - "), " + ", v)), design = design.model)))[-1, ]
-      confint.df <- data.frame(stats::confint(stats::update(model, formula(paste(paste(c(". ~ .", xs), collapse = " - "), " + ", v)), design = design.model)))[-1, ]
-      
-      conf.df <- data.frame(matrix(nrow=nrow(coef.df), ncol=2))
-      rownames(conf.df) <- rownames(coef.df)
-      for (i in rownames(conf.df)){
-        conf.df[i, ] <- confint.df[i, ]
-      }
-      
-      cbind(coef.df, conf.df)
+      cbind(
+        data.frame(coefNA(stats::update(model, formula(paste(paste(c(". ~ .", xs), collapse = " - "), " + ", v)), design = design.model)))[-1, ], data.frame(stats::confint(stats::update(model, formula(paste(paste(c(". ~ .", xs), collapse = " - "), " + ", v)), design = design.model)))[-1, ]
+      )
     })
 
     # uni <- lapply(xs, function(v){
@@ -110,20 +103,7 @@ svyregress.display <- function(svyglm.obj, decimal = 2) {
     rn.list[[x]] <<- paste(xs[x], ": ", model$xlevels[[xs[x]]][2], " vs ", model$xlevels[[xs[x]]][1], sep = "")
   })
   lapply(varnum.mfac, function(x) {
-    if (grepl(":", xs[x])){
-      a <- unlist(strsplit(xs[x], ":"))[1]
-      b <- unlist(strsplit(xs[x], ":"))[2]
-      
-      if (a %in% xs && b %in% xs){
-        ref <- paste0(a, model$xlevels[[a]][1], ":", b, model$xlevels[[b]][1])
-        rn.list[[x]] <<- c(paste(xs[x], ": ref.=", ref, sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
-      } else{
-        rn.list[[x]] <<- c(paste(xs[x], ": ref.=NA", sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
-      }
-    } else{
-      rn.list[[x]] <<- c(paste(xs[x], ": ref.=", model$xlevels[[xs[x]]][1], sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
-    }
-    #rn.list[[x]] <<- c(paste(xs[x], ": ref.=", model$xlevels[[xs[x]]][1], sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
+    rn.list[[x]] <<- c(paste(xs[x], ": ref.=", model$xlevels[[xs[x]]][1], sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
   })
   if (class(fix.all.unlist)[1] == "character") {
     fix.all.unlist <- t(data.frame(fix.all.unlist))
