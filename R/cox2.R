@@ -21,13 +21,13 @@ cox2.display <- function(cox.obj.withmodel, dec = 2) {
   if (!any(class(model) == "coxph")) {
     stop("Model not from Cox model")
   }
-  
+
   xf <- attr(model$terms, "term.labels") # Independent vars
   xf.old <- xf
   xc <- NULL
   xc.vn <- NULL
   mtype <- "normal"
-  
+
   if (length(grep("strata", xf)) > 0) {
     xf <- xf[-grep("strata", xf)]
   } else if (length(grep("frailty\\(", xf)) > 0) {
@@ -45,25 +45,25 @@ cox2.display <- function(cox.obj.withmodel, dec = 2) {
     xc.vn <- xc
     # xc.vn <- strsplit(strsplit(xc, "cluster\\(")[[1]][2], "\\)")[[1]][1]
   }
-  
+
   formula.surv <- as.character(model$formula)[2]
   formula.ranef <- paste(" + ", xc, sep = "")
   mdata <- model$model
-  
+
   if (length(xc) == 0) {
     formula.ranef <- NULL
   } else {
     names(mdata)[names(mdata) == xc] <- xc.vn
   }
-  
+
   # if (is.null(data)){
   #  mdata = data.frame(get(as.character(model$call)[3]))
   # } else{
   #  mdata = data.frame(data)
   # }
-  
-  
-  
+
+
+
   if (length(xf) == 1) {
     uni.res <- data.frame(summary(model)$coefficients)
     # uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
@@ -94,9 +94,9 @@ cox2.display <- function(cox.obj.withmodel, dec = 2) {
     unis <- lapply(xf, function(x) {
       newfit <- update(basemodel, stats::formula(paste0(". ~ . +", x)), data = mdata2)
       uni.res <- data.frame(summary(newfit)$coefficients)
-      if (grepl(":", x)){
+      if (grepl(":", x)) {
         uni.res <- uni.res[rownames(uni.res) %in% rownames(summary(model)$coefficients), ]
-      } else{
+      } else {
         uni.res <- uni.res[grep(x, rownames(uni.res)), ]
       }
       # uni.res <- uni.res[c(2:nrow(uni.res), 1), ]
@@ -122,7 +122,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2) {
     colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
     rownames(fix.all) <- rownames(uni.res)
   }
-  
+
   ## rownames
   fix.all.list <- lapply(1:length(xf), function(x) {
     fix.all[rownames(fix.all) %in% rn.uni[[x]], ]
@@ -132,7 +132,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2) {
     fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])
   })
   fix.all.unlist <- Reduce(rbind, fix.all.list)
-  
+
   rn.list <- lapply(1:length(xf), function(x) {
     rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]
   })
@@ -143,17 +143,17 @@ cox2.display <- function(cox.obj.withmodel, dec = 2) {
     rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep = "")
   })
   lapply(varnum.mfac, function(x) {
-    if (grepl(":", xf[x])){
+    if (grepl(":", xf[x])) {
       a <- unlist(strsplit(xf[x], ":"))[1]
       b <- unlist(strsplit(xf[x], ":"))[2]
-      
-      if (a %in% xf && b %in% xf){
+
+      if (a %in% xf && b %in% xf) {
         ref <- paste0(a, levels(mdata[, a])[1], ":", b, levels(mdata[, b])[1])
         rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
-      } else{
+      } else {
         rn.list[[x]] <<- c(paste(xf[x], ": ref.=NA", model$xlevels[[xf[x]]][1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
       }
-    } else{
+    } else {
       rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
     }
   })
@@ -165,8 +165,8 @@ cox2.display <- function(cox.obj.withmodel, dec = 2) {
   for (i in pv.colnum) {
     fix.all.unlist[, i] <- ifelse(as.numeric(fix.all.unlist[, i]) < 0.001, "< 0.001", round(as.numeric(fix.all.unlist[, i]), dec + 1))
   }
-  
-  
+
+
   ## random effect
   # ranef = unlist(model$vcoef)
   # ranef.out = round(ranef, dec)
@@ -185,19 +185,19 @@ cox2.display <- function(cox.obj.withmodel, dec = 2) {
     cvname <- paste(cvname[length(cvname)], collapse = ")")
     rownames(ranef.mat) <- c(clname[1], cvname)
   }
-  
-  
+
+
   ## metric
   # no.grp = unlist(lapply(model$frail, length))
   no.obs <- model$n
   no.event <- model$nevent
   metric.mat <- cbind(c(NA, no.obs, no.event), matrix(NA, 3, ncol(fix.all) - 1))
   rownames(metric.mat) <- c(NA, "No. of observations", "No. of events")
-  
+
   ## Integrated ll
   # ll = model$loglik[2]
   # aic = -2 * ll -2*model$df[1]
-  
+
   ## caption
   surv.string <- as.character(attr(model$terms, "variables")[[2]])
   time.var.name <- surv.string[2]
@@ -208,12 +208,12 @@ cox2.display <- function(cox.obj.withmodel, dec = 2) {
   } else if (mtype == "frailty") {
     intro <- paste("Frailty", intro, "- Group", cvname)
   }
-  
+
   var.names0 <- attr(model$terms, "term.labels")
   if (length(grep("strata", var.names0)) > 0) {
     intro <- paste(intro, " with '", var.names0[grep("strata", var.names0)], "'", sep = "")
   }
-  
+
   if (is.null(ranef.mat)) {
     return(list(table = fix.all.unlist, metric = metric.mat, caption = intro))
   } else {

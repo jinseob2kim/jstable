@@ -72,12 +72,13 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F) {
   # uni.res <- unis2[rownames(unis2) != "(Intercept)", ]
   adj.res <- sl$coefficients
   adj.res <- adj.res[rownames(adj.res) != "(Intercept)", , drop = FALSE]
-  uni.res <- matrix(nrow=dim(adj.res)[1], ncol=dim(adj.res)[2])
+  uni.res <- matrix(nrow = dim(adj.res)[1], ncol = dim(adj.res)[2])
   rownames(uni.res) <- rownames(adj.res)
   colnames(uni.res) <- colnames(adj.res)
-  for (i in 1:nrow(adj.res)){
+  for (i in 1:nrow(adj.res)) {
     try(uni.res[rownames(adj.res)[i], ] <- unis2[rownames(adj.res)[i], ],
-        silent=TRUE)
+      silent = TRUE
+    )
   }
 
   if (length(xf) == 1) {
@@ -110,12 +111,12 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F) {
   ## rownames
   rn.uni <- lapply(unis, rownames)
   fix.all.list <- lapply(1:length(xf), function(x) {
-    if (grepl(":", xf[x])){
+    if (grepl(":", xf[x])) {
       a <- unlist(strsplit(xf[x], ":"))[1]
       b <- unlist(strsplit(xf[x], ":"))[2]
-      
-      fix.all[grepl(a, rownames(fix.all))& grepl(b, rownames(fix.all)), ]
-    } else{
+
+      fix.all[grepl(a, rownames(fix.all)) & grepl(b, rownames(fix.all)), ]
+    } else {
       fix.all[rownames(fix.all) %in% rn.uni[[x]], ]
     }
     # fix.all[grepl(x, rownames(fix.all)), ]
@@ -127,12 +128,12 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F) {
   fix.all.unlist <- Reduce(rbind, fix.all.list)
 
   rn.list <- lapply(1:length(xf), function(x) {
-    if (grepl(":", xf[x])){
+    if (grepl(":", xf[x])) {
       a <- unlist(strsplit(xf[x], ":"))[1]
       b <- unlist(strsplit(xf[x], ":"))[2]
-      
-      rownames(fix.all)[grepl(a, rownames(fix.all))& grepl(b, rownames(fix.all))]
-    } else{
+
+      rownames(fix.all)[grepl(a, rownames(fix.all)) & grepl(b, rownames(fix.all))]
+    } else {
       rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]
     }
     # rownames(fix.all)[grepl(x, rownames(fix.all))]
@@ -144,20 +145,20 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F) {
     rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep = "")
   })
   lapply(varnum.mfac, function(x) {
-    if (grepl(":", xf[x])){
+    if (grepl(":", xf[x])) {
       a <- unlist(strsplit(xf[x], ":"))[1]
       b <- unlist(strsplit(xf[x], ":"))[2]
-      
-      if (a %in% xf && b %in% xf){
+
+      if (a %in% xf && b %in% xf) {
         ref <- paste0(a, levels(mdata[, a])[1], ":", b, levels(mdata[, b])[1])
         rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
-      } else{
+      } else {
         rn.list[[x]] <<- c(paste(xf[x], ": ref.=NA", sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
       }
-    } else{
+    } else {
       rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
     }
-    #rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+    # rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
   })
   if (class(fix.all.unlist)[1] == "character") {
     fix.all.unlist <- t(data.frame(fix.all.unlist))

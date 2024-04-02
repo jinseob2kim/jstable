@@ -48,7 +48,7 @@ svycox.display <- function(svycoxph.obj, decimal = 2) {
     names(uni.res)[ncol(uni.res)] <- "p"
     uni.res2 <- uni.res[, c("coef", grep("se", colnames(uni.res), value = T)[length(grep("se", colnames(uni.res)))], "z", "p")]
     unis <- list(uni.res2)
-    
+
     fix.all <- coxExp(uni.res2, dec = decimal)
     colnames(fix.all) <- c("HR(95%CI)", "P value")
     # rownames(fix.all) = ifelse(mtype == "frailty", names(model$coefficients)[-length(model$coefficients)], names(model$coefficients))
@@ -56,38 +56,42 @@ svycox.display <- function(svycoxph.obj, decimal = 2) {
   } else {
     mul.res <- data.frame(summary(model)$coefficients)
     colnames(mul.res)[ncol(mul.res)] <- "p"
-    
+
     unis <- lapply(xf, function(x) {
-      tryCatch({uni.res <- data.frame(summary(stats::update(model, formula(paste(paste(c(". ~ .", xf), collapse = " - "), " + ", x)), design = design.model))$coefficients)
-      names(uni.res)[ncol(uni.res)] <- "p"
-      uni.res2 <- uni.res[, c("coef", grep("se", colnames(uni.res), value = T)[length(grep("se", colnames(uni.res)))], "z", "p")]
-      return(uni.res2)},
-      error = function(e) {
-        if (grepl(":", x)){
-          a <- unlist(strsplit(x, ":"))[1]
-          b <- unlist(strsplit(x, ":"))[2]
-          
-          new.rn <- rownames(mul.res)[grepl(a, rownames(mul.res))& grepl(b, rownames(mul.res))]
-          uni.res2 <- data.frame(matrix(nrow=length(new.rn), ncol=4))
-          rownames(uni.res2) <- new.rn
-          colnames(uni.res2) <- c("coef", "robust.se", "z", "p")
-          
+      tryCatch(
+        {
+          uni.res <- data.frame(summary(stats::update(model, formula(paste(paste(c(". ~ .", xf), collapse = " - "), " + ", x)), design = design.model))$coefficients)
+          names(uni.res)[ncol(uni.res)] <- "p"
+          uni.res2 <- uni.res[, c("coef", grep("se", colnames(uni.res), value = T)[length(grep("se", colnames(uni.res)))], "z", "p")]
           return(uni.res2)
-        } else{
-          new.rn <- rownames(mul.res)[rownames(mul.res) %in% paste0(x, model$xlevels[[x]])]
-          uni.res2 <- data.frame(matrix(nrow=length(new.rn), ncol=4))
-          rownames(uni.res2) <- new.rn
-          colnames(uni.res2) <- c("coef", "robust.se", "z", "p")
-          
-          return(uni.res2)
+        },
+        error = function(e) {
+          if (grepl(":", x)) {
+            a <- unlist(strsplit(x, ":"))[1]
+            b <- unlist(strsplit(x, ":"))[2]
+
+            new.rn <- rownames(mul.res)[grepl(a, rownames(mul.res)) & grepl(b, rownames(mul.res))]
+            uni.res2 <- data.frame(matrix(nrow = length(new.rn), ncol = 4))
+            rownames(uni.res2) <- new.rn
+            colnames(uni.res2) <- c("coef", "robust.se", "z", "p")
+
+            return(uni.res2)
+          } else {
+            new.rn <- rownames(mul.res)[rownames(mul.res) %in% paste0(x, model$xlevels[[x]])]
+            uni.res2 <- data.frame(matrix(nrow = length(new.rn), ncol = 4))
+            rownames(uni.res2) <- new.rn
+            colnames(uni.res2) <- c("coef", "robust.se", "z", "p")
+
+            return(uni.res2)
+          }
         }
-      })
+      )
     })
 
     unis2 <- Reduce(rbind, unis)
     uni.res <- unis2
     uni.res <- uni.res[rownames(uni.res) %in% rownames(mul.res), ] ## set
-    
+
     fix.all <- cbind(coxExp(uni.res, dec = decimal), coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = decimal))
     colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
     rownames(fix.all) <- rownames(uni.res)
@@ -95,14 +99,14 @@ svycox.display <- function(svycoxph.obj, decimal = 2) {
 
   ## rownames
   rn.uni <- lapply(unis, rownames)
-  
+
   fix.all.list <- lapply(1:length(xf), function(x) {
-    if (grepl(":", xf[x])){
+    if (grepl(":", xf[x])) {
       a <- unlist(strsplit(xf[x], ":"))[1]
       b <- unlist(strsplit(xf[x], ":"))[2]
-      
-      fix.all[grepl(a, rownames(fix.all))& grepl(b, rownames(fix.all)), ]
-    } else{
+
+      fix.all[grepl(a, rownames(fix.all)) & grepl(b, rownames(fix.all)), ]
+    } else {
       fix.all[rownames(fix.all) %in% rn.uni[[x]], ]
     }
   })
@@ -120,17 +124,17 @@ svycox.display <- function(svycoxph.obj, decimal = 2) {
     rn.list[[x]] <<- paste(xf[x], ": ", model$xlevels[[xf[x]]][2], " vs ", model$xlevels[[xf[x]]][1], sep = "")
   })
   lapply(varnum.mfac, function(x) {
-    if (grepl(":", xf[x])){
+    if (grepl(":", xf[x])) {
       a <- unlist(strsplit(xf[x], ":"))[1]
       b <- unlist(strsplit(xf[x], ":"))[2]
-      
-      if (a %in% xf && b %in% xf){
+
+      if (a %in% xf && b %in% xf) {
         ref <- paste0(a, model$xlevels[[a]][1], ":", b, model$xlevels[[b]][1])
         rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
-      } else{
+      } else {
         rn.list[[x]] <<- c(paste(xf[x], ": ref.=NA", sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
       }
-    } else{
+    } else {
       rn.list[[x]] <<- c(paste(xf[x], ": ref.=", model$xlevels[[xf[x]]][1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
     }
   })
