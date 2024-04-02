@@ -47,7 +47,8 @@ svycox.display <- function(svycoxph.obj, decimal = 2) {
     # uni.res <- data.frame(summary(survey::svycoxph(as.formula(paste(formula.surv, "~", xf, sep="")), design = design.model))$coefficients)
     names(uni.res)[ncol(uni.res)] <- "p"
     uni.res2 <- uni.res[, c("coef", grep("se", colnames(uni.res), value = T)[length(grep("se", colnames(uni.res)))], "z", "p")]
-
+    unis <- list(uni.res2)
+    
     fix.all <- coxExp(uni.res2, dec = decimal)
     colnames(fix.all) <- c("HR(95%CI)", "P value")
     # rownames(fix.all) = ifelse(mtype == "frailty", names(model$coefficients)[-length(model$coefficients)], names(model$coefficients))
