@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
       </span>
     </div>
 
@@ -202,17 +202,17 @@
     <span class='kw'>kk</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='no'>pat.karno</span> <span class='kw'>&gt;=</span> <span class='fl'>70</span>))
   ) <span class='kw'>-&gt;</span> <span class='no'>lung</span>
 <span class='fu'>TableSubgroupGLM</span>(<span class='no'>status</span> ~ <span class='no'>sex</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>lung</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>)</div><div class='output co'>#&gt;      Variable Count Percent   OR Lower Upper P value P for interaction
-#&gt; sex2  Overall   228     100 3.01  1.65  5.47  &lt;0.001                NA</div><div class='input'><span class='fu'>TableSubgroupGLM</span>(<span class='no'>status</span> ~ <span class='no'>sex</span>, <span class='kw'>var_subgroup</span> <span class='kw'>=</span> <span class='st'>"kk"</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>lung</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>)</div><div class='output co'>#&gt;      Variable Count Percent   OR Lower Upper P value P for interaction
-#&gt; 1          kk  &lt;NA&gt;    &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;             0.476
-#&gt; init        0    38    16.9    7   0.7 70.03   0.098              &lt;NA&gt;
-#&gt;             1   187    83.1 2.94  1.55  5.57   0.001              &lt;NA&gt;</div><div class='input'>
+#&gt; sex2  Overall   228     100 3.01  1.65  5.47  &lt;0.001                NA</div><div class='input'><span class='fu'>TableSubgroupGLM</span>(<span class='no'>status</span> ~ <span class='no'>sex</span>, <span class='kw'>var_subgroup</span> <span class='kw'>=</span> <span class='st'>"kk"</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>lung</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>)</div><div class='output co'>#&gt;   Variable Count Percent   OR Lower Upper P value P for interaction
+#&gt; 1       kk  &lt;NA&gt;    &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;      NA             0.476
+#&gt; 2        0    38    16.9    7   0.7 70.03   0.098              &lt;NA&gt;
+#&gt; 3        1   187    83.1 2.94  1.55  5.57   0.001              &lt;NA&gt;</div><div class='input'>
 <span class='co'>## survey design</span>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>survey</span>)
 <span class='no'>data.design</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/survey/man/svydesign.html'>svydesign</a></span>(<span class='kw'>id</span> <span class='kw'>=</span> ~<span class='fl'>1</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>lung</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No weights or probabilities supplied, assuming equal probability</span></div><div class='input'><span class='fu'>TableSubgroupGLM</span>(<span class='no'>status</span> ~ <span class='no'>sex</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>data.design</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>)</div><div class='output co'>#&gt;      Variable Count Percent   OR Lower Upper P value P for interaction
-#&gt; sex2  Overall   228     100 3.01  1.65  5.48  &lt;0.001                NA</div><div class='input'><span class='fu'>TableSubgroupGLM</span>(<span class='no'>status</span> ~ <span class='no'>sex</span>, <span class='kw'>var_subgroup</span> <span class='kw'>=</span> <span class='st'>"kk"</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>data.design</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>)</div><div class='output co'>#&gt;      Variable Count Percent   OR Lower Upper P value P for interaction
-#&gt; 1          kk  &lt;NA&gt;    &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;             0.478
-#&gt; init        0    38    16.9    7   0.7  70.4   0.107              &lt;NA&gt;
-#&gt;             1   187    83.1 2.94  1.55  5.58   0.001              &lt;NA&gt;</div></pre>
+#&gt; sex2  Overall   228     100 3.01  1.65  5.48  &lt;0.001                NA</div><div class='input'><span class='fu'>TableSubgroupGLM</span>(<span class='no'>status</span> ~ <span class='no'>sex</span>, <span class='kw'>var_subgroup</span> <span class='kw'>=</span> <span class='st'>"kk"</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>data.design</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>)</div><div class='output co'>#&gt;   Variable Count Percent   OR Lower Upper P value P for interaction
+#&gt; 1       kk  &lt;NA&gt;    &lt;NA&gt; &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;      NA             0.478
+#&gt; 2        0    38    16.9    7   0.7  70.4   0.107              &lt;NA&gt;
+#&gt; 3        1   187    83.1 2.94  1.55  5.58   0.001              &lt;NA&gt;</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
