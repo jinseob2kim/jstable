@@ -1,3 +1,7 @@
+# jstable 1.2.4
+
+* Fix: error for multi-category independent variable in `forestcox` and `forestglm`.
+
 # jstable 1.2.3
 
 * Fix: error and ref. for interaction terms in `svycox` and `svyglm`.
