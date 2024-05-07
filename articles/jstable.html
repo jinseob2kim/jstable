@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">jstable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.5</span>
       </span>
     </div>
 
@@ -182,15 +182,15 @@ Results for Publication.</p>
 <span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a><span class="co">#&gt; $table</span></span>
 <span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a><span class="co">#&gt;                crude OR(95%CI)    crude P value adj. OR(95%CI)     adj. P value</span></span>
-<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a><span class="co">#&gt; Time           "1 (0.96,1.03)"    "0.925"       "1 (0.96,1.03)"    "0.93"      </span></span>
+<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a><span class="co">#&gt; Time           "0.98 (0.94,1.01)" "0.18"        "0.98 (0.94,1.01)" "0.177"     </span></span>
 <span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a><span class="co">#&gt; Cu: ref.=Cu000 NA                 NA            NA                 NA          </span></span>
-<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a><span class="co">#&gt;       035      "0.8 (0.57,1.12)"  "0.188"       "0.8 (0.57,1.12)"  "0.188"     </span></span>
-<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a><span class="co">#&gt;       175      "1.14 (0.81,1.61)" "0.453"       "1.14 (0.81,1.61)" "0.453"     </span></span>
+<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a><span class="co">#&gt;       035      "1.4 (0.99,1.97)"  "0.054"       "1.4 (1,1.98)"     "0.053"     </span></span>
+<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a><span class="co">#&gt;       175      "1.22 (0.88,1.69)" "0.236"       "1.22 (0.88,1.69)" "0.234"     </span></span>
 <span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a><span class="co">#&gt; $metric</span></span>
 <span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a><span class="co">#&gt;                                  crude OR(95%CI) crude P value adj. OR(95%CI)</span></span>
 <span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a><span class="co">#&gt;                                  NA              NA            NA            </span></span>
-<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a><span class="co">#&gt; Estimated correlation parameters "0.002"         NA            NA            </span></span>
+<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a><span class="co">#&gt; Estimated correlation parameters "0.001"         NA            NA            </span></span>
 <span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a><span class="co">#&gt; No. of clusters                  "72"            NA            NA            </span></span>
 <span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a><span class="co">#&gt; No. of observations              "861"           NA            NA            </span></span>
 <span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a><span class="co">#&gt;                                  adj. P value</span></span>
@@ -240,21 +240,33 @@ object from <strong>lme4</strong> package</h2>
 <span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>l2 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(ddn <span class="sc">~</span> Time <span class="sc">+</span> Cu <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Pig), <span class="at">data =</span> dietox, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
 <span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a><span class="fu">lmer.display</span>(l2)</span>
 <span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co">#&gt; $table</span></span>
-<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="co">#&gt;                     crude OR(95%CI) crude P value  adj. OR(95%CI) adj. P value</span></span>
-<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a><span class="co">#&gt; Time                  1 (0.96,1.04)     0.9320777   1 (0.96,1.04)    0.9359128</span></span>
-<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a><span class="co">#&gt; Cu: ref.=Cu000                 &lt;NA&gt;            NA            &lt;NA&gt;           NA</span></span>
-<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a><span class="co">#&gt;       035           0.8 (0.57,1.11)     0.1794695 0.8 (0.57,1.11)    0.1796003</span></span>
-<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="co">#&gt;       175           1.14 (0.82,1.6)     0.4385004 1.14 (0.82,1.6)    0.4383718</span></span>
-<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="co">#&gt; Random effects                 &lt;NA&gt;            NA            &lt;NA&gt;           NA</span></span>
-<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a><span class="co">#&gt; Pig                            0.01            NA            &lt;NA&gt;           NA</span></span>
-<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a><span class="co">#&gt; Metrics                        &lt;NA&gt;            NA            &lt;NA&gt;           NA</span></span>
-<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a><span class="co">#&gt; No. of groups (Pig)              72            NA            &lt;NA&gt;           NA</span></span>
-<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a><span class="co">#&gt; No. of observations             861            NA            &lt;NA&gt;           NA</span></span>
-<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a><span class="co">#&gt; Log-likelihood              -594.22            NA            &lt;NA&gt;           NA</span></span>
-<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a><span class="co">#&gt; AIC value                   1198.45            NA            &lt;NA&gt;           NA</span></span>
-<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a><span class="co">#&gt; $caption</span></span>
-<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a><span class="co">#&gt; [1] "Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) : ddn ~ Time + Cu + (1 | Pig)"</span></span></code></pre></div>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="co">#&gt;                      crude OR(95%CI) crude P value   adj. OR(95%CI)</span></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a><span class="co">#&gt; Time                0.98 (0.94,1.01)    0.21714253 0.98 (0.94,1.01)</span></span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a><span class="co">#&gt; Cu: ref.=Cu000                  &lt;NA&gt;            NA             &lt;NA&gt;</span></span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a><span class="co">#&gt;       035            1.4 (1.01,1.95)    0.04531861  1.4 (1.01,1.95)</span></span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="co">#&gt;       175            1.22 (0.87,1.7)    0.24595286  1.22 (0.87,1.7)</span></span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="co">#&gt; Random effects                  &lt;NA&gt;            NA             &lt;NA&gt;</span></span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a><span class="co">#&gt; Pig                                0            NA             &lt;NA&gt;</span></span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a><span class="co">#&gt; Metrics                         &lt;NA&gt;            NA             &lt;NA&gt;</span></span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a><span class="co">#&gt; No. of groups (Pig)               72            NA             &lt;NA&gt;</span></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a><span class="co">#&gt; No. of observations              861            NA             &lt;NA&gt;</span></span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a><span class="co">#&gt; Log-likelihood               -593.98            NA             &lt;NA&gt;</span></span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a><span class="co">#&gt; AIC value                    1197.95            NA             &lt;NA&gt;</span></span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a><span class="co">#&gt;                     adj. P value</span></span>
+<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a><span class="co">#&gt; Time                  0.21314422</span></span>
+<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a><span class="co">#&gt; Cu: ref.=Cu000                NA</span></span>
+<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a><span class="co">#&gt;       035             0.04458227</span></span>
+<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a><span class="co">#&gt;       175             0.24447118</span></span>
+<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a><span class="co">#&gt; Random effects                NA</span></span>
+<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a><span class="co">#&gt; Pig                           NA</span></span>
+<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a><span class="co">#&gt; Metrics                       NA</span></span>
+<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a><span class="co">#&gt; No. of groups (Pig)           NA</span></span>
+<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a><span class="co">#&gt; No. of observations           NA</span></span>
+<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a><span class="co">#&gt; Log-likelihood                NA</span></span>
+<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a><span class="co">#&gt; AIC value                     NA</span></span>
+<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a><span class="co">#&gt; $caption</span></span>
+<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a><span class="co">#&gt; [1] "Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) : ddn ~ Time + Cu + (1 | Pig)"</span></span></code></pre></div>
 </div>
 <div id="cox-model-with-frailty-or-cluster-options" class="section level2">
 <h2 class="hasAnchor">
