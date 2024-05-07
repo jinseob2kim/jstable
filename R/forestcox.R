@@ -114,7 +114,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
     } else {
       ### survey data가 아닌 경우 ###
-      if (is.null(cluster)){
+      if (is.null(cluster)) {
         model <- survival::coxph(formula, data = data, x = TRUE)
       } else {
         model <- survival::coxph(formula, data = data, x = TRUE, cluster = get(cluster))
@@ -241,32 +241,32 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
     } else {
       ### survey data가 아닌 경우 ###
-      if (is.null(cluster)){
+      if (is.null(cluster)) {
         model <- data %>%
           filter(!is.na(get(var_subgroup))) %>%
           split(.[[var_subgroup]]) %>%
           purrr::map(~ possible_coxph(formula, data = ., x = T))
-      } else{
+      } else {
         model <- data %>%
           filter(!is.na(get(var_subgroup))) %>%
           split(.[[var_subgroup]]) %>%
-          purrr::map(~ tryCatch(coxph(formula, data = ., x = T, cluster = get(cluster)), error = function(e)NA))
+          purrr::map(~ tryCatch(coxph(formula, data = ., x = T, cluster = get(cluster)), error = function(e) NA))
       }
 
-      
+
       data %>%
         filter(!is.na(get(var_subgroup))) %>%
         select(dplyr::all_of(var_subgroup)) %>%
         table() %>%
         names() -> label_val
       xlev <- survival::coxph(formula, data = data)$xlevels
-      
-      if (is.null(cluster)){
+
+      if (is.null(cluster)) {
         model.int <- possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data)
-      } else{
-        model.int <- tryCatch(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, cluster = get(cluster)), error = function(e)NA)
+      } else {
+        model.int <- tryCatch(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, cluster = get(cluster)), error = function(e) NA)
       }
-      
+
 
 
       # KM 구하기(categorical인 경우만)
@@ -292,7 +292,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 
           for (i in rownames(prop)) {
             if (length(sub_xlev[[i]]) == 1) {
-              #prop[i, paste0(xlabel, "=", sub_xlev[[i]])] <- res.kap.times[["0"]][["surv"]]
+              # prop[i, paste0(xlabel, "=", sub_xlev[[i]])] <- res.kap.times[["0"]][["surv"]]
               prop[i, ] <- res.kap.times[["0"]][["surv"]]
             } else if (length(sub_xlev[[i]]) > 1) {
               surv.df <- data.frame(res.kap.times[[i]][c("strata", "surv")])
@@ -324,9 +324,11 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       } else {
         model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
         model.int$call$data <- as.name("data")
-        pv_anova <- tryCatch(anova(model.int), error = function(e)NA)
-        if (is.na(pv_anova) & !is.null(cluster)) {warning("Warning: Anova test is not available for cluster data. So Interaction P value is NA when 3 and more categorical subgroup variable.")}
-        pv_int <- tryCatch(round(pv_anova[nrow(pv_anova), 4], decimal.pvalue), error = function(e)NA)
+        pv_anova <- tryCatch(anova(model.int), error = function(e) NA)
+        if (is.na(pv_anova) & !is.null(cluster)) {
+          warning("Warning: Anova test is not available for cluster data. So Interaction P value is NA when 3 and more categorical subgroup variable.")
+        }
+        pv_int <- tryCatch(round(pv_anova[nrow(pv_anova), 4], decimal.pvalue), error = function(e) NA)
       }
     }
 
