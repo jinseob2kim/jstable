@@ -12,7 +12,8 @@ TableSubgroupCox(
   time_eventrate = 3 * 365,
   decimal.hr = 2,
   decimal.percent = 1,
-  decimal.pvalue = 3
+  decimal.pvalue = 3,
+  cluster = NULL
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ TableSubgroupCox(
 \item{decimal.percent}{Decimal for percent, Default: 1}
 
 \item{decimal.pvalue}{Decimal for pvalue, Default: 3}
+
+\item{cluster}{Cluster variable for coxph, Default: NULL}
 }
 \value{
 Sub-group analysis table.

@@ -13,7 +13,8 @@ TableSubgroupMultiCox(
   decimal.hr = 2,
   decimal.percent = 1,
   decimal.pvalue = 3,
-  line = F
+  line = F,
+  cluster = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ TableSubgroupMultiCox(
 \item{decimal.pvalue}{Decimal for pvalue, Default: 3}
 
 \item{line}{Include new-line between sub-group variables, Default: F}
+
+\item{cluster}{Cluster variable for coxph, Default: NULL}
 }
 \value{
 Multiple sub-group analysis table.

@@ -1,3 +1,7 @@
+# jstable 1.2.5
+
+* Update: Add `cluster` option to `TableSubgroupCox` and `TableSubgroupMultiCox` for marginal cox model. ex: `cluster = "inst"`
+
 # jstable 1.2.4
 
 * Fix: error for multi-category independent variable in `forestcox` and `forestglm`.
