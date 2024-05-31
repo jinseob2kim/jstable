@@ -1,3 +1,7 @@
+# jstable 1.2.6
+
+* Add AIC metric to `cox2.display`.
+
 # jstable 1.2.5
 
 * Update: Add `cluster` option to `TableSubgroupCox` and `TableSubgroupMultiCox` for marginal cox model. ex: `cluster = "inst"`

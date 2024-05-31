@@ -14,7 +14,7 @@
 #' @rdname cox2.display
 #' @export
 #' @importFrom survival coxph cluster frailty
-#' @importFrom stats formula update
+#' @importFrom stats formula update AIC
 
 cox2.display <- function(cox.obj.withmodel, dec = 2) {
   model <- cox.obj.withmodel
@@ -191,8 +191,9 @@ cox2.display <- function(cox.obj.withmodel, dec = 2) {
   # no.grp = unlist(lapply(model$frail, length))
   no.obs <- model$n
   no.event <- model$nevent
-  metric.mat <- cbind(c(NA, no.obs, no.event), matrix(NA, 3, ncol(fix.all) - 1))
-  rownames(metric.mat) <- c(NA, "No. of observations", "No. of events")
+  aic <- stats::AIC(model)
+  metric.mat <- cbind(c(NA, no.obs, no.event, aic), matrix(NA, 4, ncol(fix.all) - 1))
+  rownames(metric.mat) <- c(NA, "No. of observations", "No. of events", "AIC")
 
   ## Integrated ll
   # ll = model$loglik[2]
