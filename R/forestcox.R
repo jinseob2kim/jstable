@@ -325,7 +325,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
         model.int$call$data <- as.name("data")
         pv_anova <- tryCatch(anova(model.int), error = function(e) NA)
-        if (is.na(pv_anova) & !is.null(cluster)) {
+        if (is.logical(pv_anova) & !is.null(cluster)) {
           warning("Warning: Anova test is not available for cluster data. So Interaction P value is NA when 3 and more categorical subgroup variable.")
         }
         pv_int <- tryCatch(round(pv_anova[nrow(pv_anova), 4], decimal.pvalue), error = function(e) NA)

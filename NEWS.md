@@ -1,3 +1,7 @@
+# jstable 1.2.7
+
+* Fix: Interaction P when 3 or more categorical subgroups in `TableSubgroupCox` and `TableSubgroupMultiCox`
+
 # jstable 1.2.6
 
 * Add AIC metric to `cox2.display`.
