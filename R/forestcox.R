@@ -320,14 +320,12 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       if (is.null(cluster) & is.null(weights) & !is.null(strata)) {
         model.int <- possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data)
       } else {
-      
         model.int <- tryCatch(eval(substitute(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights))), error = function(e) NA)
-      # if (!is.null(cluster)) {
-      #   model.int <- eval(substitute(possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights)))
-      # } else {
-      #   model.int <- tryCatch(eval(substitute(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights))), error = function(e) NA)
-      # }
-
+        # if (!is.null(cluster)) {
+        #   model.int <- eval(substitute(possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights)))
+        # } else {
+        #   model.int <- tryCatch(eval(substitute(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights))), error = function(e) NA)
+        # }
       }
 
 
