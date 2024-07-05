@@ -30,5 +30,4 @@ test_that("Run TableSubgroupMultiCox", {
   expect_warning(TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = lung, time_eventrate = 100, line = TRUE, weights = "age"))
   expect_warning(TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = lung, time_eventrate = 100, line = TRUE, cluster = "inst"))
   expect_warning(TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = lung, time_eventrate = 100, line = TRUE, cluster = "inst", strata = "inst", weights = "age"))
-  
 })
