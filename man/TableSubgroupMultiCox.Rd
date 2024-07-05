@@ -14,7 +14,9 @@ TableSubgroupMultiCox(
   decimal.percent = 1,
   decimal.pvalue = 3,
   line = F,
-  cluster = NULL
+  cluster = NULL,
+  strata = NULL,
+  weights = NULL
 )
 }
 \arguments{
@@ -37,6 +39,10 @@ TableSubgroupMultiCox(
 \item{line}{Include new-line between sub-group variables, Default: F}
 
 \item{cluster}{Cluster variable for coxph, Default: NULL}
+
+\item{strata}{Strata variable for coxph, Default: NULL}
+
+\item{weights}{Weights variable for coxph, Default: NULL}
 }
 \value{
 Multiple sub-group analysis table.
