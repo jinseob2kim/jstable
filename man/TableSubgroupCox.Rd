@@ -13,7 +13,9 @@ TableSubgroupCox(
   decimal.hr = 2,
   decimal.percent = 1,
   decimal.pvalue = 3,
-  cluster = NULL
+  cluster = NULL,
+  strata = NULL,
+  weights = NULL
 )
 }
 \arguments{
@@ -34,6 +36,10 @@ TableSubgroupCox(
 \item{decimal.pvalue}{Decimal for pvalue, Default: 3}
 
 \item{cluster}{Cluster variable for coxph, Default: NULL}
+
+\item{strata}{Strata variable for coxph, Default: NULL}
+
+\item{weights}{Weights variable for coxph, Default: NULL}
 }
 \value{
 Sub-group analysis table.
