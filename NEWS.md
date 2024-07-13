@@ -1,3 +1,8 @@
+# jstable 1.3.1
+
+* Fix: `addOverall` options to  `svyCreateTableOneJS` 
+
+
 # jstable 1.3.0
 
 * Update: Add `weights` option to `TableSubgroupCox` and `TableSubgroupMultiCox` for marginal cox model. ex: `weights = "weights"`

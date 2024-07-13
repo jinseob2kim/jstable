@@ -65,7 +65,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 
   res <- tableone::svyCreateTableOne(
     vars = vars, strata = strata, data = data, factorVars = factorVars, includeNA = includeNA, test = test,
-    smd = smd
+    smd = smd, addOverall = addOverall
   )
 
   factor_vars <- res[["MetaData"]][["varFactors"]]
@@ -85,7 +85,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
     }
     ptb1.res0 <- print(res0,
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
-      catDigits = catDigits, contDigits = contDigits, minMax = minMax
+      catDigits = catDigits, contDigits = contDigits, minMax = minMax, addOverall = addOverall
     )
     ptb1.rn <- rownames(ptb1.res0)
     ptb1.rn <- gsub("(mean (SD))", "", ptb1.rn, fixed = T)
@@ -111,7 +111,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 
   if (Labels & !is.null(labeldata)) {
     colname.group_var <- unlist(labeldata[get("variable") == strata, "val_label"])
-    if (is.na(colname.group_var[1])) {
+    if (is.na(colname.group_var[1]) & addOverall) {
       colname.group_var[1] <- "Overall"
     }
     if (showAllLevels == T) {
@@ -248,7 +248,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     ptb1.list <- lapply(data.strata, svyCreateTableOne2,
       vars = vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm, addOverall = addOverall
+      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm, addOverall = F
     )
 
 

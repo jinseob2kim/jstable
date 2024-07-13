@@ -128,7 +128,7 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
 
   if (Labels & !is.null(labeldata)) {
     colname.group_var <- unlist(labeldata[.(strata, names(res$CatTable)), val_label])
-    if (is.na(colname.group_var[1])) {
+    if (is.na(colname.group_var[1]) & addOverall) {
       colname.group_var[1] <- "Overall"
     }
     if (showAllLevels == T) {
