@@ -55,7 +55,7 @@
 
 TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, cluster = NULL, strata = NULL, weights = NULL) {
   . <- NULL
-  
+
   ### var_subgroup이 categorical variable이 아닌 경우 중단 ###
   if (any(class(data) == "survey.design" & !is.null(var_subgroup))) {
     if (is.numeric(data$variables[[var_subgroup]])) stop("var_subgroup must categorical.")
