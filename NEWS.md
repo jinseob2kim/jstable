@@ -1,6 +1,7 @@
 # jstable 1.3.1
 
 * Fix: `addOverall` options to  `svyCreateTableOneJS` 
+* Fix: `TableSubgroupCox`
 
 
 # jstable 1.3.0
