@@ -64,7 +64,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if (is.numeric(data[[var_subgroup]])) stop("var_subgroup must categorical.")
     # if (length(levels(data[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
   }
-  
+
   ## functions with error
   possible_table <- purrr::possibly(table, NA)
   possible_prop.table <- purrr::possibly(function(x) {
@@ -413,7 +413,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           )
         }) %>%
         Reduce(rbind, .) -> CI
-      
+
       model %>%
         purrr::map(possible_pv) %>%
         purrr::map_dbl(~ round(., decimal.pvalue)) -> pv
