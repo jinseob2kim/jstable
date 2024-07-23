@@ -1,8 +1,11 @@
+# jstable 1.3.2
+
+* Fix: error in subgroup option due to non-existent item in `forestcox`
+
 # jstable 1.3.1
 
 * Fix: `addOverall` options to  `svyCreateTableOneJS` 
 * Fix: `TableSubgroupCox`
-
 
 # jstable 1.3.0
 

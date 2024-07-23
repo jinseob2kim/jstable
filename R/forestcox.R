@@ -64,7 +64,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if (is.numeric(data[[var_subgroup]])) stop("var_subgroup must categorical.")
     # if (length(levels(data[[as.character(formula[[3]])]])) != 2) stop("Independent variable must have 2 levels.")
   }
-
+  
   ## functions with error
   possible_table <- purrr::possibly(table, NA)
   possible_prop.table <- purrr::possibly(function(x) {
@@ -192,7 +192,6 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     stop("Please input correct subgroup variable.")
   } else {
     ### subgroup 지정 한 경우 ###
-
     # 공변량 있는 경우 formula 변경
     if (!is.null(var_cov)) {
       formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
@@ -205,7 +204,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 
     if (any(class(data) == "survey.design")) {
       ### survey data인 경우 ###
-
+      data$variables[[var_subgroup]] <- factor(data$variables[[var_subgroup]])
       data$variables[[var_subgroup]] %>%
         table() %>%
         names() -> label_val
@@ -261,7 +260,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     } else {
       ### survey data가 아닌 경우 ###
       weights_option <- if (!is.null(weights)) TRUE else FALSE
-
+      data[[var_subgroup]] <- factor(data[[var_subgroup]])
       # Coxph 함수를 각 subgroup에 대해 적용시키기 위한 함수
       run_coxph <- function(subgroup_var, subgroup_value, data, formula, weights_option) {
         subset_data <- data[data[[subgroup_var]] == subgroup_value, ]
@@ -414,7 +413,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           )
         }) %>%
         Reduce(rbind, .) -> CI
-
+      
       model %>%
         purrr::map(possible_pv) %>%
         purrr::map_dbl(~ round(., decimal.pvalue)) -> pv
@@ -453,11 +452,11 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 
     # output 만들기
     if (ncoef < 2) {
-      out <- data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F) %>%
+      out <- data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F, row.names = NULL) %>%
         mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
 
       if (!is.null(prop)) {
-        out <- data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F) %>%
+        out <- data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F, row.names = NULL) %>%
           cbind(prop) %>%
           mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
       }
