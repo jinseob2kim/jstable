@@ -1,6 +1,7 @@
 # jstable 1.3.2
 
 * Fix: error in subgroup option due to non-existent item in `forestcox`
+* Fix: Factor order error in `forestcox`
 
 # jstable 1.3.1
 
