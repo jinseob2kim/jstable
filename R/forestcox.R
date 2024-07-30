@@ -283,9 +283,9 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 
       if (is.null(cluster)) {
         model <- sapply(var_subgroup, function(var) {
-          if (is.factor(data[[var]])){
+          if (is.factor(data[[var]])) {
             unique_vals <- levels(data[[var]])
-          } else{
+          } else {
             unique_vals <- sort(setdiff(unique(data[[var]]), NA))
           }
           lapply(unique_vals, function(value) {
@@ -296,9 +296,9 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         formula <- as.formula(paste0(deparse(formula), " + ", "cluster(", cluster, ")"))
 
         model <- sapply(var_subgroup, function(var) {
-          if (is.factor(data[[var]])){
+          if (is.factor(data[[var]])) {
             unique_vals <- levels(data[[var]])
-          } else{
+          } else {
             unique_vals <- sort(setdiff(unique(data[[var]]), NA))
           }
           lapply(unique_vals, function(value) {
