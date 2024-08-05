@@ -1,3 +1,7 @@
+#jstable 1.3.3
+*Add cox2.display available in fine-and-gray(competing risk), Multi-State Model (MSM)
+*Add TableSubgroupMultiCox available in fine-and-gray(competing risk)
+
 # jstable 1.3.2
 
 * Fix: error in subgroup option due to non-existent item in `forestcox`
