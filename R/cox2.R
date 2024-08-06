@@ -15,7 +15,7 @@
 #' @export
 #' @importFrom survival coxph cluster frailty
 #' @importFrom stats formula update AIC
-
+#' 
 cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
   model <- cox.obj.withmodel
   if (!any(class(model) == "coxph")) {
@@ -94,13 +94,13 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
     }
     
     if(!is.null(msm)){
-        ids <- mdata2[,'(id)']
-        #mdata2[,'(id)'] = NULL
         baseformula <- stats::formula(paste(c(". ~ .", xf), collapse = " - "))
-        
+        ids <- mdata2[,length(names(mdata2))]
+        print(head(ids))
         unis <- lapply(xf, function(x) {
-          newfit <- update(model, stats::formula(paste(c(baseformula, x), collapse = "+")),id = ids)
-          newfit$formula
+          print(head(ids))
+          newfit <- update(model, stats::formula(paste(c(baseformula, x), collapse = "+")))
+          print(newfit$formula)
           uni.res <- data.frame(summary(newfit)$coefficients)
           if (grepl(":", x)) {
             uni.res <- uni.res[rownames(uni.res) %in% rownames(summary(model)$coefficients), ]
@@ -131,7 +131,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
       rownames(fix.all) <- rownames(uni.res)
     } else{
       basemodel <- update(model, stats::formula(paste(c(". ~ .", xf), collapse = " - ")), data = mdata2)
-    
+      
       unis <- lapply(xf, function(x) {
         newfit <- update(basemodel, stats::formula(paste0(". ~ . +", x)), data = mdata2)
         uni.res <- data.frame(summary(newfit)$coefficients)
@@ -167,7 +167,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
       colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
       rownames(fix.all) <- rownames(uni.res)
   }
-}
+  }
 ## rownames
   fix.all.list <- lapply(1:length(xf), function(x) {
     fix.all[rownames(fix.all) %in% rn.uni[[x]], ]
