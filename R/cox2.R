@@ -95,9 +95,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
     
     if(!is.null(msm)){
         baseformula <- stats::formula(paste(c(". ~ .", xf), collapse = " - "))
-        ids <- mdata2[,length(names(mdata2))]
-        print(head(ids))
-        unis <- lapply(xf, function(x) {
+          unis <- lapply(xf, function(x) {
           print(head(ids))
           newfit <- update(model, stats::formula(paste(c(baseformula, x), collapse = "+")))
           print(newfit$formula)
