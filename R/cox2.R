@@ -59,7 +59,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
   # } else{
   #  mdata = data.frame(data)
   # }
-
+  
   if (length(xf) == 1) {
     uni.res <- data.frame(summary(model)$coefficients)
     # uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
@@ -79,13 +79,13 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
     if(mtype == 'frailty'){
       rownames(fix.all) <- c(names(model$coefficients),'frailty')
     } else{
-    rownames(fix.all) <- names(model$coefficients)
+      rownames(fix.all) <- names(model$coefficients)
     }
   } else {
     countings <- length(unlist(attr(mdata[[1]], "dimnames")[2]))
     mdata2 <- cbind(matrix(sapply(mdata[, 1], `[[`, 1), ncol = countings), mdata[, -1])
     names(mdata2)[1:countings] <- as.character(model$formula[[2]][2:(countings+1)])
-
+    
     if(!is.null(x.weight)){
       names(mdata2)[ncol(mdata2)] <- as.character(x.weight)
     }
@@ -94,29 +94,27 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
     }
     
     if(!is.null(msm)){
-        baseformula <- stats::formula(paste(c(". ~ .", xf), collapse = " - "))
-          unis <- lapply(xf, function(x) {
-          print(head(ids))
-          newfit <- update(model, stats::formula(paste(c(baseformula, x), collapse = "+")))
-          print(newfit$formula)
-          uni.res <- data.frame(summary(newfit)$coefficients)
-          if (grepl(":", x)) {
-            uni.res <- uni.res[rownames(uni.res) %in% rownames(summary(model)$coefficients), ]
-          } else {
-            uni.res <- uni.res[grep(x, rownames(uni.res)), ]
-          }
-          # uni.res <- uni.res[c(2:nrow(uni.res), 1), ]
-          # uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", x, formula.ranef, sep="")), data = mdata))$coefficients)
-          names(uni.res)[ncol(uni.res)] <- "p"
-          uni.res2 <- NULL
-          if (mtype == "normal") {
-            uni.res2 <- uni.res %>% select(z, p, contains("coef"))
-          } else if (mtype == "cluster") {
-            uni.res2 <- uni.res %>% select(z, p, contains("coef"))
-          } else {
-            uni.res2 <- uni.res %>% select(p, contains("coef"))
-          }
-          return(uni.res2)
+      baseformula <- stats::formula(paste(c(". ~ .", xf), collapse = " - "))
+      unis <- lapply(xf, function(x) {
+        newfit <- update(model, stats::formula(paste(c(baseformula, x), collapse = "+")))
+        uni.res <- data.frame(summary(newfit)$coefficients)
+        if (grepl(":", x)) {
+          uni.res <- uni.res[rownames(uni.res) %in% rownames(summary(model)$coefficients), ]
+        } else {
+          uni.res <- uni.res[grep(x, rownames(uni.res)), ]
+        }
+        # uni.res <- uni.res[c(2:nrow(uni.res), 1), ]
+        # uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", x, formula.ranef, sep="")), data = mdata))$coefficients)
+        names(uni.res)[ncol(uni.res)] <- "p"
+        uni.res2 <- NULL
+        if (mtype == "normal") {
+          uni.res2 <- uni.res %>% select(z, p, contains("coef"))
+        } else if (mtype == "cluster") {
+          uni.res2 <- uni.res %>% select(z, p, contains("coef"))
+        } else {
+          uni.res2 <- uni.res %>% select(p, contains("coef"))
+        }
+        return(uni.res2)
       })
       rn.uni <- lapply(unis, rownames)
       unis2 <- Reduce(rbind, unis)
@@ -164,9 +162,9 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
       fix.all <- cbind(jstable:::coxExp(uni.res, dec = dec), jstable:::coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = dec))
       colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
       rownames(fix.all) <- rownames(uni.res)
+    }
   }
-  }
-## rownames
+  ## rownames
   fix.all.list <- lapply(1:length(xf), function(x) {
     fix.all[rownames(fix.all) %in% rn.uni[[x]], ]
   })
@@ -271,6 +269,5 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
   } else {
     return(list(table = fix.all.unlist, ranef = ranef.mat, metric = metric.mat, caption = intro))
   }
-  }
-  
-  
+}
+
