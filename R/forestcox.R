@@ -121,11 +121,14 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
     } else {
       ### survey data가 아닌 경우 ###
-      weights <- if (!is.null(weights)) {
-        data[[weights]]
+      
+      weights_names <- weights
+      weights <- if (!is.null(weights_names)) {
+        data[[weights_names]]
       } else {
         NULL
       }
+      
       if (!is.null(cluster)) {
         formula.1 <- as.formula(
           paste0(deparse(formula), " + ", "cluster(", cluster, ")")
@@ -262,6 +265,13 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       ### survey data가 아닌 경우 ###
       weights_option <- if (!is.null(weights)) TRUE else FALSE
       data[[var_subgroup]] <- factor(data[[var_subgroup]])
+      
+      weights <- if (!is.null(weights_names)) {
+        data[[weights_names]]
+      } else {
+        NULL
+      }
+      
       # Coxph 함수를 각 subgroup에 대해 적용시키기 위한 함수
       run_coxph <- function(subgroup_var, subgroup_value, data, formula, weights_option) {
         subset_data <- data[data[[subgroup_var]] == subgroup_value, ]
@@ -271,7 +281,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         }
         
         subset_weights <- if (weights_option) {
-          as.numeric(as.character(subset_data[[weights]]))
+          as.numeric(as.character(subset_data[[weights_names]]))
         } else {
           NULL
         }
@@ -306,18 +316,13 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           })
         })
       }
-      weights <- if (!is.null(weights)) {
-        data[[weights]]
-      } else {
-        NULL
-      }
       
       data %>%
         filter(!is.na(get(var_subgroup))) %>%
         select(dplyr::all_of(var_subgroup)) %>%
         table() %>%
         names() -> label_val
-      xlev <- survival::coxph(formula, data = data)$xlevels
+      xlev <- survival::coxph(formula, data = data, weight = weights)$xlevels
       
       
       # strata만 공식에 추가하는 경우 P for interaction에서 <NA>가 나타나는 문제가 있어 수정
@@ -442,7 +447,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             }
           )
         }) -> CI
-      
+    
       model %>%
         lapply(function(x) {
           tryCatch(
@@ -455,44 +460,44 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           )
         }) -> pv
     }
-    
+  }
     # output 만들기
-    if (ncoef < 2) {
+  if (ncoef < 2) {
+    out <- data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F, row.names = NULL) %>%
+      mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
+    
+    if (!is.null(prop)) {
       out <- data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F, row.names = NULL) %>%
+        cbind(prop) %>%
         mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
-      
-      if (!is.null(prop)) {
-        out <- data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F, row.names = NULL) %>%
-          cbind(prop) %>%
-          mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
-      }
-      
-      rownames(out) <- NULL
-      
-      return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
-    } else {
+    }
+    
+    rownames(out) <- NULL
+    
+    return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
+  } else {
+    out <- data.frame(
+      Variable = unlist(lapply(label_val, function(x) c(x, rep("", length(xlev[[1]]) - 1)))), Count = unlist(lapply(Count, function(x) c(x, rep("", length(xlev[[1]]) - 1)))), Percent = unlist(lapply(round(Count / sum(Count) * 100, decimal.percent), function(x) c(x, rep("", length(xlev[[1]]) - 1)))),
+      Levels = rep(paste0(xlabel, "=", xlev[[1]]), length(label_val)), `Point Estimate` = unlist(lapply(Point.Estimate, function(x) c("Reference", x))), Lower = unlist(lapply(CI, function(x) c("", x[, 1]))), Upper = unlist(lapply(CI, function(x) c("", x[, 2]))), check.names = F
+    ) %>%
+      mutate(`P value` = unlist(lapply(pv, function(x) c("", ifelse(x >= 0.001, x, "<0.001")))), `P for interaction` = NA)
+    
+    if (!is.null(prop)) {
       out <- data.frame(
         Variable = unlist(lapply(label_val, function(x) c(x, rep("", length(xlev[[1]]) - 1)))), Count = unlist(lapply(Count, function(x) c(x, rep("", length(xlev[[1]]) - 1)))), Percent = unlist(lapply(round(Count / sum(Count) * 100, decimal.percent), function(x) c(x, rep("", length(xlev[[1]]) - 1)))),
         Levels = rep(paste0(xlabel, "=", xlev[[1]]), length(label_val)), `Point Estimate` = unlist(lapply(Point.Estimate, function(x) c("Reference", x))), Lower = unlist(lapply(CI, function(x) c("", x[, 1]))), Upper = unlist(lapply(CI, function(x) c("", x[, 2]))), check.names = F
       ) %>%
-        mutate(`P value` = unlist(lapply(pv, function(x) c("", ifelse(x >= 0.001, x, "<0.001")))), `P for interaction` = NA)
-      
-      if (!is.null(prop)) {
-        out <- data.frame(
-          Variable = unlist(lapply(label_val, function(x) c(x, rep("", length(xlev[[1]]) - 1)))), Count = unlist(lapply(Count, function(x) c(x, rep("", length(xlev[[1]]) - 1)))), Percent = unlist(lapply(round(Count / sum(Count) * 100, decimal.percent), function(x) c(x, rep("", length(xlev[[1]]) - 1)))),
-          Levels = rep(paste0(xlabel, "=", xlev[[1]]), length(label_val)), `Point Estimate` = unlist(lapply(Point.Estimate, function(x) c("Reference", x))), Lower = unlist(lapply(CI, function(x) c("", x[, 1]))), Upper = unlist(lapply(CI, function(x) c("", x[, 2]))), check.names = F
-        ) %>%
-          mutate(KM = as.vector(t(prop)), `P value` = unlist(lapply(pv, function(x) c("", ifelse(x >= 0.001, x, "<0.001")))), `P for interaction` = NA)
-      }
-      
-      rownames(out) <- NULL
-      
-      return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
+        mutate(KM = as.vector(t(prop)), `P value` = unlist(lapply(pv, function(x) c("", ifelse(x >= 0.001, x, "<0.001")))), `P for interaction` = NA)
     }
+    
+    rownames(out) <- NULL
+    
+    return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
+    
   }
+
+
 }
-
-
 
 
 TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, line = F, cluster = NULL, strata = NULL, weights = NULL) {
