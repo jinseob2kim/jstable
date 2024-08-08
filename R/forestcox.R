@@ -130,7 +130,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           paste0(deparse(formula), " + ", "cluster(", cluster, ")")
         )
         cc <- substitute(
-          survival::coxph(formula1, data = data, x = T, weights = .weights),
+          survival::coxph(formula.1, data = data, x = T, weights = .weights),
           list(.weights = weights)
         )
         model <- eval(cc)      } else {
