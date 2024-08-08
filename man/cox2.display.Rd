@@ -10,6 +10,8 @@ cox2.display(cox.obj.withmodel, dec = 2)
 \item{cox.obj.withmodel}{coxph.object with model option: TRUE}
 
 \item{dec}{Decimal point, Default: 2}
+
+\item{msm}{Used multistep method, Default: NULL}
 }
 \value{
 Table, cluster/frailty info, metrics, caption

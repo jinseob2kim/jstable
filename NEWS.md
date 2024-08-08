@@ -1,6 +1,6 @@
 #jstable 1.3.3
 *Add cox2.display available in fine-and-gray(competing risk), Multi-State Model (MSM)
-*Add TableSubgroupMultiCox available in fine-and-gray(competing risk)
+*Add TableSubgroupCox available in fine-and-gray(competing risk)
 
 # jstable 1.3.2
 
