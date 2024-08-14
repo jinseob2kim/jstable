@@ -129,9 +129,17 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         formula.1 <- as.formula(
           paste0(deparse(formula), " + ", "cluster(", cluster, ")")
         )
-        model <- survival::coxph(formula.1, data = data, x = T)
+        cc <- substitute(
+          survival::coxph(formula.1, data = data, x = T, weights = .weights),
+          list(.weights = weights)
+        )
+        model <- eval(cc)
       } else {
-        model <- survival::coxph(formula, data = data, x = T)
+        cc <- substitute(
+          survival::coxph(formula, data = data, x = T, weights = .weights),
+          list(.weights = weights)
+        )
+        model <- eval(cc)
       }
       # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
 
