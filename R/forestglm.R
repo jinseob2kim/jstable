@@ -323,7 +323,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     
     # output 만들기
     if (ncoef < 2) {
-      data.frame(Variable = unlist(paste("  ", label_val)), Count = unlist(Count), Percent = unlist(round(Count / sum(Count) * 100, decimal.percent)), `Point Estimate` = unlist(Point.Estimate), Lower = unlist(purrr::map(CI, 1)), Upper = unlist(purrr::map(CI, 2))) %>%
+      data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = purrr::map(CI, 1), Upper = purrr::map(CI, 2)) %>%
         dplyr::mutate(`P value` = unlist(ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA) -> out
       
       if (family == "binomial") {

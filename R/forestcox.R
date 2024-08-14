@@ -467,12 +467,12 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     # output 만들기
     if (ncoef < 2) {
       out <- data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F, row.names = NULL) %>%
-        mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
+        mutate(`P value` = unlist(ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA)
 
       if (!is.null(prop)) {
         out <- data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F, row.names = NULL) %>%
           cbind(prop) %>%
-          mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
+          mutate(`P value` = unlist(ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA)
       }
 
       rownames(out) <- NULL
