@@ -136,7 +136,6 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       ) %>%
         dplyr::mutate(`P value` = c("", ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA) -> out
       
-      
       if (family == "binomial") {
         names(out)[5] <- "OR"
       }
@@ -180,7 +179,6 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           return(NA)
         }
       )
-      
       # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       
       data.design <- data
@@ -319,12 +317,12 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         }
         
         round(pvl, decimal.pvalue)
-      })
+      }) %>% unlist
     
     # output 만들기
     if (ncoef < 2) {
-      data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = purrr::map(CI, 1), Upper = purrr::map(CI, 2)) %>%
-        dplyr::mutate(`P value` = unlist(ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA) -> out
+      data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = unlist(Point.Estimate), Lower = unlist(purrr::map(CI, 1)), Upper = unlist(purrr::map(CI, 2))) %>%
+        dplyr::mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
       
       if (family == "binomial") {
         names(out)[4] <- "OR"
