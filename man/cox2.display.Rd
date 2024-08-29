@@ -4,7 +4,7 @@
 \alias{cox2.display}
 \title{cox2.display: table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model}
 \usage{
-cox2.display(cox.obj.withmodel, dec = 2)
+cox2.display(cox.obj.withmodel, dec = 2, msm = NULL)
 }
 \arguments{
 \item{cox.obj.withmodel}{coxph.object with model option: TRUE}
