@@ -73,7 +73,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
     } else {
       uni.res2 <- uni.res %>% select(p, contains("coef"))
     }
-    fix.all <- jstable:::coxExp(uni.res2, dec = dec)
+    fix.all <- coxExp(uni.res2, dec = dec)
     colnames(fix.all) <- c("HR(95%CI)", "P value")
 
     if (mtype == "frailty") {
@@ -122,7 +122,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
       mul.res <- data.frame(coefNA(model))
       uni.res <- uni.res[rownames(uni.res) %in% rownames(mul.res), ]
       colnames(mul.res)[ncol(mul.res)] <- "p"
-      fix.all <- cbind(jstable:::coxExp(uni.res, dec = dec), jstable:::coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = dec))
+      fix.all <- cbind(coxExp(uni.res, dec = dec), coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = dec))
       colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
       rownames(fix.all) <- rownames(uni.res)
     } else {
@@ -159,7 +159,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
       mul.res <- data.frame(coefNA(model))
       uni.res <- uni.res[rownames(uni.res) %in% rownames(mul.res), ]
       colnames(mul.res)[ncol(mul.res)] <- "p"
-      fix.all <- cbind(jstable:::coxExp(uni.res, dec = dec), jstable:::coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = dec))
+      fix.all <- cbind(coxExp(uni.res, dec = dec), coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = dec))
       colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
       rownames(fix.all) <- rownames(uni.res)
     }
