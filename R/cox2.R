@@ -3,7 +3,7 @@
 #' @param cox.obj.withmodel coxph.object with model option: TRUE
 #' @param dec Decimal point, Default: 2
 #' @param msm Multi state model, Default: NULL
-#' @return Table, cluster/frailty info, metrics, caption 
+#' @return Table, cluster/frailty info, metrics, caption
 #' @details GEE like - cluster, Mixed effect model like - frailty
 #' @examples
 #' library(survival)
@@ -270,5 +270,4 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
   } else {
     return(list(table = fix.all.unlist, ranef = ranef.mat, metric = metric.mat, caption = intro))
   }
-
 }
