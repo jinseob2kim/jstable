@@ -317,7 +317,8 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         }
 
         round(pvl, decimal.pvalue)
-      })
+      }) %>%
+      unlist()
 
     # output 만들기
     if (ncoef < 2) {

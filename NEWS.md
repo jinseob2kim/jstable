@@ -1,6 +1,7 @@
-#jstable 1.3.3
-*Add cox2.display available in fine-and-gray(competing risk), Multi-State Model (MSM)
-*Add TableSubgroupMultiCox available in fine-and-gray(competing risk)
+# jstable 1.3.3
+* Update: Add cox2.display available in fine-and-gray(competing risk), Multi-State Model (MSM)
+* Update: Add TableSubgroupMultiCox available in fine-and-gray(competing risk)
+* Fix: error in `forestcox` and `forestglm` with datatype of P value in table
 
 # jstable 1.3.2
 
