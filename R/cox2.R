@@ -15,7 +15,7 @@
 #' @export
 #' @importFrom survival coxph cluster frailty
 #' @importFrom stats formula update AIC
-#' 
+#'  
 cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
   model <- cox.obj.withmodel
   if (!any(class(model) == "coxph")) {
