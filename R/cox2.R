@@ -3,7 +3,7 @@
 #' @param cox.obj.withmodel coxph.object with model option: TRUE
 #' @param dec Decimal point, Default: 2
 #' @param msm Multi state model, Default: NULL
-#' @return Table, cluster/frailty info, metrics, caption
+#' @return Table, cluster/frailty info, metrics, caption 
 #' @details GEE like - cluster, Mixed effect model like - frailty
 #' @examples
 #' library(survival)
