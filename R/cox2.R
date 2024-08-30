@@ -2,7 +2,8 @@
 #' @description Table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model
 #' @param cox.obj.withmodel coxph.object with model option: TRUE
 #' @param dec Decimal point, Default: 2
-#' @return Table, cluster/frailty info, metrics, caption
+#' @param msm Multi state model, Default: NULL
+#' @return Table, cluster/frailty info, metrics, caption 
 #' @details GEE like - cluster, Mixed effect model like - frailty
 #' @examples
 #' library(survival)
@@ -67,11 +68,11 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
     names(uni.res)[ncol(uni.res)] <- "p"
     uni.res2 <- NULL
     if (mtype == "normal") {
-      uni.res2 <- uni.res %>% select(z, p, contains("coef"))
+      uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
     } else if (mtype == "cluster") {
-      uni.res2 <- uni.res %>% select(z, p, contains("coef"))
+      uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
     } else {
-      uni.res2 <- uni.res %>% select(p, contains("coef"))
+      uni.res2 <- uni.res[, c("p", names(uni.res)[grep("coef", names(uni.res))])]
     }
     fix.all <- coxExp(uni.res2, dec = dec)
     colnames(fix.all) <- c("HR(95%CI)", "P value")
@@ -108,11 +109,11 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
         names(uni.res)[ncol(uni.res)] <- "p"
         uni.res2 <- NULL
         if (mtype == "normal") {
-          uni.res2 <- uni.res %>% select(z, p, contains("coef"))
+          uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
         } else if (mtype == "cluster") {
-          uni.res2 <- uni.res %>% select(z, p, contains("coef"))
+          uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
         } else {
-          uni.res2 <- uni.res %>% select(p, contains("coef"))
+          uni.res2 <- uni.res[, c("p", names(uni.res)[grep("coef", names(uni.res))])]
         }
         return(uni.res2)
       })
@@ -145,11 +146,11 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
 
         uni.res2 <- NULL
         if (mtype == "normal") {
-          uni.res2 <- uni.res %>% select(z, p, contains("coef"))
+          uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
         } else if (mtype == "cluster") {
-          uni.res2 <- uni.res %>% select(z, p, contains("coef"))
+          uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
         } else {
-          uni.res2 <- uni.res %>% select(p, contains("coef"))
+          uni.res2 <- uni.res[, c("p", names(uni.res)[grep("coef", names(uni.res))])]
         }
         return(uni.res2)
       })
@@ -269,4 +270,5 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
   } else {
     return(list(table = fix.all.unlist, ranef = ranef.mat, metric = metric.mat, caption = intro))
   }
+
 }
