@@ -1,3 +1,6 @@
+# jstable 1.3.4
+* Fix: error in `forestcox` when categorical binary outcome
+
 # jstable 1.3.3
 * Update: Add cox2.display available in fine-and-gray(competing risk), Multi-State Model (MSM)
 * Update: Add TableSubgroupMultiCox available in fine-and-gray(competing risk)
