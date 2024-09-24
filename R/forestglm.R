@@ -91,22 +91,25 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       model <- stats::glm(formula, data = data, x = T, family = family)
       # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
     }
-
-    xlev <- ifelse(length(model$xlevels) == 0, NA, model$xlevels)
+    
+    xlev <- NA
+    if (length(model$xlevels[[xlabel]]) > 0){
+      xlev <- model$xlevels[[xlabel]]
+    }
 
     # cc, PE, CI, PV 구하기
     cc <- summary(model)$coefficients
     Point.Estimate <- round(stats::coef(model), decimal.estimate)[2:(1 + ncoef)]
     CI <- round(matrix(c(cc[2:(1 + ncoef), 1] - qnorm(0.975) * cc[2:(1 + ncoef), 2], cc[2:(1 + ncoef), 1] + qnorm(0.975) * cc[2:(1 + ncoef), 2]),
       ncol = 2,
-      dimnames = list(paste0(xlabel, xlev[[1]][-1]), c("2.5 %", "97.5 %"))
+      dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %"))
     ), decimal.estimate)
 
     if (family %in% c("binomial", "poisson", "quasipoisson")) {
       Point.Estimate <- round(exp(stats::coef(model)), decimal.estimate)[2:(1 + ncoef)]
       CI <- round(exp(matrix(c(cc[2:(1 + ncoef), 1] - qnorm(0.975) * cc[2:(1 + ncoef), 2], cc[2:(1 + ncoef), 1] + qnorm(0.975) * cc[2:(1 + ncoef), 2]),
         ncol = 2,
-        dimnames = list(paste0(xlabel, xlev[[1]][-1]), c("2.5 %", "97.5 %"))
+        dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %"))
       )), decimal.estimate)
     }
 
@@ -132,7 +135,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     } else {
       data.frame(
         Variable = c("Overall", rep("", length(Point.Estimate))), Count = c(length(model$y), rep("", length(Point.Estimate))), Percent = c(100, rep("", length(Point.Estimate))),
-        Levels = paste0(xlabel, "=", xlev[[1]]), `Point Estimate` = c("Reference", Point.Estimate), Lower = c("", CI[, 1]), Upper = c("", CI[, 2])
+        Levels = paste0(xlabel, "=", xlev), `Point Estimate` = c("Reference", Point.Estimate), Lower = c("", CI[, 1]), Upper = c("", CI[, 2])
       ) %>%
         dplyr::mutate(`P value` = c("", ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA) -> out
 
@@ -164,8 +167,11 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         table() %>%
         names() -> label_val
       label_val %>% purrr::map(~ possible_svyglm(formula, design = subset(data, get(var_subgroup) == .), x = TRUE, family = family.svyglm)) -> model
-      xlev <- ifelse(length(survey::svyglm(formula, design = data)$xlevels) == 0, NA, survey::svyglm(formula, design = data)$xlevels)
-
+      xlev <- NA
+      if (length(survey::svyglm(formula, design = data)$xlevels[[xlabel]]) > 0){
+        xlev <- survey::svyglm(formula, design = data)$xlevels[[xlabel]]
+      }
+      
       # pv_int 구하기
       pv_int <- tryCatch(
         {
@@ -211,7 +217,11 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         select(dplyr::all_of(var_subgroup)) %>%
         table() %>%
         names() -> label_val
-      xlev <- ifelse(length(stats::glm(formula, data = data, family = family)$xlevels) == 0, NA, stats::glm(formula, data = data, family = family)$xlevels)
+      
+      xlev <- NA
+      if (length(stats::glm(formula, data = data, family = family)$xlevels[[xlabel]]) > 0){
+        xlev <- stats::glm(formula, data = data, family = family)$xlevels[[xlabel]]
+      }
       model.int <- possible_glm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), data = data, family = family)
 
       # pv_int 구하기
@@ -236,8 +246,8 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       Point.Estimate <- model %>%
         purrr::map("coefficients", default = NA) %>%
         lapply(function(x) {
-          est <- rep(NA, max(length(xlev[[1]]) - 1, 1))
-          names(est) <- paste0(xlabel, xlev[[1]][-1])
+          est <- rep(NA, max(length(xlev) - 1, 1))
+          names(est) <- paste0(xlabel, xlev[-1])
 
           for (i in names(est)) {
             tryCatch(est[i] <- x[i],
@@ -254,7 +264,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             return(NA)
           })
 
-          ci0 <- matrix(NA, ncol = 2, nrow = max(length(xlev[[1]]) - 1, 1), dimnames = list(paste0(xlabel, xlev[[1]][-1]), c("2.5 %", "97.5 %")))
+          ci0 <- matrix(NA, ncol = 2, nrow = max(length(xlev) - 1, 1), dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %")))
           for (i in rownames(ci0)) {
             ci0[i, 1] <- tryCatch(cc0[i, 1] - stats::qnorm(0.975) * cc0[i, 2], error = function(e) {
               return(NA)
@@ -270,8 +280,8 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       Point.Estimate <- model %>%
         purrr::map("coefficients", default = NA) %>%
         lapply(function(x) {
-          est <- rep(NA, max(length(xlev[[1]]) - 1, 1))
-          names(est) <- paste0(xlabel, xlev[[1]][-1])
+          est <- rep(NA, max(length(xlev) - 1, 1))
+          names(est) <- paste0(xlabel, xlev[-1])
 
           for (i in names(est)) {
             tryCatch(est[i] <- x[i],
@@ -288,7 +298,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             return(NA)
           })
 
-          ci0 <- matrix(NA, ncol = 2, nrow = max(length(xlev[[1]]) - 1, 1), dimnames = list(paste0(xlabel, xlev[[1]][-1]), c("2.5 %", "97.5 %")))
+          ci0 <- matrix(NA, ncol = 2, nrow = max(length(xlev) - 1, 1), dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %")))
           for (i in rownames(ci0)) {
             ci0[i, 1] <- tryCatch(cc0[i, 1] - stats::qnorm(0.975) * cc0[i, 2], error = function(e) {
               return(NA)
@@ -308,8 +318,8 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           return(NA)
         })
 
-        pvl <- rep(NA, max(length(xlev[[1]]) - 1, 1))
-        names(pvl) <- paste0(xlabel, xlev[[1]][-1])
+        pvl <- rep(NA, max(length(xlev) - 1, 1))
+        names(pvl) <- paste0(xlabel, xlev[-1])
         for (i in names(pvl)) {
           pvl[i] <- tryCatch(cc0[i, 4], error = function(e) {
             return(NA)
@@ -332,8 +342,8 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
     } else {
       data.frame(
-        Variable = unlist(lapply(label_val, function(x) c(x, rep("", length(xlev[[1]]) - 1)))), Count = unlist(lapply(Count, function(x) c(x, rep("", length(xlev[[1]]) - 1)))), Percent = unlist(lapply(round(Count / sum(Count) * 100, decimal.percent), function(x) c(x, rep("", length(xlev[[1]]) - 1)))),
-        Levels = rep(paste0(xlabel, "=", xlev[[1]]), length(label_val)), `Point Estimate` = unlist(lapply(Point.Estimate, function(x) c("Reference", x))), Lower = unlist(lapply(CI, function(x) c("", x[, 1]))), Upper = unlist(lapply(CI, function(x) c("", x[, 2])))
+        Variable = unlist(lapply(label_val, function(x) c(x, rep("", length(xlev) - 1)))), Count = unlist(lapply(Count, function(x) c(x, rep("", length(xlev) - 1)))), Percent = unlist(lapply(round(Count / sum(Count) * 100, decimal.percent), function(x) c(x, rep("", length(xlev) - 1)))),
+        Levels = rep(paste0(xlabel, "=", xlev), length(label_val)), `Point Estimate` = unlist(lapply(Point.Estimate, function(x) c("Reference", x))), Lower = unlist(lapply(CI, function(x) c("", x[, 1]))), Upper = unlist(lapply(CI, function(x) c("", x[, 2])))
       ) %>%
         dplyr::mutate(`P value` = unlist(lapply(pv, function(x) c("", ifelse(x >= 0.001, x, "<0.001")))), `P for interaction` = NA) -> out
 
