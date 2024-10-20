@@ -1,3 +1,6 @@
+# jstable 1.3.5
+* Fix: error in `TableSubgroupMultiGLM` when covariates
+
 # jstable 1.3.4
 * Fix: error in `forestcox` when categorical binary outcome
 * Fix: error in `forestglm` when categorical covariates
