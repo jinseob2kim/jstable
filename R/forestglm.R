@@ -415,7 +415,7 @@ TableSubgroupMultiGLM <- function(formula, var_subgroups = NULL, var_cov = NULL,
   } else {
     out.list <- purrr::map(var_subgroups, ~ TableSubgroupGLM(formula, var_subgroup = ., var_cov = var_cov, data = data, family = family, decimal.estimate = decimal.estimate, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue))
     out.list <- purrr::map(out.list, ~ .x %>%
-                             dplyr::mutate(`P value` = purrr::map_chr(`P value`, ~ if(is.list(.)) as.character(unlist(.)) else as.character(.))))
+      dplyr::mutate(`P value` = purrr::map_chr(`P value`, ~ if (is.list(.)) as.character(unlist(.)) else as.character(.))))
     if (line) {
       out.newline <- out.list %>% purrr::map(~ rbind(NA, .))
       return(rbind(out.all, out.newline %>% dplyr::bind_rows()))
