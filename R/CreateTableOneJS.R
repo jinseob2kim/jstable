@@ -213,10 +213,9 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
         ptb1[first_row, test_name] <- test_used
       }
     }
+    cols_to_remove <- grep("^test\\(", colnames(ptb1))
+    ptb1 <- ptb1[, -cols_to_remove]
   }
-  cols_to_remove <- grep("^test\\(", colnames(ptb1))
-  ptb1 <- ptb1[, -cols_to_remove]
-  
   sig <- ifelse(ptb1[, "p"] == "<0.001", "0", ptb1[, "p"])
   sig <- as.numeric(as.vector(sig))
   sig <- ifelse(sig <= 0.05, "**", "")
@@ -357,7 +356,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal, exact = exact,
       catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm, addOverall = addOverall, pairwise = pairwise
     )
-    
+
     cap.tb1 <- paste("Stratified by ", strata, sep = "")
     
     if (Labels & !is.null(labeldata)) {
@@ -519,3 +518,4 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
     return(list(table = ptb1, caption = cap.tb1))
   }
 }
+
