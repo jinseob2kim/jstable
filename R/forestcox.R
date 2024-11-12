@@ -7,32 +7,32 @@
 #' @param decimal.percent PARAM_DESCRIPTION, Default: 1
 #' @return OUTPUT_DESCRIPTION
 #' @details DETAILS
-#' @examples 
+#' @examples
 #' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
+#' if (interactive()) {
+#'   # EXAMPLE1
 #' }
-#' @seealso 
+#' }
+#' @seealso
 #'  \code{\link[tidyr]{drop_na}}
 #'  \code{\link[dplyr]{group_by}}, \code{\link[dplyr]{summarise}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{bind_rows}}, \code{\link[dplyr]{arrange}}
 #' @rdname count_event_by
-#' @export 
+#' @export
 #' @importFrom tidyr drop_na
 #' @importFrom dplyr group_by summarize mutate bind_rows arrange
-#' 
+#'
 count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NULL, decimal.percent = 1) {
   if (inherits(data, "survey.design")) {
     data <- data$variables
   } else {
     data <- data
   }
-  
+
   event_col <- as.character(formula[[2]][[3]])
   total_count <- nrow(data)
   total_event_count <- sum(data[[event_col]] == 1, na.rm = TRUE)
   total_event_rate <- paste0(total_event_count, "/", total_count, " (", round(total_event_count / total_count * 100, decimal.percent), "%)")
-  
+
   if (!is.null(count_by_var) && !is.null(var_subgroup)) {
     # count_by_var와 var_subgroup이 모두 있을 때
     counts <- data %>%
@@ -40,7 +40,7 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
       dplyr::group_by(!!sym(count_by_var), !!sym(var_subgroup)) %>%
       dplyr::summarize(Count = n(), Event_Count = sum(!!sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
       dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
-    
+
     overall_counts <- data %>%
       dplyr::group_by(!!sym(count_by_var)) %>%
       dplyr::summarize(Count = n(), Event_Count = sum(!!sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
@@ -48,7 +48,7 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
         Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"),
         !!sym(var_subgroup) := "Overall"
       )
-    
+
     counts <- counts %>%
       dplyr::bind_rows(overall_counts) %>%
       dplyr::arrange(!!sym(count_by_var), !!sym(var_subgroup))
@@ -81,9 +81,9 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
     Event_Count = total_event_count,
     Event_Rate = total_event_rate
   )
-  
+
   counts <- bind_rows(counts, total_row)
-  
+
   return(counts)
 }
 
