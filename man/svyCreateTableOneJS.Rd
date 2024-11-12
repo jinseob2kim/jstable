@@ -25,7 +25,8 @@ svyCreateTableOneJS(
   psub = T,
   minMax = F,
   showpm = T,
-  addOverall = F
+  addOverall = F,
+  pairwise = F
 )
 }
 \arguments{
@@ -70,6 +71,8 @@ svyCreateTableOneJS(
 \item{showpm}{Logical, show normal distributed continuous variables as Mean ± SD. Default: T}
 
 \item{addOverall}{(optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F}
+
+\item{pairwise}{(optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F}
 }
 \value{
 A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.

@@ -35,7 +35,8 @@ CreateTableOneJS(
   minMax = F,
   showpm = T,
   addOverall = F,
-  normalityTest = F
+  normalityTest = F,
+  pairwise = F
 )
 }
 \arguments{
@@ -100,9 +101,8 @@ CreateTableOneJS(
 \item{addOverall}{(optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F}
 
 \item{normalityTest}{Logical, perform the Shapiro test for all variables. Default: F}
-}
-\value{
-A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
+
+\item{pairwise}{(optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F#' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.}
 }
 \description{
 Combine CreateTableOne & print function in tableone package

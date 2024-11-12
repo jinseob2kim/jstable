@@ -1,3 +1,93 @@
+#' @title FUNCTION_TITLE
+#' @description FUNCTION_DESCRIPTION
+#' @param formula PARAM_DESCRIPTION
+#' @param data PARAM_DESCRIPTION
+#' @param count_by_var PARAM_DESCRIPTION, Default: NULL
+#' @param var_subgroup PARAM_DESCRIPTION, Default: NULL
+#' @param decimal.percent PARAM_DESCRIPTION, Default: 1
+#' @return OUTPUT_DESCRIPTION
+#' @details DETAILS
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @seealso 
+#'  \code{\link[tidyr]{drop_na}}
+#'  \code{\link[dplyr]{group_by}}, \code{\link[dplyr]{summarise}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{bind_rows}}, \code{\link[dplyr]{arrange}}
+#' @rdname count_event_by
+#' @export 
+#' @importFrom tidyr drop_na
+#' @importFrom dplyr group_by summarize mutate bind_rows arrange
+#' 
+count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NULL, decimal.percent = 1) {
+  if (inherits(data, "survey.design")) {
+    data <- data$variables
+  } else {
+    data <- data
+  }
+  
+  event_col <- as.character(formula[[2]][[3]])
+  total_count <- nrow(data)
+  total_event_count <- sum(data[[event_col]] == 1, na.rm = TRUE)
+  total_event_rate <- paste0(total_event_count, "/", total_count, " (", round(total_event_count / total_count * 100, decimal.percent), "%)")
+  
+  if (!is.null(count_by_var) && !is.null(var_subgroup)) {
+    # count_by_var와 var_subgroup이 모두 있을 때
+    counts <- data %>%
+      tidyr::drop_na(!!sym(var_subgroup)) %>%
+      dplyr::group_by(!!sym(count_by_var), !!sym(var_subgroup)) %>%
+      dplyr::summarize(Count = n(), Event_Count = sum(!!sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
+      dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
+    
+    overall_counts <- data %>%
+      dplyr::group_by(!!sym(count_by_var)) %>%
+      dplyr::summarize(Count = n(), Event_Count = sum(!!sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
+      dplyr::mutate(
+        Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"),
+        !!sym(var_subgroup) := "Overall"
+      )
+    
+    counts <- counts %>%
+      dplyr::bind_rows(overall_counts) %>%
+      dplyr::arrange(!!sym(count_by_var), !!sym(var_subgroup))
+  } else if (is.null(count_by_var) && !is.null(var_subgroup)) {
+    # var_subgroup만 있을 때
+    counts <- data %>%
+      tidyr::drop_na(!!sym(var_subgroup)) %>%
+      dplyr::group_by(!!sym(var_subgroup)) %>%
+      dplyr::summarize(Count = n(), Event_Count = sum(!!sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
+      dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
+  } else if (!is.null(count_by_var) && is.null(var_subgroup)) {
+    # count_by_var만 있을 때
+    counts <- data %>%
+      dplyr::group_by(!!sym(count_by_var)) %>%
+      dplyr::summarize(Count = n(), Event_Count = sum(!!sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
+      dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
+  } else {
+    # count_by_var와 var_subgroup이 NULL일 때는 전체 데이터만 Total로 계산
+    counts <- tibble(
+      Total = "Total",
+      Count = total_count,
+      Event_Count = total_event_count,
+      Event_Rate = total_event_rate
+    )
+    return(counts)
+  }
+  # Total 행을 추가
+  total_row <- tibble(
+    Count = total_count,
+    Event_Count = total_event_count,
+    Event_Rate = total_event_rate
+  )
+  
+  counts <- bind_rows(counts, total_row)
+  
+  return(counts)
+}
+
+
 #' @title TableSubgroupCox: Sub-group analysis table for Cox/svycox model.
 #' @description Sub-group analysis table for Cox/svycox model.
 #' @param formula formula with survival analysis.
@@ -52,71 +142,6 @@
 #' @importFrom stats confint coefficients
 #' @importFrom utils tail
 
-count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NULL, decimal.percent = 1) {
-  if (inherits(data, "survey.design")) {
-    data <- data$variables
-  } else {
-    data <- data
-  }
-
-  event_col <- as.character(formula[[2]][[3]])
-  total_count <- nrow(data)
-  total_event_count <- sum(data[[event_col]] == 1, na.rm = TRUE)
-  total_event_rate <- paste0(total_event_count, "/", total_count, " (", round(total_event_count / total_count * 100, decimal.percent), "%)")
-
-  if (!is.null(count_by_var) && !is.null(var_subgroup)) {
-    # count_by_var와 var_subgroup이 모두 있을 때
-    counts <- data %>%
-      tidyr::drop_na(!!sym(var_subgroup)) %>%
-      dplyr::group_by(!!sym(count_by_var), !!sym(var_subgroup)) %>%
-      dplyr::summarize(Count = n(), Event_Count = sum(!!sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
-      dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
-
-    overall_counts <- data %>%
-      dplyr::group_by(!!sym(count_by_var)) %>%
-      dplyr::summarize(Count = n(), Event_Count = sum(!!sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
-      dplyr::mutate(
-        Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"),
-        !!sym(var_subgroup) := "Overall"
-      )
-
-    counts <- counts %>%
-      dplyr::bind_rows(overall_counts) %>%
-      dplyr::arrange(!!sym(count_by_var), !!sym(var_subgroup))
-  } else if (is.null(count_by_var) && !is.null(var_subgroup)) {
-    # var_subgroup만 있을 때
-    counts <- data %>%
-      tidyr::drop_na(!!sym(var_subgroup)) %>%
-      dplyr::group_by(!!sym(var_subgroup)) %>%
-      dplyr::summarize(Count = n(), Event_Count = sum(!!sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
-      dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
-  } else if (!is.null(count_by_var) && is.null(var_subgroup)) {
-    # count_by_var만 있을 때
-    counts <- data %>%
-      dplyr::group_by(!!sym(count_by_var)) %>%
-      dplyr::summarize(Count = n(), Event_Count = sum(!!sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
-      dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
-  } else {
-    # count_by_var와 var_subgroup이 NULL일 때는 전체 데이터만 Total로 계산
-    counts <- tibble(
-      Total = "Total",
-      Count = total_count,
-      Event_Count = total_event_count,
-      Event_Rate = total_event_rate
-    )
-    return(counts)
-  }
-  # Total 행을 추가
-  total_row <- tibble(
-    Count = total_count,
-    Event_Count = total_event_count,
-    Event_Rate = total_event_rate
-  )
-
-  counts <- bind_rows(counts, total_row)
-
-  return(counts)
-}
 
 TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, cluster = NULL, strata = NULL, weights = NULL, event = FALSE, count_by = NULL) {
   . <- NULL

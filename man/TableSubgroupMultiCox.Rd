@@ -16,7 +16,9 @@ TableSubgroupMultiCox(
   line = F,
   cluster = NULL,
   strata = NULL,
-  weights = NULL
+  weights = NULL,
+  event = FALSE,
+  count_by = NULL
 )
 }
 \arguments{

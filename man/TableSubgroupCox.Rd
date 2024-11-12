@@ -15,7 +15,9 @@ TableSubgroupCox(
   decimal.pvalue = 3,
   cluster = NULL,
   strata = NULL,
-  weights = NULL
+  weights = NULL,
+  event = FALSE,
+  count_by = NULL
 )
 }
 \arguments{

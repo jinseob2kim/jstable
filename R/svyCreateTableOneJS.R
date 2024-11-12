@@ -205,17 +205,6 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
   return(ptb1)
 }
 
-nhanes$SDMVPSU <- as.factor(nhanes$SDMVPSU)
-nhanesSvy <- svydesign(
-  ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~WTMEC2YR,
-  nest = TRUE, data = nhanes
-)
-svyCreateTableOneJS(
-  vars = c("HI_CHOL", "race", "agecat", "RIAGENDR"),
-  strata = "race", data = nhanesSvy,
-  factorVars = c("HI_CHOL", "race", "RIAGENDR"), pairwise = T
-)
-names(nhanes)
 
 #' @title svyCreateTableOneJS: Modified CreateTableOne function in tableone package
 #' @description Combine svyCreateTableOne & print function in tableone package
