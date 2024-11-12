@@ -22,6 +22,7 @@
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
 #' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T
 #' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
+#' @param pairwise (optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples
@@ -46,7 +47,7 @@
 svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test = T,
                                showAllLevels = T, printToggle = F, quote = F, smd = F, nonnormal = NULL,
                                catDigits = 1, contDigits = 2, pDigits = 3, Labels = F, labeldata = NULL, minMax = F, showpm = T,
-                               addOverall = F) {
+                               addOverall = F, pairwise = F) {
   setkey <- variable <- level <- . <- val_label <- NULL
 
   if (length(strata) != 1) {
@@ -122,6 +123,70 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
     }
   }
 
+  if (pairwise && length(unique(data$variables[[strata]])) > 2) {
+    print('enter')
+    pairwise_comparisons <- combn(
+      colnames(ptb1)[(which(colnames(ptb1) == "level") + 1):(which(colnames(ptb1) == "p") - 1)],  2,  simplify = FALSE)
+    pairwise_pvalues_list <- list()
+    for (x in vars) {
+      pairwise_pvalues_list[[x]] <- list()
+      is_continuous <- !(x %in% factorVars) && !is.factor(data$variables[[x]])
+      for (pair in pairwise_comparisons) {
+        subset_data <- subset(data, data$variables[[strata]] %in% pair)
+        if (is_continuous) {
+          test_result <- if (x %in% nonnormal) {
+            tryCatch({
+              test <- svyranktest(as.formula(paste(x, "~", strata)), design = subset_data)
+              list(p_value = test$p.value, test_used = "svyranktest")
+            }, error = function(e) {
+              list(p_value = NA, test_used = NA)
+            })
+          } else {
+            tryCatch({
+              test <- svyttest(as.formula(paste(x, "~", strata)), design = subset_data)
+              list(p_value = test$p.value, test_used = "svyttest")
+            }, error = function(e) {
+              list(p_value = NA, test_used = NA)
+            })
+          }
+        } else {
+          test_result <- tryCatch({
+            test <- svychisq(as.formula(paste("~", x, "+", strata)), design = subset_data, method = "RaoScott")
+            list(p_value = test$p.value, test_used = "svychisq")
+          }, error = function(e) {
+            list(p_value = NA, test_used = NA)
+          })
+        }
+        pairwise_pvalues_list[[x]][[paste(pair, collapse = "_")]] <- test_result
+      }
+    }
+    for (i in seq_along(pairwise_comparisons)) {
+      col_name <- paste0("p(", pairwise_comparisons[[i]][1], " vs ", pairwise_comparisons[[i]][2], ")")
+      test_name <- paste0("test(", pairwise_comparisons[[i]][1], " vs ", pairwise_comparisons[[i]][2], ")")
+      ptb1 <- cbind(ptb1, col_name = "", test_name = "")
+      colnames(ptb1)[ncol(ptb1) - 1] <- col_name
+      colnames(ptb1)[ncol(ptb1)] <- test_name
+    }
+    for (x in vars) {
+      cleaned_var_name <- gsub("\\s+|\\(\\%\\)", "", x)
+      first_row <- which(gsub("\\s+|\\(\\%\\)", "", rownames(ptb1)) == cleaned_var_name)[1]
+      
+      for (i in seq_along(pairwise_comparisons)) {
+        pair_key <- paste(pairwise_comparisons[[i]], collapse = "_")
+        p_value <- pairwise_pvalues_list[[x]][[pair_key]]$p_value
+        test_used <- pairwise_pvalues_list[[x]][[pair_key]]$test_used
+        col_name <- paste0("p(", pairwise_comparisons[[i]][1], " vs ", pairwise_comparisons[[i]][2], ")")
+        test_name <- paste0("test(", pairwise_comparisons[[i]][1], " vs ", pairwise_comparisons[[i]][2], ")")
+        p_value <- ifelse(p_value < 0.001, "<0.001", as.character(round(p_value, 2)))
+        ptb1[first_row, col_name] <- p_value
+        ptb1[first_row, test_name] <- test_used
+      }
+    }
+    cols_to_remove <- grep("^test\\(", colnames(ptb1))
+    ptb1 <- ptb1[, -cols_to_remove]
+  }
+  
+  
   sig <- ifelse(ptb1[, "p"] == "<0.001", "0", ptb1[, "p"])
   sig <- as.numeric(as.vector(sig))
   sig <- ifelse(sig <= 0.05, "**", "")
@@ -129,7 +194,17 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
   return(ptb1)
 }
 
-
+nhanes$SDMVPSU <- as.factor(nhanes$SDMVPSU)
+nhanesSvy <- svydesign(
+  ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~WTMEC2YR,
+  nest = TRUE, data = nhanes
+)
+svyCreateTableOneJS(
+  vars = c("HI_CHOL", "race", "agecat", "RIAGENDR"),
+  strata = "race", data = nhanesSvy,
+  factorVars = c("HI_CHOL", "race", "RIAGENDR"), pairwise = T
+)
+names(nhanes)
 
 #' @title svyCreateTableOneJS: Modified CreateTableOne function in tableone package
 #' @description Combine svyCreateTableOne & print function in tableone package
@@ -154,6 +229,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
 #' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T
 #' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
+#' @param pairwise (optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples
@@ -179,7 +255,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVars = NULL, includeNA = F, test = T,
                                 showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, nonnormal = NULL,
                                 catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = T,
-                                addOverall = F) {
+                                addOverall = F, pairwise = F) {
   . <- level <- variable <- val_label <- V1 <- V2 <- NULL
 
   # if (Labels & !is.null(labeldata)){
@@ -231,7 +307,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
       strata = strata, vars = vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal,
       catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm,
-      addOverall = addOverall
+      addOverall = addOverall, pairwise = pairwise
     )
 
     cap.tb1 <- paste("Stratified by ", strata, "- weighted data", sep = "")

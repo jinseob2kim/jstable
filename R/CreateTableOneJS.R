@@ -31,6 +31,7 @@
 #' @param minMax Whether to use [min,max] instead of [p25,p75] for nonnormal variables. The default is FALSE.
 #' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T
 #' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
+#' @param pairwise (optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples
@@ -258,7 +259,7 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
 #' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T
 #' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
 #' @param normalityTest Logical, perform the Shapiro test for all variables. Default: F
-#' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
+#' @param pairwise (optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F#' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples
 #' library(survival)
