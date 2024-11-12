@@ -124,9 +124,11 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
   }
 
   if (pairwise && length(unique(data$variables[[strata]])) > 2) {
-    print('enter')
+    print("enter")
     pairwise_comparisons <- combn(
-      colnames(ptb1)[(which(colnames(ptb1) == "level") + 1):(which(colnames(ptb1) == "p") - 1)],  2,  simplify = FALSE)
+      colnames(ptb1)[(which(colnames(ptb1) == "level") + 1):(which(colnames(ptb1) == "p") - 1)], 2,
+      simplify = FALSE
+    )
     pairwise_pvalues_list <- list()
     for (x in vars) {
       pairwise_pvalues_list[[x]] <- list()
@@ -135,27 +137,36 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
         subset_data <- subset(data, data$variables[[strata]] %in% pair)
         if (is_continuous) {
           test_result <- if (x %in% nonnormal) {
-            tryCatch({
-              test <- svyranktest(as.formula(paste(x, "~", strata)), design = subset_data)
-              list(p_value = test$p.value, test_used = "svyranktest")
-            }, error = function(e) {
-              list(p_value = NA, test_used = NA)
-            })
+            tryCatch(
+              {
+                test <- svyranktest(as.formula(paste(x, "~", strata)), design = subset_data)
+                list(p_value = test$p.value, test_used = "svyranktest")
+              },
+              error = function(e) {
+                list(p_value = NA, test_used = NA)
+              }
+            )
           } else {
-            tryCatch({
-              test <- svyttest(as.formula(paste(x, "~", strata)), design = subset_data)
-              list(p_value = test$p.value, test_used = "svyttest")
-            }, error = function(e) {
-              list(p_value = NA, test_used = NA)
-            })
+            tryCatch(
+              {
+                test <- svyttest(as.formula(paste(x, "~", strata)), design = subset_data)
+                list(p_value = test$p.value, test_used = "svyttest")
+              },
+              error = function(e) {
+                list(p_value = NA, test_used = NA)
+              }
+            )
           }
         } else {
-          test_result <- tryCatch({
-            test <- svychisq(as.formula(paste("~", x, "+", strata)), design = subset_data, method = "RaoScott")
-            list(p_value = test$p.value, test_used = "svychisq")
-          }, error = function(e) {
-            list(p_value = NA, test_used = NA)
-          })
+          test_result <- tryCatch(
+            {
+              test <- svychisq(as.formula(paste("~", x, "+", strata)), design = subset_data, method = "RaoScott")
+              list(p_value = test$p.value, test_used = "svychisq")
+            },
+            error = function(e) {
+              list(p_value = NA, test_used = NA)
+            }
+          )
         }
         pairwise_pvalues_list[[x]][[paste(pair, collapse = "_")]] <- test_result
       }
@@ -170,7 +181,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
     for (x in vars) {
       cleaned_var_name <- gsub("\\s+|\\(\\%\\)", "", x)
       first_row <- which(gsub("\\s+|\\(\\%\\)", "", rownames(ptb1)) == cleaned_var_name)[1]
-      
+
       for (i in seq_along(pairwise_comparisons)) {
         pair_key <- paste(pairwise_comparisons[[i]], collapse = "_")
         p_value <- pairwise_pvalues_list[[x]][[pair_key]]$p_value
@@ -185,8 +196,8 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
     cols_to_remove <- grep("^test\\(", colnames(ptb1))
     ptb1 <- ptb1[, -cols_to_remove]
   }
-  
-  
+
+
   sig <- ifelse(ptb1[, "p"] == "<0.001", "0", ptb1[, "p"])
   sig <- as.numeric(as.vector(sig))
   sig <- ifelse(sig <= 0.05, "**", "")
