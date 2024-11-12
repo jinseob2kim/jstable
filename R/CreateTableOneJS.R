@@ -41,7 +41,8 @@
 #' @importFrom data.table data.table := setkey
 #' @importFrom tableone CreateTableOne
 #' @importFrom labelled var_label var_label<-
-#' @importFrom stats chisq.test fisher.test kruskal.test oneway.test
+#' @importFrom stats chisq.test fisher.test kruskal.test oneway.test t.test wilcox.test
+#' @importFrom utils combn
 #' @importFrom methods is
 #' @export
 

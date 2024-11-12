@@ -42,6 +42,7 @@
 #' @importFrom data.table data.table :=
 #' @importFrom tableone svyCreateTableOne
 #' @importFrom labelled var_label var_label<-
+#' @importFrom survey svychisq svyranktest svyttest 
 #' @export
 
 svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test = T,
@@ -139,7 +140,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
           test_result <- if (x %in% nonnormal) {
             tryCatch(
               {
-                test <- svyranktest(as.formula(paste(x, "~", strata)), design = subset_data)
+                test <- survey::svyranktest(as.formula(paste(x, "~", strata)), design = subset_data)
                 list(p_value = test$p.value, test_used = "svyranktest")
               },
               error = function(e) {
@@ -149,7 +150,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
           } else {
             tryCatch(
               {
-                test <- svyttest(as.formula(paste(x, "~", strata)), design = subset_data)
+                test <- survey::svyttest(as.formula(paste(x, "~", strata)), design = subset_data)
                 list(p_value = test$p.value, test_used = "svyttest")
               },
               error = function(e) {
@@ -160,7 +161,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
         } else {
           test_result <- tryCatch(
             {
-              test <- svychisq(as.formula(paste("~", x, "+", strata)), design = subset_data, method = "RaoScott")
+              test <- survey::svychisq(as.formula(paste("~", x, "+", strata)), design = subset_data, method = "RaoScott")
               list(p_value = test$p.value, test_used = "svychisq")
             },
             error = function(e) {
