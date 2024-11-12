@@ -42,7 +42,7 @@
 #' @importFrom data.table data.table :=
 #' @importFrom tableone svyCreateTableOne
 #' @importFrom labelled var_label var_label<-
-#' @importFrom survey svychisq svyranktest svyttest 
+#' @importFrom survey svychisq svyranktest svyttest
 #' @export
 
 svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test = T,
