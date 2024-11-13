@@ -284,9 +284,11 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         }
 
         rownames(out) <- NULL
-        
-        if (!is.null(labeldata)){
-          out$Levels <- paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(model$xlevels[[1]], function(x){labeldata[variable == xlabel & level == x, val_label]}))
+
+        if (!is.null(labeldata)) {
+          out$Levels <- paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(model$xlevels[[1]], function(x) {
+            labeldata[variable == xlabel & level == x, val_label]
+          }))
         }
       }
 
@@ -569,15 +571,17 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             cbind(prop) %>%
             mutate(`P value` = unlist(ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA)
         }
-        
-        if (!is.null(labeldata)){
-          out$Variable <- paste0(" ", sapply(label_val, function(x){labeldata[variable == var_subgroup & level == x, val_label]}))
+
+        if (!is.null(labeldata)) {
+          out$Variable <- paste0(" ", sapply(label_val, function(x) {
+            labeldata[variable == var_subgroup & level == x, val_label]
+          }))
         }
 
         rownames(out) <- NULL
-        
+
         var_subgroup_rev <- var_subgroup
-        if (!is.null(labeldata)){
+        if (!is.null(labeldata)) {
           var_subgroup_rev <- labeldata[variable == var_subgroup, var_label[1]]
         }
 
@@ -596,16 +600,18 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           ) %>%
             mutate(KM = as.vector(t(prop)), `P value` = unlist(lapply(pv, function(x) c("", ifelse(x >= 0.001, x, "<0.001")))), `P for interaction` = NA)
         }
-        
-        if (!is.null(labeldata)){
+
+        if (!is.null(labeldata)) {
           out$Variable <- unlist(lapply(label_val, function(x) c(labeldata[variable == var_subgroup & level == x, val_label], rep("", length(xlev[[1]]) - 1))))
-          out$Levels <- rep(paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(xlev[[1]], function(x){labeldata[variable == xlabel & level == x, val_label]})), length(label_val))
+          out$Levels <- rep(paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(xlev[[1]], function(x) {
+            labeldata[variable == xlabel & level == x, val_label]
+          })), length(label_val))
         }
 
         rownames(out) <- NULL
-        
+
         var_subgroup_rev <- var_subgroup
-        if (!is.null(labeldata)){
+        if (!is.null(labeldata)) {
           var_subgroup_rev <- labeldata[variable == var_subgroup, var_label[1]]
         }
 

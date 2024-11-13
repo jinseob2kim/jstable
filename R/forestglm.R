@@ -148,9 +148,11 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
 
       rownames(out) <- NULL
-      
-      if (!is.null(labeldata)){
-        out$Levels <- paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(xlev, function(x){labeldata[variable == xlabel & level == x, val_label]}))
+
+      if (!is.null(labeldata)) {
+        out$Levels <- paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(xlev, function(x) {
+          labeldata[variable == xlabel & level == x, val_label]
+        }))
       }
     }
 
@@ -338,9 +340,11 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if (ncoef < 2) {
       data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = unlist(Point.Estimate), Lower = unlist(purrr::map(CI, 1)), Upper = unlist(purrr::map(CI, 2))) %>%
         dplyr::mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
-      
-      if (!is.null(labeldata)){
-        out$Variable <- paste0(" ", sapply(label_val, function(x){labeldata[variable == var_subgroup & level == x, val_label]}))
+
+      if (!is.null(labeldata)) {
+        out$Variable <- paste0(" ", sapply(label_val, function(x) {
+          labeldata[variable == var_subgroup & level == x, val_label]
+        }))
       }
 
       if (family == "binomial") {
@@ -362,18 +366,20 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       if (family %in% c("poisson", "quasipoisson")) {
         names(out)[5] <- "RR"
       }
-      
-      if (!is.null(labeldata)){
+
+      if (!is.null(labeldata)) {
         out$Variable <- unlist(lapply(label_val, function(x) c(labeldata[variable == var_subgroup & level == x, val_label], rep("", length(xlev) - 1))))
-        out$Levels <- rep(paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(xlev, function(x){labeldata[variable == xlabel & level == x, val_label]})), length(label_val))
+        out$Levels <- rep(paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(xlev, function(x) {
+          labeldata[variable == xlabel & level == x, val_label]
+        })), length(label_val))
       }
     }
-    
+
     var_subgroup_rev <- var_subgroup
-    if (!is.null(labeldata)){
+    if (!is.null(labeldata)) {
       var_subgroup_rev <- labeldata[variable == var_subgroup, var_label[1]]
     }
-  
+
 
     return(rbind(c(var_subgroup_rev, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
   }
