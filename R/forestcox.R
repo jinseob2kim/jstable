@@ -101,6 +101,7 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
 #' @param cluster Cluster variable for coxph, Default: NULL
 #' @param strata Strata variable for coxph, Default: NULL
 #' @param weights Weights variable for coxph, Default: NULL
+#' @param labeldata Label info, made by `mk.lev` function, Default: NULL
 #' @return Sub-group analysis table.
 #' @details This result is used to make forestplot.
 #' @examples
@@ -143,7 +144,7 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
 #' @importFrom utils tail
 
 
-TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, cluster = NULL, strata = NULL, weights = NULL, event = FALSE, count_by = NULL) {
+TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, cluster = NULL, strata = NULL, weights = NULL, event = FALSE, count_by = NULL, labeldata = NULL) {
   . <- NULL
   if (is.null(count_by) && !(event)) {
     ### var_subgroup이 categorical variable이 아닌 경우 중단 ###
@@ -283,6 +284,10 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         }
 
         rownames(out) <- NULL
+        
+        if (!is.null(labeldata)){
+          out$Levels <- paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(model$xlevels[[1]], function(x){labeldata[variable == xlabel & level == x, val_label]}))
+        }
       }
 
       return(out)
@@ -564,10 +569,19 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             cbind(prop) %>%
             mutate(`P value` = unlist(ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA)
         }
+        
+        if (!is.null(labeldata)){
+          out$Variable <- paste0(" ", sapply(label_val, function(x){labeldata[variable == var_subgroup & level == x, val_label]}))
+        }
 
         rownames(out) <- NULL
+        
+        var_subgroup_rev <- var_subgroup
+        if (!is.null(labeldata)){
+          var_subgroup_rev <- labeldata[variable == var_subgroup, var_label[1]]
+        }
 
-        return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
+        return(rbind(c(var_subgroup_rev, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
       } else {
         out <- data.frame(
           Variable = unlist(lapply(label_val, function(x) c(x, rep("", length(xlev[[1]]) - 1)))), Count = unlist(lapply(Count, function(x) c(x, rep("", length(xlev[[1]]) - 1)))), Percent = unlist(lapply(round(Count / sum(Count) * 100, decimal.percent), function(x) c(x, rep("", length(xlev[[1]]) - 1)))),
@@ -582,10 +596,20 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           ) %>%
             mutate(KM = as.vector(t(prop)), `P value` = unlist(lapply(pv, function(x) c("", ifelse(x >= 0.001, x, "<0.001")))), `P for interaction` = NA)
         }
+        
+        if (!is.null(labeldata)){
+          out$Variable <- unlist(lapply(label_val, function(x) c(labeldata[variable == var_subgroup & level == x, val_label], rep("", length(xlev[[1]]) - 1))))
+          out$Levels <- rep(paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(xlev[[1]], function(x){labeldata[variable == xlabel & level == x, val_label]})), length(label_val))
+        }
 
         rownames(out) <- NULL
+        
+        var_subgroup_rev <- var_subgroup
+        if (!is.null(labeldata)){
+          var_subgroup_rev <- labeldata[variable == var_subgroup, var_label[1]]
+        }
 
-        return(rbind(c(var_subgroup, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
+        return(rbind(c(var_subgroup_rev, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
       }
     }
   }
@@ -716,6 +740,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 #' @param cluster Cluster variable for coxph, Default: NULL
 #' @param strata Strata variable for coxph, Default: NULL
 #' @param weights Weights variable for coxph, Default: NULL
+#' @param labeldata Label info, made by `mk.lev` function, Default: NULL
 #' @return Multiple sub-group analysis table.
 #' @details This result is used to make forestplot.
 #' @examples
@@ -749,18 +774,18 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 #' @importFrom magrittr %>%
 #' @importFrom dplyr bind_rows
 
-TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, line = F, cluster = NULL, strata = NULL, weights = NULL, event = FALSE, count_by = NULL) {
+TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, line = F, cluster = NULL, strata = NULL, weights = NULL, event = FALSE, count_by = NULL, labeldata = NULL) {
   . <- NULL
   xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
 
-  out.all <- TableSubgroupCox(formula, var_subgroup = NULL, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = count_by)
+  out.all <- TableSubgroupCox(formula, var_subgroup = NULL, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = count_by, labeldata = labeldata)
   out.all <- dplyr::mutate_all(out.all, as.character)
 
   if (is.null(var_subgroups)) {
     return(out.all)
   } else {
     out.list <- lapply(var_subgroups, function(subgroup) {
-      TableSubgroupCox(formula, var_subgroup = subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = count_by)
+      TableSubgroupCox(formula, var_subgroup = subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = count_by, labeldata = labeldata)
     })
 
     # out.list <- purrr::map(var_subgroups, ~ TableSubgroupCox(formula, var_subgroup = ., var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, weights = weights_vec))
