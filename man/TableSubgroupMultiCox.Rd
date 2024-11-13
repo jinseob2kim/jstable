@@ -18,7 +18,8 @@ TableSubgroupMultiCox(
   strata = NULL,
   weights = NULL,
   event = FALSE,
-  count_by = NULL
+  count_by = NULL,
+  labeldata = NULL
 )
 }
 \arguments{
@@ -45,6 +46,8 @@ TableSubgroupMultiCox(
 \item{strata}{Strata variable for coxph, Default: NULL}
 
 \item{weights}{Weights variable for coxph, Default: NULL}
+
+\item{labeldata}{Label info, made by `mk.lev` function, Default: NULL}
 }
 \value{
 Multiple sub-group analysis table.

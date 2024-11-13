@@ -13,7 +13,8 @@ TableSubgroupMultiGLM(
   decimal.estimate = 2,
   decimal.percent = 1,
   decimal.pvalue = 3,
-  line = F
+  line = F,
+  labeldata = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ TableSubgroupMultiGLM(
 \item{decimal.pvalue}{Decimal for pvalue, Default: 3}
 
 \item{line}{Include new-line between sub-group variables, Default: F}
+
+\item{labeldata}{Label info, made by `mk.lev` function, Default: NULL}
 }
 \value{
 Multiple sub-group analysis table.
