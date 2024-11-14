@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>glmshow.display: Show summary table of glm object. — glmshow.display • jstable</title>
+<title>FUNCTION_TITLE — count_event_by • jstable</title>
 
 
 <!-- jquery -->
@@ -41,8 +41,8 @@
 
 
 
-<meta property="og:title" content="glmshow.display: Show summary table of glm object. — glmshow.display" />
-<meta property="og:description" content="Show summary table of glm object(regression, logistic)." />
+<meta property="og:title" content="FUNCTION_TITLE — count_event_by" />
+<meta property="og:description" content="FUNCTION_DESCRIPTION" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -123,54 +123,65 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>glmshow.display: Show summary table of glm object.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/glmshow.R'><code>R/glmshow.R</code></a></small>
-    <div class="hidden name"><code>glmshow.display.Rd</code></div>
+    <h1>FUNCTION_TITLE</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jinseob2kim/jstable/blob/master/R/forestcox.R'><code>R/forestcox.R</code></a></small>
+    <div class="hidden name"><code>count_event_by.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Show summary table of glm object(regression, logistic).</p>
+    <p>FUNCTION_DESCRIPTION</p>
     </div>
 
-    <pre class="usage"><span class='fu'>glmshow.display</span>(<span class='no'>glm.object</span>, <span class='kw'>decimal</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>count_event_by</span>(
+  <span class='no'>formula</span>,
+  <span class='no'>data</span>,
+  <span class='kw'>count_by_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>var_subgroup</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>decimal.percent</span> <span class='kw'>=</span> <span class='fl'>1</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>glm.object</th>
-      <td><p>glm.object</p></td>
+      <th>formula</th>
+      <td><p>PARAM_DESCRIPTION</p></td>
     </tr>
     <tr>
-      <th>decimal</th>
-      <td><p>digits, Default: 2</p></td>
+      <th>data</th>
+      <td><p>PARAM_DESCRIPTION</p></td>
+    </tr>
+    <tr>
+      <th>count_by_var</th>
+      <td><p>PARAM_DESCRIPTION, Default: NULL</p></td>
+    </tr>
+    <tr>
+      <th>var_subgroup</th>
+      <td><p>PARAM_DESCRIPTION, Default: NULL</p></td>
+    </tr>
+    <tr>
+      <th>decimal.percent</th>
+      <td><p>PARAM_DESCRIPTION, Default: 1</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>table</p>
+    <p>OUTPUT_DESCRIPTION</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>DETAILS</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/r/stats/glm.html'>glm</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://tidyr.tidyverse.org/reference/drop_na.html'>drop_na</a></code>
+ <code><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></code>, <code><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></code>, <code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></code>, <code><a href='https://dplyr.tidyverse.org/reference/bind_rows.html'>bind_rows</a></code>, <code><a href='https://dplyr.tidyverse.org/reference/arrange.html'>arrange</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>glmshow.display</span>(<span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span>(<span class='no'>mpg</span> ~ <span class='no'>wt</span> + <span class='no'>qsec</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>mtcars</span>))</div><div class='output co'>#&gt; $first.line
-#&gt; [1] "Linear regression predicting mpg\n"
-#&gt; 
-#&gt; $table
-#&gt;      crude coeff.(95%CI)   crude P value adj. coeff.(95%CI) adj. P value
-#&gt; wt   "-5.34 (-6.44,-4.25)" "&lt; 0.001"     "-5.05 (-6,-4.1)"  "&lt; 0.001"   
-#&gt; qsec "1.41 (0.32,2.51)"    "0.017"       "0.93 (0.41,1.45)" "0.001"     
-#&gt; 
-#&gt; $last.lines
-#&gt; [1] "No. of observations = 32\nR-squared = 0.8264\nAIC value = 156.7205\n\n"
-#&gt; 
-#&gt; attr(,"class")
-#&gt; [1] "display" "list"   </div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) {
+  <span class='co'># EXAMPLE1</span>
+}
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
