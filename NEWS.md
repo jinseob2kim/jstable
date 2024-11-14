@@ -2,6 +2,7 @@
 * Update: Add event, count_by option in TableSubgroupCox, TableSubgroupMultiCox
 * Update: Add pairwise option in CreateTableOne2, CreateTableOneJS, svyCreateTableOne2, svyCreateTableOneJS
 * Update: Add `labeldata` option in `TableSubgroupGLM`, `TableSubgroupMultiGLM`, `TableSubgroupCox`, `TableSubgroupMultiCox`
+* Fix: `cox2.display` HR 
 
 # jstable 1.3.5
 * Fix: error in `TableSubgroupMultiGLM` when covariates

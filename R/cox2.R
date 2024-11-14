@@ -68,17 +68,21 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
     names(uni.res)[ncol(uni.res)] <- "p"
     uni.res2 <- NULL
     if (mtype == "normal") {
-      uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
+      uni.res2 <- uni.res[, c(1, 3, 4, 5)]
+      if (length(grep("robust.se", names(uni.res))) > 0) {
+        uni.res2 <- uni.res[, c(1, 4, 5, 6)]
+      }
     } else if (mtype == "cluster") {
-      uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
+      uni.res2 <- uni.res[, c(1, 4, 5, 6)]
     } else {
-      uni.res2 <- uni.res[, c("p", names(uni.res)[grep("coef", names(uni.res))])]
+      uni.res2 <- uni.res[-nrow(uni.res), c(1, 3, 4, 6)]
     }
     fix.all <- coxExp(uni.res2, dec = dec)
     colnames(fix.all) <- c("HR(95%CI)", "P value")
 
     if (mtype == "frailty") {
-      rownames(fix.all) <- c(names(model$coefficients), "frailty")
+      #rownames(fix.all) <- c(names(model$coefficients), "frailty")
+      rownames(fix.all) <- names(model$coefficients)
     } else {
       rownames(fix.all) <- names(model$coefficients)
     }
@@ -109,11 +113,14 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
         names(uni.res)[ncol(uni.res)] <- "p"
         uni.res2 <- NULL
         if (mtype == "normal") {
-          uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
+          uni.res2 <- uni.res[, c(1, 3, 4, 5)]
+          if (length(grep("robust.se", names(uni.res))) > 0) {
+            uni.res2 <- uni.res[, c(1, 4, 5, 6)]
+          }
         } else if (mtype == "cluster") {
-          uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
+          uni.res2 <- uni.res[, c(1, 4, 5, 6)]
         } else {
-          uni.res2 <- uni.res[, c("p", names(uni.res)[grep("coef", names(uni.res))])]
+          uni.res2 <- uni.res[, c(1, 3, 4, 6)]
         }
         return(uni.res2)
       })
@@ -140,17 +147,20 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
         # uni.res <- uni.res[c(2:nrow(uni.res), 1), ]
         # uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", x, formula.ranef, sep="")), data = mdata))$coefficients)
         names(uni.res)[ncol(uni.res)] <- "p"
-        if ("robust.se" %in% names(uni.res)) {
-          uni.res$robust.se <- NULL
-        }
+        # if ("robust.se" %in% names(uni.res)) {
+        #   uni.res$robust.se <- NULL
+        # }
 
         uni.res2 <- NULL
         if (mtype == "normal") {
-          uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
+          uni.res2 <- uni.res[, c(1, 3, 4, 5)]
+          if (length(grep("robust.se", names(uni.res))) > 0) {
+            uni.res2 <- uni.res[, c(1, 4, 5, 6)]
+          }
         } else if (mtype == "cluster") {
-          uni.res2 <- uni.res[, c("z", "p", names(uni.res)[grep("coef", names(uni.res))])]
+          uni.res2 <- uni.res[, c(1, 4, 5, 6)]
         } else {
-          uni.res2 <- uni.res[, c("p", names(uni.res)[grep("coef", names(uni.res))])]
+          uni.res2 <- uni.res[, c(1, 3, 4, 6)]
         }
         return(uni.res2)
       })
