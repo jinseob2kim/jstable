@@ -81,7 +81,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
     colnames(fix.all) <- c("HR(95%CI)", "P value")
 
     if (mtype == "frailty") {
-      #rownames(fix.all) <- c(names(model$coefficients), "frailty")
+      # rownames(fix.all) <- c(names(model$coefficients), "frailty")
       rownames(fix.all) <- names(model$coefficients)
     } else {
       rownames(fix.all) <- names(model$coefficients)
