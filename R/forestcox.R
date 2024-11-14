@@ -145,7 +145,7 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
 
 
 TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, cluster = NULL, strata = NULL, weights = NULL, event = FALSE, count_by = NULL, labeldata = NULL) {
-  . <- NULL
+  . <- variable <- val_label <- NULL
   if (is.null(count_by) && !(event)) {
     ### var_subgroup이 categorical variable이 아닌 경우 중단 ###
     if (any(class(data) == "survey.design" & !is.null(var_subgroup))) {

@@ -42,8 +42,7 @@
 #' @importFrom utils tail
 
 TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data, family = "binomial", decimal.estimate = 2, decimal.percent = 1, decimal.pvalue = 3, labeldata = NULL) {
-  . <- NULL
-
+  . <- variable <- var_label <- val_label <- level <- NULL
   ### 경고문 ###
   if (length(formula[[3]]) > 1) stop("Formula must contains only 1 independent variable")
   if (any(class(data) == "survey.design" & !is.null(var_subgroup))) {
