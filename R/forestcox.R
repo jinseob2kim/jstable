@@ -10,7 +10,7 @@
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
-#'   # EXAMPLE1
+#'  
 #' }
 #' }
 #' @seealso
