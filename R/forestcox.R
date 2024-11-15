@@ -1,7 +1,7 @@
 #' @title count_event_by: funciton to count event, subgroup number inside TableSubgroupCox, TableSubgroupMultiCox
 #' @description Function to count event, subgroup number
-#' @param formula formula with survival analysis 
-#' @param data same data as in formula 
+#' @param formula formula with survival analysis
+#' @param data same data as in formula
 #' @param count_by_var variables to count subgroup for
 #' @param var_subgroup 1 sub-group variable for analysis,
 #' @param decimal.percent decimals to show percent of, Default: 1
@@ -31,38 +31,38 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
   total_count <- nrow(data)
   total_event_count <- sum(data[[event_col]] == 1, na.rm = TRUE)
   total_event_rate <- paste0(total_event_count, "/", total_count, " (", round(total_event_count / total_count * 100, decimal.percent), "%)")
-  
+
   if (!is.null(count_by_var) && !is.null(var_subgroup)) {
     # count_by_var와 var_subgroup이 모두 있을 때
     counts <- data %>%
       dplyr::filter(!is.na(!!rlang::sym(var_subgroup))) %>%
       dplyr::group_by(!!rlang::sym(count_by_var), !!rlang::sym(var_subgroup)) %>%
-      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = 'drop') %>%
+      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
       dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
-    
+
     overall_counts <- data %>%
       dplyr::group_by(!!rlang::sym(count_by_var)) %>%
-      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = 'drop') %>%
-      dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"),
-                    !!rlang::sym(var_subgroup) := "Overall")
-    
+      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
+      dplyr::mutate(
+        Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"),
+        !!rlang::sym(var_subgroup) := "Overall"
+      )
+
     counts <- counts %>%
       dplyr::bind_rows(overall_counts) %>%
       dplyr::arrange(!!rlang::sym(count_by_var), !!rlang::sym(var_subgroup))
-    
   } else if (is.null(count_by_var) && !is.null(var_subgroup)) {
     # var_subgroup만 있을 때
     counts <- data %>%
       dplyr::filter(!is.na(!!rlang::sym(var_subgroup))) %>%
       dplyr::group_by(!!rlang::sym(var_subgroup)) %>%
-      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = 'drop') %>%
+      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
       dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
-    
   } else if (!is.null(count_by_var) && is.null(var_subgroup)) {
     # count_by_var만 있을 때
     counts <- data %>%
       dplyr::group_by(!!rlang::sym(count_by_var)) %>%
-      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = 'drop') %>%
+      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
       dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
   } else {
     # count_by_var와 var_subgroup이 NULL일 때는 전체 데이터만 Total로 계산
@@ -74,16 +74,16 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
     )
     return(counts)
   }
-  
+
   # Total 행을 추가
   total_row <- tibble::tibble(
     Count = total_count,
     Event_Count = total_event_count,
     Event_Rate = total_event_rate
   )
-  
+
   counts <- dplyr::bind_rows(counts, total_row)
-  
+
   return(counts)
 }
 
@@ -624,7 +624,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   }
   ## add event, count_by options
   if ((event) && is.null(count_by)) {
-    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = FALSE, count_by = count_by, labeldata =  labeldata)
+    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = FALSE, count_by = count_by, labeldata = labeldata)
     count_output <- count_event_by(formula = formula, data = data, count_by_var = count_by, var_subgroup = var_subgroup, decimal.percent = 1)
     if (!is.null(var_subgroup)) {
       for (i in 1:nrow(original_output)) {
@@ -654,12 +654,20 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if (!is.null(labeldata)) {
       count_by_levels <- sapply(count_by_levels, function(x) {
         label <- labeldata[labeldata$variable == count_by & labeldata$level == x, "val_label"]
-        if (length(label) > 0) return(label) else return(x)
+        if (length(label) > 0) {
+          return(label)
+        } else {
+          return(x)
+        }
       })
-      
+
       count_output[[count_by]] <- sapply(count_output[[count_by]], function(x) {
         label <- labeldata[labeldata$variable == count_by & labeldata$level == x, "val_label"]
-        if (length(label) > 0) return(label) else return(x)
+        if (length(label) > 0) {
+          return(label)
+        } else {
+          return(x)
+        }
       })
     }
     if (!is.null(var_subgroup)) {
@@ -716,7 +724,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   if (!(event) && !is.null(count_by)) {
     original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = NULL, labeldata = labeldata)
     count_output <- count_event_by(formula = formula, data = data, count_by_var = count_by, var_subgroup = var_subgroup, decimal.percent = 1)
-    
+
     if (inherits(data, "survey.design")) {
       data <- data$variables
     } else {
@@ -727,15 +735,23 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       # count_by_levels와 count_output의 count_by 값을 라벨로 변환
       count_by_levels <- sapply(count_by_levels, function(x) {
         label <- labeldata[labeldata$variable == count_by & labeldata$level == x, "val_label"]
-        if (length(label) > 0) return(label) else return(x)
+        if (length(label) > 0) {
+          return(label)
+        } else {
+          return(x)
+        }
       })
-      
+
       count_output[[count_by]] <- sapply(count_output[[count_by]], function(x) {
         label <- labeldata[labeldata$variable == count_by & labeldata$level == x, "val_label"]
-        if (length(label) > 0) return(label) else return(x)
+        if (length(label) > 0) {
+          return(label)
+        } else {
+          return(x)
+        }
       })
-      }
-    
+    }
+
     if (!is.null(var_subgroup)) {
       subgroup_levels <- unique(data[[var_subgroup]])
       for (countlevel in count_by_levels) {
@@ -847,4 +863,3 @@ TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, var_cov = NULL,
     }
   }
 }
-
