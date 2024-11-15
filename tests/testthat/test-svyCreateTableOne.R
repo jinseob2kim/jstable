@@ -4,6 +4,7 @@ library(survey)
 test_that("Run SvyCreateOneTableJS", {
   data(nhanes)
   nhanes$SDMVPSU <- as.factor(nhanes$SDMVPSU)
+  nhanes$race<-as.factor(nhanes$race)
   a.label <- mk.lev(nhanes)
   nhanesSvy <- svydesign(ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~WTMEC2YR, nest = TRUE, data = nhanes)
 
@@ -23,12 +24,17 @@ test_that("Run SvyCreateOneTableJS", {
     strata = "RIAGENDR", data = nhanesSvy, factorVars = c("HI_CHOL", "race", "RIAGENDR"), labeldata = a.label, Labels = T
   ), "list")
 
-
+  expect_is(svyCreateTableOneJS(
+    vars = c("HI_CHOL", "race", "agecat", "RIAGENDR"),
+    strata = "race", data = nhanesSvy, factorVars = c("HI_CHOL", "race", "RIAGENDR"), labeldata = a.label, Labels = T, pairwise = T
+  ), "list")
+  
   expect_is(svyCreateTableOneJS(
     vars = c("HI_CHOL", "race", "agecat", "RIAGENDR"),
     strata = "RIAGENDR", data = nhanesSvy, factorVars = c("HI_CHOL", "race", "RIAGENDR"), labeldata = a.label, Labels = T, showAllLevels = F
   ), "list")
 
+  
   expect_is(svyCreateTableOneJS(
     vars = c("HI_CHOL", "race", "RIAGENDR"),
     strata = "SDMVPSU", strata2 = "agecat", data = nhanesSvy, factorVars = c("HI_CHOL", "race", "RIAGENDR"), labeldata = a.label, Labels = T

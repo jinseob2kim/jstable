@@ -125,9 +125,11 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
   }
 
   if (pairwise && length(unique(data$variables[[strata]])) > 2) {
-    print("enter")
+    p_position <- which(colnames(ptb1) == "p")
+    strata_count <- length(unique(data$variables[[strata]]))
+    comparison_columns <- colnames(ptb1)[(p_position - strata_count):(p_position - 1)]
     pairwise_comparisons <- combn(
-      colnames(ptb1)[(which(colnames(ptb1) == "level") + 1):(which(colnames(ptb1) == "p") - 1)], 2,
+      comparison_columns, 2, 
       simplify = FALSE
     )
     pairwise_pvalues_list <- list()

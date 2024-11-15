@@ -2,7 +2,7 @@
 % Please edit documentation in R/forestcox.R
 \name{count_event_by}
 \alias{count_event_by}
-\title{FUNCTION_TITLE}
+\title{count_event_by: funciton to count event, subgroup number inside TableSubgroupCox, TableSubgroupMultiCox}
 \usage{
 count_event_by(
   formula,
@@ -13,24 +13,24 @@ count_event_by(
 )
 }
 \arguments{
-\item{formula}{PARAM_DESCRIPTION}
+\item{formula}{formula with survival analysis}
 
-\item{data}{PARAM_DESCRIPTION}
+\item{data}{same data as in formula}
 
-\item{count_by_var}{PARAM_DESCRIPTION, Default: NULL}
+\item{count_by_var}{variables to count subgroup for}
 
-\item{var_subgroup}{PARAM_DESCRIPTION, Default: NULL}
+\item{var_subgroup}{1 sub-group variable for analysis,}
 
-\item{decimal.percent}{PARAM_DESCRIPTION, Default: 1}
+\item{decimal.percent}{decimals to show percent of, Default: 1}
 }
 \value{
-OUTPUT_DESCRIPTION
+Table with event, subgroup number
 }
 \description{
-FUNCTION_DESCRIPTION
+Function to count event, subgroup number
 }
 \details{
-DETAILS
+This function is used inside TableSubgroupCox, TableSubgroupMultiCox for calculation
 }
 \examples{
 \dontrun{
@@ -40,6 +40,5 @@ if (interactive()) {
 }
 }
 \seealso{
-\code{\link[tidyr]{drop_na}}
- \code{\link[dplyr]{group_by}}, \code{\link[dplyr]{summarise}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{bind_rows}}, \code{\link[dplyr]{arrange}}
+\code{\link[dplyr]{group_by}}, \code{\link[dplyr]{summarise}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{bind_rows}}, \code{\link[dplyr]{arrange}}
 }

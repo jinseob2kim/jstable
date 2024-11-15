@@ -47,6 +47,10 @@ TableSubgroupMultiCox(
 
 \item{weights}{Weights variable for coxph, Default: NULL}
 
+\item{event}{Show number and rates of event in survival analysis default:F}
+
+\item{count_by}{Select variables to count by subgroup, Default: NULL}
+
 \item{labeldata}{Label info, made by `mk.lev` function, Default: NULL}
 }
 \value{
