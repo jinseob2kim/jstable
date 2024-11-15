@@ -290,7 +290,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 
         if (!is.null(labeldata)) {
           out$Levels <- paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(model$xlevels[[1]], function(x) {
-            labeldata[variable == xlabel & level == x, val_label]
+            labeldata[variable == xlabel & labeldata$level == x, val_label]
           }))
         }
       }
@@ -577,7 +577,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 
         if (!is.null(labeldata)) {
           out$Variable <- paste0(" ", sapply(label_val, function(x) {
-            labeldata[variable == var_subgroup & level == x, val_label]
+            labeldata[variable == var_subgroup & labeldata$level == x, val_label]
           }))
         }
 
@@ -605,9 +605,9 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         }
 
         if (!is.null(labeldata)) {
-          out$Variable <- unlist(lapply(label_val, function(x) c(labeldata[variable == var_subgroup & level == x, val_label], rep("", length(xlev[[1]]) - 1))))
+          out$Variable <- unlist(lapply(label_val, function(x) c(labeldata[variable == var_subgroup & labeldata$level == x, val_label], rep("", length(xlev[[1]]) - 1))))
           out$Levels <- rep(paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(xlev[[1]], function(x) {
-            labeldata[variable == xlabel & level == x, val_label]
+            labeldata[variable == xlabel & labeldata$level == x, val_label]
           })), length(label_val))
         }
 
@@ -624,7 +624,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   }
   ## add event, count_by options
   if ((event) && is.null(count_by)) {
-    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = FALSE, count_by = count_by)
+    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = FALSE, count_by = count_by, labeldata =  labeldata)
     count_output <- count_event_by(formula = formula, data = data, count_by_var = count_by, var_subgroup = var_subgroup, decimal.percent = 1)
     if (!is.null(var_subgroup)) {
       for (i in 1:nrow(original_output)) {
@@ -643,7 +643,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     }
   }
   if ((event) && !is.null(count_by)) {
-    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = FALSE, count_by = NULL)
+    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = FALSE, count_by = NULL, labeldata = labeldata)
     count_output <- count_event_by(formula = formula, data = data, count_by_var = count_by, var_subgroup = var_subgroup, decimal.percent = 1)
     if (inherits(data, "survey.design")) {
       data <- data$variables
@@ -651,23 +651,39 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       data <- data
     }
     count_by_levels <- sort(unique(data[[count_by]]), decreasing = TRUE)
+    if (!is.null(labeldata)) {
+      count_by_levels <- sapply(count_by_levels, function(x) {
+        label <- labeldata[labeldata$variable == count_by & labeldata$level == x, "val_label"]
+        if (length(label) > 0) return(label) else return(x)
+      })
+      
+      count_output[[count_by]] <- sapply(count_output[[count_by]], function(x) {
+        label <- labeldata[labeldata$variable == count_by & labeldata$level == x, "val_label"]
+        if (length(label) > 0) return(label) else return(x)
+      })
+    }
     if (!is.null(var_subgroup)) {
       subgroup_levels <- unique(data[[var_subgroup]])
       for (countlevel in count_by_levels) {
         event_rate_col <- paste0("Count(", count_by, "=", countlevel, ")")
         original_output <- original_output %>%
           tibble::add_column(!!event_rate_col := NA, .after = "Count")
-        for (level in subgroup_levels) {
-          value_to_insert <- count_output[count_output[[count_by]] == countlevel & count_output[[var_subgroup]] == level, "Event_Rate"]
+        for (sub_level in subgroup_levels) {
+          level_label <- if (!is.null(labeldata)) {
+            label <- as.character(labeldata[labeldata$variable == var_subgroup & labeldata$level == sub_level, "val_label"])[1]
+          } else {
+            sub_level
+          }
+          value_to_insert <- count_output[count_output[[count_by]] == countlevel & count_output[[var_subgroup]] == sub_level, "Event_Rate"]
           value_to_insert <- value_to_insert[!is.na(value_to_insert)]
           if (length(value_to_insert) > 0) {
             if (!is.na(value_to_insert[1])) {
-              original_output[[event_rate_col]][trimws(original_output[["Variable"]]) == level] <- value_to_insert[1]
+              original_output[[event_rate_col]][trimws(original_output[["Variable"]]) == level_label] <- value_to_insert[1]
             } else {
-              original_output[[event_rate_col]][trimws(original_output[["Variable"]]) == level] <- ""
+              original_output[[event_rate_col]][trimws(original_output[["Variable"]]) == level_label] <- ""
             }
           } else {
-            original_output[[event_rate_col]][trimws(original_output[["Variable"]]) == level] <- ""
+            original_output[[event_rate_col]][trimws(original_output[["Variable"]]) == level_label] <- ""
           }
         }
       }
@@ -698,24 +714,43 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     }
   }
   if (!(event) && !is.null(count_by)) {
-    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = NULL)
+    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = NULL, labeldata = labeldata)
     count_output <- count_event_by(formula = formula, data = data, count_by_var = count_by, var_subgroup = var_subgroup, decimal.percent = 1)
+    
     if (inherits(data, "survey.design")) {
       data <- data$variables
     } else {
       data <- data
     }
     count_by_levels <- sort(unique(data[[count_by]]), decreasing = TRUE)
+    if (!is.null(labeldata)) {
+      # count_by_levels와 count_output의 count_by 값을 라벨로 변환
+      count_by_levels <- sapply(count_by_levels, function(x) {
+        label <- labeldata[labeldata$variable == count_by & labeldata$level == x, "val_label"]
+        if (length(label) > 0) return(label) else return(x)
+      })
+      
+      count_output[[count_by]] <- sapply(count_output[[count_by]], function(x) {
+        label <- labeldata[labeldata$variable == count_by & labeldata$level == x, "val_label"]
+        if (length(label) > 0) return(label) else return(x)
+      })
+      }
+    
     if (!is.null(var_subgroup)) {
       subgroup_levels <- unique(data[[var_subgroup]])
       for (countlevel in count_by_levels) {
         event_rate_col <- paste0("Count(", count_by, "=", countlevel, ")")
         original_output <- original_output %>%
           tibble::add_column(!!event_rate_col := NA, .after = "Count")
-        for (level in subgroup_levels) {
-          value_to_insert <- count_output[count_output[[count_by]] == countlevel & count_output[[var_subgroup]] == level, "Count"]
+        for (sub_level in subgroup_levels) {
+          level_label <- if (!is.null(labeldata)) {
+            label <- as.character(labeldata[labeldata$variable == var_subgroup & labeldata$level == sub_level, "val_label"])[1]
+          } else {
+            sub_level
+          }
+          value_to_insert <- count_output[count_output[[count_by]] == countlevel & count_output[[var_subgroup]] == sub_level, "Count"]
           value_to_insert <- value_to_insert[!is.na(value_to_insert)]
-          original_output[[event_rate_col]][trimws(original_output[["Variable"]]) == level] <- value_to_insert[1]
+          original_output[[event_rate_col]][trimws(original_output[["Variable"]]) == level_label] <- value_to_insert[1]
         }
       }
 
@@ -812,3 +847,4 @@ TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, var_cov = NULL,
     }
   }
 }
+

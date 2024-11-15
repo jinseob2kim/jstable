@@ -1,7 +1,7 @@
 Package: jstable
 Title: Create Tables from Different Types of Regression
 Version: 1.3.6
-Date: 2024-11-13
+Date: 2024-11-15
 Authors@R: c(person("Jinseob", "Kim", email = "jinseob2kim@gmail.com", role = c("aut", "cre"),  comment = c(ORCID = "0000-0002-9403-605X")),
              person("Zarathu", role = c("cph", "fnd")),
              person("Yoonkyoung","Jeon", role = c("aut")),
@@ -14,7 +14,7 @@ Depends: R (>= 3.4.0)
 License: Apache License 2.0 
 Encoding: UTF-8
 RoxygenNote: 7.3.2
-Imports: geepack, lme4, stats, data.table, labelled, tableone, coxme, survival (>= 3.0.0), survey, methods, dplyr, purrr, magrittr, tibble, tidyr, rlang
+Imports: geepack, lme4, stats, data.table, labelled, tableone, coxme, survival (>= 3.0.0), survey, methods, dplyr, purrr, magrittr, tibble,  rlang
 URL: https://github.com/jinseob2kim/jstable
 BugReports: https://github.com/jinseob2kim/jstable/issues
 Suggests: 

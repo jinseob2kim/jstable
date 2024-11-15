@@ -44,13 +44,11 @@ TableSubgroupCox(
 
 \item{weights}{Weights variable for coxph, Default: NULL}
 
-<<<<<<< HEAD
-\item{labeldata}{Label info, made by `mk.lev` function, Default: NULL}
-=======
 \item{event}{Show number and rates of event in survival analysis default:F}
 
 \item{count_by}{Select variables to count by subgroup, Default: NULL}
->>>>>>> 13722ba (s)
+
+\item{labeldata}{Label info, made by `mk.lev` function, Default: NULL}
 }
 \value{
 Sub-group analysis table.
