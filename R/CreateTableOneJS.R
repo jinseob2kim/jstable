@@ -155,7 +155,13 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
       }
     })
 
-    pairwise_comparisons <- combn(colnames(ptb1)[(which(colnames(ptb1) == "level") + 1):(which(colnames(ptb1) == "p") - 1)], 2, simplify = FALSE)
+    p_position <- which(colnames(ptb1) == "p")
+    strata_count <- length(unique(data$variables[[strata]]))
+    comparison_columns <- colnames(ptb1)[(p_position - strata_count):(p_position - 1)]
+    pairwise_comparisons <- combn(
+      comparison_columns, 2, 
+      simplify = FALSE
+    )
     pairwise_pvalues_list <- lapply(vars, function(x) {
       sapply(pairwise_comparisons, function(pair) {
         subset_data <- data[data[[strata]] %in% pair, ]
