@@ -1,3 +1,6 @@
+# jstable 1.3.7
+* fix: pairwise options in CreateTableOne2, CreateTableOneJS, svyCreateTableOne2, svyCreateTableOneJS
+
 # jstable 1.3.6
 * Update: Add event, count_by option in TableSubgroupCox, TableSubgroupMultiCox
 * Update: Add pairwise option in CreateTableOne2, CreateTableOneJS, svyCreateTableOne2, svyCreateTableOneJS
