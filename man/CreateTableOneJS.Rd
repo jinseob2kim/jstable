@@ -36,7 +36,8 @@ CreateTableOneJS(
   showpm = T,
   addOverall = F,
   normalityTest = F,
-  pairwise = F
+  pairwise = F,
+  pairwise.showtest = F
 )
 }
 \arguments{
@@ -103,6 +104,8 @@ CreateTableOneJS(
 \item{normalityTest}{Logical, perform the Shapiro test for all variables. Default: F}
 
 \item{pairwise}{(optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F#' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.}
+
+\item{pairwise.showtest}{(optional, only used if strata are supplied) When using pairwise comparison, it displays the test used to calculate p-values for pairwise comparisons. Default: F}
 }
 \description{
 Combine CreateTableOne & print function in tableone package

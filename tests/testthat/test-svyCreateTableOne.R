@@ -4,8 +4,17 @@ library(survey)
 test_that("Run SvyCreateOneTableJS", {
   data(nhanes)
   nhanes$SDMVPSU <- as.factor(nhanes$SDMVPSU)
-  nhanes$race <- as.factor(nhanes$race)
+  nhanes$race<-as.factor(nhanes$race)
+  nhanes$RIAGENDR<-as.factor(nhanes$RIAGENDR)
   a.label <- mk.lev(nhanes)
+  a.label <- a.label %>%
+    dplyr::mutate(val_label = case_when(
+      variable == "race" & level == "1" ~ "White",
+      variable == "race" & level == "2" ~ "Black",
+      variable == "race" & level == "3" ~ "Hispanic",
+      variable == "race" & level == "4" ~ "Asian",
+      TRUE ~ val_label
+    ))
   nhanesSvy <- svydesign(ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~WTMEC2YR, nest = TRUE, data = nhanes)
 
   expect_is(svyCreateTableOneJS(

@@ -26,7 +26,8 @@ svyCreateTableOneJS(
   minMax = F,
   showpm = T,
   addOverall = F,
-  pairwise = F
+  pairwise = F,
+  pairwise.showtest = F
 )
 }
 \arguments{
@@ -73,6 +74,8 @@ svyCreateTableOneJS(
 \item{addOverall}{(optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F}
 
 \item{pairwise}{(optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F}
+
+\item{pairwise.showtest}{(optional, only used if strata are supplied) When using pairwise comparison, it displays the test used to calculate p-values for pairwise comparisons. Default: F}
 }
 \value{
 A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
