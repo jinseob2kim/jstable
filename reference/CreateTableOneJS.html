@@ -164,7 +164,8 @@
   <span class='kw'>showpm</span> <span class='kw'>=</span> <span class='no'>T</span>,
   <span class='kw'>addOverall</span> <span class='kw'>=</span> <span class='no'>F</span>,
   <span class='kw'>normalityTest</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='kw'>pairwise</span> <span class='kw'>=</span> <span class='no'>F</span>
+  <span class='kw'>pairwise</span> <span class='kw'>=</span> <span class='no'>F</span>,
+  <span class='kw'>pairwise.showtest</span> <span class='kw'>=</span> <span class='no'>F</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -297,6 +298,10 @@
     <tr>
       <th>pairwise</th>
       <td><p>(optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F#' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.</p></td>
+    </tr>
+    <tr>
+      <th>pairwise.showtest</th>
+      <td><p>(optional, only used if strata are supplied) When using pairwise comparison, it displays the test used to calculate p-values for pairwise comparisons. Default: F</p></td>
     </tr>
     </table>
 
