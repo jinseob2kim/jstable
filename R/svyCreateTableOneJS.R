@@ -124,7 +124,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
       colnames(ptb1)[1:length(colname.group_var)] <- colname.group_var
     }
   }
-  
+
   if (pairwise && length(unique(data$variables[[strata]])) > 2) {
     unique_strata <- sort(unique(stats::na.omit(data$variables[[strata]])))
     pairwise_comparisons <- combn(unique_strata, 2, simplify = FALSE)
@@ -141,19 +141,24 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
               data = subset_data, strata = strata, vars = vars, factorVars = factorVars, includeNA = includeNA, test = test,
               showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, nonnormal = nonnormal,
               catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, Labels = Labels, labeldata = labeldata, minMax = minMax, showpm = showpm,
-              addOverall = addOverall, pairwise = F)
+              addOverall = addOverall, pairwise = F
+            )
             p_values <- table_result[, "p"]
             test_used <- table_result[, "test"]
-            list(p_value = p_values, 
-                 test_used = test_used)
+            list(
+              p_value = p_values,
+              test_used = test_used
+            )
           },
           error = function(e) {
-            list(p_value = stats::setNames(rep(NA, length(vars)), vars), 
-                 test_used = stats::setNames(rep(NA, length(vars)), vars))
+            list(
+              p_value = stats::setNames(rep(NA, length(vars)), vars),
+              test_used = stats::setNames(rep(NA, length(vars)), vars)
+            )
           }
         )
       }, simplify = FALSE),
-      nm = pairwise_names 
+      nm = pairwise_names
     )
     for (i in seq_along(pairwise_comparisons)) {
       col_name <- paste0("p(", pairwise_comparisons[[i]][1], "vs", pairwise_comparisons[[i]][2], ")")
@@ -168,9 +173,9 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
       pairwise_key <- paste0("p(", pairwise_comparisons[[i]][1], " vs ", pairwise_comparisons[[i]][2], ")")
       p_value <- pairwise_pvalues[[pairwise_key]]$p_value
       test_used <- pairwise_pvalues[[pairwise_key]]$test_used
-      p_value_names <- names(p_value) 
+      p_value_names <- names(p_value)
       for (x in p_value_names) {
-        if (x != "") { 
+        if (x != "") {
           matched_rows <- match(x, rownames(ptb1))
           if (!is.na(matched_rows)) {
             ptb1[matched_rows, col_name] <- p_value[x]
@@ -182,7 +187,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
     if (!is.null(labeldata) && Labels) {
       pairwise_p_cols <- grep("^p\\(", colnames(ptb1), value = TRUE)
       pairwise_test_cols <- grep("^test\\(", colnames(ptb1), value = TRUE)
-      
+
       strata_labels <- stats::setNames(labeldata[labeldata$variable == strata, val_label], labeldata[labeldata$variable == strata, level])
       updated_p_colnames <- sapply(pairwise_p_cols, function(col_name) {
         match <- regmatches(col_name, regexec("^p\\(([^vs]+)vs([^\\)]+)\\)", col_name))
@@ -195,7 +200,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
             return(paste0("p(", label1, " vs ", label2, ")"))
           }
         }
-        return(col_name) 
+        return(col_name)
       })
       updated_test_colnames <- sapply(pairwise_test_cols, function(col_name) {
         match <- regmatches(col_name, regexec("^test\\(([^vs]+)vs([^\\)]+)\\)", col_name))
@@ -208,13 +213,13 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
             return(paste0("test(", label1, " vs ", label2, ")"))
           }
         }
-        return(col_name) 
+        return(col_name)
       })
-      
+
       colnames(ptb1)[colnames(ptb1) %in% pairwise_p_cols] <- updated_p_colnames
       colnames(ptb1)[colnames(ptb1) %in% pairwise_test_cols] <- updated_test_colnames
     }
-    if(!pairwise.showtest){
+    if (!pairwise.showtest) {
       cols_to_remove <- grep("^test\\(", colnames(ptb1))
       ptb1 <- ptb1[, -cols_to_remove]
     }

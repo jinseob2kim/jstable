@@ -4,8 +4,8 @@ library(survey)
 test_that("Run SvyCreateOneTableJS", {
   data(nhanes)
   nhanes$SDMVPSU <- as.factor(nhanes$SDMVPSU)
-  nhanes$race<-as.factor(nhanes$race)
-  nhanes$RIAGENDR<-as.factor(nhanes$RIAGENDR)
+  nhanes$race <- as.factor(nhanes$race)
+  nhanes$RIAGENDR <- as.factor(nhanes$RIAGENDR)
   a.label <- mk.lev(nhanes)
   a.label <- a.label %>%
     dplyr::mutate(val_label = case_when(

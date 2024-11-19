@@ -146,38 +146,42 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
 
   # Pairwise option
   if (pairwise && length(unique(data[[strata]])) > 2) {
-      unique_strata <- sort(unique(stats::na.omit(data[[strata]])))
-      pairwise_comparisons <- combn(unique_strata, 2, simplify = FALSE)
-      pairwise_names <- sapply(pairwise_comparisons, function(pair) {
-        paste0("p(", pair[1], " vs ", pair[2], ")")
-      })
-      pairwise_pvalues <- stats::setNames(
-        sapply(pairwise_comparisons, function(pair) {
-          subset_data <- data[data[[strata]] %in% pair, ]
-          subset_data[[strata]] <- droplevels(subset_data[[strata]])
-          tryCatch(
-            {
-              table_result <- CreateTableOne2(
-                data = subset_data, strata = strata, vars = vars, factorVars = factorVars, includeNA = includeNA, test = test,
-                testApprox = testApprox, argsApprox = argsApprox, testExact = testExact, argsExact = argsExact,
-                testNormal = testNormal, argsNormal = argsNormal, testNonNormal = testNonNormal, argsNonNormal = argsNonNormal,
-                showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, Labels = Labels,
-                exact = NULL, nonnormal = nonnormal, catDigits = catDigits, contDigits = contDigits, pDigits = pDigits,
-                labeldata = labeldata, minMax = minMax, showpm = showpm, addOverall = addOverall, pairwise = F
-              )
-              p_values <- table_result[, "p"]
-              test_used <- table_result[, "test"]
-              list(p_value = p_values, 
-                   test_used = test_used)
-            },
-            error = function(e) {
-              list(p_value = stats::setNames(rep(NA, length(vars)), vars), 
-                   test_used = stats::setNames(rep(NA, length(vars)), vars))
-            }
-          )
-        }, simplify = FALSE),
-        nm = pairwise_names 
-      )
+    unique_strata <- sort(unique(stats::na.omit(data[[strata]])))
+    pairwise_comparisons <- combn(unique_strata, 2, simplify = FALSE)
+    pairwise_names <- sapply(pairwise_comparisons, function(pair) {
+      paste0("p(", pair[1], " vs ", pair[2], ")")
+    })
+    pairwise_pvalues <- stats::setNames(
+      sapply(pairwise_comparisons, function(pair) {
+        subset_data <- data[data[[strata]] %in% pair, ]
+        subset_data[[strata]] <- droplevels(subset_data[[strata]])
+        tryCatch(
+          {
+            table_result <- CreateTableOne2(
+              data = subset_data, strata = strata, vars = vars, factorVars = factorVars, includeNA = includeNA, test = test,
+              testApprox = testApprox, argsApprox = argsApprox, testExact = testExact, argsExact = argsExact,
+              testNormal = testNormal, argsNormal = argsNormal, testNonNormal = testNonNormal, argsNonNormal = argsNonNormal,
+              showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, Labels = Labels,
+              exact = NULL, nonnormal = nonnormal, catDigits = catDigits, contDigits = contDigits, pDigits = pDigits,
+              labeldata = labeldata, minMax = minMax, showpm = showpm, addOverall = addOverall, pairwise = F
+            )
+            p_values <- table_result[, "p"]
+            test_used <- table_result[, "test"]
+            list(
+              p_value = p_values,
+              test_used = test_used
+            )
+          },
+          error = function(e) {
+            list(
+              p_value = stats::setNames(rep(NA, length(vars)), vars),
+              test_used = stats::setNames(rep(NA, length(vars)), vars)
+            )
+          }
+        )
+      }, simplify = FALSE),
+      nm = pairwise_names
+    )
     for (i in seq_along(pairwise_comparisons)) {
       col_name <- paste0("p(", pairwise_comparisons[[i]][1], "vs", pairwise_comparisons[[i]][2], ")")
       test_name <- paste0("test(", pairwise_comparisons[[i]][1], "vs", pairwise_comparisons[[i]][2], ")")
@@ -191,9 +195,9 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
       pairwise_key <- paste0("p(", pairwise_comparisons[[i]][1], " vs ", pairwise_comparisons[[i]][2], ")")
       p_value <- pairwise_pvalues[[pairwise_key]]$p_value
       test_used <- pairwise_pvalues[[pairwise_key]]$test_used
-      p_value_names <- names(p_value) 
+      p_value_names <- names(p_value)
       for (x in p_value_names) {
-        if (x != "") { 
+        if (x != "") {
           matched_rows <- match(x, rownames(ptb1))
           if (!is.na(matched_rows)) {
             ptb1[matched_rows, col_name] <- p_value[x]
@@ -202,40 +206,40 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
         }
       }
     }
-      if (!is.null(labeldata) && Labels) {
-        pairwise_p_cols <- grep("^p\\(", colnames(ptb1), value = TRUE)
-        pairwise_test_cols <- grep("^test\\(", colnames(ptb1), value = TRUE)
-        strata_labels <- stats::setNames(labeldata[labeldata$variable == strata, val_label], labeldata[labeldata$variable == strata, level])
-        updated_p_colnames <- sapply(pairwise_p_cols, function(col_name) {
-          match <- regmatches(col_name, regexec("^p\\(([^vs]+)vs([^\\)]+)\\)", col_name))
-          if (length(match[[1]]) == 3) {
-            group1 <- match[[1]][2]
-            group2 <- match[[1]][3]
-            label1 <- strata_labels[as.character(group1)]
-            label2 <- strata_labels[as.character(group2)]
-            if (!is.na(label1) && !is.na(label2)) {
-              return(paste0("p(", label1, " vs ", label2, ")"))
-            }
+    if (!is.null(labeldata) && Labels) {
+      pairwise_p_cols <- grep("^p\\(", colnames(ptb1), value = TRUE)
+      pairwise_test_cols <- grep("^test\\(", colnames(ptb1), value = TRUE)
+      strata_labels <- stats::setNames(labeldata[labeldata$variable == strata, val_label], labeldata[labeldata$variable == strata, level])
+      updated_p_colnames <- sapply(pairwise_p_cols, function(col_name) {
+        match <- regmatches(col_name, regexec("^p\\(([^vs]+)vs([^\\)]+)\\)", col_name))
+        if (length(match[[1]]) == 3) {
+          group1 <- match[[1]][2]
+          group2 <- match[[1]][3]
+          label1 <- strata_labels[as.character(group1)]
+          label2 <- strata_labels[as.character(group2)]
+          if (!is.na(label1) && !is.na(label2)) {
+            return(paste0("p(", label1, " vs ", label2, ")"))
           }
-          return(col_name) 
-        })
-        updated_test_colnames <- sapply(pairwise_test_cols, function(col_name) {
-          match <- regmatches(col_name, regexec("^test\\(([^vs]+)vs([^\\)]+)\\)", col_name))
-          if (length(match[[1]]) == 3) {
-            group1 <- match[[1]][2]
-            group2 <- match[[1]][3]
-            label1 <- strata_labels[as.character(group1)]
-            label2 <- strata_labels[as.character(group2)]
-            if (!is.na(label1) && !is.na(label2)) {
-              return(paste0("test(", label1, " vs ", label2, ")"))
-            }
+        }
+        return(col_name)
+      })
+      updated_test_colnames <- sapply(pairwise_test_cols, function(col_name) {
+        match <- regmatches(col_name, regexec("^test\\(([^vs]+)vs([^\\)]+)\\)", col_name))
+        if (length(match[[1]]) == 3) {
+          group1 <- match[[1]][2]
+          group2 <- match[[1]][3]
+          label1 <- strata_labels[as.character(group1)]
+          label2 <- strata_labels[as.character(group2)]
+          if (!is.na(label1) && !is.na(label2)) {
+            return(paste0("test(", label1, " vs ", label2, ")"))
           }
-          return(col_name) 
-        })
-        colnames(ptb1)[colnames(ptb1) %in% pairwise_p_cols] <- updated_p_colnames
-        colnames(ptb1)[colnames(ptb1) %in% pairwise_test_cols] <- updated_test_colnames
-      }
-    if(!pairwise.showtest){
+        }
+        return(col_name)
+      })
+      colnames(ptb1)[colnames(ptb1) %in% pairwise_p_cols] <- updated_p_colnames
+      colnames(ptb1)[colnames(ptb1) %in% pairwise_test_cols] <- updated_test_colnames
+    }
+    if (!pairwise.showtest) {
       cols_to_remove <- grep("^test\\(", colnames(ptb1))
       ptb1 <- ptb1[, -cols_to_remove]
     }
@@ -379,7 +383,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       testNormal = testNormal, argsNormal = argsNormal,
       testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal, exact = exact,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm, addOverall = addOverall, pairwise = pairwise, pairwise.showtest= pairwise.showtest
+      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm, addOverall = addOverall, pairwise = pairwise, pairwise.showtest = pairwise.showtest
     )
 
     cap.tb1 <- paste("Stratified by ", strata, sep = "")
