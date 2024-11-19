@@ -32,6 +32,7 @@
 #' @param showpm Logical, show normal distributed continuous variables as Mean ± SD. Default: T
 #' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
 #' @param pairwise (optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F
+#' @param pairwise.showtest (optional, only used if strata are supplied) When using pairwise comparison, it displays the test used to calculate p-values for pairwise comparisons. Default: F
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples
@@ -52,7 +53,7 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
                             testNormal = oneway.test, argsNormal = list(var.equal = F),
                             testNonNormal = kruskal.test, argsNonNormal = list(NULL),
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, exact = NULL, nonnormal = NULL,
-                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, minMax = F, showpm = T, addOverall = F, pairwise = F) {
+                            catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, minMax = F, showpm = T, addOverall = F, pairwise = F, pairwise.showtest = F) {
   setkey <- variable <- level <- . <- val_label <- NULL
 
   if (length(strata) != 1) {
@@ -143,72 +144,40 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
     # cap.tb1 = paste("Table 1: Stratified by ", labeldata[variable == strata, "var_label"][1], sep="")
   }
 
+  # Pairwise option
   if (pairwise && length(unique(data[[strata]])) > 2) {
-    # 정규성 테스트 수행
-    normality_results <- sapply(vars, function(x) {
-      is_continuous <- is.numeric(data[[x]]) || is.integer(data[[x]])
-      if (is_continuous && nrow(data) <= 5000) {
-        shapiro_test_result <- tryCatch(stats::shapiro.test(data[[x]])$p.value, error = function(e) NA)
-        return(!is.na(shapiro_test_result) && shapiro_test_result >= 0.05) # p >= 0.05면 정규성 만족
-      } else {
-        return(TRUE) # 큰 샘플이거나 정규성 검사가 불가할 때는 정규성 만족으로 처리
-      }
-    })
-
-    p_position <- which(colnames(ptb1) == "p")
-    strata_count <- length(unique(data$variables[[strata]]))
-    comparison_columns <- colnames(ptb1)[(p_position - strata_count):(p_position - 1)]
-    pairwise_comparisons <- combn(
-      comparison_columns, 2,
-      simplify = FALSE
-    )
-    pairwise_pvalues_list <- lapply(vars, function(x) {
-      sapply(pairwise_comparisons, function(pair) {
-        subset_data <- data[data[[strata]] %in% pair, ]
-        is_continuous <- is.numeric(data[[x]]) || is.integer(data[[x]])
-        test_result <- if (is_continuous) {
-          if (normality_results[x]) {
-            tryCatch(
-              {
-                test <- t.test(subset_data[[x]] ~ subset_data[[strata]], var.equal = FALSE) # Welch's t-test
-                list(p_value = test$p.value, test_used = "t-test")
-              },
-              error = function(e) {
-                list(p_value = NA, test_used = NA)
-              }
-            )
-          } else {
-            tryCatch(
-              {
-                test <- wilcox.test(subset_data[[x]] ~ subset_data[[strata]])
-                list(p_value = test$p.value, test_used = "wilcox")
-              },
-              error = function(e) {
-                list(p_value = NA, test_used = NA)
-              }
-            )
-          }
-        } else {
-          # 범주형 데이터에 대해 Chi-square 또는 Fisher's exact test 수행
+      unique_strata <- sort(unique(stats::na.omit(data[[strata]])))
+      pairwise_comparisons <- combn(unique_strata, 2, simplify = FALSE)
+      pairwise_names <- sapply(pairwise_comparisons, function(pair) {
+        paste0("p(", pair[1], " vs ", pair[2], ")")
+      })
+      pairwise_pvalues <- stats::setNames(
+        sapply(pairwise_comparisons, function(pair) {
+          subset_data <- data[data[[strata]] %in% pair, ]
+          subset_data[[strata]] <- droplevels(subset_data[[strata]])
           tryCatch(
             {
-              test <- chisq.test(table(subset_data[[strata]], subset_data[[x]]))
-              list(p_value = test$p.value, test_used = "chisq")
-            },
-            warning = function(w) {
-              test <- fisher.test(table(subset_data[[strata]], subset_data[[x]]))
-              list(p_value = test$p.value, test_used = "exact")
+              table_result <- CreateTableOne2(
+                data = subset_data, strata = strata, vars = vars, factorVars = factorVars, includeNA = includeNA, test = test,
+                testApprox = testApprox, argsApprox = argsApprox, testExact = testExact, argsExact = argsExact,
+                testNormal = testNormal, argsNormal = argsNormal, testNonNormal = testNonNormal, argsNonNormal = argsNonNormal,
+                showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, Labels = Labels,
+                exact = NULL, nonnormal = nonnormal, catDigits = catDigits, contDigits = contDigits, pDigits = pDigits,
+                labeldata = labeldata, minMax = minMax, showpm = showpm, addOverall = addOverall, pairwise = F
+              )
+              p_values <- table_result[, "p"]
+              test_used <- table_result[, "test"]
+              list(p_value = p_values, 
+                   test_used = test_used)
             },
             error = function(e) {
-              list(p_value = NA, test_used = NA)
+              list(p_value = stats::setNames(rep(NA, length(vars)), vars), 
+                   test_used = stats::setNames(rep(NA, length(vars)), vars))
             }
           )
-        }
-        return(test_result)
-      }, simplify = FALSE)
-    })
-    names(pairwise_pvalues_list) <- vars
-
+        }, simplify = FALSE),
+        nm = pairwise_names 
+      )
     for (i in seq_along(pairwise_comparisons)) {
       col_name <- paste0("p(", pairwise_comparisons[[i]][1], "vs", pairwise_comparisons[[i]][2], ")")
       test_name <- paste0("test(", pairwise_comparisons[[i]][1], "vs", pairwise_comparisons[[i]][2], ")")
@@ -216,23 +185,60 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
       colnames(ptb1)[ncol(ptb1) - 1] <- col_name
       colnames(ptb1)[ncol(ptb1)] <- test_name
     }
-
     for (i in seq_along(pairwise_comparisons)) {
       col_name <- paste0("p(", pairwise_comparisons[[i]][1], "vs", pairwise_comparisons[[i]][2], ")")
       test_name <- paste0("test(", pairwise_comparisons[[i]][1], "vs", pairwise_comparisons[[i]][2], ")")
-      for (x in vars) {
-        p_value <- pairwise_pvalues_list[[x]][[i]]$p_value
-        test_used <- pairwise_pvalues_list[[x]][[i]]$test_used
-        cleaned_row_names <- gsub("\\s+|\\(\\%\\)", "", rownames(ptb1))
-        cleaned_var_name <- gsub("\\s+|\\(\\%\\)", "", x)
-        first_row <- which(cleaned_row_names == cleaned_var_name)[1]
-        p_value <- ifelse(p_value < 0.001, "<0.001", as.character(round(p_value, 2)))
-        ptb1[first_row, col_name] <- p_value
-        ptb1[first_row, test_name] <- test_used
+      pairwise_key <- paste0("p(", pairwise_comparisons[[i]][1], " vs ", pairwise_comparisons[[i]][2], ")")
+      p_value <- pairwise_pvalues[[pairwise_key]]$p_value
+      test_used <- pairwise_pvalues[[pairwise_key]]$test_used
+      p_value_names <- names(p_value) 
+      for (x in p_value_names) {
+        if (x != "") { 
+          matched_rows <- match(x, rownames(ptb1))
+          if (!is.na(matched_rows)) {
+            ptb1[matched_rows, col_name] <- p_value[x]
+            ptb1[matched_rows, test_name] <- test_used[x]
+          }
+        }
       }
     }
-    cols_to_remove <- grep("^test\\(", colnames(ptb1))
-    ptb1 <- ptb1[, -cols_to_remove]
+      if (!is.null(labeldata) && Labels) {
+        pairwise_p_cols <- grep("^p\\(", colnames(ptb1), value = TRUE)
+        pairwise_test_cols <- grep("^test\\(", colnames(ptb1), value = TRUE)
+        strata_labels <- stats::setNames(labeldata[labeldata$variable == strata, val_label], labeldata[labeldata$variable == strata, level])
+        updated_p_colnames <- sapply(pairwise_p_cols, function(col_name) {
+          match <- regmatches(col_name, regexec("^p\\(([^vs]+)vs([^\\)]+)\\)", col_name))
+          if (length(match[[1]]) == 3) {
+            group1 <- match[[1]][2]
+            group2 <- match[[1]][3]
+            label1 <- strata_labels[as.character(group1)]
+            label2 <- strata_labels[as.character(group2)]
+            if (!is.na(label1) && !is.na(label2)) {
+              return(paste0("p(", label1, " vs ", label2, ")"))
+            }
+          }
+          return(col_name) 
+        })
+        updated_test_colnames <- sapply(pairwise_test_cols, function(col_name) {
+          match <- regmatches(col_name, regexec("^test\\(([^vs]+)vs([^\\)]+)\\)", col_name))
+          if (length(match[[1]]) == 3) {
+            group1 <- match[[1]][2]
+            group2 <- match[[1]][3]
+            label1 <- strata_labels[as.character(group1)]
+            label2 <- strata_labels[as.character(group2)]
+            if (!is.na(label1) && !is.na(label2)) {
+              return(paste0("test(", label1, " vs ", label2, ")"))
+            }
+          }
+          return(col_name) 
+        })
+        colnames(ptb1)[colnames(ptb1) %in% pairwise_p_cols] <- updated_p_colnames
+        colnames(ptb1)[colnames(ptb1) %in% pairwise_test_cols] <- updated_test_colnames
+      }
+    if(!pairwise.showtest){
+      cols_to_remove <- grep("^test\\(", colnames(ptb1))
+      ptb1 <- ptb1[, -cols_to_remove]
+    }
   }
   sig <- ifelse(ptb1[, "p"] == "<0.001", "0", ptb1[, "p"])
   sig <- as.numeric(as.vector(sig))
@@ -277,6 +283,7 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
 #' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
 #' @param normalityTest Logical, perform the Shapiro test for all variables. Default: F
 #' @param pairwise (optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F#' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
+#' @param pairwise.showtest (optional, only used if strata are supplied) When using pairwise comparison, it displays the test used to calculate p-values for pairwise comparisons. Default: F
 #' @details DETAILS
 #' @examples
 #' library(survival)
@@ -297,7 +304,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
                              testNonNormal = kruskal.test, argsNonNormal = list(NULL),
                              showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, exact = NULL, nonnormal = NULL,
                              catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = T,
-                             addOverall = F, normalityTest = F, pairwise = F) {
+                             addOverall = F, normalityTest = F, pairwise = F, pairwise.showtest = F) {
   . <- level <- variable <- val_label <- V1 <- V2 <- NULL
   # if (Labels & !is.null(labeldata)){
   #  var_label(data) = sapply(names(data), function(v){as.character(labeldata[get("variable") == v, "var_label"][1])}, simplify = F)
@@ -372,7 +379,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       testNormal = testNormal, argsNormal = argsNormal,
       testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal, exact = exact,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm, addOverall = addOverall, pairwise = pairwise
+      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm, addOverall = addOverall, pairwise = pairwise, pairwise.showtest= pairwise.showtest
     )
 
     cap.tb1 <- paste("Stratified by ", strata, sep = "")
