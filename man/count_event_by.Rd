@@ -35,7 +35,7 @@ This function is used inside TableSubgroupCox, TableSubgroupMultiCox for calcula
 \examples{
 \dontrun{
 if (interactive()) {
-  # EXAMPLE1
+
 }
 }
 }

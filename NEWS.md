@@ -1,3 +1,6 @@
+# jstable 1.3.8
+* Update: Detect mixed model and show corresponding values in  'TableSubgroupGLM', 'TableSubgroupMultiGLM'
+
 # jstable 1.3.7
 * fix: pairwise options in CreateTableOne2, CreateTableOneJS, svyCreateTableOne2, svyCreateTableOneJS
 
