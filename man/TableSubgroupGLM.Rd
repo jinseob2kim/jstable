@@ -2,7 +2,7 @@
 % Please edit documentation in R/forestglm.R
 \name{TableSubgroupGLM}
 \alias{TableSubgroupGLM}
-\title{TableSubgroupGLM: Sub-group analysis table for GLM.}
+\title{TableSubgroupGLM: Sub-group analysis table for GLM and GLMM(lme4 package).}
 \usage{
 TableSubgroupGLM(
   formula,

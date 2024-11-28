@@ -1,4 +1,4 @@
-#' @title TableSubgroupGLM: Sub-group analysis table for GLM.
+#' @title TableSubgroupGLM: Sub-group analysis table for GLM and GLMM(lme4 package).
 #' @description Sub-group analysis table for GLM.
 #' @param formula formula with survival analysis.
 #' @param var_subgroup 1 sub-group variable for analysis, Default: NULL
@@ -40,7 +40,8 @@
 #' @importFrom survey svyglm
 #' @importFrom stats glm coefficients anova gaussian quasibinomial poisson quasipoisson qnorm terms
 #' @importFrom utils tail
-#' @importFrom lme4 lmer glmer fixef
+#' @importFrom lme4 glmer fixef
+#' @importFrom car Anova
 
 TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data, family = "binomial", decimal.estimate = 2, decimal.percent = 1, decimal.pvalue = 3, labeldata = NULL) {
   . <- variable <- var_label <- val_label <- level <- NULL
@@ -68,7 +69,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     purrr::map_dbl(x, .[["y"]], 1)
   }, NA)
   possible_glmer <- purrr::possibly(lme4::glmer, NA)
-  possible_lmer <- purrr::possibly(lme4::lmer, NA)
+  possible_lmertest<-purrr::possibly(lmerTest::lmer, NA)
   xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
   ncoef <- ifelse(any(class(data) == "survey.design"), ifelse(length(levels(data$variables[[xlabel]])) <= 2, 1, length(levels(data$variables[[xlabel]])) - 1),
                   ifelse(length(levels(data[[xlabel]])) <= 2, 1, length(levels(data[[xlabel]])) - 1)
@@ -89,7 +90,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     }
     if (is_mixed_effect) {
       if (family == "gaussian") {
-        model <- lme4::lmer(formula, data = data)
+        model <- lmerTest::lmer(formula, data = data)
       } else {
         model <- lme4::glmer(formula, data = data, family = family)
       }
@@ -134,7 +135,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       
       # P-value 계산
       pv <- tryCatch({
-        round(cc[2:(1 + ncoef), "Pr(>|z|)"], decimal.pvalue)
+        round(cc[2:(1 + ncoef), grep("Pr", colnames(cc), value = TRUE)], decimal.pvalue)
       }, error = function(e) {
         warning("P-value computation failed. Returning NA.")
         rep(NA, ncoef)
@@ -237,7 +238,8 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if(!is_mixed_effect){
     if (any(class(data) == "survey.design")) {
       ### survey data인 경우 ###
-      
+      vars_in_formula <- all.vars(as.formula(formula))
+      complete_data <- data$variables[complete.cases(data$variables[, vars_in_formula]), ]
       data$variables[[var_subgroup]] %>%
         table() %>%
         names() -> label_val
@@ -279,9 +281,11 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         pv_int <- round(pv_anova[[length(pv_anova)]][[7]], decimal.pvalue)
       }
       
-      Count <- as.vector(table(data$variables[[var_subgroup]]))
+      Count <- as.vector(table(complete_data[[var_subgroup]]))
     } 
       else{
+        vars_in_formula <- all.vars(as.formula(formula))
+        complete_data <- data[complete.cases(data[, vars_in_formula]), ]
         data %>%
           subset(!is.na(get(var_subgroup))) %>%
           group_split(get(var_subgroup)) %>%
@@ -314,7 +318,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
         }
         
-        Count <- as.vector(table(data[[var_subgroup]]))
+        Count <- as.vector(table(complete_data[[var_subgroup]]))
       }
         
         # PE, CI, PV 구하기
@@ -407,11 +411,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
     
     if(is_mixed_effect){
+      vars_in_formula <- all.vars(as.formula(formula))
+      complete_data <- data[complete.cases(data[, vars_in_formula]), ]
       model <- data %>%
         subset(!is.na(get(var_subgroup))) %>%
         group_split(get(var_subgroup)) %>%
         purrr::map(~ if (family == "gaussian") {
-          possible_lmer(formula, data = ., REML = FALSE)
+          possible_lmertest(formula, data = ., REML = FALSE)
         } else {
           possible_glmer(formula, data = ., family = family)
         })
@@ -435,7 +441,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       model.int <- tryCatch(
         if (length(xlev) > 1) {
           if (family == "gaussian") {
-            possible_lmer(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), 
+            possible_lmertest(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), 
                           data = data, REML = FALSE)
           } else {
             possible_glmer(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), 
@@ -446,20 +452,24 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         },
         error = function(e) NA
       )
-      
       # Calculate pv_int
-      if (any(is.na(model.int))) {
+      if (is.na(model.int) || !inherits(model.int, "merMod")) {  # Check if model is invalid or not an S4 object
         pv_int <- NA
-      } else if (sum(grepl(":", names(coef(model.int)))) > 1) {
-        pv_anova <- anova(model.int, test = "Chisq")
-        pv_int <- round(pv_anova[nrow(pv_anova), 5], decimal.pvalue)
       } else {
-        pvs_int <- summary(model.int)$coefficients
-        pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+        coef_names <- names(lme4::fixef(model.int)) 
+        if (sum(grepl(":", coef_names)) > 1) {  # Check for more than one interaction term
+          pv_anova<-car::Anova(model.int)
+          interaction_row <- grep(":", rownames(pv_anova), value = TRUE)
+          pr_row<-grep("Pr", colnames(pv_anova), value = TRUE)
+          pv_int <- round(pv_anova[interaction_row, pr_row], decimal.pvalue)
+        } else {
+          pvs_int <- summary(model.int)$coefficients  # Access coefficients table
+          pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)  # Extract p-value for interaction
+          formula_string <- deparse(formula(model.int))  # Extract the formula of the model
+        }
       }
-      
       # Calculate Count (subgroup sizes)
-      Count <- as.vector(table(data[[var_subgroup]]))
+      Count <- as.vector(table(complete_data[[var_subgroup]]))
       
       # Calculate Point Estimate (PE), Confidence Interval (CI), and P-value (PV)
       if (family %in% c("binomial", "poisson", "quasipoisson")) {
@@ -523,8 +533,12 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           cc0 <- tryCatch(summary(model)$coefficients, error = function(e) NA)
           pvl <- rep(NA, max(length(xlev) - 1, 1))
           names(pvl) <- paste0(xlabel, xlev[-1])
+          p_col <- grep("Pr", colnames(cc0), value = TRUE)
+          if (length(p_col) == 0) {
+            return(round(pvl, decimal.pvalue))
+          }
           for (i in names(pvl)) {
-            pvl[i] <- tryCatch(cc0[i, 4], error = function(e) NA)
+            pvl[i] <- tryCatch(cc0[i, p_col], error = function(e) NA)
           }
           round(pvl, decimal.pvalue)
         })}
