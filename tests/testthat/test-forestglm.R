@@ -16,8 +16,8 @@ test_that("Run TableSubgroupMultiGLM", {
   expect_is(TableSubgroupMultiGLM(status ~ sex, data = lung, family = "binomial"), "data.frame")
   expect_is(TableSubgroupMultiGLM(status ~ sex, var_subgroups = c("kk", "kk1"), data = lung, family = "binomial"), "data.frame")
   expect_is(TableSubgroupMultiGLM(pat.karno ~ sex, var_subgroups = c("kk", "kk1"), data = lung, family = "gaussian", line = TRUE), "data.frame")
-  expect_is(TableSubgroupMultiGLM(status ~ sex +(1|inst), var_subgroups = c("kk", "kk1"), data = lung, family = "gaussian", line = TRUE), "data.frame")
-  
+  expect_is(TableSubgroupMultiGLM(status ~ sex + (1 | inst), var_subgroups = c("kk", "kk1"), data = lung, family = "gaussian", line = TRUE), "data.frame")
+
   ## Survey data
   library(survey)
   expect_warning(data.design <- svydesign(id = ~1, data = lung))
