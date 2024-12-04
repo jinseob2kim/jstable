@@ -245,7 +245,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       if (any(class(data) == "survey.design")) {
         ### survey data인 경우 ###
         vars_in_formula <- all.vars(as.formula(formula))
-        complete_data <- data$variables[complete.cases(data$variables[, vars_in_formula]), ]
+        complete_data <- data$variables[complete.cases(dplyr::select(data$variables, all_of(vars_in_formula))), ]
         data$variables[[var_subgroup]] %>%
           table() %>%
           names() -> label_val
@@ -290,7 +290,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         Count <- as.vector(table(complete_data[[var_subgroup]]))
       } else {
         vars_in_formula <- all.vars(as.formula(formula))
-        complete_data <- data[complete.cases(data[, vars_in_formula]), ]
+        complete_data <- data[complete.cases(dplyr::select(data, all_of(vars_in_formula))), ]
         data %>%
           subset(!is.na(get(var_subgroup))) %>%
           group_split(get(var_subgroup)) %>%
@@ -417,7 +417,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 
     if (is_mixed_effect) {
       vars_in_formula <- all.vars(as.formula(formula))
-      complete_data <- data[complete.cases(data[, vars_in_formula]), ]
+      complete_data <- data[complete.cases(dplyr::select(data, all_of(vars_in_formula))), ]
       model <- data %>%
         subset(!is.na(get(var_subgroup))) %>%
         group_split(get(var_subgroup)) %>%
