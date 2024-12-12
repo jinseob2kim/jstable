@@ -24,7 +24,6 @@ test_that("Run TableSubgroupMultiCox", {
         TRUE ~ val_label
       )
     )
-  lung.label
   expect_is(TableSubgroupMultiCox(Surv(time, status) ~ sex, time_eventrate = 100, data = lung), "data.frame")
   expect_warning(TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = lung, time_eventrate = 100))
   expect_warning(TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = lung, time_eventrate = 100, line = TRUE))
