@@ -3,4 +3,6 @@ pkgdown: 1.4.1.9000
 pkgdown_sha: 732fb5b9ccc0ef87a73dfd0772ae661a4039b2a8
 articles:
   jstable: jstable.html
+  jstable_competing_risk_analysis: jstable_competing_risk_analysis.html
+  jstable_options: jstable_options.html
 
