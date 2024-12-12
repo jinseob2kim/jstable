@@ -1,0 +1,48 @@
+---
+title: "Competing risk analysis"
+author: "Jinseob Kim"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+css: vignette-styles.css
+vignette: >
+  %\VignetteIndexEntry{jstable}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = TRUE, message = F, warning = F
+)
+library(jstable)
+library(survival)
+library(dplyr)
+```
+
+# Display results of comepting risk analysis using jstable(Fine-Gray Method)
+
+## TableSubgroupMultiCox
+- When using the TableSubgroupMultiCox function, preprocessing the data with the finegray function from the survival package is required. The finegray function generates a new dataset containing fgstart, fgstop, fgstatus, and fgwt. The TableSubgroupMultiCox function then displays results based on the corresponding formula and weights.
+```{r}
+data <- mgus2
+data$etime <- with(data, ifelse(pstat==0, futime, ptime))
+data$event <- with(data, ifelse(pstat==0, 2*death, 1))
+data$event <- factor(data$event, 0:2, labels=c("censor", "pcm", "death"))
+data$age65<- with(data, ifelse(age >65, 1, 0))
+data$age65<- factor(data$age65)
+pdata <- survival::finegray(survival::Surv(etime, event) ~ ., data=data)
+TableSubgroupMultiCox(formula = Surv(fgstart, fgstop, fgstatus) ~ sex, data = pdata, var_cov = 'age',  weights = 'fgwt', var_subgroups =  c('age65'))
+```
+
+## cox2.display
+- As written above, preprocessing the data with finegray function is also required. By using corresponding formula and weights, cox2.display function will display table results. 
+```{r}
+fgfit <- coxph(Surv(fgstart, fgstop, fgstatus) ~ age+sex,
+               weight= fgwt, data=pdata, model = T)
+cox2.display(fgfit)
+```
+
