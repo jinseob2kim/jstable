@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 css: vignette-styles.css
 vignette: >
-  %\VignetteIndexEntry{jstable}
+  %\VignetteIndexEntry{Introducing jstable options}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
