@@ -23,10 +23,11 @@ library(survival)
 library(dplyr)
 ```
 
-# Display results of comepting risk analysis using jstable(Fine-Gray Method)
+## Display results of comepting risk analysis using jstable(Fine-Gray Method)
 
 ## TableSubgroupMultiCox
-- When using the TableSubgroupMultiCox function, preprocessing the data with the finegray function from the survival package is required. The finegray function generates a new dataset containing fgstart, fgstop, fgstatus, and fgwt. The TableSubgroupMultiCox function then displays results based on the corresponding formula and weights.
+
+### When using the TableSubgroupMultiCox function, preprocessing the data with the finegray function from the survival package is required. The finegray function generates a new dataset containing fgstart, fgstop, fgstatus, and fgwt. The TableSubgroupMultiCox function then displays results based on the corresponding formula and weights.
 ```{r}
 data <- mgus2
 data$etime <- with(data, ifelse(pstat == 0, futime, ptime))
@@ -39,7 +40,8 @@ TableSubgroupMultiCox(formula = Surv(fgstart, fgstop, fgstatus) ~ sex, data = pd
 ```
 
 ## cox2.display
-- As written above, preprocessing the data with finegray function is also required. By using corresponding formula and weights, cox2.display function will display table results. 
+
+### As written above, preprocessing the data with finegray function is also required. By using corresponding formula and weights, cox2.display function will display table results. 
 ```{r}
 fgfit <- coxph(Surv(fgstart, fgstop, fgstatus) ~ age + sex,
   weight = fgwt, data = pdata, model = T

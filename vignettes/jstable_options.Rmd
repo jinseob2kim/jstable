@@ -23,7 +23,7 @@ library(survival)
 library(dplyr)
 ```
 
-# Introducing count_by, event options in TableSubgroupMultiCox
+## Introducing count_by, event options in TableSubgroupMultiCox
 
 ## TableSubgroupMultiCox
  
@@ -52,36 +52,42 @@ lung.label <- lung.label %>%
 ```
 
 ## Counting the Number of Independent Variables for Comparison
-- The default option for count_by is set to NULL. By specifying an independent variable in the count_by option, the table will display the counts for each level of the independent variable.
+
+### The default option for count_by is set to NULL. By specifying an independent variable in the count_by option, the table will display the counts for each level of the independent variable.
 ```{r}
 TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = lung, time_eventrate = 100, line = TRUE, cluster = "inst", strata = "inst", weights = "age", event = FALSE, count_by = "sex", labeldata = lung.label)
 ```
 
 ## Calculate crude incidence rate of event
-- The default value for the event option is set to FALSE. By setting event to TRUE, the table will display the crude incidence rate of events. This rate is calculated using the number of events as the numerator and the count of the independent variable as the denominator.(Different from Kaplan-Meier Estimates)
+
+### The default value for the event option is set to FALSE. By setting event to TRUE, the table will display the crude incidence rate of events. This rate is calculated using the number of events as the numerator and the count of the independent variable as the denominator.(Different from Kaplan-Meier Estimates)
 ```{r}
 TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = lung, time_eventrate = 100, line = TRUE, cluster = "inst", strata = "inst", weights = "age", event = TRUE, count_by = "sex", labeldata = lung.label)
 ```
 
 ## Using both count_by and event option is also available
-- By using both count_by and event option, the table will display crude incidence rate and the counts for each level of the independant variable. 
+
+### By using both count_by and event option, the table will display crude incidence rate and the counts for each level of the independant variable. 
 ```{r}
 TableSubgroupMultiCox(Surv(time, status) ~ sex, var_subgroups = c("kk", "kk1"), data = lung, time_eventrate = 100, line = TRUE, cluster = "inst", strata = "inst", weights = "age", event = TRUE, count_by = NULL, labeldata = lung.label)
 ```
 # Introducing pairwise option 
 
 ## Introducing pairwise, pairwise.showtest option in CreateTableOneJS
-- The default value for the pairwise option is FALSE. By setting pairwise to TRUE, the table will display p-values for pairwise comparisons of stratified groups.
+
+### The default value for the pairwise option is FALSE. By setting pairwise to TRUE, the table will display p-values for pairwise comparisons of stratified groups.
 ```{r}
 CreateTableOneJS(vars = names(lung), strata = "ph.ecog", data = lung, showAllLevels = F, labeldata = lung.label, Labels = T, pairwise = T)
 ```
-- By setting pairwise.showtest option to TRUE, the table will display test used to calculate p-values for pairwise comparisons of stratified groups. Default test for categorical variables are chi-sq test and continuous variables are t-test.
+
+### By setting pairwise.showtest option to TRUE, the table will display test used to calculate p-values for pairwise comparisons of stratified groups. Default test for categorical variables are chi-sq test and continuous variables are t-test.
 ```{r}
 CreateTableOneJS(vars = names(lung), strata = "ph.ecog", data = lung, showAllLevels = F, labeldata = lung.label, Labels = T, pairwise = T, pairwise.showtest = T)
 ```
 
 ## Introducing pairwise option in svyCreateTableOneJS
-- The default value for the pairwise option is FALSE. By setting pairwise to TRUE, the table will display p-values for pairwise comparisons of stratified groups. 
+
+### The default value for the pairwise option is FALSE. By setting pairwise to TRUE, the table will display p-values for pairwise comparisons of stratified groups. 
 ```{r}
 library(survey)
 data(nhanes)
@@ -104,7 +110,8 @@ svyCreateTableOneJS(
   strata = "race", data = nhanesSvy, factorVars = c("HI_CHOL", "race", "RIAGENDR"), labeldata = a.label, Labels = T, pairwise = T
 )
 ```
-- By setting pairwise.showtest option to TRUE, the table will display test used to calculate p-values for pairwise comparisons of stratified groups. 
+
+### By setting pairwise.showtest option to TRUE, the table will display test used to calculate p-values for pairwise comparisons of stratified groups. 
 ```{r}
 svyCreateTableOneJS(
   vars = c("HI_CHOL", "race", "agecat", "RIAGENDR"),
