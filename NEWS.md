@@ -1,5 +1,5 @@
 # jstable 1.3.9
-* Update: Add C-Index in cox2.display
+* Update: Add C-Index(se) in cox2.display
 
 # jstable 1.3.8
 * Update: Detect mixed model and show corresponding values in  'TableSubgroupGLM', 'TableSubgroupMultiGLM'
