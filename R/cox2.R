@@ -247,11 +247,11 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
   no.obs <- model$n
   no.event <- model$nevent
   aic <- stats::AIC(model)
-  ccd<-model$concordance
-  concordance_value <- round(ccd["concordance"],3)
-  std_value <- round(ccd["std"],3)
-  c_index<-paste0(concordance_value, '(', std_value, ')')
-  metric.mat <- cbind(c(NA, no.obs, no.event, aic, c_index ), matrix(NA, 5, ncol(fix.all) - 1))
+  ccd <- model$concordance
+  concordance_value <- round(ccd["concordance"], 3)
+  std_value <- round(ccd["std"], 3)
+  c_index <- paste0(concordance_value, "(", std_value, ")")
+  metric.mat <- cbind(c(NA, no.obs, no.event, aic, c_index), matrix(NA, 5, ncol(fix.all) - 1))
   rownames(metric.mat) <- c(NA, "No. of observations", "No. of events", "AIC", "C-Index")
 
   ## Integrated ll
