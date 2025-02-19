@@ -1,3 +1,6 @@
+# jstable 1.3.10
+* Enable TableSubgroupCox to handle with mixed effect model, automatically detects mixed model with formula
+
 # jstable 1.3.9
 * Update: Add C-Index(se) in cox2.display
 
