@@ -89,11 +89,16 @@ geeExp <- function(gee.coef, family = "binomial", dec) {
 #' @importFrom data.table data.table
 #' @importFrom stats complete.cases update formula
 
-geeglm.display <- function(geeglm.obj, decimal = 2) {
+geeglm.display <- function(geeglm.obj, decimal = 2, pcut.univariate=NULL) {
   family.gee <- geeglm.obj$family[[1]]
   corstr.gee <- geeglm.obj$corstr
   y <- as.character(geeglm.obj$terms[[2]])
   xs <- names(geeglm.obj$model)[-1]
+  
+  if (length(geeglm.obj$xlevels) != 0){
+    xs.factor <- names(geeglm.obj$xlevels)[sapply(geeglm.obj$xlevels, function(x){length(x) > 2})]
+  }
+  
   ## rownames
   geeglm.obj$data <- data.table::data.table(geeglm.obj$data)
   # nomiss <- stats::complete.cases(geeglm.obj$data[, c(y, xs), with = F])
@@ -122,8 +127,48 @@ geeglm.display <- function(geeglm.obj, decimal = 2) {
     family.label <- colnames(gee.res.modi)[1]
     colnames(gee.res.modi) <- c(paste(family.label, "(95%CI)", sep = ""), "P value")
   } else {
-    gee.multi <- summary(geeglm.obj)$coefficients[-1, -3]
-    gee.res <- cbind(geeExp(gee.uni, family = family.gee, dec = decimal), geeExp(gee.multi, family = family.gee, dec = decimal))
+    if (is.null(pcut.univariate)){
+      gee.multi <- summary(geeglm.obj)$coefficients[-1, -3]
+    }else{
+      significant_vars <- rownames(gee.uni)[as.numeric(gee.uni[, 3]) < pcut.univariate]
+
+      
+      
+      if (length(geeglm.obj$xlevels) != 0){
+        factor_vars_list <- lapply(xs.factor, function(factor_var) {
+          matches <- grep(paste0("^", factor_var), rownames(gee.uni), value = TRUE)
+          return(matches)
+        })
+        names(factor_vars_list) <- xs.factor
+        
+        for (key in names(factor_vars_list)) {
+          variables <- factor_vars_list[[key]]
+          
+          p_values <- gee.uni[variables, 3]
+          
+          if (any(p_values < pcut.univariate, na.rm = TRUE)) {
+            significant_vars <- setdiff(significant_vars, variables)
+            
+            significant_vars <- unique(c(significant_vars, key))
+          }
+        }
+      }
+      
+      selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + ")))
+      selected_model <- geepack::geeglm(selected_formula, data = geeglm.obj$data, family = family.gee, id=geeglm.obj$id , corstr = corstr.gee) 
+      gee.multi <- summary(selected_model)$coefficients[-1, -3]
+      
+      
+      gee.na <- as.data.frame(matrix(NA, nrow = nrow(gee.uni), ncol = ncol(gee.uni)))
+      colnames(gee.na) <- colnames(gee.uni)
+      rownames(gee.na) <- rownames(gee.uni)
+      
+      row_indices <- match(rownames(gee.multi), rownames(gee.uni))
+      gee.na[row_indices, ] <- gee.multi
+      
+    }
+    
+    gee.res <- cbind(geeExp(gee.uni, family = family.gee, dec = decimal), geeExp(gee.na, family = family.gee, dec = decimal))
     gee.res.list <- lapply(1:length(xs), function(x) {
       gee.res[rownames(gee.uni) %in% rn.uni[[x]], ]
     })

@@ -6,6 +6,8 @@ test_that("Run glmshow.display", {
   expect_is(glmshow.display(glm(mpg ~ cyl + disp, data = mtcars)), "display")
   expect_is(glmshow.display(glm(am ~ cyl, data = mtcars, family = "binomial")), "display")
   expect_is(glmshow.display(glm(am ~ cyl + disp, data = mtcars, family = "binomial")), "display")
+  expect_is(glmshow.display(glm(am ~ cyl + disp, data = mtcars, family = "binomial"),pcut.univariate = 0.0055), "display")
+  expect_is(glmshow.display(glm(mpg ~ factor(am) +wt+qsec, data = mtcars, family = "gaussian"), pcut.univariate = 0.01), "display")
 })
 
 test_that("Run cox2.display", {
