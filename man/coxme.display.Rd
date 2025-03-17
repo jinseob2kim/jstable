@@ -4,12 +4,14 @@
 \alias{coxme.display}
 \title{coxme.display: table for coxme.object (coxme package)}
 \usage{
-coxme.display(coxme.obj, dec = 2)
+coxme.display(coxme.obj, dec = 2, pcut.univariate = NULL)
 }
 \arguments{
 \item{coxme.obj}{coxme.object}
 
 \item{dec}{Decimal point, Default: 2}
+
+\item{pcut.univariate}{pcut.univariate, Default: NULL}
 }
 \value{
 Fixed effect table, random effect, metrics, caption

@@ -4,12 +4,14 @@
 \alias{svyregress.display}
 \title{svyregress.display: table for svyglm.object}
 \usage{
-svyregress.display(svyglm.obj, decimal = 2)
+svyregress.display(svyglm.obj, decimal = 2, pcut.univariate = NULL)
 }
 \arguments{
 \item{svyglm.obj}{svyglm.object}
 
 \item{decimal}{digit, Default: 2}
+
+\item{pcut.univariate}{pcut.univariate, Default: NULL}
 }
 \value{
 table

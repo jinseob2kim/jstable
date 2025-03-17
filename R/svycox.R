@@ -2,6 +2,7 @@
 #' @description Table for complex design cox model.
 #' @param svycoxph.obj svycoxph.object
 #' @param decimal digit, Default: 2
+#' @param pcut.univariate pcut.univariate, Default: NULL
 #' @return List including table, metric, caption
 #' @details DETAILS
 #' @examples
@@ -30,10 +31,10 @@
 #' @rdname svycox.display
 #' @export
 #' @importFrom survey svycoxph
-#' @importFrom stats AIC update
+#' @importFrom stats AIC update model.frame
 
 
-svycox.display <- function(svycoxph.obj, decimal = 2) {
+svycox.display <- function(svycoxph.obj, decimal = 2, pcut.univariate = NULL) {
   model <- svycoxph.obj
   if (!any(class(model) == "svycoxph")) {
     stop("Model not from Survey cox model")
@@ -42,6 +43,9 @@ svycox.display <- function(svycoxph.obj, decimal = 2) {
   formula.surv <- as.character(model$formula)[2]
   design.model <- model$survey.design
 
+  model_data <- stats::model.frame(model)
+  categorical_vars <- xf[sapply(model_data[xf], function(x) is.factor(x) | is.character(x))]
+  
   if (length(xf) == 1) {
     uni.res <- data.frame(summary(model)$coefficients)
     # uni.res <- data.frame(summary(survey::svycoxph(as.formula(paste(formula.surv, "~", xf, sep="")), design = design.model))$coefficients)
@@ -54,8 +58,6 @@ svycox.display <- function(svycoxph.obj, decimal = 2) {
     # rownames(fix.all) = ifelse(mtype == "frailty", names(model$coefficients)[-length(model$coefficients)], names(model$coefficients))
     rownames(fix.all) <- names(model$coefficients)
   } else {
-    mul.res <- data.frame(summary(model)$coefficients)
-    colnames(mul.res)[ncol(mul.res)] <- "p"
 
     unis <- lapply(xf, function(x) {
       tryCatch(
@@ -90,6 +92,70 @@ svycox.display <- function(svycoxph.obj, decimal = 2) {
 
     unis2 <- Reduce(rbind, unis)
     uni.res <- unis2
+    if (is.null(pcut.univariate)){
+      mul.res <- data.frame(summary(model)$coefficients)
+      colnames(mul.res)[ncol(mul.res)] <- "p"
+      
+    }else{
+      significant_vars <- rownames(uni.res)[as.numeric(uni.res[, 4]) < pcut.univariate]
+      if (length(categorical_vars) != 0){
+        factor_vars_list <- lapply(categorical_vars, function(factor_var) {
+          factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
+          factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
+          
+          
+          matches <- grep(paste0("^", factor_var_escaped), rownames(uni.res), value = TRUE)
+          return(matches)
+        })
+        names(factor_vars_list) <- categorical_vars
+        
+        for (key in names(factor_vars_list)) {
+          variables <- factor_vars_list[[key]]
+          
+          p_values <- uni.res[variables, 4]
+          
+          if (any(p_values < pcut.univariate, na.rm = TRUE)) {
+            significant_vars <- setdiff(significant_vars, variables)
+            
+            significant_vars <- unique(c(significant_vars, key))
+          }
+        }
+      }
+      if (length(significant_vars) == 0 ){
+        
+        mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = ncol(uni.res))
+        colnames(mul.res) <- colnames(uni.res)
+        rownames(mul.res) <- rownames(uni.res)
+        
+      }else{
+        
+        
+        selected_formula <- as.formula(paste(formula.surv, "~", paste(significant_vars, collapse = " + ")))
+        selected_model <- survey::svycoxph(selected_formula, design = design.model ) 
+        
+        mul <- data.frame(summary(selected_model)$coefficients)
+        colnames(mul)[ncol(mul)] <- "p"
+        
+        mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = ncol(mul))
+        rownames(mul.res) <- rownames(uni.res)
+        
+        if (!is.null(mul)) {
+          mul_no_intercept <- as.matrix(mul[!grepl("Intercept", rownames(mul)), , drop = FALSE])
+          
+          
+          for (var in rownames(mul_no_intercept)) { 
+            mul.res[var, ] <- mul_no_intercept[var,]
+          }
+        }
+        colnames(mul.res) <- colnames(mul)
+        rownames(mul.res) <- rownames(uni.res)
+        
+        
+      }
+      
+      
+    }
+
     uni.res <- uni.res[rownames(uni.res) %in% rownames(mul.res), ] ## set
 
     fix.all <- cbind(coxExp(uni.res, dec = decimal), coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = decimal))

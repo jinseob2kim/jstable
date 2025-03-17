@@ -1,3 +1,6 @@
+# jstable 1.3.11
+* Update: Add pcut.univariate to geeglm.display, coxme.display, cox2.display, glmshow.display, lmer.display, svyglm.display, and svycox.display to allow multivariable analysis only with statistically significant variables.
+
 # jstable 1.3.10
 * Enable TableSubgroupCox to handle with mixed effect model, automatically detects mixed model with formula
 

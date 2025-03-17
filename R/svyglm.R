@@ -2,6 +2,7 @@
 #' @description table for svyglm.object (survey package).
 #' @param svyglm.obj svyglm.object
 #' @param decimal digit, Default: 2
+#' @param pcut.univariate pcut.univariate, Default: NULL
 #' @return table
 #' @details DETAILS
 #' @examples
@@ -19,12 +20,17 @@
 #' @importFrom stats update confint
 
 
-svyregress.display <- function(svyglm.obj, decimal = 2) {
+svyregress.display <- function(svyglm.obj, decimal = 2, pcut.univariate = NULL) {
   model <- svyglm.obj
   design.model <- model$survey.design
   xs <- attr(model$terms, "term.labels")
   y <- names(model$model)[1]
   gaussianT <- ifelse(length(grep("gaussian", model$family)) == 1, T, F)
+  
+  model_data <- model.frame(model)
+  categorical_vars <- xs[sapply(model_data[xs], function(x) is.factor(x) | is.character(x))]
+  
+  
 
   if (length(xs) == 0) {
     stop("No independent variable")
@@ -68,24 +74,144 @@ svyregress.display <- function(svyglm.obj, decimal = 2) {
       uni.res <- t(rbind(summ, ifelse(uni[, 4] <= 0.001, "< 0.001", as.character(round(uni[, 4], decimal + 1)))))
       colnames(uni.res) <- c(paste("crude coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "crude P value")
       rownames(uni.res) <- rownames(uni)
-      # mul <- summary(model)$coefficients[-1, ]
-      mul <- cbind(coefNA(model)[-1, ], stats::confint(model)[-1, ])
-      mul.summ <- paste(round(mul[, 1], decimal), " (", round(mul[, 5], decimal), ",", round(mul[, 6], decimal), ")", sep = "")
-      mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
-      colnames(mul.res) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+      
+      if(is.null(pcut.univariate)){
+        # mul <- summary(model)$coefficients[-1, ]
+        mul <- cbind(coefNA(model)[-1, ], stats::confint(model)[-1, ])
+        mul.summ <- paste(round(mul[, 1], decimal), " (", round(mul[, 5], decimal), ",", round(mul[, 6], decimal), ")", sep = "")
+        mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
+        colnames(mul.res) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+      }else{
+        significant_vars <- rownames(uni)[as.numeric(uni[, 4]) < pcut.univariate]
+        
+        if (length(categorical_vars) != 0){
+          factor_vars_list <- lapply(categorical_vars, function(factor_var) {
+            factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
+            factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
+            
+            
+            matches <- grep(paste0("^", factor_var_escaped), rownames(uni), value = TRUE)
+            return(matches)
+          })
+          names(factor_vars_list) <- categorical_vars
+          
+          for (key in names(factor_vars_list)) {
+            variables <- factor_vars_list[[key]]
+            
+            p_values <- uni[variables, 4]
+            
+            if (any(p_values < pcut.univariate, na.rm = TRUE)) {
+              significant_vars <- setdiff(significant_vars, variables)
+              
+              significant_vars <- unique(c(significant_vars, key))
+            }
+          }
+        }
+        
+        if (length(significant_vars) == 0 ){
+          
+          mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = 2)
+          colnames(mul.res) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+          rownames(mul.res) <- rownames(uni.res)
+          
+        }else{
+          selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + ")))
+          selected_model <- survey::svyglm(selected_formula, design = design.model ) 
+          mul <- cbind(coefNA(selected_model)[-1, ], stats::confint(selected_model)[-1, ])
+          mul.summ <- paste(round(mul[, 1], decimal), " (", round(mul[, 5], decimal), ",", round(mul[, 6], decimal), ")", sep = "")
+          mul.res1 <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
+          colnames(mul.res1) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+          
+          mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = 2)
+          rownames(mul.res) <- rownames(uni.res)
+          
+          if (!is.null(mul.res1)) {
+            mul_no_intercept <- mul.res1[!grepl("Intercept", rownames(mul.res1)), , drop = FALSE]
+            
+            
+            for (var in rownames(mul_no_intercept)) { 
+              mul.res[var, ] <- mul_no_intercept[var,]
+            }
+          }
+          colnames(mul.res) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+          rownames(mul.res) <- rownames(uni.res)
+          
+        }
+      }
     } else {
       summ <- paste(round(exp(uni[, 1]), decimal), " (", round(exp(uni[, 5]), decimal), ",", round(exp(uni[, 6]), decimal), ")", sep = "")
       uni.res <- t(rbind(summ, ifelse(uni[, 4] <= 0.001, "< 0.001", as.character(round(uni[, 4], decimal + 1)))))
       colnames(uni.res) <- c(paste("crude OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "crude P value")
       rownames(uni.res) <- rownames(uni)
-      # mul <- summary(model)$coefficients[-1, ]
-      mul <- cbind(coefNA(model)[-1, ], stats::confint(model)[-1, ])
-      mul.summ <- paste(round(exp(mul[, 1]), decimal), " (", round(exp(mul[, 5]), decimal), ",", round(exp(mul[, 6]), decimal), ")", sep = "")
-      mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
-      colnames(mul.res) <- c(paste("adj. OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+      if(is.null(pcut.univariate)){
+        # mul <- summary(model)$coefficients[-1, ]
+        mul <- cbind(coefNA(model)[-1, ], stats::confint(model)[-1, ])
+        mul.summ <- paste(round(exp(mul[, 1]), decimal), " (", round(exp(mul[, 5]), decimal), ",", round(exp(mul[, 6]), decimal), ")", sep = "")
+        mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
+        colnames(mul.res) <- c(paste("adj. OR.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+      }else{
+        significant_vars <- rownames(uni)[as.numeric(uni[, 4]) < pcut.univariate]
+        
+        if (length(categorical_vars) != 0){
+          factor_vars_list <- lapply(categorical_vars, function(factor_var) {
+            factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
+            factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
+            
+            
+            matches <- grep(paste0("^", factor_var_escaped), rownames(uni), value = TRUE)
+            return(matches)
+          })
+          names(factor_vars_list) <- categorical_vars
+          
+          for (key in names(factor_vars_list)) {
+            variables <- factor_vars_list[[key]]
+            
+            p_values <- uni[variables, 4]
+            
+            if (any(p_values < pcut.univariate, na.rm = TRUE)) {
+              significant_vars <- setdiff(significant_vars, variables)
+              
+              significant_vars <- unique(c(significant_vars, key))
+            }
+          }
+        }
+        
+        if (length(significant_vars) == 0 ){
+          mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = 2)
+          colnames(mul.res) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+          rownames(mul.res) <- rownames(uni.res)
+          
+        }else{
+          selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + ")))
+          selected_model <- survey::svyglm(selected_formula, design = design.model ) 
+          mul <- cbind(coefNA(selected_model)[-1, ], stats::confint(selected_model)[-1, ])
+          mul.summ <- paste(round(exp(mul[, 1]), decimal), " (", round(exp(mul[, 5]), decimal), ",", round(exp(mul[, 6]), decimal), ")", sep = "")
+          mul.res1 <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
+          colnames(mul.res1) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+          
+          mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = 2)
+          rownames(mul.res) <- rownames(uni.res)
+          
+          if (!is.null(mul.res1)) {
+            mul_no_intercept <- mul.res1[!grepl("Intercept", rownames(mul.res1)), , drop = FALSE]
+            
+            
+            for (var in rownames(mul_no_intercept)) { 
+              mul.res[var, ] <- mul_no_intercept[var,]
+            }
+          }
+          colnames(mul.res) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+          rownames(mul.res) <- rownames(uni.res)
+          
+        }
+        
+        
+      }
+      
+      
     }
     res <- cbind(uni.res[rownames(uni.res) %in% rownames(mul.res), ], mul.res)
-    rownames(res) <- rownames(mul)
+    rownames(res) <- rownames(uni.res)
   }
 
   fix.all <- res
@@ -163,3 +289,4 @@ svyregress.display <- function(svyglm.obj, decimal = 2) {
   class(results) <- c("display", "list")
   return(results)
 }
+

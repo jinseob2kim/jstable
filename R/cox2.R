@@ -3,6 +3,7 @@
 #' @param cox.obj.withmodel coxph.object with model option: TRUE
 #' @param dec Decimal point, Default: 2
 #' @param msm Multi state model, Default: NULL
+#' @param pcut.univariate pcut.univariate, Default: NULL
 #' @return Table, cluster/frailty info, metrics, caption
 #' @details GEE like - cluster, Mixed effect model like - frailty
 #' @examples
@@ -17,7 +18,7 @@
 #' @importFrom survival coxph cluster frailty
 #' @importFrom stats formula update AIC
 #'
-cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
+cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate = NULL) {
   model <- cox.obj.withmodel
   if (!any(class(model) == "coxph")) {
     stop("Model not from Cox model")
@@ -28,6 +29,9 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
   xc.vn <- NULL
   x.weight <- model$call$weight
   mtype <- "normal"
+  
+ 
+  
   if (length(grep("strata", xf)) > 0) {
     xf <- xf[-grep("strata", xf)]
   } else if (length(grep("frailty\\(", xf)) > 0) {
@@ -54,7 +58,9 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
   } else {
     names(mdata)[names(mdata) == xc] <- xc.vn
   }
-
+  #categorical_vars <- attr(terms(model), "term.labels")[sapply(mdata[attr(terms(model), "term.labels")], is.factor)]
+  categorical_vars <- xf[sapply(mdata[xf], is.factor)]
+  
   # if (is.null(data)){
   #  mdata = data.frame(get(as.character(model$call)[3]))
   # } else{
@@ -127,7 +133,66 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
       rn.uni <- lapply(unis, rownames)
       unis2 <- Reduce(rbind, unis)
       uni.res <- unis2
-      mul.res <- data.frame(coefNA(model))
+      
+      if (is.null(pcut.univariate)){
+        mul.res <- data.frame(coefNA(model))
+      }else{
+        significant_vars <- rownames(uni.res)[as.numeric(uni.res[, 4]) < pcut.univariate]
+        
+        if (length(categorical_vars) != 0){
+          factor_vars_list <- lapply(categorical_vars, function(factor_var) {
+            factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
+            factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
+            
+            
+            matches <- grep(paste0("^", factor_var_escaped), rownames(coefNA(model)), value = TRUE)
+            return(matches)
+          })
+          names(factor_vars_list) <- categorical_vars
+          
+          for (key in names(factor_vars_list)) {
+            variables <- factor_vars_list[[key]]
+            
+            p_values <- uni.res[variables, 4]
+            
+            if (any(p_values < pcut.univariate, na.rm = TRUE)) {
+              significant_vars <- setdiff(significant_vars, variables)
+              
+              significant_vars <- unique(c(significant_vars, key))
+            }
+          }
+        }
+        
+        if (length(significant_vars) == 0 ){
+          mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = ncol(data.frame(coefNA(model))))
+          rownames(mul.res) <- rownames(uni.res)
+          #colnames(mul.res) <- c("coef","exp.coef.","se.coef.","robust.se" ,"z", "Pr...z..")
+          colnames(mul.res) <- colnames(data.frame(coefNA(model)))
+        }else{
+          if(mtype=="normal"){
+            selected_formula <- as.formula(paste(formula.surv, "~", paste(significant_vars, collapse = " + ")))
+          }else{
+            selected_formula <- as.formula(paste(formula.surv, "~", paste(significant_vars, collapse = " + "),"+",paste0(mtype, '(',xc.vn,')')))
+          }
+          selected_model <- coxph(selected_formula, data = mdata2, model = TRUE) 
+          mul <- coefNA(selected_model)
+          mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = ncol(data.frame(coefNA(model))))
+          rownames(mul.res) <- rownames(uni.res)
+          #colnames(mul.res) <- c("coef","exp.coef.","se.coef.","robust.se" ,"z", "Pr...z..")
+          colnames(mul.res) <- colnames(data.frame(coefNA(model)))
+          if (!is.null(mul)) {
+            mul_no_intercept <- mul[!grepl("Intercept", rownames(mul)), , drop = FALSE]
+            
+            
+            for (var in rownames(mul_no_intercept)) { 
+              mul.res[var, ] <- mul_no_intercept[var,]
+            }
+          }
+        }
+        
+      }
+      
+      
       uni.res <- uni.res[rownames(uni.res) %in% rownames(mul.res), ]
       colnames(mul.res)[ncol(mul.res)] <- "p"
       fix.all <- cbind(coxExp(uni.res, dec = dec), coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = dec))
@@ -167,7 +232,66 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL) {
       rn.uni <- lapply(unis, rownames)
       unis2 <- Reduce(rbind, unis)
       uni.res <- unis2
-      mul.res <- data.frame(coefNA(model))
+      if(is.null(pcut.univariate)){
+        mul.res <- data.frame(coefNA(model))
+      }else{
+        
+        significant_vars <- rownames(uni.res)[as.numeric(uni.res[, 4]) < pcut.univariate]
+        
+        if (length(categorical_vars) != 0){
+          factor_vars_list <- lapply(categorical_vars, function(factor_var) {
+            factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
+            factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
+            
+            
+            matches <- grep(paste0("^", factor_var_escaped), rownames(coefNA(model)), value = TRUE)
+            return(matches)
+          })
+          names(factor_vars_list) <- categorical_vars
+          
+          for (key in names(factor_vars_list)) {
+            variables <- factor_vars_list[[key]]
+            
+            p_values <- uni.res[variables, 4]
+            
+            if (any(p_values < pcut.univariate, na.rm = TRUE)) {
+              significant_vars <- setdiff(significant_vars, variables)
+              
+              significant_vars <- unique(c(significant_vars, key))
+            }
+          }
+        }
+        
+        if (length(significant_vars) == 0 ){
+          mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = ncol(data.frame(coefNA(model))))
+          rownames(mul.res) <- rownames(uni.res)
+          #colnames(mul.res) <- c("coef","exp.coef.","se.coef.","robust.se" ,"z", "Pr...z..")
+          colnames(mul.res) <- colnames(data.frame(coefNA(model)))
+        }else{
+          if(mtype=="normal"){
+            selected_formula <- as.formula(paste(formula.surv, "~", paste(significant_vars, collapse = " + ")))
+          }else{
+            selected_formula <- as.formula(paste(formula.surv, "~", paste(significant_vars, collapse = " + "),"+",paste0(mtype, '(',xc.vn,')')))
+          }
+          selected_model <- coxph(selected_formula, data = mdata2, model = TRUE) 
+          mul <- coefNA(selected_model)
+          mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = ncol(data.frame(coefNA(model))))
+          rownames(mul.res) <- rownames(uni.res)
+          #colnames(mul.res) <- c("coef","se(coef)","se2","Chisq","DF","p" )
+          colnames(mul.res) <- colnames(data.frame(coefNA(model)))
+          if (!is.null(mul)) {
+            mul_no_intercept <- mul[!grepl("Intercept", rownames(mul)), , drop = FALSE]
+            
+            
+            for (var in rownames(mul_no_intercept)) { 
+              mul.res[var, ] <- mul_no_intercept[var,]
+            }
+          }
+          
+        }
+        
+      }
+      
       uni.res <- uni.res[rownames(uni.res) %in% rownames(mul.res), ]
       colnames(mul.res)[ncol(mul.res)] <- "p"
       fix.all <- cbind(coxExp(uni.res, dec = dec), coxExp(mul.res[rownames(uni.res), names(uni.res)], dec = dec))

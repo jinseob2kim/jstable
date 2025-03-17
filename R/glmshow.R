@@ -14,7 +14,7 @@ coefNA <- function(model) {
   coef.rownames <- merge(coef(summary(model)), model$coefficients, by = 0, all = T)
   coef.matrix <- as.matrix(coef.rownames[, -c(1, ncol(coef.rownames))])
   rownames(coef.matrix) <- coef.rownames[, "Row.names"]
-  return(coef.matrix[names(model$coefficients), ])
+  return(coef.matrix[names(model$coefficients), , drop = FALSE])
 }
 
 
@@ -22,6 +22,7 @@ coefNA <- function(model) {
 #' @description Show summary table of glm object(regression, logistic).
 #' @param glm.object glm.object
 #' @param decimal digits, Default: 2
+#' @param pcut.univariate pcut.univariate, Default: NULL
 #' @return table
 #' @details DETAILS
 #' @examples
@@ -31,8 +32,9 @@ coefNA <- function(model) {
 #' @rdname glmshow.display
 #' @export
 #' @importFrom stats glm cor predict formula
+#' @importFrom magrittr %>%
 
-glmshow.display <- function(glm.object, decimal = 2) {
+glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
   model <- glm.object
   if (!any(class(model) %in% c("lm", "glm"))) {
     stop("Model not from  GLM")
@@ -41,10 +43,12 @@ glmshow.display <- function(glm.object, decimal = 2) {
   xs <- attr(model$terms, "term.labels")
   y <- names(model$model)[1]
   family <- ifelse(length(grep("gaussian", model$family)) == 1, 1, ifelse(length(grep("binomial", model$family)) >= 1, 2, 3))
-
-
+  
   data <- model$data
-
+  if (length(model$xlevels) != 0){
+    #xs.factor <- names(model$xlevels)[sapply(model$xlevels, function(x){length(x) > 2})]
+    xs.factor <- names(model$xlevels)
+    }
   ## table
   if (length(xs) == 0) {
     stop("No independent variable")
@@ -75,15 +79,81 @@ glmshow.display <- function(glm.object, decimal = 2) {
     })
     rn.uni <- lapply(uni, rownames)
     uni <- Reduce(rbind, uni)
+    
+    if (!is.null(pcut.univariate)) {
+      uni_no_intercept <- uni[!grepl("Intercept", rownames(uni)), , drop = FALSE]
+      significant_vars <- rownames(uni_no_intercept)[as.numeric(uni_no_intercept[, 4]) < pcut.univariate]
+      
+      if (length(model$xlevels) != 0){
+        factor_vars_list <- lapply(xs.factor, function(factor_var) {
+          factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
+          factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
+          
+          
+          matches <- grep(paste0("^", factor_var_escaped), rownames(coefNA(model)), value = TRUE)
+          return(matches)
+        })
+        names(factor_vars_list) <- xs.factor
+      
+        for (key in names(factor_vars_list)) {
+          variables <- factor_vars_list[[key]]
+          
+          p_values <- uni_no_intercept[variables, 4]
+          
+          if (any(p_values < pcut.univariate, na.rm = TRUE)) {
+            significant_vars <- setdiff(significant_vars, variables)
+            
+            significant_vars <- unique(c(significant_vars, key))
+          }
+        }
+      }
+    } else {
+      significant_vars <- xs  
+    }
+    
+    
     if (family == 1) {
       summ <- paste(round(uni[, 1], decimal), " (", round(uni[, 1] - 1.96 * uni[, 2], decimal), ",", round(uni[, 1] + 1.96 * uni[, 2], decimal), ")", sep = "")
       uni.res <- t(rbind(summ, ifelse(uni[, 4] <= 0.001, "< 0.001", as.character(round(uni[, 4], decimal + 1)))))
       colnames(uni.res) <- c(paste("crude coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "crude P value")
       rownames(uni.res) <- rownames(uni)
-      mul <- coefNA(model)[-1, ]
-      mul.summ <- paste(round(mul[, 1], decimal), " (", round(mul[, 1] - 1.96 * mul[, 2], decimal), ",", round(mul[, 1] + 1.96 * mul[, 2], decimal), ")", sep = "")
-      mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
-      colnames(mul.res) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+      uni.res_no_intercept <- uni.res[!grepl("Intercept", rownames(uni)), , drop = FALSE]
+      
+      
+      if (is.null(pcut.univariate)){
+        mul <- coefNA(model)[-1, ]
+        mul.summ <- paste(round(mul[, 1], decimal), " (", round(mul[, 1] - 1.96 * mul[, 2], decimal), ",", round(mul[, 1] + 1.96 * mul[, 2], decimal), ")", sep = "")
+        mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
+        colnames(mul.res) <- c(paste("adj. coeff.(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+      }else{
+        if (length(significant_vars) == 0 ){
+          mul.res <- matrix(NA, nrow = nrow(uni.res_no_intercept), ncol = 2)
+          rownames(mul.res) <- rownames(uni.res_no_intercept)
+          colnames(mul.res) <- c("adj. coeff. (95%CI)", "adj. P value")
+          
+        }else{
+          selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + ")))
+          selected_model <- stats::glm(selected_formula, data = data, family = model$family) 
+          mul <- coefNA(selected_model)
+          mul.res <- matrix(NA, nrow = nrow(uni.res_no_intercept), ncol = 2)
+          rownames(mul.res) <- rownames(uni.res_no_intercept)
+          colnames(mul.res) <- c("adj. coeff. (95%CI)", "adj. P value")
+          if (!is.null(mul)) {
+            mul_no_intercept <- mul[!grepl("Intercept", rownames(mul)), , drop = FALSE]
+            
+            
+            for (var in rownames(mul_no_intercept)) { 
+              mul.res[var, ] <- c(
+                paste(round(mul[var, 1], decimal), " (", 
+                      round(mul[var, 1] - 1.96 * mul[var, 2], decimal), ",", 
+                      round(mul[var, 1] + 1.96 * mul[var, 2], decimal), ")", sep = ""),
+                ifelse(mul[var, 4] <= 0.001, "< 0.001", as.character(round(mul[var, 4], decimal + 1)))
+              )
+            }
+          }
+      }
+        
+      }
     } else {
       k <- ifelse(family == 2, "OR", "RR")
 
@@ -91,14 +161,47 @@ glmshow.display <- function(glm.object, decimal = 2) {
       uni.res <- t(rbind(summ, ifelse(uni[, 4] <= 0.001, "< 0.001", as.character(round(uni[, 4], decimal + 1)))))
       colnames(uni.res) <- c(paste("crude ", k, ".(", 100 - 100 * 0.05, "%CI)", sep = ""), "crude P value")
       rownames(uni.res) <- rownames(uni)
-      mul <- coefNA(model)[-1, ]
-      mul.summ <- paste(round(exp(mul[, 1]), decimal), " (", round(exp(mul[, 1] - 1.96 * mul[, 2]), decimal), ",", round(exp(mul[, 1] + 1.96 * mul[, 2]), decimal), ")", sep = "")
-      mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
-      colnames(mul.res) <- c(paste("adj. ", k, ".(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+      uni.res_no_intercept <- uni.res[!grepl("Intercept", rownames(uni)), , drop = FALSE]
+      
+      if (is.null(pcut.univariate)){
+        mul <- coefNA(model)[-1, ]
+        mul.summ <- paste(round(exp(mul[, 1]), decimal), " (", round(exp(mul[, 1] - 1.96 * mul[, 2]), decimal), ",", round(exp(mul[, 1] + 1.96 * mul[, 2]), decimal), ")", sep = "")
+        mul.res <- t(rbind(mul.summ, ifelse(mul[, 4] <= 0.001, "< 0.001", as.character(round(mul[, 4], decimal + 1)))))
+        colnames(mul.res) <- c(paste("adj. ", k, ".(", 100 - 100 * 0.05, "%CI)", sep = ""), "adj. P value")
+      }else{
+        if (length(significant_vars) == 0 ){
+          mul.res <- matrix(NA, nrow = nrow(uni.res_no_intercept), ncol = 2)
+          rownames(mul.res) <- rownames(uni.res_no_intercept)
+          colnames(mul.res) <- c("adj. coeff. (95%CI)", "adj. P value")
+          
+        }else{
+          selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + ")))
+          selected_model <- stats::glm(selected_formula, data = data, family = model$family) 
+          mul <- coefNA(selected_model)
+          mul.res <- matrix(NA, nrow = nrow(uni.res_no_intercept), ncol = 2)
+          rownames(mul.res) <- rownames(uni.res_no_intercept)
+          colnames(mul.res) <- c("adj. coeff. (95%CI)", "adj. P value")
+          
+          if (!is.null(mul)) {
+            mul_no_intercept <- mul[!grepl("Intercept", rownames(mul)), , drop = FALSE]
+            
+            
+            for (var in rownames(mul_no_intercept)) { 
+              mul.res[var, ] <- c(
+                paste(round(exp(mul[var, 1]), decimal), " (", 
+                      round(exp(mul[var, 1] - 1.96 * mul[var, 2]), decimal), ",", 
+                      round(exp(mul[var, 1] + 1.96 * mul[var, 2]), decimal), ")", sep = ""),
+                ifelse(mul[var, 4] <= 0.001, "< 0.001", as.character(round(mul[var, 4], decimal + 1)))
+              )
+            }
+          }
+          
+        }
+    }
     }
 
-    res <- cbind(uni.res[rownames(uni.res) %in% rownames(mul.res), ], mul.res)
-    rownames(res) <- rownames(mul)
+    res <- cbind(uni.res_no_intercept, mul.res)
+    rownames(res) <- rownames(mul.res)
   }
 
   ## label
@@ -204,3 +307,4 @@ glmshow.display <- function(glm.object, decimal = 2) {
 #' }
 #' @details DETAILS
 "mort"
+
