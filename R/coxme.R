@@ -44,10 +44,13 @@ coxmeTable <- function(mod) {
 #' @importFrom stats pnorm qnorm
 
 coxExp <- function(cox.coef, dec) {
-  HR <- paste(round(exp(cox.coef[, 1]), dec), " (", round(exp(cox.coef[, 1] - stats::qnorm(0.975) * cox.coef[, 2]), dec), ",", round(exp(cox.coef[, 1] + stats::qnorm(0.975) * cox.coef[, 2]), dec), ")", sep = "")
+  HR <- ifelse(is.na(cox.coef[,1]),NA,paste(round(exp(cox.coef[, 1]), dec), " (", round(exp(cox.coef[, 1] - stats::qnorm(0.975) * cox.coef[, 2]), dec), ",", round(exp(cox.coef[, 1] + stats::qnorm(0.975) * cox.coef[, 2]), dec), ")", sep = ""))
   pv <- cox.coef[, "p"]
   # pv = 2*(1-pnorm(abs(cox.coef[, "z"])))
-  return(cbind(HR, pv))
+  result<-cbind(HR, pv)
+  rownames(result) <- rownames(cox.coef)
+  
+  return(result)
 }
 
 
@@ -83,6 +86,7 @@ extractAIC.coxme <- function(fit, scale = NULL, k = 2, ...) {
 #' @description Make mixed effect model results from coxme.object (coxme package)
 #' @param coxme.obj coxme.object
 #' @param dec Decimal point, Default: 2
+#' @param pcut.univariate pcut.univariate, Default: NULL
 #' @return Fixed effect table, random effect, metrics, caption
 #' @details DETAILS
 #' @examples
@@ -93,7 +97,7 @@ extractAIC.coxme <- function(fit, scale = NULL, k = 2, ...) {
 #' @export
 #' @importFrom coxme coxme
 
-coxme.display <- function(coxme.obj, dec = 2) {
+coxme.display <- function(coxme.obj, dec = 2, pcut.univariate = NULL) {
   model <- coxme.obj
   if (!any(class(model) == "coxme")) {
     stop("Model not from mixed effects Cox model")
@@ -104,11 +108,13 @@ coxme.display <- function(coxme.obj, dec = 2) {
   if (length(xstrata) > 0) {
     xf <- xf[-grep("strata", xf)]
   }
-
+ 
   formula.surv <- as.character(model$formulaList$fixed)[2]
   formula.ranef <- as.character(model$formulaList$random)
   mdata <- data.frame(get(as.character(model$call)[3]))
 
+  categorical_vars <- xf[sapply(mdata[xf], is.factor)]
+  
   if (length(xf) == 1) {
     # uni.res = coxmeTable(coxme(as.formula(paste(formula.surv, "~", xf," + ", formula.ranef, sep="")), data = mdata))
     uni.res <- coxmeTable(model)
@@ -128,7 +134,75 @@ coxme.display <- function(coxme.obj, dec = 2) {
     unis2 <- Reduce(rbind, unis)
     uni.res <- unis2
     uni.res <- uni.res[rownames(uni.res) %in% rownames(summary(model)$coefficients), ]
-    fix.all <- cbind(coxExp(uni.res, dec = dec), coxExp(coxmeTable(model), dec = dec))
+    
+    
+    if(is.null(pcut.univariate)){
+      fix.all <- cbind(coxExp(uni.res, dec = dec), coxExp(coxmeTable(model), dec = dec))
+    }else{
+      
+      significant_vars <- rownames(uni.res)[as.numeric(uni.res[, "p"]) < pcut.univariate]
+      
+      if (length(categorical_vars) != 0){
+        factor_vars_list <- lapply(categorical_vars, function(factor_var) {
+          factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
+          factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
+          
+          
+          matches <- grep(paste0("^", factor_var_escaped), rownames(coxExp(coxmeTable(model))), value = TRUE)
+          return(matches)
+        })
+        names(factor_vars_list) <- categorical_vars
+        
+        for (key in names(factor_vars_list)) {
+          variables <- factor_vars_list[[key]]
+          
+          p_values <- uni.res[variables, "p"]
+          
+          if (any(p_values < pcut.univariate, na.rm = TRUE)) {
+            significant_vars <- setdiff(significant_vars, variables)
+            
+            significant_vars <- unique(c(significant_vars, key))
+          }
+        }
+      }
+      
+      if (length(significant_vars) == 0 ){
+        mul.res <- matrix(NA, nrow = nrow(coxExp(coxmeTable(model), dec = dec)), ncol = ncol(coxExp(coxmeTable(model), dec = dec)))
+        rownames(mul.res) <- rownames(coxExp(coxmeTable(model), dec = dec))
+        #colnames(mul.res) <- c("coef","exp.coef.","se.coef.","robust.se" ,"z", "Pr...z..")
+        colnames(mul.res) <- colnames(coxExp(coxmeTable(model), dec = dec))
+        
+        
+        fix.all <- cbind(coxExp(uni.res, dec = dec), mul.res)
+        
+      }else{
+        
+        selected_formula <- as.formula(paste(formula.surv, "~", paste(significant_vars, collapse = " + "),"+",formula.ranef))
+        
+        selected_model <- coxme(selected_formula, data = mdata) 
+        mul <- coxExp(coxmeTable(selected_model), dec = dec)
+        mul.res <- matrix(NA, nrow = nrow(coxExp(coxmeTable(model), dec = dec)), ncol = ncol(coxExp(coxmeTable(model), dec = dec)))
+        rownames(mul.res) <- rownames(coxExp(coxmeTable(model), dec = dec))
+        #colnames(mul.res) <- c("coef","exp.coef.","se.coef.","robust.se" ,"z", "Pr...z..")
+        colnames(mul.res) <- colnames(coxExp(coxmeTable(model), dec = dec))
+        if (!is.null(mul)) {
+          mul_no_intercept <- mul[!grepl("Intercept", rownames(mul)), , drop = FALSE]
+          
+          
+          for (var in rownames(mul_no_intercept)) { 
+            mul.res[var, ] <- mul_no_intercept[var,]
+          }
+        }
+        
+        fix.all <- cbind(coxExp(uni.res, dec = dec), mul.res)
+      }
+      
+      
+      
+      
+    }
+    
+    
     colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
     rownames(fix.all) <- names(model$coefficients)
   }

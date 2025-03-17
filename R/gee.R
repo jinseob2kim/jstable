@@ -53,13 +53,13 @@ geeUni <- function(y, x, data, id.vec, family, cor.type = "exchangeable") {
 
 geeExp <- function(gee.coef, family = "binomial", dec) {
   if (family == "binomial") {
-    OR <- paste(round(exp(gee.coef[, 1]), dec), " (", round(exp(gee.coef[, 1] - 1.96 * gee.coef[, 2]), dec), ",", round(exp(gee.coef[, 1] + 1.96 * gee.coef[, 2]), dec), ")", sep = "")
+    OR <- ifelse(is.na(gee.coef[,1]), NA, paste(round(exp(gee.coef[, 1]), dec), " (", round(exp(gee.coef[, 1] - 1.96 * gee.coef[, 2]), dec), ",", round(exp(gee.coef[, 1] + 1.96 * gee.coef[, 2]), dec), ")", sep = ""))
     return(cbind(OR, gee.coef[, 3]))
   } else if (family == "gaussian") {
-    coeff <- paste(round(gee.coef[, 1], dec), " (", round(gee.coef[, 1] - 1.96 * gee.coef[, 2], dec), ",", round(gee.coef[, 1] + 1.96 * gee.coef[, 2], dec), ")", sep = "")
+    coeff <- ifelse(is.na(gee.coef[,1]),NA,paste(round(gee.coef[, 1], dec), " (", round(gee.coef[, 1] - 1.96 * gee.coef[, 2], dec), ",", round(gee.coef[, 1] + 1.96 * gee.coef[, 2], dec), ")", sep = ""))
     return(cbind(coeff, gee.coef[, 3]))
   } else if (family %in% c("poisson", "quasipoisson")) {
-    RR <- paste(round(exp(gee.coef[, 1]), dec), " (", round(exp(gee.coef[, 1] - 1.96 * gee.coef[, 2]), dec), ",", round(exp(gee.coef[, 1] + 1.96 * gee.coef[, 2]), dec), ")", sep = "")
+    RR <- ifelse(is.na(gee.coef[,1]),NA,paste(round(exp(gee.coef[, 1]), dec), " (", round(exp(gee.coef[, 1] - 1.96 * gee.coef[, 2]), dec), ",", round(exp(gee.coef[, 1] + 1.96 * gee.coef[, 2]), dec), ")", sep = ""))
     return(cbind(RR, gee.coef[, 3]))
   }
 }
@@ -70,6 +70,7 @@ geeExp <- function(gee.coef, family = "binomial", dec) {
 #' @description Make gee results from "geeglm" object
 #' @param geeglm.obj "geeglm" object
 #' @param decimal Decimal, Default: 2
+#' @param pcut.univariate pcut.univariate, Default: NULL
 #' @return List: caption, main table, metrics table
 #' @details DETAILS
 #' @examples
@@ -96,7 +97,8 @@ geeglm.display <- function(geeglm.obj, decimal = 2, pcut.univariate=NULL) {
   xs <- names(geeglm.obj$model)[-1]
   
   if (length(geeglm.obj$xlevels) != 0){
-    xs.factor <- names(geeglm.obj$xlevels)[sapply(geeglm.obj$xlevels, function(x){length(x) > 2})]
+    #xs.factor <- names(geeglm.obj$xlevels)[sapply(geeglm.obj$xlevels, function(x){length(x) > 2})]
+    xs.factor <- names(geeglm.obj$xlevels)
   }
   
   ## rownames
@@ -129,14 +131,19 @@ geeglm.display <- function(geeglm.obj, decimal = 2, pcut.univariate=NULL) {
   } else {
     if (is.null(pcut.univariate)){
       gee.multi <- summary(geeglm.obj)$coefficients[-1, -3]
+      gee.na <- gee.multi
     }else{
       significant_vars <- rownames(gee.uni)[as.numeric(gee.uni[, 3]) < pcut.univariate]
 
       
-      
       if (length(geeglm.obj$xlevels) != 0){
         factor_vars_list <- lapply(xs.factor, function(factor_var) {
-          matches <- grep(paste0("^", factor_var), rownames(gee.uni), value = TRUE)
+          factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
+          factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
+          
+          #matches <- grep(paste0("^", factor_var_escaped), rownames(coefNA(model)), value = TRUE)
+          matches <- grep(paste0("^", factor_var_escaped), rownames(gee.uni), value = TRUE)
+  
           return(matches)
         })
         names(factor_vars_list) <- xs.factor

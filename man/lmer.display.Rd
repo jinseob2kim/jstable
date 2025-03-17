@@ -4,7 +4,7 @@
 \alias{lmer.display}
 \title{lmer.display: table for "lmerMod" or "glmerMod" object (lme4 package)}
 \usage{
-lmer.display(lmerMod.obj, dec = 2, ci.ranef = F)
+lmer.display(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = NULL)
 }
 \arguments{
 \item{lmerMod.obj}{"lmerMod" or "glmerMod" object}
@@ -12,6 +12,8 @@ lmer.display(lmerMod.obj, dec = 2, ci.ranef = F)
 \item{dec}{Decimal, Default: 2}
 
 \item{ci.ranef}{Show confidence interval of random effects?, Default: F}
+
+\item{pcut.univariate}{pcut.univariate, Default: NULL}
 }
 \value{
 Table: fixed & random effect

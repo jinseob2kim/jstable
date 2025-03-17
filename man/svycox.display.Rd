@@ -4,12 +4,14 @@
 \alias{svycox.display}
 \title{svycoxph.display: table for svycoxph.object in survey package.}
 \usage{
-svycox.display(svycoxph.obj, decimal = 2)
+svycox.display(svycoxph.obj, decimal = 2, pcut.univariate = NULL)
 }
 \arguments{
 \item{svycoxph.obj}{svycoxph.object}
 
 \item{decimal}{digit, Default: 2}
+
+\item{pcut.univariate}{pcut.univariate, Default: NULL}
 }
 \value{
 List including table, metric, caption

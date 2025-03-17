@@ -4,12 +4,14 @@
 \alias{glmshow.display}
 \title{glmshow.display: Show summary table of glm object.}
 \usage{
-glmshow.display(glm.object, decimal = 2)
+glmshow.display(glm.object, decimal = 2, pcut.univariate = NULL)
 }
 \arguments{
 \item{glm.object}{glm.object}
 
 \item{decimal}{digits, Default: 2}
+
+\item{pcut.univariate}{pcut.univariate, Default: NULL}
 }
 \value{
 table

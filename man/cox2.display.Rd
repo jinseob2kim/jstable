@@ -4,7 +4,7 @@
 \alias{cox2.display}
 \title{cox2.display: table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model}
 \usage{
-cox2.display(cox.obj.withmodel, dec = 2, msm = NULL)
+cox2.display(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate = NULL)
 }
 \arguments{
 \item{cox.obj.withmodel}{coxph.object with model option: TRUE}
@@ -12,6 +12,8 @@ cox2.display(cox.obj.withmodel, dec = 2, msm = NULL)
 \item{dec}{Decimal point, Default: 2}
 
 \item{msm}{Multi state model, Default: NULL}
+
+\item{pcut.univariate}{pcut.univariate, Default: NULL}
 }
 \value{
 Table, cluster/frailty info, metrics, caption

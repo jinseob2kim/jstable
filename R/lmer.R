@@ -16,21 +16,20 @@ lmerExp <- function(lmer.coef, family = "binomial", dec) {
     lmer.coef <- t(data.frame(lmer.coef))
   }
   pv <- 2 * (1 - pnorm(abs(lmer.coef[, 3])))
+  
   if (family == "binomial") {
-    OR <- paste(round(exp(lmer.coef[, 1]), dec), " (", round(exp(lmer.coef[, 1] - 1.96 * lmer.coef[, 2]), dec), ",", round(exp(lmer.coef[, 1] + 1.96 * lmer.coef[, 2]), dec), ")", sep = "")
-    return(cbind(OR, pv))
+    OR <- paste(round(exp(lmer.coef[, 1]), dec), " (", round(exp(lmer.coef[, 1] - 1.96 * lmer.coef[, 2]), dec), ", ", round(exp(lmer.coef[, 1] + 1.96 * lmer.coef[, 2]), dec), ")", sep = "")
+    result <- cbind(OR, pv)
   } else if (family %in% c(NULL, "gaussian")) {
-    coeff <- paste(round(lmer.coef[, 1], dec), " (", round(lmer.coef[, 1] - 1.96 * lmer.coef[, 2], dec), ",", round(lmer.coef[, 1] + 1.96 * lmer.coef[, 2], dec), ")", sep = "")
-    return(cbind(coeff, pv))
+    coeff <- paste(round(lmer.coef[, 1], dec), " (", round(lmer.coef[, 1] - 1.96 * lmer.coef[, 2], dec), ", ", round(lmer.coef[, 1] + 1.96 * lmer.coef[, 2], dec), ")", sep = "")
+    result <- cbind(coeff, pv)
   } else if (family %in% c("poisson", "quasipoisson")) {
-    RR <- paste(round(exp(lmer.coef[, 1]), dec), " (", round(exp(lmer.coef[, 1] - 1.96 * lmer.coef[, 2]), dec), ",", round(exp(lmer.coef[, 1] + 1.96 * lmer.coef[, 2]), dec), ")", sep = "")
-    return(cbind(RR, pv))
+    RR <- paste(round(exp(lmer.coef[, 1]), dec), " (", round(exp(lmer.coef[, 1] - 1.96 * lmer.coef[, 2]), dec), ", ", round(exp(lmer.coef[, 1] + 1.96 * lmer.coef[, 2]), dec), ")", sep = "")
+    result <- cbind(RR, pv)
   }
+  rownames(result) <- rownames(lmer.coef) 
+  return(result[ , , drop = FALSE]) 
 }
-
-
-
-
 
 
 
@@ -38,6 +37,7 @@ lmerExp <- function(lmer.coef, family = "binomial", dec) {
 #' @description Make mixed effect model results from "lmerMod" or "glmerMod" object (lme4 package)
 #' @param lmerMod.obj "lmerMod" or "glmerMod" object
 #' @param dec Decimal, Default: 2
+#' @param pcut.univariate pcut.univariate, Default: NULL
 #' @param ci.ranef Show confidence interval of random effects?, Default: F
 #' @return Table: fixed & random effect
 #' @details DETAILS
@@ -52,7 +52,7 @@ lmerExp <- function(lmer.coef, family = "binomial", dec) {
 #' @importFrom lme4 lmer glmer confint.merMod
 #' @importFrom stats update formula
 
-lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F) {
+lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = NULL) {
   sl <- summary(lmerMod.obj)
   fixef <- sl$coefficients[-1, ]
 
@@ -64,6 +64,9 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F) {
   xf <- xfr[!grepl("\\|", xfr)]
   family.lmer <- ifelse(is.null(sl$family), "gaussian", sl$family)
   uni.res <- ""
+  
+  categorical_vars <- xf[sapply(mdata[xf], is.factor)]
+  
   basemodel <- update(lmerMod.obj, stats::formula(paste(c(". ~ .", xf), collapse = " - ")), data = mdata)
   unis <- lapply(xf, function(x) {
     summary(stats::update(basemodel, stats::formula(paste0(". ~ . +", x)), data = mdata))$coefficients
@@ -87,10 +90,81 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F) {
     colnames(fix.all) <- c(paste(family.label, "(95%CI)", sep = ""), "P value")
     rownames(fix.all) <- rownames(sl$coefficients)[-1]
   } else {
-    fix.all <- cbind(lmerExp(uni.res, family = family.lmer, dec = dec), lmerExp(fixef, family = family.lmer, dec = dec))
-    family.label <- colnames(fix.all)[1]
-    colnames(fix.all) <- c(paste("crude ", family.label, "(95%CI)", sep = ""), "crude P value", paste("adj. ", family.label, "(95%CI)", sep = ""), "adj. P value")
-    rownames(fix.all) <- rownames(sl$coefficients)[-1]
+    if(is.null(pcut.univariate)){
+      fix.all <- cbind(lmerExp(uni.res, family = family.lmer, dec = dec), lmerExp(fixef, family = family.lmer, dec = dec))
+      family.label <- colnames(fix.all)[1]
+      colnames(fix.all) <- c(paste("crude ", family.label, "(95%CI)", sep = ""), "crude P value", paste("adj. ", family.label, "(95%CI)", sep = ""), "adj. P value")
+      rownames(fix.all) <- rownames(sl$coefficients)[-1]
+      
+    }else{
+      uni.val <- lmerExp(uni.res, family = family.lmer, dec = dec)
+      significant_vars <- rownames(uni.val)[as.numeric(uni.val[, 2]) < pcut.univariate]
+      
+      
+      if (length(categorical_vars) != 0){
+        factor_vars_list <- lapply(categorical_vars, function(factor_var) {
+          factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
+          factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
+          
+          
+          matches <- grep(paste0("^", factor_var_escaped), rownames(uni.val), value = TRUE)
+          return(matches)
+        })
+        names(factor_vars_list) <- categorical_vars
+        
+        for (key in names(factor_vars_list)) {
+          variables <- factor_vars_list[[key]]
+          
+          p_values <- uni.val[variables, 2]
+          
+          if (any(p_values < pcut.univariate, na.rm = TRUE)) {
+            significant_vars <- setdiff(significant_vars, variables)
+            
+            significant_vars <- unique(c(significant_vars, key))
+          }
+        }
+      }
+     
+      if (length(significant_vars) == 0 ){
+        
+        mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = 2)
+        fix.all <- cbind(lmerExp(uni.res, family = family.lmer, dec = dec), mul.res)
+        family.label <- colnames(fix.all)[1]
+        colnames(fix.all) <- c(paste("crude ", family.label, "(95%CI)", sep = ""), "crude P value", paste("adj. ", family.label, "(95%CI)", sep = ""), "adj. P value")
+        rownames(fix.all) <- rownames(sl$coefficients)[-1]
+        
+        
+    
+      }else{
+       
+        selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + "),"+", paste(xr,collapse = "+")))
+        selected_model <- lme4 :: lmer(selected_formula, data = mdata) 
+        selected_summary <- summary(selected_model)
+        mul<-selected_summary$coefficients[-1,,drop = FALSE]
+        mulexp<-lmerExp(mul, family = family.lmer, dec = dec)
+        
+        mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = 2)
+        rownames(mul.res) <- rownames(uni.res)
+        #colnames(mul.res) <- c("coef","exp.coef.","se.coef.","robust.se" ,"z", "Pr...z..")
+        #colnames(mul.res) <- colnames(data.frame(coefNA(model)))
+        if (!is.null(mulexp)) {
+          mul_no_intercept <- mulexp[!grepl("Intercept", rownames(mul)), , drop = FALSE]
+          
+          
+          for (var in rownames(mul_no_intercept)) { 
+            mul.res[var, ] <- mul_no_intercept[var,]
+          }
+        }
+      }
+      fix.all <- cbind(lmerExp(uni.res, family = family.lmer, dec = dec), mul.res)
+      family.label <- colnames(fix.all)[1]
+      colnames(fix.all) <- c(paste("crude ", family.label, "(95%CI)", sep = ""), "crude P value", paste("adj. ", family.label, "(95%CI)", sep = ""), "adj. P value")
+      rownames(fix.all) <- rownames(sl$coefficients)[-1]
+      
+      
+    }
+    
+    
   }
 
   ranef <- data.frame(sl$varcor)[, c(1, 4)]
