@@ -1,5 +1,60 @@
-## svyCreate Table1 : include 2 strata
+#' @title ChangeSvyTable: Modify the number n 
+#' @description Replace the number of weights taken into account with the number of n in the original data
+#' @param svy TableOne object that take weights into account 
+#' @param ori TableOne object in the original data 
+#' @return A matrix that replaces the n number of weights with the n number of the original data 
+#' @details DETAILS
+#' @examples
+#' # example code
+#' library('survey'); library('tableone')
+#' data(nhanes)
+#' nhanes$SDMVPSU <- as.factor(nhanes$SDMVPSU)
+#' nhanesSvy <- svydesign(
+#'   ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~WTMEC2YR,
+#'   nest = TRUE, data = nhanes
+#' )
+#' 
+#' res <- svyCreateTableOne(
+#'   vars = c("HI_CHOL", "race", "agecat", "RIAGENDR"),
+#'   strata = "RIAGENDR", data = nhanesSvy,
+#'   factorVars = c("HI_CHOL", "race", "RIAGENDR")
+#' )
+#' 
+#' ori <- CreateTableOne(
+#'   vars = c("HI_CHOL", "race", "agecat", "RIAGENDR"),
+#'   strata = "RIAGENDR", data = nhanes,
+#'   factorVars = c("HI_CHOL", "race", "RIAGENDR")
+#' )
+#' ChangeSvyTable(res, ori)
+#' @rdname ChangeSvyTable
+#' @export
 
+ChangeSvyTable <- function(svy, ori){
+  res <- svy
+  
+  col_var <- names(svy$CatTable)
+  fac_var <- svy$MetaData$varFactors
+  cont_var <- setdiff(svy$MetaData$vars, svy$MetaData$varFactors)
+  
+  for (i in seq_along(res$CatTable)){
+    for (j in fac_var){
+      res$CatTable[[i]][[j]][,'freq'] <- ori$CatTable[[i]][[j]][,'freq']
+    }
+  }
+
+  if(length(cont_var)==0){
+    for (i in seq_along(res$CatTable)){
+      res$CatTable[[i]][[1]][ , 'n'] <- ori$CatTable[[i]][[1]][ , 'n']
+    }
+  }else{
+    for (i in seq_along(res$ContTable)){
+      res$ContTable[[i]][[1]] <- ori$ContTable[[i]][[1]]
+    }
+  }
+  return(res)
+}
+
+## svyCreate Table1 : include 2 strata
 
 #' @title svyCreateTableOne2: Modified svyCreateTableOne function in tableone package
 #' @description Combine svyCreateTableOne & print function in tableone package
@@ -24,6 +79,7 @@
 #' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
 #' @param pairwise (optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F
 #' @param pairwise.showtest (optional, only used if strata are supplied) When using pairwise comparison, it displays the test used to calculate p-values for pairwise comparisons. Default: F
+#' @param n_original Replace the number of weighted n with the n in the original data. Default: T 
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples
@@ -49,7 +105,7 @@
 svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test = T,
                                showAllLevels = T, printToggle = F, quote = F, smd = F, nonnormal = NULL,
                                catDigits = 1, contDigits = 2, pDigits = 3, Labels = F, labeldata = NULL, minMax = F, showpm = T,
-                               addOverall = F, pairwise = F, pairwise.showtest = F) {
+                               addOverall = F, pairwise = F, pairwise.showtest = F, n_original = T) {
   setkey <- variable <- level <- . <- val_label <- NULL
 
   if (length(strata) != 1) {
@@ -65,13 +121,20 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
     vars <- setdiff(vars, vars.ex)
   }
 
-
-  res <- tableone::svyCreateTableOne(
+  res2 <- tableone::svyCreateTableOne(
     vars = vars, strata = strata, data = data, factorVars = factorVars, includeNA = includeNA, test = test,
     smd = smd, addOverall = addOverall
   )
-
-  factor_vars <- res[["MetaData"]][["varFactors"]]
+  if(n_original){
+    ori <- tableone::CreateTableOne(
+      vars = vars, strata = strata, data = data$variables, factorVars = factorVars, includeNA = includeNA, test = test,
+      smd = smd, addOverall = addOverall
+    )
+    res <- ChangeSvyTable(res2, ori)
+  }else{
+    res <- res2
+  }
+  factor_vars <- res2[["MetaData"]][["varFactors"]]
 
   if (Labels & !is.null(labeldata)) {
     labelled::var_label(data$variables) <- sapply(names(data$variables), function(v) {
@@ -79,7 +142,10 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
     }, simplify = F)
     # vals.tb1 <- c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
     data.table::setkey(labeldata, variable, level)
+    
     res0 <- tableone::svyCreateTableOne(vars = vars, data = data, factorVars = factorVars, includeNA = includeNA)
+    
+    
     for (i in seq_along(res0$CatTable)) {
       for (j in factor_vars) {
         lvs <- res0$CatTable[[i]][[j]]$level
@@ -94,12 +160,14 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
     ptb1.rn <- gsub("(mean (SD))", "", ptb1.rn, fixed = T)
   }
 
-
+  #문제
   ptb1 <- print(res,
-    showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
-    catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax
+   showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
+   catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax
   )
 
+  
+  
   if (showpm) {
     ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
     ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
@@ -141,7 +209,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
               data = subset_data, strata = strata, vars = vars, factorVars = factorVars, includeNA = includeNA, test = test,
               showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, nonnormal = nonnormal,
               catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, Labels = Labels, labeldata = labeldata, minMax = minMax, showpm = showpm,
-              addOverall = addOverall, pairwise = F
+              addOverall = addOverall, pairwise = F, n_original = n_original
             )
             p_values <- table_result[, "p"]
             test_used <- table_result[, "test"]
@@ -257,6 +325,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 #' @param addOverall (optional, only used if strata are supplied) Adds an overall column to the table. Smd and p-value calculations are performed using only the stratifed clolumns. Default: F
 #' @param pairwise (optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F
 #' @param pairwise.showtest (optional, only used if strata are supplied) When using pairwise comparison, it displays the test used to calculate p-values for pairwise comparisons. Default: F
+#' @param n_original Replace the number of weighted n with the n in the original data. Default: T 
 #' @return A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
 #' @details DETAILS
 #' @examples
@@ -282,7 +351,7 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
 svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVars = NULL, includeNA = F, test = T,
                                 showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, nonnormal = NULL,
                                 catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, psub = T, minMax = F, showpm = T,
-                                addOverall = F, pairwise = F, pairwise.showtest = F) {
+                                addOverall = F, pairwise = F, pairwise.showtest = F, n_original = T) {
   . <- level <- variable <- val_label <- V1 <- V2 <- NULL
 
   # if (Labels & !is.null(labeldata)){
@@ -292,6 +361,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
   data <- data
 
   if (is.null(strata)) {
+  
     if (Labels & !is.null(labeldata)) {
       labelled::var_label(data$variables) <- sapply(names(data$variables), function(v) {
         as.character(labeldata[get("variable") == v, "var_label"][1])
@@ -299,10 +369,17 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
       # vals.tb1 <- c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
       data.table::setkey(labeldata, variable, level)
     }
-
-    res <- tableone::svyCreateTableOne(vars = vars, data = data, factorVars = factorVars, includeNA = includeNA)
-    factor_vars <- res[["MetaData"]][["varFactors"]]
-
+    
+    res2 <- tableone::svyCreateTableOne(vars = vars, data = data, factorVars = factorVars, includeNA = includeNA)
+    factor_vars <- res2[["MetaData"]][["varFactors"]]
+    
+    if(n_original){
+      ori2 <- tableone::CreateTableOne(vars = vars, data = data$variables, factorVars = factorVars, includeNA = includeNA)
+      res <- ChangeSvyTable(res2, ori2)
+    }else{
+      res <- res2
+    }
+    
     if (Labels & !is.null(labeldata)) {
       for (i in seq_along(res$CatTable)) {
         for (j in factor_vars) {
@@ -330,12 +407,22 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     # }
     return(list(table = ptb1, caption = cap.tb1))
   } else if (is.null(strata2)) {
-    ptb1 <- svyCreateTableOne2(
-      strata = strata, vars = vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
-      showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm,
-      addOverall = addOverall, pairwise = pairwise, pairwise.showtest = pairwise.showtest
-    )
+    if(n_original){
+      ptb1 <- svyCreateTableOne2(
+        strata = strata, vars = vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
+        showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal,
+        catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm,
+        addOverall = addOverall, pairwise = pairwise, pairwise.showtest = pairwise.showtest, n_original = T
+      )
+    }else{
+      ptb1 <- svyCreateTableOne2(
+        strata = strata, vars = vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
+        showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal,
+        catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm,
+        addOverall = addOverall, pairwise = pairwise, pairwise.showtest = pairwise.showtest, n_original = F
+      )
+    }
+    
 
     cap.tb1 <- paste("Stratified by ", strata, "- weighted data", sep = "")
 
@@ -348,12 +435,21 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     data.strata <- lapply(setdiff(unique(data$variable[[strata]]), NA), function(x) {
       subset(data, get(strata) == x)
     })
-    ptb1.list <- lapply(data.strata, svyCreateTableOne2,
-      vars = vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
-      showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm, addOverall = F
-    )
 
+    if(n_original){
+      ptb1.list <- lapply(data.strata, svyCreateTableOne2,
+                          vars = vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
+                          showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal,
+                          catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm, addOverall = F, n_original = T
+      )
+    }else{
+      ptb1.list <- lapply(data.strata, svyCreateTableOne2,
+                          vars = vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
+                          showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal,
+                          catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm, addOverall = F, n_original = F
+      )
+    }
+    
 
     if (showAllLevels == T) {
       ptb1.cbind <- Reduce(cbind, c(list(ptb1.list[[1]]), lapply(2:length(ptb1.list), function(x) {
@@ -397,15 +493,25 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
 
     return(list(table = ptb1.cbind, caption = cap.tb1))
   } else {
-    res <- tableone::svyCreateTableOne(vars = vars, strata = c(strata2, strata), data = data, factorVars = factorVars, includeNA = F, test = T, addOverall = addOverall)
-    factor_vars <- res[["MetaData"]][["varFactors"]]
 
+    res2 <- tableone::svyCreateTableOne(vars = vars, strata = c(strata2, strata), data = data, factorVars = factorVars, includeNA = F, test = T, addOverall = addOverall)
+    factor_vars <- res2[["MetaData"]][["varFactors"]]
+    if (n_original){
+      ori <- tableone::CreateTableOne(vars = vars, strata = c(strata2, strata), data = data$variables, factorVars = factorVars, includeNA = F, test = T, addOverall = addOverall)
+      res <- ChangeSvyTable(res2,ori)
+    }else{
+      res <- res2
+    }
+    
     if (Labels & !is.null(labeldata)) {
-      labelled::var_label(data$variable) <- sapply(names(data$variable), function(v) {
+      labelled::var_label(data$variables) <- sapply(names(data$variable), function(v) {
         as.character(labeldata[get("variable") == v, "var_label"][1])
       }, simplify = F)
       data.table::setkey(labeldata, variable, level)
+     
       res0 <- tableone::svyCreateTableOne(vars = vars, data = data, factorVars = factorVars, includeNA = includeNA)
+        
+      
       for (i in seq_along(res0$CatTable)) {
         for (j in factor_vars) {
           lvs <- res0$CatTable[[i]][[j]]$level
