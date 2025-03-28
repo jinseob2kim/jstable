@@ -25,7 +25,8 @@ svyCreateTableOne2(
   showpm = T,
   addOverall = F,
   pairwise = F,
-  pairwise.showtest = F
+  pairwise.showtest = F,
+  n_original = T
 )
 }
 \arguments{
@@ -70,6 +71,8 @@ svyCreateTableOne2(
 \item{pairwise}{(optional, only used if strata are supplied) When there are three or more strata, it displays the p-values for pairwise comparisons. Default: F}
 
 \item{pairwise.showtest}{(optional, only used if strata are supplied) When using pairwise comparison, it displays the test used to calculate p-values for pairwise comparisons. Default: F}
+
+\item{n_original}{Replace the number of weighted n with the n in the original data. Default: T}
 }
 \value{
 A matrix object containing what you see is also invisibly returned. This can be assinged a name and exported via write.csv.
