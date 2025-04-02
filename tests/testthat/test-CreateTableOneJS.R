@@ -28,6 +28,7 @@ test_that("Run CreateOneTableJS", {
   expect_is(CreateTableOneJS(vars = names(lung), strata = "sex", data = lung), "list")
   expect_is(CreateTableOneJS(vars = names(lung), strata = "sex", data = lung, labeldata = lung.label, Labels = T), "list")
   expect_is(CreateTableOneJS(vars = names(lung), strata = "sex", data = lung, showAllLevels = F), "list")
+  expect_is(CreateTableOneJS(vars = names(lung), strata = "sex", data = lung, showAllLevels = F, normalityTest = T), "list")
   expect_is(CreateTableOneJS(vars = names(lung), strata = "sex", data = lung, showAllLevels = F, labeldata = lung.label, Labels = T), "list")
   expect_is(CreateTableOneJS(vars = names(lung), strata = "ph.ecog", data = lung, showAllLevels = F, labeldata = lung.label, Labels = T, pairwise = T), "list")
 

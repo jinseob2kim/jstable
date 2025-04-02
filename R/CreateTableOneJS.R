@@ -298,6 +298,7 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
 #' @importFrom labelled var_label var_label<-
 #' @importFrom stats chisq.test fisher.test kruskal.test oneway.test shapiro.test
 #' @importFrom methods is
+#' @importFrom nortest ad.test
 #' @export
 
 
@@ -318,8 +319,14 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
 
   # 모든 변수에 대해 shapiro test 수행
   if (normalityTest == T) {
-    if (nrow(data) > 5000) {
-      print("Warning: Shapiro test is not possible due to the large sample size.")
+    if (nrow(data) >= 5000) {
+      #print("Warning: Shapiro test is not possible due to the large sample size.")
+      #print("Doing ad.test")
+      nonnormal <- setdiff(names(data), factorVars)
+      nonnormal <- nonnormal[sapply(nonnormal, function(x) {
+        ifelse(class(data[[x]]) %in% c("integer", "numeric"), nortest::ad.test(data[[x]])$p.value < 0.05, F)
+      })]
+      
     } else {
       if (!is.null(nonnormal)) {
         print("Warning: Nonnormal variables previously entered are ignored.")
