@@ -256,18 +256,18 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         }
 
         # pv_int 구하기
-        pv_int <- tryCatch(
-          {
-            pvs_int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data, family = family.svyglm) %>%
-              summary() %>%
-              coefficients()
-            pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
-            pv_int
-          },
-          error = function(e) {
-            return(NA)
-          }
-        )
+        # pv_int <- tryCatch(
+        #   {
+        #     pvs_int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data, family = family.svyglm) %>%
+        #       summary() %>%
+        #       coefficients()
+        #     pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+        #     pv_int
+        #   },
+        #   error = function(e) {
+        #     return(NA)
+        #   }
+        # )
         # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
 
         data.design <- data
@@ -280,11 +280,33 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         } else {
           model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = quasipoisson())
         }
-
-        if (any(is.na(model.int))) {
+        
+        model.int$call[[2]] <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula)))
+        model.int$call[[3]] <- data.design
+        #model.int$call[[4]] <- gaussian()
+        model.int$call[[4]] <- family.svyglm
+        # print(model.int$call)
+        # print(family)
+        # print(family.svyglm)
+        # print(any(is.na(model.int)))
+        # if (any(is.na(model.int))) {
+        # } else if (sum(grepl(":", names(coef(model.int)))) > 1) {
+        #   pv_anova <- anova(model.int, method = "Wald")
+        #   pv_int <- round(pv_anova[[length(pv_anova)]][[7]], decimal.pvalue)
+        # }
+        
+        if (is.logical(model.int)) {
+          pv_int <- NA
         } else if (sum(grepl(":", names(coef(model.int)))) > 1) {
           pv_anova <- anova(model.int, method = "Wald")
-          pv_int <- round(pv_anova[[length(pv_anova)]][[7]], decimal.pvalue)
+          pv_int <- round(pv_anova[[length(pv_anova)]]$p[1], decimal.pvalue)
+          #pv_int <- round(pv_anova[nrow(pv_anova), 5], decimal.pvalue)
+        } else {
+          pvs_int <- model.int %>%
+            summary() %>%
+            coefficients()
+          pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+          # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
         }
 
         Count <- as.vector(table(complete_data[[var_subgroup]]))

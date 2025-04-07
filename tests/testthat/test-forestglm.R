@@ -24,4 +24,28 @@ test_that("Run TableSubgroupMultiGLM", {
   expect_is(TableSubgroupMultiGLM(status ~ sex, data = data.design, family = "binomial"), "data.frame")
   expect_is(TableSubgroupMultiGLM(status ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, family = "binomial"), "data.frame")
   expect_is(TableSubgroupMultiGLM(pat.karno ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, family = "gaussian", line = TRUE), "data.frame")
+
+  
+  lung %>%
+    dplyr::mutate(
+      status = as.integer(status == 1),
+      sex = factor(sex),
+      ph.ecog = factor(ph.ecog),
+      kk = factor(ifelse(pat.karno < 70,1,
+                         ifelse(pat.karno >= 70 & pat.karno <= 90,2,3)))
+    ) -> lung
+  expect_warning(data.design <- svydesign(id = ~1, data = lung))
+  
+  
+  expect_is(TableSubgroupMultiGLM(status ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, family = "gaussian"), "data.frame")
+  expect_is(TableSubgroupMultiGLM(status ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, family = "binomial"), "data.frame")
+  expect_is(TableSubgroupMultiGLM(pat.karno ~ sex, var_subgroups = c("kk", "kk1"), data = data.design, family = "gaussian"), "data.frame")
+  
+
+  
+
+  
+  
+  
+  
 })

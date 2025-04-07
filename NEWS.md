@@ -2,6 +2,7 @@
 * Update: Add pcut.univariate to geeglm.display, coxme.display, cox2.display, glmshow.display, lmer.display, svyglm.display, and svycox.display to allow multivariable analysis only with statistically significant variables.
 * Update: Add n_original to svyCreateTableOneJS to display the original sample size (unweighted n) in addition to the weighted sample size.
 * Update: Add Anderson-Darling normality test for sample sizes ≥ 5000.
+* Fix: error in TableSubgroupMultiGLM when family = "gaussian" and data = data.design with multi-level categorical subgroup variables (3 or more levels)
 
 # jstable 1.3.10
 * Enable TableSubgroupCox to handle with mixed effect model, automatically detects mixed model with formula
