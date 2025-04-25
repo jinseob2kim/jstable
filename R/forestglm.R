@@ -50,13 +50,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   fixed_effects <- Filter(function(term) {
     !grepl("\\|", term)
   }, fixed_effects)
-  if (length(fixed_effects) > 1) stop("Formula must contains only 1 independent variable")
+  if (length(fixed_effects) > 1) stop("Formula must contain only 1 independent variable")
   if (any(class(data) == "survey.design" & !is.null(var_subgroup))) {
     if (is.numeric(data$variables[[var_subgroup]])) stop("var_subgroup must categorical.")
   } else if (any(class(data) == "data.frame" & !is.null(var_subgroup))) {
     if (is.numeric(data[[var_subgroup]])) stop("var_subgroup must categorical.")
   }
-
+  
   ## functions with error
   possible_table <- purrr::possibly(table, NA)
   possible_prop.table <- purrr::possibly(function(x) {
@@ -74,7 +74,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   possible_lmertest <- purrr::possibly(lmerTest::lmer, NA)
   xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
   ncoef <- ifelse(any(class(data) == "survey.design"), ifelse(length(levels(data$variables[[xlabel]])) <= 2, 1, length(levels(data$variables[[xlabel]])) - 1),
-    ifelse(length(levels(data[[xlabel]])) <= 2, 1, length(levels(data[[xlabel]])) - 1)
+                  ifelse(length(levels(data[[xlabel]])) <= 2, 1, length(levels(data[[xlabel]])) - 1)
   )
   var_cov <- setdiff(var_cov, c(as.character(formula[[3]]), var_subgroup))
   is_mixed_effect <- grepl("\\|", deparse(formula))
@@ -113,7 +113,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       } else {
         round(lme4::fixef(model), decimal.estimate)[2:(1 + ncoef)]
       }
-
+      
       CI <- tryCatch(
         {
           ci_bounds <- confint(model, parm = "beta_", level = 0.95)
@@ -138,7 +138,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             }
         }
       )
-
+      
       # P-value 계산
       pv <- tryCatch(
         {
@@ -162,36 +162,36 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       } else {
         model <- stats::glm(formula, data = data, x = T, family = family)
-
+        
         # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
       }
-
+      
       xlev <- NA
-
+      
       if (!is.null(model$xlevels[[xlabel]])) {
         xlev <- model$xlevels[[xlabel]]
       }
-
+      
       # cc, PE, CI, PV 구하기
       cc <- summary(model)$coefficients
       Point.Estimate <- round(stats::coef(model), decimal.estimate)[2:(1 + ncoef)]
       CI <- round(matrix(c(cc[2:(1 + ncoef), 1] - qnorm(0.975) * cc[2:(1 + ncoef), 2], cc[2:(1 + ncoef), 1] + qnorm(0.975) * cc[2:(1 + ncoef), 2]),
-        ncol = 2,
-        dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %"))
+                         ncol = 2,
+                         dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %"))
       ), decimal.estimate)
-
+      
       if (family %in% c("binomial", "poisson", "quasipoisson")) {
         Point.Estimate <- round(exp(stats::coef(model)), decimal.estimate)[2:(1 + ncoef)]
         CI <- round(exp(matrix(c(cc[2:(1 + ncoef), 1] - qnorm(0.975) * cc[2:(1 + ncoef), 2], cc[2:(1 + ncoef), 1] + qnorm(0.975) * cc[2:(1 + ncoef), 2]),
-          ncol = 2,
-          dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %"))
+                               ncol = 2,
+                               dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %"))
         )), decimal.estimate)
       }
-
+      
       # if (length(Point.Estimate) > 1){
       #  stop("Formula must contain 1 independent variable only.")
       # }
-
+      
       # event <- model$y
       # prop <- round(prop.table(table(event, model$x[, 1]), 2)[2, ] * 100, decimal.percent)
       pv <- round(summary(model)$coefficients[2:(1 + ncoef), 4], decimal.pvalue)
@@ -200,7 +200,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if (ncoef < 2) {
       data.frame(Variable = "Overall", Count = length(model$y), Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2]) %>%
         dplyr::mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
-
+      
       if (family == "binomial") {
         names(out)[4] <- "OR"
       }
@@ -213,34 +213,34 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         Levels = paste0(xlabel, "=", xlev), `Point Estimate` = c("Reference", Point.Estimate), Lower = c("", CI[, 1]), Upper = c("", CI[, 2])
       ) %>%
         dplyr::mutate(`P value` = c("", ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA) -> out
-
+      
       if (family == "binomial") {
         names(out)[5] <- "OR"
       }
       if (family %in% c("poisson", "quasipoisson")) {
         names(out)[5] <- "RR"
       }
-
+      
       rownames(out) <- NULL
-
+      
       if (!is.null(labeldata)) {
         out$Levels <- paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(xlev, function(x) {
           labeldata[variable == xlabel & level == x, val_label]
         }))
       }
     }
-
+    
     return(out)
   } else if (length(var_subgroup) >= 2 | any(grepl(var_subgroup, formula))) {
     stop("Please input correct subgroup variable.")
   } else {
     ### subgroup 지정 한 경우 ###
-
+    
     # 공변량 있는 경우 formula 변경
     if (!is.null(var_cov)) {
       formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
     }
-
+    
     if (!is_mixed_effect) {
       if (any(class(data) == "survey.design")) {
         ### survey data인 경우 ###
@@ -254,7 +254,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         if (length(survey::svyglm(formula, design = data)$xlevels[[xlabel]]) > 0) {
           xlev <- survey::svyglm(formula, design = data)$xlevels[[xlabel]]
         }
-
+        
         # pv_int 구하기
         # pv_int <- tryCatch(
         #   {
@@ -269,7 +269,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         #   }
         # )
         # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
-
+        
         data.design <- data
         if (family == "binomial") {
           model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = quasibinomial())
@@ -308,7 +308,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
           # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
         }
-
+        
         Count <- as.vector(table(complete_data[[var_subgroup]]))
       } else {
         vars_in_formula <- all.vars(as.formula(formula))
@@ -317,20 +317,20 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           subset(!is.na(get(var_subgroup))) %>%
           group_split(get(var_subgroup)) %>%
           purrr::map(~ possible_glm(formula, data = ., x = T, family = family)) -> model
-
-
+        
+        
         data %>%
           subset(!is.na(get(var_subgroup))) %>%
           select(dplyr::all_of(var_subgroup)) %>%
           table() %>%
           names() -> label_val
-
+        
         xlev <- NA
         if (length(stats::glm(formula, data = data, family = family)$xlevels[[xlabel]]) > 0) {
           xlev <- stats::glm(formula, data = data, family = family)$xlevels[[xlabel]]
         }
         model.int <- possible_glm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), data = data, family = family)
-
+        
         # pv_int 구하기
         if (any(is.na(model.int))) {
           pv_int <- NA
@@ -344,10 +344,10 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
           # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
         }
-
+        
         Count <- as.vector(table(complete_data[[var_subgroup]]))
       }
-
+      
       # PE, CI, PV 구하기
       if (family %in% c("binomial", "poisson", "quasipoisson")) {
         Point.Estimate <- model %>%
@@ -355,22 +355,22 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           lapply(function(x) {
             est <- rep(NA, max(length(xlev) - 1, 1))
             names(est) <- paste0(xlabel, xlev[-1])
-
+            
             for (i in names(est)) {
               tryCatch(est[i] <- x[i],
-                error = function(e) est[i] <- NA
+                       error = function(e) est[i] <- NA
               )
             }
-
+            
             round(exp(est), decimal.estimate)
           })
-
+        
         CI <- model %>%
           purrr::map(function(model) {
             cc0 <- tryCatch(summary(model)$coefficients, error = function(e) {
               return(NA)
             })
-
+            
             ci0 <- matrix(NA, ncol = 2, nrow = max(length(xlev) - 1, 1), dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %")))
             for (i in rownames(ci0)) {
               ci0[i, 1] <- tryCatch(cc0[i, 1] - stats::qnorm(0.975) * cc0[i, 2], error = function(e) {
@@ -380,7 +380,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
                 return(NA)
               })
             }
-
+            
             round(exp(ci0), decimal.estimate)
           })
       } else {
@@ -389,22 +389,22 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           lapply(function(x) {
             est <- rep(NA, max(length(xlev) - 1, 1))
             names(est) <- paste0(xlabel, xlev[-1])
-
+            
             for (i in names(est)) {
               tryCatch(est[i] <- x[i],
-                error = function(e) est[i] <- NA
+                       error = function(e) est[i] <- NA
               )
             }
-
+            
             round(est, decimal.estimate)
           })
-
+        
         CI <- model %>%
           purrr::map(function(model) {
             cc0 <- tryCatch(summary(model)$coefficients, error = function(e) {
               return(NA)
             })
-
+            
             ci0 <- matrix(NA, ncol = 2, nrow = max(length(xlev) - 1, 1), dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %")))
             for (i in rownames(ci0)) {
               ci0[i, 1] <- tryCatch(cc0[i, 1] - stats::qnorm(0.975) * cc0[i, 2], error = function(e) {
@@ -414,17 +414,17 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
                 return(NA)
               })
             }
-
+            
             round(ci0, decimal.estimate)
           })
       }
-
+      
       pv <- model %>%
         purrr::map(function(model) {
           cc0 <- tryCatch(summary(model)$coefficients, error = function(e) {
             return(NA)
           })
-
+          
           pvl <- rep(NA, max(length(xlev) - 1, 1))
           names(pvl) <- paste0(xlabel, xlev[-1])
           for (i in names(pvl)) {
@@ -432,11 +432,11 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
               return(NA)
             })
           }
-
+          
           round(pvl, decimal.pvalue)
         })
     }
-
+    
     if (is_mixed_effect) {
       vars_in_formula <- all.vars(as.formula(formula))
       complete_data <- data[complete.cases(dplyr::select(data, dplyr::all_of(vars_in_formula))), ]
@@ -448,13 +448,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         } else {
           possible_glmer(formula, data = ., family = family)
         })
-
+      
       label_val <- data %>%
         subset(!is.na(get(var_subgroup))) %>%
         select(dplyr::all_of(var_subgroup)) %>%
         table() %>%
         names()
-
+      
       xlabel <- attr(terms(formula), "term.labels")[1]
       xlev <- NA
       xlev <- tryCatch(
@@ -466,17 +466,17 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           NA
         }
       )
-
+      
       # Interaction model for overall interaction p-value
       model.int <- tryCatch(
         if (length(xlev) > 1) {
           if (family == "gaussian") {
             possible_lmertest(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))),
-              data = data, REML = FALSE
+                              data = data, REML = FALSE
             )
           } else {
             possible_glmer(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))),
-              data = data, family = family
+                           data = data, family = family
             )
           }
         } else {
@@ -502,7 +502,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
       # Calculate Count (subgroup sizes)
       Count <- as.vector(table(complete_data[[var_subgroup]]))
-
+      
       # Calculate Point Estimate (PE), Confidence Interval (CI), and P-value (PV)
       if (family %in% c("binomial", "poisson", "quasipoisson")) {
         # For binomial/Poisson families
@@ -522,13 +522,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             },
             error = function(e) rep(NA, max(length(xlev) - 1, 1))
           ))
-
+        
         CI <- model %>%
           purrr::map(function(model) {
             cc0 <- tryCatch(summary(model)$coefficients, error = function(e) NA)
             ci0 <- matrix(NA,
-              ncol = 2, nrow = max(length(xlev) - 1, 1),
-              dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %"))
+                          ncol = 2, nrow = max(length(xlev) - 1, 1),
+                          dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %"))
             )
             for (i in rownames(ci0)) {
               ci0[i, 1] <- tryCatch(cc0[i, 1] - qnorm(0.975) * cc0[i, 2], error = function(e) NA)
@@ -546,7 +546,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
               if (is.null(coef)) {
                 return(rep(NA, max(length(xlev) - 1, 1)))
               }
-
+              
               # Point Estimate 계산
               est <- rep(NA, max(length(xlev) - 1, 1))
               names(est) <- paste0(xlabel, xlev[-1])
@@ -557,13 +557,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             },
             error = function(e) rep(NA, max(length(xlev) - 1, 1))
           ))
-
+        
         CI <- model %>%
           purrr::map(function(model) {
             cc0 <- tryCatch(summary(model)$coefficients, error = function(e) NA)
             ci0 <- matrix(NA,
-              ncol = 2, nrow = max(length(xlev) - 1, 1),
-              dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %"))
+                          ncol = 2, nrow = max(length(xlev) - 1, 1),
+                          dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %"))
             )
             for (i in rownames(ci0)) {
               ci0[i, 1] <- tryCatch(cc0[i, 1] - qnorm(0.975) * cc0[i, 2], error = function(e) NA)
@@ -572,7 +572,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             round(ci0, decimal.estimate)
           })
       }
-
+      
       # Extract p-values for each subgroup
       pv <- model %>%
         purrr::map(function(model) {
@@ -593,13 +593,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     if (ncoef < 2) {
       data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = unlist(Point.Estimate), Lower = unlist(purrr::map(CI, 1)), Upper = unlist(purrr::map(CI, 2))) %>%
         dplyr::mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
-
+      
       if (!is.null(labeldata)) {
         out$Variable <- paste0(" ", sapply(label_val, function(x) {
           labeldata[variable == var_subgroup & level == x, val_label]
         }))
       }
-
+      
       if (family == "binomial") {
         names(out)[4] <- "OR"
       }
@@ -618,7 +618,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       if (family %in% c("poisson", "quasipoisson")) {
         names(out)[5] <- "RR"
       }
-
+      
       if (!is.null(labeldata)) {
         out$Variable <- unlist(lapply(label_val, function(x) c(labeldata[variable == var_subgroup & level == x, val_label], rep("", length(xlev) - 1))))
         out$Levels <- rep(paste0(labeldata[variable == xlabel, var_label[1]], "=", sapply(xlev, function(x) {
@@ -626,13 +626,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         })), length(label_val))
       }
     }
-
+    
     var_subgroup_rev <- var_subgroup
     if (!is.null(labeldata)) {
       var_subgroup_rev <- labeldata[variable == var_subgroup, var_label[1]]
     }
-
-
+    
+    
     return(rbind(c(var_subgroup_rev, rep(NA, ncol(out) - 2), ifelse(pv_int >= 0.001, pv_int, "<0.001")), out))
   }
 }
@@ -689,13 +689,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 TableSubgroupMultiGLM <- function(formula, var_subgroups = NULL, var_cov = NULL, data, family = "binomial", decimal.estimate = 2, decimal.percent = 1, decimal.pvalue = 3, line = F, labeldata = NULL) {
   . <- NULL
   out.all <- TableSubgroupGLM(formula, var_subgroup = NULL, var_cov = var_cov, data = data, family = family, decimal.estimate = decimal.estimate, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, labeldata = labeldata)
-
+  
   if (is.null(var_subgroups)) {
     return(out.all)
   } else {
     out.list <- purrr::map(var_subgroups, ~ TableSubgroupGLM(formula, var_subgroup = ., var_cov = var_cov, data = data, family = family, decimal.estimate = decimal.estimate, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, labeldata = labeldata))
     out.list <- purrr::map(out.list, ~ .x %>%
-      dplyr::mutate(`P value` = purrr::map_chr(`P value`, ~ if (is.list(.)) as.character(unlist(.)) else as.character(.))))
+                             dplyr::mutate(`P value` = purrr::map_chr(`P value`, ~ if (is.list(.)) as.character(unlist(.)) else as.character(.))))
     if (line) {
       out.newline <- out.list %>% purrr::map(~ rbind(NA, .))
       return(rbind(out.all, out.newline %>% dplyr::bind_rows()))
