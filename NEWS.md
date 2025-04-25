@@ -1,3 +1,7 @@
+# jstable 1.3.12
+* Update: Add count_by and event variable to TableSubgroupGLM, TableSubgroupMultiGLM 
+* Update: Collapse columns when there are more than 3 levels in TalbeSubgroupCox, TableSubgroupMultiCox
+
 # jstable 1.3.11
 * Update: Add pcut.univariate to geeglm.display, coxme.display, cox2.display, glmshow.display, lmer.display, svyglm.display, and svycox.display to allow multivariable analysis only with statistically significant variables.
 * Update: Add n_original to svyCreateTableOneJS to display the original sample size (unweighted n) in addition to the weighted sample size.

@@ -1,94 +1,3 @@
-#' @title count_event_by: funciton to count event, subgroup number inside TableSubgroupCox, TableSubgroupMultiCox
-#' @description Function to count event, subgroup number
-#' @param formula formula with survival analysis
-#' @param data same data as in formula
-#' @param count_by_var variables to count subgroup for
-#' @param var_subgroup 1 sub-group variable for analysis,
-#' @param decimal.percent decimals to show percent of, Default: 1
-#' @return Table with event, subgroup number
-#' @details This function is used inside TableSubgroupCox, TableSubgroupMultiCox for calculation
-#' @examples
-#' \dontrun{
-#' if (interactive()) {
-#'
-#' }
-#' }
-#' @seealso
-#'  \code{\link[dplyr]{group_by}}, \code{\link[dplyr]{summarise}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{bind_rows}}, \code{\link[dplyr]{arrange}}
-#' @rdname count_event_by
-#' @export
-#' @importFrom dplyr group_by summarize mutate bind_rows arrange
-#' @importFrom rlang sym
-#'
-count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NULL, decimal.percent = 1) {
-  if (inherits(data, "survey.design")) {
-    data <- data$variables
-  } else {
-    data <- data
-  }
-  Count <- Event_Count <- NULL
-  event_col <- as.character(formula[[2]][[3]])
-  total_count <- nrow(data)
-  total_event_count <- sum(data[[event_col]] == 1, na.rm = TRUE)
-  total_event_rate <- paste0(total_event_count, "/", total_count, " (", round(total_event_count / total_count * 100, decimal.percent), "%)")
-  
-  if (!is.null(count_by_var) && !is.null(var_subgroup)) {
-    # count_by_var와 var_subgroup이 모두 있을 때
-    counts <- data %>%
-      dplyr::filter(!is.na(!!rlang::sym(var_subgroup))) %>%
-      dplyr::group_by(!!rlang::sym(count_by_var), !!rlang::sym(var_subgroup)) %>%
-      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
-      dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
-    
-    overall_counts <- data %>%
-      dplyr::group_by(!!rlang::sym(count_by_var)) %>%
-      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
-      dplyr::mutate(
-        Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"),
-        !!rlang::sym(var_subgroup) := "Overall"
-      )
-    
-    counts <- counts %>%
-      dplyr::bind_rows(overall_counts) %>%
-      dplyr::arrange(!!rlang::sym(count_by_var), !!rlang::sym(var_subgroup))
-  } else if (is.null(count_by_var) && !is.null(var_subgroup)) {
-    # var_subgroup만 있을 때
-    counts <- data %>%
-      dplyr::filter(!is.na(!!rlang::sym(var_subgroup))) %>%
-      dplyr::group_by(!!rlang::sym(var_subgroup)) %>%
-      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
-      dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
-  } else if (!is.null(count_by_var) && is.null(var_subgroup)) {
-    # count_by_var만 있을 때
-    counts <- data %>%
-      dplyr::group_by(!!rlang::sym(count_by_var)) %>%
-      dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
-      dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
-  } else {
-    # count_by_var와 var_subgroup이 NULL일 때는 전체 데이터만 Total로 계산
-    counts <- tibble::tibble(
-      Total = "Total",
-      Count = total_count,
-      Event_Count = total_event_count,
-      Event_Rate = total_event_rate
-    )
-    return(counts)
-  }
-  
-  # Total 행을 추가
-  total_row <- tibble::tibble(
-    Count = total_count,
-    Event_Count = total_event_count,
-    Event_Rate = total_event_rate
-  )
-  
-  counts <- dplyr::bind_rows(counts, total_row)
-  
-  return(counts)
-}
-
-
-
 #' @title TableSubgroupCox: Sub-group analysis table for Cox/svycox model.
 #' @description Sub-group analysis table for Cox/svycox model.
 #' @param formula formula with survival analysis.
@@ -194,74 +103,74 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
       }
       if(!is_mixed_effect){
-      # Strata !is.null인 경우 formula 변경
-      if (!is.null(strata)) {
-        formula <- as.formula(paste0(deparse(formula), " + ", paste0("strata(", strata, ")")))
-      }
-      
-      if (any(class(data) == "survey.design")) {
-        ### survey data인 경우 ###
-        model <- survey::svycoxph(formula, design = data, x = T)
-        # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+        # Strata !is.null인 경우 formula 변경
+        if (!is.null(strata)) {
+          formula <- as.formula(paste0(deparse(formula), " + ", paste0("strata(", strata, ")")))
+        }
         
-        # KM 구하기(categorical인 경우)
-        if (is.numeric(data$variables[[xlabel]])) {
-          prop <- NULL
+        if (any(class(data) == "survey.design")) {
+          ### survey data인 경우 ###
+          model <- survey::svycoxph(formula, design = data, x = T)
+          # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+          
+          # KM 구하기(categorical인 경우)
+          if (is.numeric(data$variables[[xlabel]])) {
+            prop <- NULL
+          } else {
+            res.kap <- survey::svykm(formula.km, design = data)
+            prop <- round(100 * sapply(res.kap, function(x) {
+              1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]
+            }), decimal.percent)
+            names(prop) <- paste0(xlabel, "=", model$xlevels[[1]])
+          }
         } else {
-          res.kap <- survey::svykm(formula.km, design = data)
-          prop <- round(100 * sapply(res.kap, function(x) {
-            1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]
-          }), decimal.percent)
-          names(prop) <- paste0(xlabel, "=", model$xlevels[[1]])
+          ### survey data가 아닌 경우 ###
+          weights <- if (!is.null(weights)) {
+            data[[weights]]
+          } else {
+            NULL
+          }
+          if (!is.null(cluster)) {
+            formula.1 <- as.formula(
+              paste0(deparse(formula), " + ", "cluster(", cluster, ")")
+            )
+            cc <- substitute(
+              survival::coxph(formula.1, data = data, x = T, weights = .weights),
+              list(.weights = weights)
+            )
+            model <- eval(cc)
+          } else {
+            cc <- substitute(
+              survival::coxph(formula, data = data, x = T, weights = .weights),
+              list(.weights = weights)
+            )
+            model <- eval(cc)
+          }
+          # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+          
+          # KM 구하기(categorical인 경우)
+          if (is.numeric(data[[xlabel]])) {
+            prop <- NULL
+          } else {
+            res.kap <- survival::survfit(formula.km, data = data)
+            res.kap.times <- summary(res.kap, times = time_eventrate, extend = T)
+            prop <- round(100 * (1 - res.kap.times[["surv"]]), decimal.percent)
+            names(prop) <- paste0(xlabel, "=", model$xlevels[[1]])
+          }
+          # out.kap <- paste(res.kap.times[["n.event"]], " (", round(100 * (1 - res.kap.times[["surv"]]), decimal.percent), ")", sep = "")
         }
-      } else {
-        ### survey data가 아닌 경우 ###
-        weights <- if (!is.null(weights)) {
-          data[[weights]]
-        } else {
-          NULL
-        }
-        if (!is.null(cluster)) {
-          formula.1 <- as.formula(
-            paste0(deparse(formula), " + ", "cluster(", cluster, ")")
-          )
-          cc <- substitute(
-            survival::coxph(formula.1, data = data, x = T, weights = .weights),
-            list(.weights = weights)
-          )
-          model <- eval(cc)
-        } else {
-          cc <- substitute(
-            survival::coxph(formula, data = data, x = T, weights = .weights),
-            list(.weights = weights)
-          )
-          model <- eval(cc)
-        }
-        # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
         
-        # KM 구하기(categorical인 경우)
-        if (is.numeric(data[[xlabel]])) {
-          prop <- NULL
-        } else {
-          res.kap <- survival::survfit(formula.km, data = data)
-          res.kap.times <- summary(res.kap, times = time_eventrate, extend = T)
-          prop <- round(100 * (1 - res.kap.times[["surv"]]), decimal.percent)
-          names(prop) <- paste0(xlabel, "=", model$xlevels[[1]])
-        }
-        # out.kap <- paste(res.kap.times[["n.event"]], " (", round(100 * (1 - res.kap.times[["surv"]]), decimal.percent), ")", sep = "")
-      }
-      
-      # PE, CI, PV 구하기
-      Point.Estimate <- round(exp(coef(model)), decimal.hr)[1:ncoef]
-      
-      # if (length(Point.Estimate) > 1){
-      #  stop("Formula must contain 1 independent variable only.")
-      # }
-      
-      CI <- round(exp(confint(model)[1:ncoef, ]), decimal.hr)
-      event <- purrr::map_dbl(model$y, 1) %>% tail(model$n)
-      # prop <- round(prop.table(table(event, model$x[, 1]), 2)[2, ] * 100, decimal.percent)
-      pv <- round(summary(model)$coefficients[1:ncoef, "Pr(>|z|)"], decimal.pvalue)
+        # PE, CI, PV 구하기
+        Point.Estimate <- round(exp(coef(model)), decimal.hr)[1:ncoef]
+        
+        # if (length(Point.Estimate) > 1){
+        #  stop("Formula must contain 1 independent variable only.")
+        # }
+        
+        CI <- round(exp(confint(model)[1:ncoef, ]), decimal.hr)
+        event <- purrr::map_dbl(model$y, 1) %>% tail(model$n)
+        # prop <- round(prop.table(table(event, model$x[, 1]), 2)[2, ] * 100, decimal.percent)
+        pv <- round(summary(model)$coefficients[1:ncoef, "Pr(>|z|)"], decimal.pvalue)
       }
       else{
         prop<-NULL
@@ -331,264 +240,264 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
       }
       if (!is_mixed_effect){
-      # Strata !is.null인 경우 formula 변경
-      if (!is.null(strata)) {
-        formula <- as.formula(paste0(deparse(formula), " + ", paste0("strata(", strata, ")")))
-      }
-      
-      if (any(class(data) == "survey.design")) {
-        ### survey data인 경우 ###
-        data$variables[[var_subgroup]] <- factor(data$variables[[var_subgroup]])
-        data$variables[[var_subgroup]] %>%
-          table() %>%
-          names() -> label_val
-        label_val %>% purrr::map(~ possible_svycoxph(formula, design = subset(data, get(var_subgroup) == .), x = TRUE)) -> model
-        xlev <- survey::svycoxph(formula, design = data)$xlevels
-        
-        # pv_int 구하기
-        pv_int <- tryCatch(
-          {
-            pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data) %>%
-              summary() %>%
-              coefficients()
-            pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
-            pv_int
-          },
-          error = function(e) {
-            return(NA)
-          }
-        )
-        
-        ## interaction 여러개인 경우 pv_int 구하기
-        model.int <- possible_svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data)
-        
-        if (any(is.na(model.int))) {
-        } else if (sum(grepl(":", names(coef(model.int)))) > 1) {
-          model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
-          pv_anova <- survey::regTermTest(model.int, as.formula(paste0("~", xlabel, ":", var_subgroup)))
-          pv_int <- round(pv_anova$p[1], decimal.pvalue)
+        # Strata !is.null인 경우 formula 변경
+        if (!is.null(strata)) {
+          formula <- as.formula(paste0(deparse(formula), " + ", paste0("strata(", strata, ")")))
         }
         
-        # KM 구하기(categorical인 경우만)
-        if (!is.numeric(data$variables[[xlabel]])) {
-          prop <- NULL
-          try(
+        if (any(class(data) == "survey.design")) {
+          ### survey data인 경우 ###
+          data$variables[[var_subgroup]] <- factor(data$variables[[var_subgroup]])
+          data$variables[[var_subgroup]] %>%
+            table() %>%
+            names() -> label_val
+          label_val %>% purrr::map(~ possible_svycoxph(formula, design = subset(data, get(var_subgroup) == .), x = TRUE)) -> model
+          xlev <- survey::svycoxph(formula, design = data)$xlevels
+          
+          # pv_int 구하기
+          pv_int <- tryCatch(
             {
-              res.kap <- purrr::map(label_val, ~ survey::svykm(formula.km, design = subset(data, get(var_subgroup) == .)))
-              mkz <- function(reskap) {
-                round(100 * sapply(reskap, function(x) {
-                  1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]
-                }), decimal.percent)
-              }
-              prop <- purrr::map(res.kap, mkz) %>%
-                dplyr::bind_cols() %>%
-                t()
-              # prop <- purrr::map(res.kap, ~round(100 * sapply(., function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent))
-              colnames(prop) <- paste0(xlabel, "=", xlev[[1]])
+              pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data) %>%
+                summary() %>%
+                coefficients()
+              pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+              pv_int
             },
-            silent = TRUE
+            error = function(e) {
+              return(NA)
+            }
           )
-        } else {
-          prop <- NULL
-        }
-      } else {
-        ### survey data가 아닌 경우 ###
-        weights_option <- if (!is.null(weights)) TRUE else FALSE
-        data[[var_subgroup]] <- factor(data[[var_subgroup]])
-        # Coxph 함수를 각 subgroup에 대해 적용시키기 위한 함수
-        run_coxph <- function(subgroup_var, subgroup_value, data, formula, weights_option) {
-          subset_data <- data[data[[subgroup_var]] == subgroup_value, ]
           
-          if (nrow(subset_data) == 0) {
-            return(NULL)
+          ## interaction 여러개인 경우 pv_int 구하기
+          model.int <- possible_svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data)
+          
+          if (any(is.na(model.int))) {
+          } else if (sum(grepl(":", names(coef(model.int)))) > 1) {
+            model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
+            pv_anova <- survey::regTermTest(model.int, as.formula(paste0("~", xlabel, ":", var_subgroup)))
+            pv_int <- round(pv_anova$p[1], decimal.pvalue)
           }
           
-          subset_weights <- if (weights_option) {
-            as.numeric(as.character(subset_data[[weights]]))
+          # KM 구하기(categorical인 경우만)
+          if (!is.numeric(data$variables[[xlabel]])) {
+            prop <- NULL
+            try(
+              {
+                res.kap <- purrr::map(label_val, ~ survey::svykm(formula.km, design = subset(data, get(var_subgroup) == .)))
+                mkz <- function(reskap) {
+                  round(100 * sapply(reskap, function(x) {
+                    1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]
+                  }), decimal.percent)
+                }
+                prop <- purrr::map(res.kap, mkz) %>%
+                  dplyr::bind_cols() %>%
+                  t()
+                # prop <- purrr::map(res.kap, ~round(100 * sapply(., function(x){1 - x[["surv"]][which.min(abs(x[["time"]] - time_eventrate))]}), decimal.percent))
+                colnames(prop) <- paste0(xlabel, "=", xlev[[1]])
+              },
+              silent = TRUE
+            )
+          } else {
+            prop <- NULL
+          }
+        } else {
+          ### survey data가 아닌 경우 ###
+          weights_option <- if (!is.null(weights)) TRUE else FALSE
+          data[[var_subgroup]] <- factor(data[[var_subgroup]])
+          # Coxph 함수를 각 subgroup에 대해 적용시키기 위한 함수
+          run_coxph <- function(subgroup_var, subgroup_value, data, formula, weights_option) {
+            subset_data <- data[data[[subgroup_var]] == subgroup_value, ]
+            
+            if (nrow(subset_data) == 0) {
+              return(NULL)
+            }
+            
+            subset_weights <- if (weights_option) {
+              as.numeric(as.character(subset_data[[weights]]))
+            } else {
+              NULL
+            }
+            cc <- substitute(
+              survival::coxph(formula, data = subset_data, x = T, weights = .weights),
+              list(.weights = subset_weights)
+            )
+            eval(cc)
+          }
+          
+          if (is.null(cluster)) {
+            model <- sapply(var_subgroup, function(var) {
+              if (is.factor(data[[var]])) {
+                unique_vals <- levels(data[[var]])
+              } else {
+                unique_vals <- sort(setdiff(unique(data[[var]]), NA))
+              }
+              lapply(unique_vals, function(value) {
+                result <- run_coxph(var, value, data, formula, weights_option)
+              })
+            })
+          } else {
+            formula <- as.formula(paste0(deparse(formula), " + ", "cluster(", cluster, ")"))
+            
+            model <- sapply(var_subgroup, function(var) {
+              if (is.factor(data[[var]])) {
+                unique_vals <- levels(data[[var]])
+              } else {
+                unique_vals <- sort(setdiff(unique(data[[var]]), NA))
+              }
+              lapply(unique_vals, function(value) {
+                result <- run_coxph(var, value, data, formula, weights_option)
+              })
+            })
+          }
+          weights <- if (!is.null(weights)) {
+            data[[weights]]
           } else {
             NULL
           }
-          cc <- substitute(
-            survival::coxph(formula, data = subset_data, x = T, weights = .weights),
-            list(.weights = subset_weights)
-          )
-          eval(cc)
-        }
-        
-        if (is.null(cluster)) {
-          model <- sapply(var_subgroup, function(var) {
-            if (is.factor(data[[var]])) {
-              unique_vals <- levels(data[[var]])
-            } else {
-              unique_vals <- sort(setdiff(unique(data[[var]]), NA))
-            }
-            lapply(unique_vals, function(value) {
-              result <- run_coxph(var, value, data, formula, weights_option)
-            })
-          })
-        } else {
-          formula <- as.formula(paste0(deparse(formula), " + ", "cluster(", cluster, ")"))
           
-          model <- sapply(var_subgroup, function(var) {
-            if (is.factor(data[[var]])) {
-              unique_vals <- levels(data[[var]])
-            } else {
-              unique_vals <- sort(setdiff(unique(data[[var]]), NA))
-            }
-            lapply(unique_vals, function(value) {
-              result <- run_coxph(var, value, data, formula, weights_option)
-            })
-          })
-        }
-        weights <- if (!is.null(weights)) {
-          data[[weights]]
-        } else {
-          NULL
-        }
-        
-        data %>%
-          filter(!is.na(get(var_subgroup))) %>%
-          select(dplyr::all_of(var_subgroup)) %>%
-          table() %>%
-          names() -> label_val
-        xlev <- survival::coxph(formula, data = data)$xlevels
-        
-        
-        # strata만 공식에 추가하는 경우 P for interaction에서 <NA>가 나타나는 문제가 있어 수정
-        if (is.null(cluster) & is.null(weights) & !is.null(strata)) {
-          model.int <- possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data)
-        } else {
-          model.int <- tryCatch(eval(substitute(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights))), error = function(e) NA)
-          # if (!is.null(cluster)) {
-          #   model.int <- eval(substitute(possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights)))
-          # } else {
-          #   model.int <- tryCatch(eval(substitute(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights))), error = function(e) NA)
-          # }
-        }
-        
-        
-        # KM 구하기(categorical인 경우만)
-        if (!is.numeric(data[[xlabel]])) {
-          prop <- NULL
-          try({
-            res.kap.times <- data %>%
-              filter(!is.na(get(var_subgroup))) %>%
-              split(.[[var_subgroup]]) %>%
-              purrr::map(~ survival::survfit(formula.km, data = .)) %>%
-              purrr::map(~ summary(., times = time_eventrate, extend = T))
-            
-            prop <- matrix(nrow = length(res.kap.times), ncol = length(xlev[[1]]))
-            colnames(prop) <- paste0(xlabel, "=", xlev[[1]])
-            rownames(prop) <- names(res.kap.times)
-            
-            sub_xlev <- data %>%
-              filter(!is.na(get(var_subgroup))) %>%
-              split(.[[var_subgroup]]) %>%
-              lapply(function(x) {
-                sort(setdiff(unique(x[[xlabel]]), NA))
-              })
-            
-            for (i in rownames(prop)) {
-              if (length(sub_xlev[[i]]) == 1) {
-                # prop[i, paste0(xlabel, "=", sub_xlev[[i]])] <- res.kap.times[["0"]][["surv"]]
-                prop[i, ] <- res.kap.times[["0"]][["surv"]]
-              } else if (length(sub_xlev[[i]]) > 1) {
-                surv.df <- data.frame(res.kap.times[[i]][c("strata", "surv")])
-                for (j in colnames(prop)) {
-                  tryCatch(prop[i, j] <- surv.df[surv.df$strata == j, "surv"],
-                           error = function(e) {
-                             prop[i, j] <- NA
-                           }
-                  )
+          data %>%
+            filter(!is.na(get(var_subgroup))) %>%
+            select(dplyr::all_of(var_subgroup)) %>%
+            table() %>%
+            names() -> label_val
+          xlev <- survival::coxph(formula, data = data)$xlevels
+          
+          
+          # strata만 공식에 추가하는 경우 P for interaction에서 <NA>가 나타나는 문제가 있어 수정
+          if (is.null(cluster) & is.null(weights) & !is.null(strata)) {
+            model.int <- possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data)
+          } else {
+            model.int <- tryCatch(eval(substitute(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights))), error = function(e) NA)
+            # if (!is.null(cluster)) {
+            #   model.int <- eval(substitute(possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights)))
+            # } else {
+            #   model.int <- tryCatch(eval(substitute(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights))), error = function(e) NA)
+            # }
+          }
+          
+          
+          # KM 구하기(categorical인 경우만)
+          if (!is.numeric(data[[xlabel]])) {
+            prop <- NULL
+            try({
+              res.kap.times <- data %>%
+                filter(!is.na(get(var_subgroup))) %>%
+                split(.[[var_subgroup]]) %>%
+                purrr::map(~ survival::survfit(formula.km, data = .)) %>%
+                purrr::map(~ summary(., times = time_eventrate, extend = T))
+              
+              prop <- matrix(nrow = length(res.kap.times), ncol = length(xlev[[1]]))
+              colnames(prop) <- paste0(xlabel, "=", xlev[[1]])
+              rownames(prop) <- names(res.kap.times)
+              
+              sub_xlev <- data %>%
+                filter(!is.na(get(var_subgroup))) %>%
+                split(.[[var_subgroup]]) %>%
+                lapply(function(x) {
+                  sort(setdiff(unique(x[[xlabel]]), NA))
+                })
+              
+              for (i in rownames(prop)) {
+                if (length(sub_xlev[[i]]) == 1) {
+                  # prop[i, paste0(xlabel, "=", sub_xlev[[i]])] <- res.kap.times[["0"]][["surv"]]
+                  prop[i, ] <- res.kap.times[["0"]][["surv"]]
+                } else if (length(sub_xlev[[i]]) > 1) {
+                  surv.df <- data.frame(res.kap.times[[i]][c("strata", "surv")])
+                  for (j in colnames(prop)) {
+                    tryCatch(prop[i, j] <- surv.df[surv.df$strata == j, "surv"],
+                             error = function(e) {
+                               prop[i, j] <- NA
+                             }
+                    )
+                  }
                 }
               }
-            }
-            
-            prop <- round(100 * (1 - prop), decimal.percent)
-          }, silent = )
-        } else {
-          prop <- NULL
-        }
-        
-        # pv_int 구하기
-        if (any(is.na(model.int))) {
-          pv_int <- NA
-        } else if (sum(grepl(":", names(coef(model.int)))) == 1) {
-          pvs_int <- model.int %>%
-            summary() %>%
-            coefficients()
-          pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
-          # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
-        } else {
-          model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
-          model.int$call$data <- as.name("data")
-          pv_anova <- tryCatch(anova(model.int), error = function(e) NA)
-          if (is.logical(pv_anova) & !is.null(cluster)) {
-            warning("Warning: Anova test is not available for cluster data. So Interaction P value is NA when 3 and more categorical subgroup variable.")
+              
+              prop <- round(100 * (1 - prop), decimal.percent)
+            }, silent = )
+          } else {
+            prop <- NULL
           }
-          pv_int <- tryCatch(round(pv_anova[nrow(pv_anova), 4], decimal.pvalue), error = function(e) NA)
+          
+          # pv_int 구하기
+          if (any(is.na(model.int))) {
+            pv_int <- NA
+          } else if (sum(grepl(":", names(coef(model.int)))) == 1) {
+            pvs_int <- model.int %>%
+              summary() %>%
+              coefficients()
+            pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
+            # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
+          } else {
+            model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
+            model.int$call$data <- as.name("data")
+            pv_anova <- tryCatch(anova(model.int), error = function(e) NA)
+            if (is.logical(pv_anova) & !is.null(cluster)) {
+              warning("Warning: Anova test is not available for cluster data. So Interaction P value is NA when 3 and more categorical subgroup variable.")
+            }
+            pv_int <- tryCatch(round(pv_anova[nrow(pv_anova), 4], decimal.pvalue), error = function(e) NA)
+          }
         }
-      }
-      
-      # Count, PE, CI, PV 계산
-      model %>% purrr::map_dbl("n", .default = NA) -> Count
-      
-      if (ncoef < 2) {
-        model %>%
-          purrr::map("coefficients", .default = NA) %>%
-          lapply(function(x) {
-            round(exp(x[1:ncoef]), decimal.hr)
-          }) %>%
-          unlist() -> Point.Estimate
         
-        model %>%
-          lapply(function(x) {
-            tryCatch(
-              {
-                round(exp(stats::confint(x)[1, ]), decimal.hr)
-              },
-              error = function(e) {
-                return(matrix(nrow = 1, ncol = 2, dimnames = list(paste0(xlabel, xlev[[1]][-1]), c("2.5 %", "97.5 %"))))
-              }
-            )
-          }) %>%
-          Reduce(rbind, .) -> CI
+        # Count, PE, CI, PV 계산
+        model %>% purrr::map_dbl("n", .default = NA) -> Count
         
-        model %>%
-          purrr::map(possible_pv) %>%
-          purrr::map_dbl(~ round(., decimal.pvalue)) -> pv
-      } else {
-        model %>%
-          purrr::map("coefficients", .default = NA) %>%
-          lapply(function(x) {
-            round(exp(x[1:ncoef]), decimal.hr)
-          }) -> Point.Estimate
-        
-        model %>%
-          purrr::map(possible_confint) %>%
-          lapply(function(x) {
-            tryCatch(
-              {
-                round(exp(x[1:ncoef, ]), decimal.hr)
-              },
-              error = function(e) {
-                return(matrix(nrow = length(xlev[[1]]) - 1, ncol = 2, dimnames = list(paste0(xlabel, xlev[[1]][-1]), c("2.5 %", "97.5 %"))))
-              }
-            )
-          }) -> CI
-        
-        model %>%
-          lapply(function(x) {
-            tryCatch(
-              {
-                round(summary(x)$coefficients[1:ncoef, 5], decimal.pvalue)
-              },
-              error = function(e) {
-                return(rep(NA, length(xlev[[1]]) - 1))
-              }
-            )
-          }) -> pv
-      }
+        if (ncoef < 2) {
+          model %>%
+            purrr::map("coefficients", .default = NA) %>%
+            lapply(function(x) {
+              round(exp(x[1:ncoef]), decimal.hr)
+            }) %>%
+            unlist() -> Point.Estimate
+          
+          model %>%
+            lapply(function(x) {
+              tryCatch(
+                {
+                  round(exp(stats::confint(x)[1, ]), decimal.hr)
+                },
+                error = function(e) {
+                  return(matrix(nrow = 1, ncol = 2, dimnames = list(paste0(xlabel, xlev[[1]][-1]), c("2.5 %", "97.5 %"))))
+                }
+              )
+            }) %>%
+            Reduce(rbind, .) -> CI
+          
+          model %>%
+            purrr::map(possible_pv) %>%
+            purrr::map_dbl(~ round(., decimal.pvalue)) -> pv
+        } else {
+          model %>%
+            purrr::map("coefficients", .default = NA) %>%
+            lapply(function(x) {
+              round(exp(x[1:ncoef]), decimal.hr)
+            }) -> Point.Estimate
+          
+          model %>%
+            purrr::map(possible_confint) %>%
+            lapply(function(x) {
+              tryCatch(
+                {
+                  round(exp(x[1:ncoef, ]), decimal.hr)
+                },
+                error = function(e) {
+                  return(matrix(nrow = length(xlev[[1]]) - 1, ncol = 2, dimnames = list(paste0(xlabel, xlev[[1]][-1]), c("2.5 %", "97.5 %"))))
+                }
+              )
+            }) -> CI
+          
+          model %>%
+            lapply(function(x) {
+              tryCatch(
+                {
+                  round(summary(x)$coefficients[1:ncoef, 5], decimal.pvalue)
+                },
+                error = function(e) {
+                  return(rep(NA, length(xlev[[1]]) - 1))
+                }
+              )
+            }) -> pv
+        }
       }
       else{
         prop<-NULL
@@ -646,15 +555,15 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       if (ncoef < 2) {
         if (is_mixed_effect) {
           CI<- do.call(rbind, lapply(CI, function(x) {
-          if (is.null(dim(x))) {
-            matrix(x, nrow = 1, dimnames = list(NULL, c("2.5 %", "97.5 %")))
-          } else {
-            x
-          }
+            if (is.null(dim(x))) {
+              matrix(x, nrow = 1, dimnames = list(NULL, c("2.5 %", "97.5 %")))
+            } else {
+              x
+            }
           }))
           Point.Estimate<-unlist(Point.Estimate)
-          }
-
+        }
+        
         out <- data.frame(Variable = paste("  ", label_val), Count = Count, Percent = round(Count / sum(Count) * 100, decimal.percent), `Point Estimate` = Point.Estimate, Lower = CI[, 1], Upper = CI[, 2], check.names = F, row.names = NULL) %>%
           mutate(`P value` = unlist(ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA)
         
@@ -789,17 +698,29 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           }
         }
       }
-      for (i in 1:nrow(original_output)) {
-        count_output <- count_event_by(formula = formula, data = data, count_by_var = NULL, var_subgroup = var_subgroup, decimal.percent = 1)
-        clean_variable <- trimws(original_output$Variable[i])
-        if (clean_variable != "" && clean_variable %in% count_output[[var_subgroup]]) {
-          match_row <- which(count_output[[var_subgroup]] == clean_variable)
-          if (length(match_row) > 0) {
-            original_output$Count[i] <- count_output$Event_Rate[match_row]
+      count_output_sub <- count_event_by(formula = formula, data = data,
+                                         count_by_var = NULL,
+                                         var_subgroup = var_subgroup,
+                                         decimal.percent = decimal.percent)
+      if (!is.null(labeldata)) {
+        count_output_sub[[var_subgroup]] <- sapply(
+          count_output_sub[[var_subgroup]],
+          function(x) {
+            lab <- labeldata[labeldata$variable == var_subgroup &
+                               labeldata$level    == x,
+                             "val_label"]
+            if (length(lab) > 0) lab else x
           }
+        )
+      }
+      for (i in seq_len(nrow(original_output))) {
+        clean_variable <- trimws(original_output$Variable[i])
+        if (clean_variable %in% count_output_sub[[var_subgroup]]) {
+          match_row <- which(count_output_sub[[var_subgroup]] == clean_variable)[1]
+          original_output$Count[i] <- count_output_sub$Event_Rate[match_row]
         }
       }
-      return(original_output)
+      return(collapse_counts(original_output, count_by))
     } else {
       for (countlevel in count_by_levels) {
         event_rate_col <- paste0("Count(", count_by, "=", countlevel, ")")
@@ -812,7 +733,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
       count_output <- count_event_by(formula = formula, data = data, count_by_var = NULL, var_subgroup = var_subgroup, decimal.percent = 1)
       original_output$Count[1] <- count_output$Event_Rate[1]
-      return(original_output)
+      return(collapse_counts(original_output, count_by))
     }
   }
   if (!(event) && !is.null(count_by)) {
@@ -864,7 +785,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         }
       }
       
-      return(original_output)
+      return(collapse_counts(original_output, count_by))
     } else {
       for (countlevel in count_by_levels) {
         event_rate_col <- paste0("Count(", count_by, "=", countlevel, ")")
@@ -875,7 +796,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         
         original_output[[event_rate_col]][trimws(original_output[["Variable"]]) == "Overall"] <- value_to_insert[1]
       }
-      return(original_output)
+      return(collapse_counts(original_output, count_by))
     }
   }
 }
