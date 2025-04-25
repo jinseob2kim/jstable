@@ -33,7 +33,6 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
   total_event_rate <- paste0(total_event_count, "/", total_count, " (", round(total_event_count / total_count * 100, decimal.percent), "%)")
   
   if (!is.null(count_by_var) && !is.null(var_subgroup)) {
-    # count_by_var와 var_subgroup이 모두 있을 때
     counts <- data %>%
       dplyr::filter(!is.na(!!rlang::sym(var_subgroup))) %>%
       dplyr::group_by(!!rlang::sym(count_by_var), !!rlang::sym(var_subgroup)) %>%
@@ -52,20 +51,17 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
       dplyr::bind_rows(overall_counts) %>%
       dplyr::arrange(!!rlang::sym(count_by_var), !!rlang::sym(var_subgroup))
   } else if (is.null(count_by_var) && !is.null(var_subgroup)) {
-    # var_subgroup만 있을 때
     counts <- data %>%
       dplyr::filter(!is.na(!!rlang::sym(var_subgroup))) %>%
       dplyr::group_by(!!rlang::sym(var_subgroup)) %>%
       dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
       dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
   } else if (!is.null(count_by_var) && is.null(var_subgroup)) {
-    # count_by_var만 있을 때
     counts <- data %>%
       dplyr::group_by(!!rlang::sym(count_by_var)) %>%
       dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
       dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
   } else {
-    # count_by_var와 var_subgroup이 NULL일 때는 전체 데이터만 Total로 계산
     counts <- tibble::tibble(
       Total = "Total",
       Count = total_count,
@@ -74,8 +70,7 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
     )
     return(counts)
   }
-  
-  # Total 행을 추가
+
   total_row <- tibble::tibble(
     Count = total_count,
     Event_Count = total_event_count,
@@ -96,8 +91,8 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
 #' @param count_by A string giving the name of the variable whose per-level
 #'   count columns should be collapsed. If NULL, df is returned unmodified.
 #' @return A data.frame identical to `f except that:
-#'   1. All Count(count_by=…) columns are removed.
-#'   2. A single column Count(by count_by) remains, containing the first
+#' All Count(count_by=…) columns are removed.
+#' A single column Count(by count_by) remains, containing the first
 #'      non-missing, non-empty value from the original per-level columns.
 #' @details
 #' This helper is intended for internal use by
@@ -110,7 +105,7 @@ count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NU
 collapse_counts <- function(df, count_by) {
   pattern <- paste0("^Count\\(", count_by, "=[^\\)]+\\)$")
   drop_cols <- grep(pattern, names(df), value = TRUE)
-  if (!length(drop_cols)) return(df)
+  if (length(drop_cols)<3) return(df)
   newcol <- paste0("Count(by ", count_by, ")")
   df[[newcol]] <- NA_character_
   key <- "Levels"
@@ -136,111 +131,162 @@ collapse_counts <- function(df, count_by) {
 
 
 
-
-#' @title count_event_by_glm: function to count event rates for GLM analysis
-#' @description Count event and subgroup numbers, supports automatic parsing of fixed-effect syntax (1|subgroup).
-#' @param formula formula with binary response (0/1) and optional fixed-effect `(1|subgroup)` term.
+#' @title count_event_by_glm: function to count event rates or summary metrics for GLM analysis
+#' @description Count event and subgroup summary, supports automatic parsing of fixed-effect syntax `(1|subgroup)` and multiple families.
+#' @param formula formula with response (0/1 or count or continuous) and optional fixed-effect `(1|subgroup)` term.
 #' @param data data.frame or survey.design
-#' @param count_by_var variable name to stratify counts by (string)
-#' @param var_subgroup subgroup variable name (string); automatically parsed from `(1|subgroup)` if not provided
-#' @param decimal.percent decimals for percent display, Default: 1
-#' @return tibble with Count, Event_Count, Event_Rate, and grouping columns
-#' @export
-#' @importFrom dplyr group_by summarise mutate arrange filter
+#' @param count_by_var variable name to stratify by (string), default NULL
+#' @param var_subgroup subgroup variable name (string); parsed from formula if not provided, default NULL
+#' @param decimal.percent decimals for percent or mean/sd, default 1
+#' @param family family type: "gaussian", "binomial", "poisson", or "quasipoisson"
+#' @return tibble with grouping columns and Metric column (rate or mean sd)
+#' @importFrom dplyr group_by summarise filter
 #' @importFrom rlang .data
-count_event_by_glm <- function(formula, data, count_by_var = NULL,
-                               var_subgroup = NULL, decimal.percent = 1) {
-  # handle survey designs
-  if (inherits(data, "survey.design")) data <- data$variables
-  # parse fixed-effect syntax (1|subgroup) in formula
-  ftxt <- deparse(formula)
-  if (is.null(var_subgroup)) {
-    m <- regexec("\\(1\\|([^\\)]+)\\)", ftxt)
-    vs <- regmatches(ftxt, m)[[1]]
-    if (length(vs) == 2) {
-      var_subgroup <- vs[2]
-      ftxt <- gsub("\\s*\\(1\\|[^\\)]+\\)", "", ftxt)
-      formula <- as.formula(ftxt)
+#' @importFrom stats sd
+#' @export
+count_event_by_glm <- function(
+    formula,
+    data,
+    count_by_var    = NULL,
+    var_subgroup    = NULL,
+    decimal.percent = 1,
+    family          = "binomial"
+) {
+  # raw data
+  df_raw <- if (inherits(data, "survey.design")) data$variables else data
+  
+  # determine needed variables (includes random-effect groups)
+  required_vars <- all.vars(formula)
+  if (!is.null(count_by_var))   required_vars <- c(required_vars, count_by_var)
+  if (!is.null(var_subgroup))   required_vars <- c(required_vars, var_subgroup)
+  
+  # subset to complete cases
+  df <- df_raw[stats::complete.cases(df_raw[, required_vars, drop = FALSE]), , drop = FALSE]
+  
+  # response name
+  response_col <- as.character(formula[[2]])
+  
+  # metric function by family
+  if (family == "binomial") {
+    metric_fn <- function(x) {
+      n <- length(x)
+      e <- sum(x == 1, na.rm = TRUE)
+      paste0(e, "/", n, " (", round(e / n * 100, decimal.percent), "%)")
     }
+  } else if (family == "gaussian") {
+    metric_fn <- function(x) {
+      n <- length(x)
+      m <- mean(x, na.rm = TRUE)
+      s <- sd(x, na.rm = TRUE)
+      paste0(n, " (", round(m, decimal.percent), " +- ", round(s, decimal.percent), ")")
+    }
+  } else if (family %in% c("poisson", "quasipoisson")) {
+    metric_fn <- function(x) {
+      n <- length(x)
+      m <- mean(x, na.rm = TRUE)
+      s <- sd(x, na.rm = TRUE)
+      paste0(n, " (", round(m, decimal.percent), " +- ", round(s, decimal.percent), ")")
+    }
+  } else {
+    stop("Unsupported family: ", family)
   }
-  event_col <- as.character(formula[[2]])
-  # total only
+  
+  # no stratification
   if (is.null(count_by_var) && is.null(var_subgroup)) {
-    total_n <- nrow(data)
-    total_e <- sum(data[[event_col]] == 1, na.rm = TRUE)
-    total_rate <- paste0(total_e, "/", total_n,
-                         " (", round(total_e/total_n*100,
-                                     decimal.percent), "%)")
     return(tibble::tibble(
-      Total = "Total",
-      Count = total_n,
-      Event_Count = total_e,
-      Event_Rate = total_rate
+      Total  = "Total",
+      Count  = nrow(df),
+      Metric = metric_fn(df[[response_col]])
     ))
   }
+  
   # both count_by and subgroup
   if (!is.null(count_by_var) && !is.null(var_subgroup)) {
-    df <- dplyr::filter(data, !is.na(.data[[var_subgroup]]))
-    base <- df %>%
+    # subgroup breakdown
+    res <- df %>%
+      dplyr::filter(!is.na(.data[[var_subgroup]])) %>%
       dplyr::group_by(.data[[count_by_var]], .data[[var_subgroup]]) %>%
       dplyr::summarise(
-        Count = dplyr::n(),
-        Event_Count = sum(.data[[event_col]] == 1, na.rm = TRUE),
+        Count  = dplyr::n(),
+        Metric = metric_fn(.data[[response_col]]),
         .groups = "drop"
       ) %>%
+      dplyr::ungroup() %>%
       dplyr::mutate(
-        Event_Rate = paste0(Event_Count, "/", Count,
-                            " (", round(Event_Count/Count*100,
-                                        decimal.percent), "%)")
+        !!count_by_var := as.character(.data[[count_by_var]]),
+        !!var_subgroup := as.character(.data[[var_subgroup]])
       )
+    # overall per count_by
     overall <- df %>%
       dplyr::group_by(.data[[count_by_var]]) %>%
       dplyr::summarise(
-        Count = dplyr::n(),
-        Event_Count = sum(.data[[event_col]] == 1, na.rm = TRUE),
+        Count  = dplyr::n(),
+        Metric = metric_fn(.data[[response_col]]),
         .groups = "drop"
       ) %>%
+      dplyr::ungroup() %>%
       dplyr::mutate(
-        Event_Rate = paste0(Event_Count, "/", Count,
-                            " (", round(Event_Count/Count*100,
-                                        decimal.percent), "%)"),
+        !!count_by_var := as.character(.data[[count_by_var]]),
         !!var_subgroup := "Overall"
       )
-    return(dplyr::bind_rows(base, overall) %>%
-             dplyr::arrange(.data[[count_by_var]], .data[[var_subgroup]]))
+    # total across all
+    total <- tibble::tibble(
+      !!count_by_var := NA_character_,
+      !!var_subgroup := NA_character_,
+      Count  = nrow(df),
+      Metric = metric_fn(df[[response_col]])
+    )
+    return(dplyr::bind_rows(res, overall, total))
   }
+  
   # only subgroup
   if (is.null(count_by_var) && !is.null(var_subgroup)) {
-    df <- dplyr::filter(data, !is.na(.data[[var_subgroup]]))
-    return(df %>%
-             dplyr::group_by(.data[[var_subgroup]]) %>%
-             dplyr::summarise(
-               Count = dplyr::n(),
-               Event_Count = sum(.data[[event_col]] == 1, na.rm = TRUE),
-               .groups = "drop"
-             ) %>%
-             dplyr::mutate(
-               Event_Rate = paste0(Event_Count, "/", Count,
-                                   " (", round(Event_Count/Count*100,
-                                               decimal.percent), "%)")
-             ))
+    res <- df %>%
+      dplyr::filter(!is.na(.data[[var_subgroup]])) %>%
+      dplyr::group_by(.data[[var_subgroup]]) %>%
+      dplyr::summarise(
+        Count  = dplyr::n(),
+        Metric = metric_fn(.data[[response_col]]),
+        .groups = "drop"
+      ) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(
+        !!var_subgroup := as.character(.data[[var_subgroup]])
+      )
+    # append total row
+    total <- tibble::tibble(
+      !!var_subgroup := "Total",
+      Count  = nrow(df),
+      Metric = metric_fn(df[[response_col]])
+    )
+    return(dplyr::bind_rows(res, total))
   }
+  
   # only count_by
   if (!is.null(count_by_var) && is.null(var_subgroup)) {
-    return(data %>%
-             dplyr::group_by(.data[[count_by_var]]) %>%
-             dplyr::summarise(
-               Count = dplyr::n(),
-               Event_Count = sum(.data[[event_col]] == 1, na.rm = TRUE),
-               .groups = "drop"
-             ) %>%
-             dplyr::mutate(
-               Event_Rate = paste0(Event_Count, "/", Count,
-                                   " (", round(Event_Count/Count*100,
-                                               decimal.percent), "%)")
-             ))
+    res <- df %>%
+      dplyr::group_by(.data[[count_by_var]]) %>%
+      dplyr::summarise(
+        Count  = dplyr::n(),
+        Metric = metric_fn(.data[[response_col]]),
+        .groups = "drop"
+      ) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(
+        !!count_by_var := as.character(.data[[count_by_var]])
+      )
+    # append total
+    total <- tibble::tibble(
+      !!count_by_var := "Total",
+      Count  = nrow(df),
+      Metric = metric_fn(df[[response_col]])
+    )
+    return(dplyr::bind_rows(res, total))
   }
 }
+
+
+
 
 
 

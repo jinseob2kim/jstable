@@ -13,7 +13,9 @@ TableSubgroupGLM(
   decimal.estimate = 2,
   decimal.percent = 1,
   decimal.pvalue = 3,
-  labeldata = NULL
+  labeldata = NULL,
+  count_by = NULL,
+  event = FALSE
 )
 }
 \arguments{
@@ -34,6 +36,10 @@ TableSubgroupGLM(
 \item{decimal.pvalue}{Decimal for pvalue, Default: 3}
 
 \item{labeldata}{Label info, made by `mk.lev` function, Default: NULL}
+
+\item{count_by}{Variable name to stratify counts by (string). Default: NULL.}
+
+\item{event}{If `TRUE`, show counts/metrics instead of only model estimates. Default: FALSE.}
 }
 \value{
 Sub-group analysis table.

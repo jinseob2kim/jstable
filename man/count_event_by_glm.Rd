@@ -2,30 +2,33 @@
 % Please edit documentation in R/utils.R
 \name{count_event_by_glm}
 \alias{count_event_by_glm}
-\title{count_event_by_glm: function to count event rates for GLM analysis}
+\title{count_event_by_glm: function to count event rates or summary metrics for GLM analysis}
 \usage{
 count_event_by_glm(
   formula,
   data,
   count_by_var = NULL,
   var_subgroup = NULL,
-  decimal.percent = 1
+  decimal.percent = 1,
+  family = "binomial"
 )
 }
 \arguments{
-\item{formula}{formula with binary response (0/1) and optional fixed-effect `(1|subgroup)` term.}
+\item{formula}{formula with response (0/1 or count or continuous) and optional fixed-effect `(1|subgroup)` term.}
 
 \item{data}{data.frame or survey.design}
 
-\item{count_by_var}{variable name to stratify counts by (string)}
+\item{count_by_var}{variable name to stratify by (string), default NULL}
 
-\item{var_subgroup}{subgroup variable name (string); automatically parsed from `(1|subgroup)` if not provided}
+\item{var_subgroup}{subgroup variable name (string); parsed from formula if not provided, default NULL}
 
-\item{decimal.percent}{decimals for percent display, Default: 1}
+\item{decimal.percent}{decimals for percent or mean/sd, default 1}
+
+\item{family}{family type: "gaussian", "binomial", "poisson", or "quasipoisson"}
 }
 \value{
-tibble with Count, Event_Count, Event_Rate, and grouping columns
+tibble with grouping columns and Metric column (rate or mean sd)
 }
 \description{
-Count event and subgroup numbers, supports automatic parsing of fixed-effect syntax (1|subgroup).
+Count event and subgroup summary, supports automatic parsing of fixed-effect syntax `(1|subgroup)` and multiple families.
 }

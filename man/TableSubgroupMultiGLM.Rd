@@ -14,7 +14,9 @@ TableSubgroupMultiGLM(
   decimal.percent = 1,
   decimal.pvalue = 3,
   line = F,
-  labeldata = NULL
+  labeldata = NULL,
+  count_by = NULL,
+  event = FALSE
 )
 }
 \arguments{
@@ -37,6 +39,10 @@ TableSubgroupMultiGLM(
 \item{line}{Include new-line between sub-group variables, Default: F}
 
 \item{labeldata}{Label info, made by `mk.lev` function, Default: NULL}
+
+\item{count_by}{Variable name to stratify counts by (string). Default: NULL.}
+
+\item{event}{If `TRUE`, show counts/metrics instead of only model estimates. Default: FALSE.}
 }
 \value{
 Multiple sub-group analysis table.

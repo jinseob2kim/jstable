@@ -14,8 +14,8 @@ count columns should be collapsed. If NULL, df is returned unmodified.}
 }
 \value{
 A data.frame identical to `f except that:
-  1. All Count(count_by=…) columns are removed.
-  2. A single column Count(by count_by) remains, containing the first
+All Count(count_by=…) columns are removed.
+A single column Count(by count_by) remains, containing the first
      non-missing, non-empty value from the original per-level columns.
 }
 \description{
