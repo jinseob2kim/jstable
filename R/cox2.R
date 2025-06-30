@@ -29,7 +29,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
   xc.vn <- NULL
   x.weight <- model$call$weight
   mtype <- "normal"
-  
+  x.id <- model$call$id
  
   
   if (length(grep("strata", xf)) > 0) {
@@ -98,10 +98,13 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
     names(mdata2)[1:countings] <- as.character(model$formula[[2]][2:(countings + 1)])
 
     if (!is.null(x.weight)) {
-      names(mdata2)[ncol(mdata2)] <- as.character(x.weight)
+      names(mdata2)[names(mdata2) == "(weights)"] <- as.character(x.weight)
     }
     if (!is.null(xc.vn)) {
       names(mdata2)[ncol(mdata2)] <- xc.vn
+    }
+    if (!is.null(x.id)){
+      names(mdata2)[names(mdata2)== "(id)"] <- as.character(x.id)
     }
 
     if (!is.null(msm)) {
