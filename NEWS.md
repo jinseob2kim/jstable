@@ -1,3 +1,6 @@
+# jstable 1.3.13
+* Fix: error in handling `id` and `weight` columns from input data in the Cox module.
+
 # jstable 1.3.12
 * Update: Add count_by and event variable to TableSubgroupGLM, TableSubgroupMultiGLM 
 * Update: Collapse columns when there are more than 3 levels in TalbeSubgroupCox, TableSubgroupMultiCox
