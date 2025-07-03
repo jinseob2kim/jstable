@@ -13,3 +13,4 @@
 ^CRAN-SUBMISSION$
 ^doc$
 ^Meta$
+^pkgdown$
