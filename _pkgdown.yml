@@ -1,22 +1,20 @@
 URL: https://jinseob2kim.github.io/jstable, https://github.com/jinseob2kim/jstable
-
 development:
   mode: auto
-  
-  
 authors:
   Jinseob Kim:
     href: https://github.com/jinseob2kim
   Zarathu:
     href: https://www.zarathu.com
-    html: <img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png" height="24" />
-
-
+    html: <img src="https://raw.githubusercontent.com/zarathucorp/zarathu/master/Color%20logo%20-%20no%20background.png"
+      height="24" />
 template:
   bootstrap: 5
+  light-switch: yes
+  bslib:
+    navbar-bg: '#19490A'
   params:
     docsearch:
       api_key: f6ab1678f68371b7775614662cffcb9d
       index_name: jstable
-
 
