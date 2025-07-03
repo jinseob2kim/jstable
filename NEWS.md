@@ -1,3 +1,7 @@
+# jstable 1.3.14
+* Fix: error in `cox2.display` when all status 0
+* Update: Add testcode of `cox2.display` when all status 0 (isList, column&row name diff check)
+
 # jstable 1.3.13
 * Fix: error in handling `id` and `weight` columns from input data in the Cox module.
 

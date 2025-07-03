@@ -30,7 +30,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
   x.weight <- model$call$weight
   mtype <- "normal"
   x.id <- model$call$id
- 
+  
   
   if (length(grep("strata", xf)) > 0) {
     xf <- xf[-grep("strata", xf)]
@@ -50,6 +50,73 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
     # xc.vn <- strsplit(strsplit(xc, "cluster\\(")[[1]][2], "\\)")[[1]][1]
   }
 
+# handle no event case
+if (model$nevent == 0) {
+    # metrics
+    no.obs <- model$n
+    no.event <- model$nevent
+    aic <- NA # no event
+    c_index <- "NA (NA)" # no event
+
+    # vars
+    var_names <- xf  # variable names
+    if (length(var_names) == 0) var_names <- "No variables"
+    if (length(var_names) == 1) {
+      col_names <- c("HR(95%CI)", "P value")
+    } else {
+      col_names <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
+    }
+    fix.all.unlist <- matrix(NA, nrow = length(var_names), ncol = length(col_names), 
+                             dimnames = list(var_names, col_names))
+
+    # metric table
+    metric.mat <- cbind(c(NA, no.obs, no.event, aic, c_index), matrix(NA, 5, max(1, ncol(fix.all.unlist) - 1)))
+    rownames(metric.mat) <- c(NA, "No. of observations", "No. of events", "AIC", "C-Index")
+
+    # caption
+    surv.string <- as.character(attr(model$terms, "variables")[[2]])
+    time.var.name <- paste(sapply(2:(length(surv.string) - 1), function(i) paste(surv.string[i])), collapse = ", ")
+    status.var.name <- surv.string[length(surv.string)]
+    intro <- paste("Cox model on time ('", time.var.name, "') to event ('", status.var.name, "')", sep = "")
+
+    # type info
+    cvname_for_caption <- if (is.null(xc.vn)) "N/A" else xc.vn
+    if (mtype == "cluster") {
+      intro <- paste("Marginal", intro, "- Group", cvname_for_caption)
+    } else if (mtype == "frailty") {
+      intro <- paste("Frailty", intro, "- Group", cvname_for_caption)
+    }
+
+    # fixed effect
+    var_names <- xf
+    if (length(var_names) == 0) var_names <- "No variables"
+    if (length(var_names) == 1) {
+      col_names <- c("HR(95%CI)", "P value")
+    } else {
+      col_names <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
+    }
+    fix.all.unlist <- matrix(NA, nrow = length(var_names), ncol = length(col_names), 
+                             dimnames = list(var_names, col_names))
+
+    # random effect
+    ranef.mat <- NULL
+    if (mtype == "cluster" || mtype == "frailty") {
+      ranef.mat <- cbind(c(NA, NA), matrix(NA, 2, max(1, ncol(fix.all.unlist) - 1)))
+      if (mtype == "cluster") {
+        rownames(ranef.mat) <- c("cluster", xc.vn)
+      } else { # frailty
+        rownames(ranef.mat) <- c("frailty", xc.vn)
+      }
+    }
+
+    # return
+    if (is.null(ranef.mat)) {
+      return(list(table = fix.all.unlist, metric = metric.mat, caption = intro))
+    } else {
+      return(list(table = fix.all.unlist, ranef = ranef.mat, metric = metric.mat, caption = intro))
+    }
+  }
+  
   formula.surv <- as.character(model$formula)[2]
   formula.ranef <- paste(" + ", xc, sep = "")
   mdata <- model$model
@@ -66,7 +133,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
   # } else{
   #  mdata = data.frame(data)
   # }
-
+  
   if (length(xf) == 1) {
     uni.res <- data.frame(summary(model)$coefficients)
     # uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
@@ -85,7 +152,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
     }
     fix.all <- coxExp(uni.res2, dec = dec)
     colnames(fix.all) <- c("HR(95%CI)", "P value")
-
+    
     if (mtype == "frailty") {
       # rownames(fix.all) <- c(names(model$coefficients), "frailty")
       rownames(fix.all) <- names(model$coefficients)
@@ -96,7 +163,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
     countings <- length(unlist(attr(mdata[[1]], "dimnames")[2]))
     mdata2 <- cbind(matrix(sapply(mdata[, 1], `[[`, 1), ncol = countings), mdata[, -1])
     names(mdata2)[1:countings] <- as.character(model$formula[[2]][2:(countings + 1)])
-
+    
     if (!is.null(x.weight)) {
       names(mdata2)[names(mdata2) == "(weights)"] <- as.character(x.weight)
     }
@@ -106,7 +173,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
     if (!is.null(x.id)){
       names(mdata2)[names(mdata2)== "(id)"] <- as.character(x.id)
     }
-
+    
     if (!is.null(msm)) {
       baseformula <- stats::formula(paste(c(". ~ .", xf), collapse = " - "))
       unis <- lapply(xf, function(x) {
@@ -203,7 +270,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
       rownames(fix.all) <- rownames(uni.res)
     } else {
       basemodel <- update(model, stats::formula(paste(c(". ~ .", xf), collapse = " - ")), data = mdata2)
-
+      
       unis <- lapply(xf, function(x) {
         newfit <- update(basemodel, stats::formula(paste0(". ~ . +", x)), data = mdata2)
         uni.res <- data.frame(summary(newfit)$coefficients)
@@ -218,7 +285,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
         # if ("robust.se" %in% names(uni.res)) {
         #   uni.res$robust.se <- NULL
         # }
-
+        
         uni.res2 <- NULL
         if (mtype == "normal") {
           uni.res2 <- uni.res[, c(1, 3, 4, 5)]
@@ -311,7 +378,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
     fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])
   })
   fix.all.unlist <- Reduce(rbind, fix.all.list)
-
+  
   rn.list <- lapply(1:length(xf), function(x) {
     rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]
   })
@@ -325,7 +392,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
     if (grepl(":", xf[x])) {
       a <- unlist(strsplit(xf[x], ":"))[1]
       b <- unlist(strsplit(xf[x], ":"))[2]
-
+      
       if (a %in% xf && b %in% xf) {
         ref <- paste0(a, levels(mdata[, a])[1], ":", b, levels(mdata[, b])[1])
         rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
@@ -342,13 +409,13 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
   if (is.null(msm)) {
     rownames(fix.all.unlist) <- unlist(rn.list)
   }
-
+  
   pv.colnum <- which(colnames(fix.all.unlist) %in% c("P value", "crude P value", "adj. P value"))
   for (i in pv.colnum) {
     fix.all.unlist[, i] <- ifelse(as.numeric(fix.all.unlist[, i]) < 0.001, "< 0.001", round(as.numeric(fix.all.unlist[, i]), dec + 1))
   }
-
-
+  
+  
   ## random effect
   # ranef = unlist(model$vcoef)
   # ranef.out = round(ranef, dec)
@@ -367,8 +434,8 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
     cvname <- paste(cvname[length(cvname)], collapse = ")")
     rownames(ranef.mat) <- c(clname[1], cvname)
   }
-
-
+  
+  
   ## metric
   # no.grp = unlist(lapply(model$frail, length))
   no.obs <- model$n
@@ -380,11 +447,11 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
   c_index <- paste0(concordance_value, "(", std_value, ")")
   metric.mat <- cbind(c(NA, no.obs, no.event, aic, c_index), matrix(NA, 5, ncol(fix.all) - 1))
   rownames(metric.mat) <- c(NA, "No. of observations", "No. of events", "AIC", "C-Index")
-
+  
   ## Integrated ll
   # ll = model$loglik[2]
   # aic = -2 * ll -2*model$df[1]
-
+  
   ## caption
   surv.string <- as.character(attr(model$terms, "variables")[[2]])
   time.var.name <- paste(sapply(2:(length(surv.string) - 1), function(i) paste(surv.string[i])), collapse = ", ")
@@ -400,12 +467,12 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
     intro[2] <- paste("states", states)
   }
   states <- model$states
-
+  
   var.names0 <- attr(model$terms, "term.labels")
   if (length(grep("strata", var.names0)) > 0) {
     intro <- paste(intro, " with '", var.names0[grep("strata", var.names0)], "'", sep = "")
   }
-
+  
   if (is.null(ranef.mat)) {
     return(list(table = fix.all.unlist, metric = metric.mat, caption = intro))
   } else {
