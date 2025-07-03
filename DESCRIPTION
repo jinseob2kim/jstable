@@ -9,7 +9,7 @@ Authors@R: c(person("Jinseob", "Kim", email = "jinseob2kim@gmail.com", role = c(
              person("Hyojong", "Myung", role = c("aut")),
              person("Hyungwoo", "Jo", role = c("aut")),
              person("Sungho", "Choi", role = c("aut")),
-             person("Jaewoong", "Heo", role = c("aut")),
+             person("Jaewoong", "Heo", role = c("aut"))
              )
 Description: Create regression tables from generalized linear model(GLM), generalized estimating equation(GEE), generalized linear mixed-effects model(GLMM), Cox proportional hazards model, survey-weighted generalized linear model(svyglm) and survey-weighted Cox model results for publication.
 Depends: R (>= 3.4.0)
