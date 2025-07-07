@@ -13,13 +13,50 @@ test_that("Run glmshow.display", {
 test_that("Run cox2.display", {
   library(survival)
   # data(lung)
+  fit00 <- coxph(Surv(time, status) ~ ph.ecog, data = lung, model = TRUE)
   fit0 <- coxph(Surv(time, status) ~ ph.ecog + age, data = lung, model = TRUE)
   fit1 <- coxph(Surv(time, status) ~ ph.ecog + age + cluster(inst), data = lung, model = TRUE)
   fit2 <- coxph(Surv(time, status) ~ ph.ecog + age + frailty(inst), data = lung, model = TRUE)
 
+  # all status 0 case
+  lung.all0 <- lung
+  lung.all0$status <- 0
+  fit00.all0 <- coxph(Surv(time, status) ~ ph.ecog, data = lung.all0, model = TRUE)
+  fit0.all0 <- coxph(Surv(time, status) ~ ph.ecog + age, data = lung.all0, model = TRUE)
+  fit1.all0 <- coxph(Surv(time, status) ~ ph.ecog + age + cluster(inst), data = lung.all0, model = TRUE)
+  fit2.all0 <- coxph(Surv(time, status) ~ ph.ecog + age + frailty(inst), data = lung.all0, model = TRUE)
+
   expect_is(cox2.display(fit0), "list")
   expect_is(cox2.display(fit1), "list")
   expect_is(cox2.display(fit2), "list")
+  expect_is(cox2.display(fit0.all0), "list")
+  expect_is(cox2.display(fit1.all0), "list")
+  expect_is(cox2.display(fit2.all0), "list")
+
+  # table structure test
+  res00 <- cox2.display(fit00)
+  res00.all0 <- cox2.display(fit00.all0)
+  expect_equal(dim(res00$table), dim(res00.all0$table))
+  expect_equal(rownames(res00$table), rownames(res00.all0$table))
+  expect_equal(colnames(res00$table), colnames(res00.all0$table))
+
+  res0 <- cox2.display(fit0)
+  res0.all0 <- cox2.display(fit0.all0)
+  expect_equal(dim(res0$table), dim(res0.all0$table))
+  expect_equal(rownames(res0$table), rownames(res0.all0$table))
+  expect_equal(colnames(res0$table), colnames(res0.all0$table))
+
+  res1 <- cox2.display(fit1)
+  res1.all0 <- cox2.display(fit1.all0)
+  expect_equal(dim(res1$table), dim(res1.all0$table))
+  expect_equal(rownames(res1$table), rownames(res1.all0$table))
+  expect_equal(colnames(res1$table), colnames(res1.all0$table))
+
+  res2 <- cox2.display(fit2)
+  res2.all0 <- cox2.display(fit2.all0)
+  expect_equal(dim(res2$table), dim(res2.all0$table))
+  expect_equal(rownames(res2$table), rownames(res2.all0$table))
+  expect_equal(colnames(res2$table), colnames(res2.all0$table))
 })
 
 
