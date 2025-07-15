@@ -1,11 +1,11 @@
-pandoc: '3.4'
-pkgdown: 2.1.3
+pandoc: '3.3'
+pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
-  jstable: jstable.html
   jstable_competing_risk_analysis: jstable_competing_risk_analysis.html
   jstable_options: jstable_options.html
-last_built: 2025-07-03T02:59Z
+  jstable: jstable.html
+last_built: 2025-07-15T06:35Z
 urls:
-  reference: https://hbgyeom1.github.io/jstable/reference
-  article: https://hbgyeom1.github.io/jstable/articles
+  reference: https://jinseob2kim.github.io/jstable/reference
+  article: https://jinseob2kim.github.io/jstable/articles
