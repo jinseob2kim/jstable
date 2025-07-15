@@ -1,8 +1,11 @@
-pandoc: 3.1.11
-pkgdown: 1.4.1.9000
-pkgdown_sha: 732fb5b9ccc0ef87a73dfd0772ae661a4039b2a8
+pandoc: '3.3'
+pkgdown: 2.1.0
+pkgdown_sha: ~
 articles:
-  jstable: jstable.html
   jstable_competing_risk_analysis: jstable_competing_risk_analysis.html
   jstable_options: jstable_options.html
-
+  jstable: jstable.html
+last_built: 2025-07-15T06:37Z
+urls:
+  reference: https://jinseob2kim.github.io/jstable/reference
+  article: https://jinseob2kim.github.io/jstable/articles
