@@ -90,7 +90,7 @@ geeExp <- function(gee.coef, family = "binomial", dec) {
 #' @importFrom data.table data.table
 #' @importFrom stats complete.cases update formula
 
-geeglm.display <- function(geeglm.obj, decimal = 2, pcut.univariate=NULL) {
+geeglm.display <- function(geeglm.obj, decimal = 2, pcut.univariate=NULL, data_for_univariate = NULL) {
   family.gee <- geeglm.obj$family[[1]]
   corstr.gee <- geeglm.obj$corstr
   y <- as.character(geeglm.obj$terms[[2]])
@@ -104,13 +104,35 @@ geeglm.display <- function(geeglm.obj, decimal = 2, pcut.univariate=NULL) {
   ## rownames
   geeglm.obj$data <- data.table::data.table(geeglm.obj$data)
   # nomiss <- stats::complete.cases(geeglm.obj$data[, c(y, xs), with = F])
-  basemodel <- stats::update(geeglm.obj, stats::formula(paste(c(". ~ .", xs), collapse = " - ")), data = geeglm.obj$data)
+  # basemodel <- stats::update(geeglm.obj, stats::formula(paste(c(". ~ .", xs), collapse = " - ")), data = geeglm.obj$data)
   # gee.uni.list <- lapply(xs, function(x){geeUni(y, x, data = geeglm.obj$data[nomiss, ], id.vec = geeglm.obj$id, family = family.gee, cor.type = corstr.gee)})
-  gee.uni.list <- lapply(xs, function(x) {
-    summary(stats::update(basemodel, stats::formula(paste0(". ~ . +", x)), data = geeglm.obj$data))$coefficients[-1, -3]
-  })
-  rn.uni <- lapply(gee.uni.list, rownames)
-  gee.uni <- Reduce(rbind, gee.uni.list)
+  if (is.null(data_for_univariate)) {
+    basemodel <- stats::update(geeglm.obj, stats::formula(paste(c(". ~ .", xs), collapse = " - ")), data = geeglm.obj$data)
+    # gee.uni.list <- lapply(xs, function(x){geeUni(y, x, data = geeglm.obj$data[nomiss, ], id.vec = geeglm.obj$id, family = family.gee, cor.type = corstr.gee)})
+    gee.uni.list <- lapply(xs, function(x) {
+      summary(stats::update(basemodel, stats::formula(paste0(". ~ . +", x)), data = geeglm.obj$data))$coefficients[-1, -3]
+    })
+    rn.uni <- lapply(gee.uni.list, rownames)
+    gee.uni <- Reduce(rbind, gee.uni.list)
+  }
+    else {
+      gee.uni.list <- lapply(xs, function(x) {
+        idx <- complete.cases(data_for_univariate[, c(y, x), drop = FALSE])
+        df_uni <- data_for_univariate[idx, ]
+        id_var <- all.vars(geeglm.obj$call$id)[1]
+        id_uni <- df_uni[[id_var]]
+        fit_uni <- geepack::geeglm(
+          as.formula(paste(y, "~", x)),
+          data   = df_uni,
+          id     = id_uni,
+          family = family.gee,
+          corstr = corstr.gee
+        )
+        summary(fit_uni)$coefficients[-1, -3]
+      })
+      rn.uni <- lapply(gee.uni.list, rownames)
+      gee.uni <- Reduce(rbind, gee.uni.list)
+    }
 
   if (length(xs) == 1) {
     gee.res <- geeExp(gee.uni, family = family.gee, dec = decimal)

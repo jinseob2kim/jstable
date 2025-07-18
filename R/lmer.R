@@ -52,10 +52,10 @@ lmerExp <- function(lmer.coef, family = "binomial", dec) {
 #' @importFrom lme4 lmer glmer confint.merMod
 #' @importFrom stats update formula
 
-lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = NULL) {
+lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = NULL, data_for_univariate = NULL) {
   sl <- summary(lmerMod.obj)
   fixef <- sl$coefficients[-1, ]
-
+  
   mdata <- lmerMod.obj@frame
   forms <- as.character(sl$call[[2]])
   y <- forms[2]
@@ -66,13 +66,33 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
   uni.res <- ""
   
   categorical_vars <- xf[sapply(mdata[xf], is.factor)]
-  
-  basemodel <- update(lmerMod.obj, stats::formula(paste(c(". ~ .", xf), collapse = " - ")), data = mdata)
-  unis <- lapply(xf, function(x) {
-    summary(stats::update(basemodel, stats::formula(paste0(". ~ . +", x)), data = mdata))$coefficients
-  })
-  unis2 <- Reduce(rbind, unis)
-  # uni.res <- unis2[rownames(unis2) != "(Intercept)", ]
+  if (is.null(data_for_univariate)) {
+    basemodel <- update(lmerMod.obj, stats::formula(paste(c(". ~ .", xf), collapse = " - ")), data = mdata)
+    unis <- lapply(xf, function(x) {
+      summary(stats::update(basemodel, stats::formula(paste0(". ~ . +", x)), data = mdata))$coefficients
+    })
+    names(unis) <- xf  
+    # uni.res <- unis2[rownames(unis2) != "(Intercept)", ]
+    unis2 <- Reduce(rbind, unis)
+    }
+    else {
+      random_part <- if (length(xr) > 0) paste(xr, collapse = "+") else ""
+      unis <- lapply(xf, function(v) {
+        keep <- complete.cases(data_for_univariate[, c(y ,v), drop = FALSE]) 
+        if (!any(keep)) {
+          coef_ncol <- ncol(fixef)  
+          return(matrix(nrow = 0, ncol = coef_ncol))
+        } 
+        terms <- if (length(xr) > 0) c(v, xr) else xvar
+        f_uni <- reformulate(termlabels = terms, response = y)
+        uni_mod <- update(lmerMod.obj, f_uni, data = data_for_univariate[keep, , drop = FALSE])
+        
+        summary(uni_mod)$coefficients
+      })
+      unis <- Filter(function(x) is.matrix(x) && nrow(x) >0, unis)
+      names(unis) <- xf
+      unis2 <- Reduce(rbind, unis)
+    }
   adj.res <- sl$coefficients
   adj.res <- adj.res[rownames(adj.res) != "(Intercept)", , drop = FALSE]
   uni.res <- matrix(nrow = dim(adj.res)[1], ncol = dim(adj.res)[2])
@@ -80,10 +100,11 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
   colnames(uni.res) <- colnames(adj.res)
   for (i in 1:nrow(adj.res)) {
     try(uni.res[rownames(adj.res)[i], ] <- unis2[rownames(adj.res)[i], ],
-      silent = TRUE
-    )
+        silent = TRUE)
   }
-
+  
+  
+  
   if (length(xf) == 1) {
     fix.all <- lmerExp(uni.res, family = family.lmer, dec = dec)
     family.label <- colnames(fix.all)[1]
@@ -124,7 +145,7 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
           }
         }
       }
-     
+      
       if (length(significant_vars) == 0 ){
         
         mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = 2)
@@ -134,9 +155,9 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
         rownames(fix.all) <- rownames(sl$coefficients)[-1]
         
         
-    
+        
       }else{
-       
+        
         selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + "),"+", paste(xr,collapse = "+")))
         selected_model <- lme4 :: lmer(selected_formula, data = mdata) 
         selected_summary <- summary(selected_model)
@@ -166,29 +187,30 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
     
     
   }
-
+  
   ranef <- data.frame(sl$varcor)[, c(1, 4)]
   ranef.out <- cbind(as.character(round(ranef[, 2], dec)), matrix(NA, nrow(ranef), ncol(fix.all) - 1))
   rownames(ranef.out) <- ranef[, 1]
   if (ci.ranef) {
-    ranef.ci <- confint.merMod(lmerMod.obj, parm = 1:nrow(ranef), oldNames = F)^2
+    n_theta <- length(lme4::getME(lmerMod.obj, "theta"))
+    ranef.ci <- confint.merMod(lmerMod.obj, parm = seq_len(n_theta), oldNames = F)^2
     ranef.paste <- paste(round(ranef$vcov, dec), " (", round(ranef.ci[, 1], dec), ",", round(ranef.ci[, 2], dec), ")", sep = "")
     ranef.out <- cbind(ranef.paste, matrix(NA, nrow(ranef), 3))
     rownames(ranef.out) <- ranef[, 1]
   }
-
+  
   ranef.na <- rbind(rep(NA, ncol(fix.all)), ranef.out)
   rownames(ranef.na)[1] <- "Random effects"
   colnames(ranef.na) <- colnames(fix.all)
-
-
+  
+  
   ## rownames
   rn.uni <- lapply(unis, rownames)
   fix.all.list <- lapply(1:length(xf), function(x) {
     if (grepl(":", xf[x])) {
       a <- unlist(strsplit(xf[x], ":"))[1]
       b <- unlist(strsplit(xf[x], ":"))[2]
-
+      
       fix.all[grepl(a, rownames(fix.all)) & grepl(b, rownames(fix.all)), ]
     } else {
       fix.all[rownames(fix.all) %in% rn.uni[[x]], ]
@@ -200,12 +222,12 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
     fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])
   })
   fix.all.unlist <- Reduce(rbind, fix.all.list)
-
+  
   rn.list <- lapply(1:length(xf), function(x) {
     if (grepl(":", xf[x])) {
       a <- unlist(strsplit(xf[x], ":"))[1]
       b <- unlist(strsplit(xf[x], ":"))[2]
-
+      
       rownames(fix.all)[grepl(a, rownames(fix.all)) & grepl(b, rownames(fix.all))]
     } else {
       rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]
@@ -222,7 +244,7 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
     if (grepl(":", xf[x])) {
       a <- unlist(strsplit(xf[x], ":"))[1]
       b <- unlist(strsplit(xf[x], ":"))[2]
-
+      
       if (a %in% xf && b %in% xf) {
         ref <- paste0(a, levels(mdata[, a])[1], ":", b, levels(mdata[, b])[1])
         rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
@@ -239,8 +261,8 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
   }
   rownames(fix.all.unlist) <- unlist(rn.list)
   tb.df <- as.data.frame(rbind(fix.all.unlist, ranef.na))
-
-
+  
+  
   ## metric
   no.grp <- sl$ngrps
   no.obs <- nrow(mdata)
@@ -255,7 +277,7 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
   lapply(seq(2, ncol(fix.all), by = 2), function(x) {
     tb.lmerMod[, x] <<- as.numeric(as.vector(tb.lmerMod[, x]))
   })
-
+  
   ## caption
   cap.lmerMod <- paste(sl$methTitle, " : ", y, " ~ ", forms[3], sep = "")
   return(list(table = tb.lmerMod, caption = cap.lmerMod))

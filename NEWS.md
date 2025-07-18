@@ -1,3 +1,6 @@
+# jstable 1.3.15
+* Update: Add `data_for_univariate` in `cox2.display`, `geeglm.display`, `lmer.display`, crude p-values in univariate tables are now computed directly from the raw data passed via `data_for_univariate`.
+
 # jstable 1.3.14
 * Fix: error in `cox2.display` when all status 0
 * Update: Add testcode of `cox2.display` when all status 0 (isList, column&row name diff check)
