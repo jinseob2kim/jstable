@@ -55,21 +55,21 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
                             showAllLevels = T, printToggle = F, quote = F, smd = F, Labels = F, exact = NULL, nonnormal = NULL,
                             catDigits = 1, contDigits = 2, pDigits = 3, labeldata = NULL, minMax = F, showpm = T, addOverall = F, pairwise = F, pairwise.showtest = F) {
   setkey <- variable <- level <- . <- val_label <- NULL
-
+  
   if (length(strata) != 1) {
     stop("Please select only 1 strata")
   }
-
+  
   vars.ex <- names(which(sapply(vars, function(x) {
     !(class(data[[x]]) %in% c("integer", "numeric", "factor", "character"))
   })))
-
+  
   if (length(vars.ex) > 0) {
     warning("Variables other than numeric or factor types are excluded.")
     vars <- setdiff(vars, vars.ex)
   }
-
-
+  
+  
   res <- tableone::CreateTableOne(
     vars = vars, strata = strata, data = data, factorVars = factorVars, includeNA = includeNA, test = test,
     testApprox = testApprox, argsApprox = argsApprox,
@@ -77,10 +77,10 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
     testNormal = testNormal, argsNormal = argsNormal,
     testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd, addOverall = addOverall
   )
-
+  
   # factor_vars <- vars[sapply(vars, function(x){class(data[[x]]) %in% c("factor", "character")})]
   factor_vars <- res[["MetaData"]][["varFactors"]]
-
+  
   if (Labels & !is.null(labeldata)) {
     labelled::var_label(data) <- sapply(names(data), function(v) {
       as.character(labeldata[get("variable") == v, "var_label"][1])
@@ -94,41 +94,41 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
         res0$CatTable[[i]][[j]]$level <- labeldata[.(j, lvs), val_label]
       }
     }
-
+    
     ptb1.res0 <- print(res0,
-      showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
-      catDigits = catDigits, contDigits = contDigits, minMax = minMax
+                       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
+                       catDigits = catDigits, contDigits = contDigits, minMax = minMax
     )
     ptb1.rn <- rownames(ptb1.res0)
     ptb1.rn <- gsub("(mean (SD))", "", ptb1.rn, fixed = T)
   }
-
+  
   vars.fisher <- sapply(factor_vars, function(x) {
     is(tryCatch(chisq.test(table(data[[strata]], data[[x]])), error = function(e) e, warning = function(w) w), "warning")
   })
   vars.fisher <- factor_vars[unlist(vars.fisher)]
-
+  
   if (is.null(exact) & length(vars.fisher) > 0) {
     exact <- vars.fisher
   }
-
+  
   ptb1 <- print(res,
-    showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal, exact = exact,
-    catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax
+                showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal, exact = exact,
+                catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax
   )
   if (showpm) {
     ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
     ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
   }
-
+  
   rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed = T)
   if (Labels & !is.null(labeldata)) {
     rownames(ptb1) <- ptb1.rn
     if (showAllLevels == T) ptb1[, 1] <- ptb1.res0[, 1]
   }
-
+  
   # cap.tb1 = paste("Table 1: Stratified by ", strata, sep="")
-
+  
   if (Labels & !is.null(labeldata)) {
     colname.group_var <- unlist(labeldata[.(strata, names(res$CatTable)), val_label])
     if (is.na(colname.group_var[1]) & addOverall) {
@@ -143,7 +143,7 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
     # ptb1[,1] = vals.tb1
     # cap.tb1 = paste("Table 1: Stratified by ", labeldata[variable == strata, "var_label"][1], sep="")
   }
-
+  
   # Pairwise option
   if (pairwise && length(unique(data[[strata]])) > 2) {
     unique_strata <- sort(unique(stats::na.omit(data[[strata]])))
@@ -316,7 +316,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
   #  vals.tb1 = c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
   # }
   data <- data
-
+  
   # 모든 변수에 대해 shapiro test 수행
   if (normalityTest == T) {
     if (nrow(data) >= 5000) {
@@ -337,7 +337,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       })]
     }
   }
-
+  
   if (is.null(strata)) {
     if (Labels & !is.null(labeldata)) {
       labelled::var_label(data) <- sapply(names(data), function(v) {
@@ -345,7 +345,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       }, simplify = F)
       data.table::setkey(labeldata, variable, level)
     }
-
+    
     res <- tableone::CreateTableOne(
       vars = vars, data = data, factorVars = factorVars, includeNA = includeNA, test = test,
       testApprox = testApprox, argsApprox = argsApprox,
@@ -353,9 +353,9 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       testNormal = testNormal, argsNormal = argsNormal,
       testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd
     )
-
+    
     factor_vars <- res[["MetaData"]][["varFactors"]]
-
+    
     if (Labels & !is.null(labeldata)) {
       for (i in seq_along(res$CatTable)) {
         for (j in factor_vars) {
@@ -365,17 +365,17 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       }
       # vals.tb1 <- c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
     }
-
+    
     ptb1 <- print(res,
-      showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax
+                  showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
+                  catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax
     )
-
+    
     if (showpm) {
       ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
       ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
     }
-
+    
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed = T)
     cap.tb1 <- "Total"
     # if (Labels & !is.null(labeldata)){
@@ -392,9 +392,9 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal, exact = exact,
       catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = showpm, addOverall = addOverall, pairwise = pairwise, pairwise.showtest = pairwise.showtest
     )
-
+    
     cap.tb1 <- paste("Stratified by ", strata, sep = "")
-
+    
     if (Labels & !is.null(labeldata)) {
       cap.tb1 <- paste("Stratified by ", labeldata[get("variable") == strata, "var_label"][1], sep = "")
       # ptb1[,1] = vals.tb1
@@ -403,16 +403,39 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
   } else if (psub == T) {
     # data.strata <-  lapply(levels(data[[strata]]), function(x){data[data[[strata]] == x, ]})
     data.strata <- split(data, data[[strata]])
-    ptb1.list <- lapply(data.strata, CreateTableOne2,
-      vars = vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test,
-      testApprox = testApprox, argsApprox = argsApprox,
-      testExact = testExact, argsExact = argsExact,
-      testNormal = testNormal, argsNormal = argsNormal,
-      testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
-      showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal, exact = exact,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = T, addOverall = F
-    )
-
+    if (Labels & !is.null(labeldata)) {
+      data.table::setkey(labeldata, variable, level)
+    }
+    ptb1.list <- lapply(names(data.strata), function(s1_level) {
+      tbl <- CreateTableOne2(
+        vars = vars, strata = strata2, data = data.strata[[s1_level]], factorVars = factorVars, includeNA = includeNA, test = test,
+        testApprox = testApprox, argsApprox = argsApprox,
+        testExact = testExact, argsExact = argsExact,
+        testNormal = testNormal, argsNormal = argsNormal,
+        testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
+        showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal, exact = exact,
+        catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = T, addOverall = F
+      )
+      s2_levels_in_cols <- colnames(tbl)[colnames(tbl) %in% levels(as.factor(data[[strata2]]))]
+      if (Labels & !is.null(labeldata)) {
+        s1_label <- labeldata[.(strata, s1_level), val_label]
+        if (length(s1_label) == 0 || is.na(s1_label)) {
+          s1_label <- s1_level
+        }
+        new_names <- sapply(s2_levels_in_cols, function(s2_level) {
+          s2_label <- labeldata[.(strata2, s2_level), val_label]
+          if (length(s2_label) == 0 || is.na(s2_label)) {
+            s2_label <- s2_level
+          }
+          paste(s1_label, s2_label, sep = ":")
+        })
+      } else {
+        new_names <- paste(s1_level, s2_levels_in_cols, sep = ":")
+      }
+      colnames(tbl)[colnames(tbl) %in% s2_levels_in_cols] <- new_names
+      return(tbl)
+    })
+    
     if (showAllLevels == T) {
       ptb1.cbind <- Reduce(cbind, c(list(ptb1.list[[1]]), lapply(2:length(ptb1.list), function(x) {
         ptb1.list[[x]][, -1]
@@ -420,18 +443,18 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
     } else {
       ptb1.cbind <- Reduce(cbind, ptb1.list)
     }
-
-
+    
+    
     # colnum.test = which(colnames(ptb1.cbind) == "test")
     # ptb1.2group = ptb1.cbind[, c(setdiff(1:ncol(ptb1.cbind), colnum.test), colnum.test[1])]
-    cap.tb1 <- paste("Stratified by ", strata, "(", paste(levels(data[[strata]]), collapse = ", "), ") & ", strata2, sep = "")
+    cap.tb1 <- paste("Stratified by ", strata, " and ", strata2, sep = "")
     if (Labels & !is.null(labeldata)) {
       labelled::var_label(data.strata[[1]]) <- sapply(names(data.strata[[1]]), function(v) {
         as.character(labeldata[get("variable") == v, "var_label"][1])
       }, simplify = F)
       # vals.tb1 <- c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
-      data.table::setkey(labeldata, variable, level)
-
+      # data.table::setkey(labeldata, variable, level)
+      
       res <- tableone::CreateTableOne(vars = vars, data = data.strata[[1]], factorVars = factorVars, includeNA = includeNA)
       factor_vars <- res[["MetaData"]][["varFactors"]]
       for (i in seq_along(res$CatTable)) {
@@ -440,20 +463,26 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
           res$CatTable[[i]][[j]]$level <- labeldata[.(j, lvs), val_label]
         }
       }
-
+      
       ptb1.res <- print(res,
-        showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
-        catDigits = catDigits, contDigits = contDigits, minMax = minMax
+                        showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
+                        catDigits = catDigits, contDigits = contDigits, minMax = minMax
       )
       ptb1.rn <- rownames(ptb1.res)
       rownames(ptb1.cbind) <- gsub("(mean (SD))", "", ptb1.rn, fixed = T)
       if (showAllLevels == T) {
         ptb1.cbind[, 1] <- ptb1.res[, 1]
       }
-
-      cap.tb1 <- paste("Stratified by ", labeldata[get("variable") == strata, "var_label"][1], "(", paste(unlist(labeldata[get("variable") == strata, "val_label"]), collapse = ", "), ") & ", labeldata[get("variable") == strata2, "var_label"][1], sep = "")
+      
+      strata1_label <- labeldata[get("variable") == strata, "var_label"][1]
+      strata2_label <- labeldata[get("variable") == strata2, "var_label"][1]
+      if (!is.na(strata1_label) & !is.na(strata2_label)) {
+        colnames(ptb1.cbind)[1] <- paste(strata1_label, strata2_label, sep = ":")
+      }
+      
+      cap.tb1 <- paste("Stratified by ", labeldata[get("variable") == strata, "var_label"][1], " and ", labeldata[get("variable") == strata2, "var_label"][1], sep = "")
     }
-
+    
     return(list(table = ptb1.cbind, caption = cap.tb1))
   } else {
     res <- tableone::CreateTableOne(
@@ -463,20 +492,20 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
       testNormal = oneway.test, argsNormal = list(var.equal = F),
       testNonNormal = kruskal.test, argsNonNormal = list(NULL), addOverall = addOverall
     )
-
+    
     factor_vars <- res[["MetaData"]][["varFactors"]]
     # factor_vars <- vars[sapply(vars, function(x){class(data[[x]]) %in% c("factor", "character")})]
     var.strata <- paste(data[[strata2]], data[[strata]], sep = "_")
-
+    
     vars.fisher <- sapply(factor_vars, function(x) {
       is(tryCatch(chisq.test(table(var.strata, data[[x]])), error = function(e) e, warning = function(w) w), "warning")
     })
     vars.fisher <- factor_vars[unlist(vars.fisher)]
-
+    
     if (is.null(exact) & length(vars.fisher) > 0) {
       exact <- vars.fisher
     }
-
+    
     if (Labels & !is.null(labeldata)) {
       labelled::var_label(data) <- sapply(names(data), function(v) {
         as.character(labeldata[get("variable") == v, "var_label"][1])
@@ -489,28 +518,28 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
           res0$CatTable[[i]][[j]]$level <- labeldata[.(j, lvs), val_label]
         }
       }
-
+      
       ptb1.res0 <- print(res0,
-        showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
-        catDigits = catDigits, contDigits = contDigits, minMax = minMax
+                         showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
+                         catDigits = catDigits, contDigits = contDigits, minMax = minMax
       )
       ptb1.rn <- rownames(ptb1.res0)
       ptb1.rn <- gsub("(mean (SD))", "", ptb1.rn, fixed = T)
-
+      
       # vals.tb1 <- c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
     }
-
+    
     ptb1 <- print(res,
-      showAllLevels = showAllLevels,
-      printToggle = F, quote = F, smd = smd, varLabels = Labels, exact = exact, nonnormal = nonnormal,
-      catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax
+                  showAllLevels = showAllLevels,
+                  printToggle = F, quote = F, smd = smd, varLabels = Labels, exact = exact, nonnormal = nonnormal,
+                  catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax
     )
-
+    
     if (showpm) {
       ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
       ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
     }
-
+    
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed = T)
     if (Labels & !is.null(labeldata)) {
       rownames(ptb1) <- ptb1.rn
@@ -518,14 +547,14 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
         ptb1[, 1] <- ptb1.res0[, 1]
       }
     }
-
+    
     sig <- ifelse(ptb1[, "p"] == "<0.001", "0", ptb1[, "p"])
     sig <- as.numeric(as.vector(sig))
     sig <- ifelse(sig <= 0.05, "**", "")
     ptb1 <- cbind(ptb1, sig)
-    cap.tb1 <- paste("Table 1: Stratified by ", strata, " and ", strata2, sep = "")
-
-
+    cap.tb1 <- paste("Stratified by ", strata, " and ", strata2, sep = "")
+    
+    
     # Column name
     if (Labels & !is.null(labeldata)) {
       val_combination <- data.table::CJ(labeldata[variable == strata, val_label], labeldata[variable == strata2, val_label], sorted = F)
@@ -544,7 +573,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
           colnames(ptb1)[1:length(colname.group_var)] <- colname.group_var
         }
       }
-
+      
       # caption
       cap.tb1 <- paste("Stratified by ", labeldata[variable == strata, var_label][1], " and ", labeldata[variable == strata2, var_label][1], sep = "")
       # val_label
