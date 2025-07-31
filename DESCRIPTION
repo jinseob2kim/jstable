@@ -9,7 +9,7 @@ Authors@R: c(person("Jinseob", "Kim", email = "jinseob2kim@gmail.com", role = c(
              person("Hyojong", "Myung", role = c("aut")),
              person("Hyungwoo", "Jo", role = c("aut")),
              person("Sungho", "Choi", role = c("aut")),
-             person("Jaewoong", "Heo", role = c("aut"))
+             person("Jaewoong", "Heo", role = c("aut")),
              person("Mingu", "Jee", role = c("aut"))
              )
 Description: Create regression tables from generalized linear model(GLM), generalized estimating equation(GEE), generalized linear mixed-effects model(GLMM), Cox proportional hazards model, survey-weighted generalized linear model(svyglm) and survey-weighted Cox model results for publication.
@@ -18,7 +18,7 @@ License: Apache License 2.0
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Imports: geepack, lme4, stats, data.table, labelled, tableone, coxme, survival (>= 3.0.0), survey, methods, dplyr, purrr, magrittr, tibble,  rlang, car, lmerTest, nortest
-URL: https://github.com/jinseob2kim/jstable
+URL: https://github.com/jinseob2kim/jstable, https://jinseob2kim.github.io/jstable/
 BugReports: https://github.com/jinseob2kim/jstable/issues
 Suggests: 
     testthat,

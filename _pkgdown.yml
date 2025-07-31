@@ -1,3 +1,4 @@
+url: https://jinseob2kim.github.io/jstable/
 URL: https://jinseob2kim.github.io/jstable, https://github.com/jinseob2kim/jstable
 development:
   mode: auto
@@ -12,7 +13,7 @@ template:
   bootstrap: 5
   light-switch: yes
   bslib:
-    navbar-bg: '#19490A'
+    pkgdown-navbar-bg: '#19490A'
   params:
     docsearch:
       api_key: f6ab1678f68371b7775614662cffcb9d
