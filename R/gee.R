@@ -71,6 +71,7 @@ geeExp <- function(gee.coef, family = "binomial", dec) {
 #' @param geeglm.obj "geeglm" object
 #' @param decimal Decimal, Default: 2
 #' @param pcut.univariate pcut.univariate, Default: NULL
+#' @param data_for_univariate data for univariate model, Default: NULL
 #' @return List: caption, main table, metrics table
 #' @details DETAILS
 #' @examples

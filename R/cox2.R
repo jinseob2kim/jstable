@@ -4,6 +4,7 @@
 #' @param dec Decimal point, Default: 2
 #' @param msm Multi state model, Default: NULL
 #' @param pcut.univariate pcut.univariate, Default: NULL
+#' @param data_for_univariate data for univariate model, Default: NULL
 #' @return Table, cluster/frailty info, metrics, caption
 #' @details GEE like - cluster, Mixed effect model like - frailty
 #' @examples
