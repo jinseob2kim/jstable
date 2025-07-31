@@ -1,3 +1,6 @@
+# jstable 1.3.16
+* Update: Now in `CreateTableOneJS` and `svyCreateTableOneJS`, column names are more descriptive when using `psub = T` with `strata`, `strata2`.
+
 # jstable 1.3.15
 * Update: Add `data_for_univariate` in `cox2.display`, `geeglm.display`, `lmer.display`, crude p-values in univariate tables are now computed directly from the raw data passed via `data_for_univariate`.
 
