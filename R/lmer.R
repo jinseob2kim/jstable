@@ -38,6 +38,7 @@ lmerExp <- function(lmer.coef, family = "binomial", dec) {
 #' @param lmerMod.obj "lmerMod" or "glmerMod" object
 #' @param dec Decimal, Default: 2
 #' @param pcut.univariate pcut.univariate, Default: NULL
+#' @param data_for_univariate data for univariate model, Default: NULL
 #' @param ci.ranef Show confidence interval of random effects?, Default: F
 #' @return Table: fixed & random effect
 #' @details DETAILS
