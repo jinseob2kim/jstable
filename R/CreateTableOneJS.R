@@ -403,38 +403,29 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
   } else if (psub == T) {
     # data.strata <-  lapply(levels(data[[strata]]), function(x){data[data[[strata]] == x, ]})
     data.strata <- split(data, data[[strata]])
+    ptb1.list <- lapply(data.strata, CreateTableOne2,
+                        vars = vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test,
+                        testApprox = testApprox, argsApprox = argsApprox,
+                        testExact = testExact, argsExact = argsExact,
+                        testNormal = testNormal, argsNormal = argsNormal,
+                        testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
+                        showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal, exact = exact,
+                        catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, labeldata = labeldata, minMax = minMax, showpm = T, addOverall = F
+    )
+    
     if (Labels & !is.null(labeldata)) {
       data.table::setkey(labeldata, variable, level)
-    }
-    ptb1.list <- lapply(names(data.strata), function(s1_level) {
-      tbl <- CreateTableOne2(
-        vars = vars, strata = strata2, data = data.strata[[s1_level]], factorVars = factorVars, includeNA = includeNA, test = test,
-        testApprox = testApprox, argsApprox = argsApprox,
-        testExact = testExact, argsExact = argsExact,
-        testNormal = testNormal, argsNormal = argsNormal,
-        testNonNormal = testNonNormal, argsNonNormal = argsNonNormal, smd = smd,
-        showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal, exact = exact,
-        catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = T, addOverall = F
-      )
-      s2_levels_in_cols <- colnames(tbl)[colnames(tbl) %in% levels(as.factor(data[[strata2]]))]
-      if (Labels & !is.null(labeldata)) {
-        s1_label <- labeldata[.(strata, s1_level), val_label]
-        if (length(s1_label) == 0 || is.na(s1_label)) {
-          s1_label <- s1_level
+      strata_labels <- labeldata[.(strata, names(data.strata)), val_label]
+      strata2_labels <- unique(labeldata[variable == strata2, val_label])
+      
+      ptb1.list <- mapply(function(tbl, strata_label) {
+        cols_to_rename <- intersect(colnames(tbl), strata2_labels)
+        if (length(cols_to_rename) > 0) {
+          colnames(tbl)[colnames(tbl) %in% cols_to_rename] <- paste(strata_label, cols_to_rename, sep = ":")
         }
-        new_names <- sapply(s2_levels_in_cols, function(s2_level) {
-          s2_label <- labeldata[.(strata2, s2_level), val_label]
-          if (length(s2_label) == 0 || is.na(s2_label)) {
-            s2_label <- s2_level
-          }
-          paste(s1_label, s2_label, sep = ":")
-        })
-      } else {
-        new_names <- paste(s1_level, s2_levels_in_cols, sep = ":")
-      }
-      colnames(tbl)[colnames(tbl) %in% s2_levels_in_cols] <- new_names
-      return(tbl)
-    })
+        tbl
+      }, tbl = ptb1.list, strata_label = strata_labels, SIMPLIFY = FALSE)
+    }
     
     if (showAllLevels == T) {
       ptb1.cbind <- Reduce(cbind, c(list(ptb1.list[[1]]), lapply(2:length(ptb1.list), function(x) {
@@ -449,11 +440,13 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
     # ptb1.2group = ptb1.cbind[, c(setdiff(1:ncol(ptb1.cbind), colnum.test), colnum.test[1])]
     cap.tb1 <- paste("Stratified by ", strata, " and ", strata2, sep = "")
     if (Labels & !is.null(labeldata)) {
+      colname.group_index <- paste(labeldata[variable == strata, var_label][1], ":", labeldata[variable == strata2, var_label][1], sep = "")
+      colnames(ptb1.cbind)[1] <- colname.group_index
       labelled::var_label(data.strata[[1]]) <- sapply(names(data.strata[[1]]), function(v) {
         as.character(labeldata[get("variable") == v, "var_label"][1])
       }, simplify = F)
       # vals.tb1 <- c(NA, unlist(sapply(vars, function(v){labeldata[get("variable") == v, "val_label"]})))
-      # data.table::setkey(labeldata, variable, level)
+      data.table::setkey(labeldata, variable, level)
       
       res <- tableone::CreateTableOne(vars = vars, data = data.strata[[1]], factorVars = factorVars, includeNA = includeNA)
       factor_vars <- res[["MetaData"]][["varFactors"]]
@@ -474,13 +467,7 @@ CreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, factorVa
         ptb1.cbind[, 1] <- ptb1.res[, 1]
       }
       
-      strata1_label <- labeldata[get("variable") == strata, "var_label"][1]
-      strata2_label <- labeldata[get("variable") == strata2, "var_label"][1]
-      if (!is.na(strata1_label) & !is.na(strata2_label)) {
-        colnames(ptb1.cbind)[1] <- paste(strata1_label, strata2_label, sep = ":")
-      }
-      
-      cap.tb1 <- paste("Stratified by ", labeldata[get("variable") == strata, "var_label"][1], " and ", labeldata[get("variable") == strata2, "var_label"][1], sep = "")
+      cap.tb1 <- paste("Stratified by ", labeldata[variable == strata, var_label][1], " and ", labeldata[variable == strata2, var_label][1], sep = "")
     }
     
     return(list(table = ptb1.cbind, caption = cap.tb1))

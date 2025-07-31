@@ -439,17 +439,31 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     if(n_original){
       ptb1.list <- lapply(data.strata, svyCreateTableOne2,
                           vars = vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
-                          showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal,
-                          catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm, addOverall = F, n_original = T
+                          showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal,
+                          catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm, addOverall = F, n_original = T, labeldata = labeldata
       )
     }else{
       ptb1.list <- lapply(data.strata, svyCreateTableOne2,
                           vars = vars, strata = strata2, factorVars = factorVars, includeNA = includeNA, test = test, smd = smd,
-                          showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = F, nonnormal = nonnormal,
-                          catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm, addOverall = F, n_original = F
+                          showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, Labels = Labels, nonnormal = nonnormal,
+                          catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax, showpm = showpm, addOverall = F, n_original = F, labeldata = labeldata
       )
     }
     
+    
+    if (Labels & !is.null(labeldata)) {
+      data.table::setkey(labeldata, variable, level)
+      strata_labels <- labeldata[.(strata, names(data.strata)), val_label]
+      strata2_labels <- unique(labeldata[variable == strata2, val_label])
+      
+      ptb1.list <- mapply(function(tbl, strata_label) {
+        cols_to_rename <- intersect(colnames(tbl), strata2_labels)
+        if (length(cols_to_rename) > 0) {
+          colnames(tbl)[colnames(tbl) %in% cols_to_rename] <- paste(strata_label, cols_to_rename, sep = ":")
+        }
+        tbl
+      }, tbl = ptb1.list, strata_label = strata_labels, SIMPLIFY = FALSE)
+    }
     
     if (showAllLevels == T) {
       ptb1.cbind <- Reduce(cbind, c(list(ptb1.list[[1]]), lapply(2:length(ptb1.list), function(x) {
@@ -461,8 +475,10 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
     
     # colnum.test = which(colnames(ptb1.cbind) == "test")
     # ptb1.2group = ptb1.cbind[, c(setdiff(1:ncol(ptb1.cbind), colnum.test), colnum.test[1])]
-    cap.tb1 <- paste("Stratified by ", strata, "(", paste(levels(data[[strata]]), collapse = ", "), ") & ", strata2, "- weighted data", sep = "")
+    cap.tb1 <- paste("Stratified by ", strata, " and ", strata2, "- weighted data", sep = "")
     if (Labels & !is.null(labeldata)) {
+      colname.group_index <- paste(labeldata[variable == strata, var_label][1], ":", labeldata[variable == strata2, var_label][1], sep = "")
+      colnames(ptb1.cbind)[1] <- colname.group_index
       labelled::var_label(data.strata[[1]]$variables) <- sapply(names(data.strata[[1]]$variables), function(v) {
         as.character(labeldata[get("variable") == v, "var_label"][1])
       }, simplify = F)
@@ -488,32 +504,7 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
         ptb1.cbind[, 1] <- ptb1.res[, 1]
       }
       
-      cap.tb1 <- paste("Stratified by ", labeldata[get("variable") == strata, "var_label"][1], "(", paste(unlist(labeldata[get("variable") == strata, "val_label"]), collapse = ", "), ") & ", labeldata[get("variable") == strata2, "var_label"][1], "- weighted data", sep = "")
-      
-      # Get strata and strata2 levels
-      strata_levels <- setdiff(unique(data$variables[[strata]]), NA)
-      
-      # Get strata2 levels from the first sub-table's column names
-      s2_colnames <- colnames(ptb1.list[[1]])
-      s2_levels_in_table <- s2_colnames[!s2_colnames %in% c("level", "p", "test", "sig")]
-      
-      # Get labels
-      strata_labels <- labeldata[.(strata, strata_levels), val_label]
-      s2_labels_in_table <- labeldata[.(strata2, s2_levels_in_table), val_label]
-      
-      # Create new column names like "A:a", "A:b", "B:a", "B:b"
-      new_level_colnames <- c()
-      for (s_label in strata_labels) {
-        new_level_colnames <- c(new_level_colnames, paste(s_label, s2_labels_in_table, sep=":"))
-      }
-      
-      # Find indices of level columns in ptb1.cbind
-      level_cols_indices <- which(!colnames(ptb1.cbind) %in% c("level", "p", "test", "sig"))
-      
-      # Replace the column names
-      if (length(level_cols_indices) == length(new_level_colnames)) {
-        colnames(ptb1.cbind)[level_cols_indices] <- new_level_colnames
-      }
+      cap.tb1 <- paste("Stratified by ", labeldata[variable == strata, var_label][1], " and ", labeldata[variable == strata2, var_label][1], "- weighted data", sep = "")
     }
     
     return(list(table = ptb1.cbind, caption = cap.tb1))
