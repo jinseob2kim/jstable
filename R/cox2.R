@@ -227,7 +227,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
           fit_uni  <- survival::coxph(uni_fmla,
                                       data      = df_uni,
                                       model     = TRUE,
-                                      na.action = na.omit)
+                                      na.action = "na.omit")
           
           cm       <- summary(fit_uni)$coefficients
           cols     <- c(1,
@@ -373,7 +373,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
         fit_uni  <- survival::coxph(uni_fmla,
                                     data      = df_uni,
                                     model     = TRUE,
-                                    na.action = na.omit)
+                                    na.action = "na.omit")
         
         cm       <- summary(fit_uni)$coefficients
         cols     <- c(1,

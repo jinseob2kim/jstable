@@ -4,7 +4,12 @@
 \alias{geeglm.display}
 \title{geeglm.display}
 \usage{
-geeglm.display(geeglm.obj, decimal = 2, pcut.univariate = NULL)
+geeglm.display(
+  geeglm.obj,
+  decimal = 2,
+  pcut.univariate = NULL,
+  data_for_univariate = NULL
+)
 }
 \arguments{
 \item{geeglm.obj}{"geeglm" object}
@@ -12,6 +17,8 @@ geeglm.display(geeglm.obj, decimal = 2, pcut.univariate = NULL)
 \item{decimal}{Decimal, Default: 2}
 
 \item{pcut.univariate}{pcut.univariate, Default: NULL}
+
+\item{data_for_univariate}{data for univariate model, Default: NULL}
 }
 \value{
 List: caption, main table, metrics table
