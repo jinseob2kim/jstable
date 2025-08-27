@@ -1,3 +1,14 @@
+# jstable 1.3.17
+* Fix: `cox2.display` now properly handles variables with no variation in complete cases during univariate analysis
+* Fix: `cox2.display` correctly filters out NA p-values when using `pcut.univariate` option
+* Fix: `cox2.display` now properly handles data.table objects with `data_for_univariate` parameter
+* Fix: When `pcut.univariate` is applied, `cox2.display` now correctly shows metrics (N, AIC, C-index, Events) from the selected model with significant variables
+* Fix: Added missing `@importFrom survival Surv` for proper NAMESPACE generation
+* Fix: `glmshow.display` now properly handles interaction terms with `pcut.univariate` option
+* Fix: `glmshow.display` correctly maintains variable order when selecting significant variables with interaction terms
+* Fix: `glmshow.display` now displays proper reference levels for interaction terms with multi-level factors (e.g., "wt:cyl: ref.=4")
+* Update: `LabeljsTable` now supports interaction terms, applying labels to both main effects and interaction coefficients
+
 # jstable 1.3.16
 * Update: Now in `CreateTableOneJS` and `svyCreateTableOneJS`, column names are more descriptive when using `psub = T` with `strata`, `strata2`.
 

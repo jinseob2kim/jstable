@@ -42,13 +42,16 @@ glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
 
   xs <- attr(model$terms, "term.labels")
   y <- names(model$model)[1]
-  family <- ifelse(length(grep("gaussian", model$family)) == 1, 1, ifelse(length(grep("binomial", model$family)) >= 1, 2, 3))
+  model_family <- family(model)$family
+  family <- ifelse(grepl("gaussian", model_family), 1, 
+                   ifelse(grepl("binomial", model_family), 2, 3))
   
   data <- model$data
-  if (length(model$xlevels) != 0){
-    #xs.factor <- names(model$xlevels)[sapply(model$xlevels, function(x){length(x) > 2})]
-    xs.factor <- names(model$xlevels)
-    }
+  xs.factor <- if (length(model$xlevels) != 0) {
+    names(model$xlevels)
+  } else {
+    character(0)
+  }
   ## table
   if (length(xs) == 0) {
     stop("No independent variable")
@@ -73,22 +76,50 @@ glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
   } else {
     basemodel <- stats::update(model, formula(paste(c(". ~ .", xs), collapse = " - ")), data = data)
 
-    uni <- lapply(xs, function(v) {
-      data.frame(coefNA(stats::update(basemodel, formula(paste0(". ~ . +", v)), data = data)))
-      # data.frame(coefNA(stats::glm(as.formula(paste(y, " ~ ", v)), data = data, family = model$family)))[-1, ]
+    # Create a list of univariate model results, one for each variable in xs.
+    # We remove the intercept from each.
+    uni_list <- lapply(xs, function(v) {
+      uni_model <- stats::update(basemodel, formula(paste0(". ~ . +", v)), data = data)
+      data.frame(coefNA(uni_model))[-1, , drop = FALSE]
     })
-    rn.uni <- lapply(uni, rownames)
-    uni <- Reduce(rbind, uni)
+
+    # The rn.uni for grouping is based on the coefficients from each univariate model.
+    rn.uni <- lapply(uni_list, rownames)
+
+    # Get the coefficients from the full model to define the final table structure.
+    mul_coef_names <- rownames(coefNA(model))[-1] # Exclude intercept
+
+    # Create the final 'uni' matrix with the correct dimensions and NA values,
+    # ensuring its rows match the multivariate model exactly.
+    uni <- matrix(NA, nrow = length(mul_coef_names), ncol = ncol(coefNA(model)),
+                  dimnames = list(mul_coef_names, colnames(coefNA(model))))
+
+    # Create a list of all available univariate coefficients
+    all_uni_coefs <- do.call(rbind, uni_list)
+
+    # Fill the 'uni' matrix from the list of univariate results.
+    # This ensures that each coefficient's crude estimate comes from its simplest model
+    # and prevents overwriting (e.g., 'vs' crude estimate from 'y~vs', not 'y~vs+am+vs:am').
+    for (coef_name in mul_coef_names) {
+      # Find the first occurrence of the coefficient in the univariate results
+      if (coef_name %in% rownames(all_uni_coefs)) {
+        # Take the first one found, which corresponds to the simplest model
+        uni[coef_name, ] <- as.matrix(all_uni_coefs[coef_name, , drop = FALSE][1, ])
+      }
+    }
     
     if (!is.null(pcut.univariate)) {
       uni_no_intercept <- uni[!grepl("Intercept", rownames(uni)), , drop = FALSE]
-      significant_vars <- rownames(uni_no_intercept)[as.numeric(uni_no_intercept[, 4]) < pcut.univariate]
+      significant_coefs <- rownames(uni_no_intercept)[as.numeric(uni_no_intercept[, 4]) < pcut.univariate]
       
+      # Collect terms that should be included
+      terms_to_include <- character(0)
+      
+      # Process factor variables
       if (length(model$xlevels) != 0){
         factor_vars_list <- lapply(xs.factor, function(factor_var) {
           factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
           factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
-          
           
           matches <- grep(paste0("^", factor_var_escaped), rownames(coefNA(model)), value = TRUE)
           return(matches)
@@ -101,12 +132,44 @@ glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
           p_values <- uni_no_intercept[variables, 4]
           
           if (any(p_values < pcut.univariate, na.rm = TRUE)) {
-            significant_vars <- setdiff(significant_vars, variables)
-            
-            significant_vars <- unique(c(significant_vars, key))
+            terms_to_include <- unique(c(terms_to_include, key))
           }
         }
       }
+      
+      # Process continuous variables and interaction terms
+      for (term in xs) {
+        if (grepl(":", term)) {
+          # This is an interaction term - treat like a factor variable
+          # Find all coefficients related to this interaction term
+          term_escaped <- gsub("\\(", "\\\\(", term)
+          term_escaped <- gsub("\\)", "\\\\)", term_escaped)
+          term_escaped <- gsub(":", ":", term_escaped)
+          
+          # Find all coefficients that match this interaction pattern
+          interaction_coefs <- grep(paste0("^", term_escaped, "|:", strsplit(term, ":")[[1]][2]), 
+                                   rownames(uni_no_intercept), value = TRUE)
+          
+          if (length(interaction_coefs) > 0) {
+            # Get p-values for all interaction coefficients
+            p_values <- uni_no_intercept[interaction_coefs, 4]
+            
+            # If ANY coefficient is significant, include the interaction term and main effects
+            if (any(p_values < pcut.univariate, na.rm = TRUE)) {
+              main_effects <- strsplit(term, ":")[[1]]
+              terms_to_include <- unique(c(terms_to_include, main_effects, term))
+            }
+          }
+        } else if (!(term %in% xs.factor)) {
+          # This is a continuous variable
+          if (term %in% significant_coefs) {
+            terms_to_include <- unique(c(terms_to_include, term))
+          }
+        }
+      }
+      
+      # Now create significant_vars maintaining the order from xs
+      significant_vars <- xs[xs %in% terms_to_include]
     } else {
       significant_vars <- xs  
     }
@@ -143,12 +206,14 @@ glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
             
             
             for (var in rownames(mul_no_intercept)) { 
-              mul.res[var, ] <- c(
-                paste(round(mul[var, 1], decimal), " (", 
-                      round(mul[var, 1] - 1.96 * mul[var, 2], decimal), ",", 
-                      round(mul[var, 1] + 1.96 * mul[var, 2], decimal), ")", sep = ""),
-                ifelse(mul[var, 4] <= 0.001, "< 0.001", as.character(round(mul[var, 4], decimal + 1)))
-              )
+              if (var %in% rownames(mul.res)) {
+                mul.res[var, ] <- c(
+                  paste(round(mul[var, 1], decimal), " (", 
+                        round(mul[var, 1] - 1.96 * mul[var, 2], decimal), ",", 
+                        round(mul[var, 1] + 1.96 * mul[var, 2], decimal), ")", sep = ""),
+                  ifelse(mul[var, 4] <= 0.001, "< 0.001", as.character(round(mul[var, 4], decimal + 1)))
+                )
+              }
             }
           }
       }
@@ -187,12 +252,14 @@ glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
             
             
             for (var in rownames(mul_no_intercept)) { 
-              mul.res[var, ] <- c(
-                paste(round(exp(mul[var, 1]), decimal), " (", 
-                      round(exp(mul[var, 1] - 1.96 * mul[var, 2]), decimal), ",", 
-                      round(exp(mul[var, 1] + 1.96 * mul[var, 2]), decimal), ")", sep = ""),
-                ifelse(mul[var, 4] <= 0.001, "< 0.001", as.character(round(mul[var, 4], decimal + 1)))
-              )
+              if (var %in% rownames(mul.res)) {
+                mul.res[var, ] <- c(
+                  paste(round(exp(mul[var, 1]), decimal), " (", 
+                        round(exp(mul[var, 1] - 1.96 * mul[var, 2]), decimal), ",", 
+                        round(exp(mul[var, 1] + 1.96 * mul[var, 2]), decimal), ")", sep = ""),
+                  ifelse(mul[var, 4] <= 0.001, "< 0.001", as.character(round(mul[var, 4], decimal + 1)))
+                )
+              }
             }
           }
           
@@ -225,17 +292,45 @@ glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
     rn.list[[x]] <<- paste(xs[x], ": ", model$xlevels[[xs[x]]][2], " vs ", model$xlevels[[xs[x]]][1], sep = "")
   })
   lapply(varnum.mfac, function(x) {
-    if (grepl(":", xs[x])) {
-      a <- unlist(strsplit(xs[x], ":"))[1]
-      b <- unlist(strsplit(xs[x], ":"))[2]
-      if (a %in% xs && b %in% xs) {
-        ref <- paste0(a, model$xlevels[[a]][1], ":", b, model$xlevels[[b]][1])
-        rn.list[[x]] <<- c(paste(xs[x], ": ref.=", ref, sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
+    var_name <- xs[x]
+    if (grepl(":", var_name)) {
+      components <- unlist(strsplit(var_name, ":"))
+      are_all_factors <- all(sapply(components, function(comp) comp %in% names(model$xlevels)))
+
+      if (are_all_factors) {
+        ref <- paste(sapply(components, function(comp) model$xlevels[[comp]][1]), collapse = ":")
+        rn.list[[x]] <<- c(paste(var_name, ": ref.=", ref, sep = ""), gsub(var_name, "   ", rn.list[[x]]))
       } else {
-        rn.list[[x]] <<- c(paste(xs[x], ": ref.=NA", model$xlevels[[xs[x]]][1], sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
+        # Interaction with at least one continuous variable
+        # Check if any component is a factor with more than 2 levels
+        factor_comp <- components[components %in% names(model$xlevels)]
+        if (length(factor_comp) > 0) {
+          # Check if any factor has more than 2 levels
+          multi_level_factors <- factor_comp[sapply(factor_comp, function(f) length(model$xlevels[[f]]) > 2)]
+          if (length(multi_level_factors) > 0) {
+            # Create ref string for the multi-level factor
+            ref_levels <- sapply(multi_level_factors, function(f) model$xlevels[[f]][1])
+            ref_string <- paste(ref_levels, collapse = ",")
+            rn.list[[x]] <<- c(paste(var_name, ": ref.=", ref_string, sep = ""), gsub(var_name, "   ", rn.list[[x]]))
+          } else {
+            # All factors have only 2 levels or less
+            rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+          }
+        } else {
+          # No factor component
+          rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+        }
       }
     } else {
-      rn.list[[x]] <<- c(paste(xs[x], ": ref.=", model$xlevels[[xs[x]]][1], sep = ""), gsub(xs[x], "   ", rn.list[[x]]))
+      # Not an interaction term
+      if (var_name %in% names(model$xlevels)) {
+        # It's a factor variable
+        rn.list[[x]] <<- c(paste(var_name, ": ref.=", model$xlevels[[var_name]][1], sep = ""), gsub(var_name, "   ", rn.list[[x]]))
+      } else {
+        # It's not a factor, but has multiple rows (e.g., splines).
+        # Just add header.
+        rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+      }
     }
   })
   if (class(fix.all.unlist)[1] == "character") {

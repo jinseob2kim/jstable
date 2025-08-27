@@ -54,6 +54,7 @@ lmerExp <- function(lmer.coef, family = "binomial", dec) {
 #' @importFrom stats update formula reformulate
 
 lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = NULL, data_for_univariate = NULL) {
+  xvar <- NULL
   sl <- summary(lmerMod.obj)
   fixef <- sl$coefficients[-1, ]
   

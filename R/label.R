@@ -202,21 +202,166 @@ LabeljsTable <- function(obj.table, ref) {
     })
     vl_label <- lapply(vl, function(x) {
       vname <- strsplit(x[1], ": ")[[1]][1]
-      x[1] <- gsub(vname, ref[variable == vname, var_label][1], x[1])
-      cond.lv2 <- grepl(": ", x[1]) & grepl(" vs ", x[1])
-      # x[1] <- gsub(vname, ref[variable == vname, var_label][1], x[1])
-      if (cond.lv2) {
-        lv2 <- strsplit(strsplit(x[1], ": ")[[1]][[2]], " vs ")[[1]]
-        vll <- ref[variable == vname & level %in% lv2, c("level", "val_label")]
-        x <- paste(ref[variable == vname, var_label][1], ": ", vll[level == lv2[1], val_label], " vs ", vll[level == lv2[2], val_label], sep = "")
-        # x = gsub(paste(vll[2, 1], " vs ", vll[1,1], sep=""), paste(vll[2, 2], " vs ", vll[1,2], sep=""), x)
-      } else if (ref[variable == vname, class][1] %in% c("factor", "character")) {
-        x[1] <- paste(ref[variable == vname, var_label][1], ": ref.=", ref[variable == vname & level == strsplit(x[1], "\\.\\=")[[1]][2], val_label], sep = "")
-        for (k in 2:length(x)) {
-          x[k] <- paste("   ", ref[variable == vname & level == strsplit(x[k], "   ")[[1]][2], val_label], sep = "")
+      
+      # Check if it's an interaction term coefficient (like wt:vsStraight or wt:cyl)
+      # Interaction coefficients contain ":" but not " vs " or "ref.="
+      is_interaction_coef <- grepl(":", vname) && !grepl(" vs ", x[1]) && !grepl("ref\\.=", x[1])
+      
+      if (is_interaction_coef) {
+        # This is an interaction coefficient (e.g., "wt:vsStraight" or "wt:cyl6")
+        # We need to handle this specially
+        
+        # Split by colon to find the parts
+        parts <- strsplit(vname, ":")[[1]]
+        
+        # For each part, check if it's a variable or a variable+level
+        processed_parts <- sapply(parts, function(part) {
+          # Check if this part is a base variable
+          if (part %in% ref$variable) {
+            # It's a base variable, replace with label
+            label <- ref[variable == part, var_label][1]
+            return(if (is.na(label)) part else label)
+          } else {
+            # It might be variable+level (like "vsStraight" or "cyl6")
+            # Try to find which variable this belongs to
+            for (var in unique(ref$variable)) {
+              if (startsWith(part, var)) {
+                # Found the variable
+                var_label <- ref[variable == var, var_label][1]
+                if (!is.na(var_label)) {
+                  # Extract the level part
+                  level_part <- substring(part, nchar(var) + 1)
+                  # Check if we have a label for this level
+                  level_label <- ref[variable == var & level == level_part, val_label][1]
+                  if (!is.na(level_label)) {
+                    return(paste0(var_label, ":", level_label))
+                  } else {
+                    return(paste0(var_label, ":", level_part))
+                  }
+                }
+              }
+            }
+            # If no match found, return original
+            return(part)
+          }
+        })
+        
+        # Reconstruct the interaction term
+        x[1] <- paste(processed_parts, collapse = ":")
+        
+      } else if (grepl(":", vname) && grepl("ref\\.=", x[1])) {
+        # This is an interaction header with ref (e.g., "wt:cyl: ref.=4")
+        interaction_parts <- strsplit(vname, ":")[[1]]
+        
+        # Replace each part with its label
+        interaction_labels <- sapply(interaction_parts, function(part) {
+          label <- ref[variable == part, var_label][1]
+          if (is.na(label)) part else label
+        })
+        
+        # Reconstruct with ref
+        interaction_label <- paste(interaction_labels, collapse = ":")
+        ref_part <- strsplit(x[1], "ref\\.=")[[1]][2]
+        
+        # Try to replace ref level with label
+        for (part in interaction_parts) {
+          if (part %in% ref$variable) {
+            ref_label <- ref[variable == part & level == ref_part, val_label][1]
+            if (!is.na(ref_label)) {
+              ref_part <- ref_label
+              break
+            }
+          }
         }
-
-        # for (y in ref[variable == vname, level]) {x = gsub(y, ref[variable == vname & level == y, val_label], x)}
+        
+        x[1] <- paste(interaction_label, ": ref.=", ref_part, sep = "")
+        
+        # Process remaining rows (factor levels in interaction)
+        if (length(x) > 1) {
+          for (k in 2:length(x)) {
+            # This will be like "   6" or "   8" for interaction levels
+            level_str <- trimws(x[k])
+            
+            # Try to find and replace with label
+            for (part in interaction_parts) {
+              if (part %in% ref$variable) {
+                level_label <- ref[variable == part & level == level_str, val_label][1]
+                if (!is.na(level_label)) {
+                  x[k] <- paste("   ", level_label, sep = "")
+                  break
+                }
+              }
+            }
+          }
+        }
+      } else {
+        # Original code for non-interaction terms
+        var_label <- ref[variable == vname, var_label][1]
+        if (!is.na(var_label)) {
+          # Use sub to replace only the first occurrence
+          x[1] <- sub(paste0("^", vname), var_label, x[1])
+        }
+        
+        cond.lv2 <- grepl(": ", x[1]) & grepl(" vs ", x[1])
+        if (cond.lv2) {
+          # Handle "vs: Straight vs V-shaped" format
+          # Extract the levels from the current string after var_label replacement
+          parts_after_label <- strsplit(x[1], ": ")[[1]]
+          if (length(parts_after_label) == 2) {
+            # The second part contains "Straight vs V-shaped" or similar
+            level_part <- parts_after_label[2]
+            # Extract the levels - they should match the original level names
+            lv2 <- strsplit(level_part, " vs ")[[1]]
+            
+            # The levels should be the original factor levels
+            # Check if var_label was mistakenly included in the level names
+            lv2_clean <- lv2
+            if (!is.na(var_label)) {
+              lv2_clean <- gsub(var_label, "", lv2)
+              lv2_clean <- trimws(lv2_clean)
+              # If after removing var_label, we get empty strings, use original
+              if (any(lv2_clean == "")) {
+                lv2_clean <- lv2
+              }
+            }
+            
+            # Now find the val_labels
+            vll <- ref[variable == vname & level %in% lv2_clean, c("level", "val_label")]
+            if (nrow(vll) >= 2) {
+              x[1] <- paste(var_label, ": ", 
+                           vll[level == lv2_clean[1], val_label], " vs ", 
+                           vll[level == lv2_clean[2], val_label], sep = "")
+            } else {
+              # If we can't find clean levels, try with original lv2
+              vll <- ref[variable == vname & level %in% lv2, c("level", "val_label")]
+              if (nrow(vll) >= 2) {
+                x[1] <- paste(var_label, ": ", 
+                             vll[level == lv2[1], val_label], " vs ", 
+                             vll[level == lv2[2], val_label], sep = "")
+              }
+            }
+          }
+        } else if (vname %in% ref$variable && ref[variable == vname, class][1] %in% c("factor", "character")) {
+          # Handle multi-level factors with ref
+          if (grepl("ref\\.=", x[1])) {
+            ref_level <- strsplit(x[1], "ref\\.=")[[1]][2]
+            ref_label <- ref[variable == vname & level == ref_level, val_label][1]
+            if (!is.na(ref_label)) {
+              x[1] <- paste(ref[variable == vname, var_label][1], ": ref.=", ref_label, sep = "")
+            }
+          }
+          
+          # Process additional rows for factor levels
+          if (length(x) > 1) {
+            for (k in 2:length(x)) {
+              level_str <- trimws(x[k])
+              level_label <- ref[variable == vname & level == level_str, val_label][1]
+              if (!is.na(level_label)) {
+                x[k] <- paste("   ", level_label, sep = "")
+              }
+            }
+          }
+        }
       }
       return(x)
     })
