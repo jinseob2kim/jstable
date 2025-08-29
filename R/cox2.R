@@ -17,11 +17,10 @@
 #' @rdname cox2.display
 #' @export
 #' @importFrom survival coxph cluster frailty Surv
-#' @importFrom data.table is.data.table as.data.table
-#' @importFrom stats formula update AIC
+#' @importFrom data.table is.data.table as.data.table .SD
+#' @importFrom stats formula update AIC na.omit
 #'
 cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate = NULL, data_for_univariate = NULL) {
-  na.omit <- ..cols_to_check <- NULL
   if (!is.null(data_for_univariate) && !data.table::is.data.table(data_for_univariate)) {
     data_for_univariate <- data.table::as.data.table(data_for_univariate)
   }
@@ -229,7 +228,8 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
         if (randTerm!="") needed <- c(needed, xc.vn)
         # Handle both data.frame and data.table
         cols_to_check <- c(needed, x)
-        df_uni <- data_for_univariate[complete.cases(data_for_univariate[, ..cols_to_check]), ]
+        subset_data <- data_for_univariate[, .SD, .SDcols = cols_to_check]
+        df_uni <- data_for_univariate[complete.cases(subset_data), ]
         
         # Check if variable has variation
         if (is.factor(df_uni[[x]])) {
@@ -411,7 +411,8 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
           if (randTerm!="") needed <- c(needed, xc.vn)
           # Handle both data.frame and data.table
           cols_to_check <- c(needed, x)
-          df_uni <- data_for_univariate[complete.cases(data_for_univariate[, ..cols_to_check]), ]
+          subset_data <- data_for_univariate[, .SD, .SDcols = cols_to_check]
+          df_uni <- data_for_univariate[complete.cases(subset_data), ]
           
           # Check if variable has variation
           if (is.factor(df_uni[[x]])) {
