@@ -17,8 +17,8 @@
 #' @rdname cox2.display
 #' @export
 #' @importFrom survival coxph cluster frailty Surv
-#' @importFrom data.table is.data.table as.data.table
-#' @importFrom stats formula update AIC
+#' @importFrom data.table is.data.table as.data.table .SD
+#' @importFrom stats formula update AIC na.omit
 #'
 cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate = NULL, data_for_univariate = NULL) {
   if (!is.null(data_for_univariate) && !data.table::is.data.table(data_for_univariate)) {
