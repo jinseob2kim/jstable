@@ -97,6 +97,11 @@ geeglm.display <- function(geeglm.obj, decimal = 2, pcut.univariate=NULL, data_f
   y <- as.character(geeglm.obj$terms[[2]])
   xs <- names(geeglm.obj$model)[-1]
   
+  # Initialize final_model to track which model is used for metrics
+  final_model <- geeglm.obj
+  
+  # Initialize xs.factor
+  xs.factor <- NULL
   if (length(geeglm.obj$xlevels) != 0){
     #xs.factor <- names(geeglm.obj$xlevels)[sapply(geeglm.obj$xlevels, function(x){length(x) > 2})]
     xs.factor <- names(geeglm.obj$xlevels)
@@ -153,13 +158,30 @@ geeglm.display <- function(geeglm.obj, decimal = 2, pcut.univariate=NULL, data_f
     colnames(gee.res.modi) <- c(paste(family.label, "(95%CI)", sep = ""), "P value")
   } else {
     if (is.null(pcut.univariate)){
-      gee.multi <- summary(geeglm.obj)$coefficients[-1, -3]
+      # When no pcut, use all variables but may need to refit with data_for_univariate
+      if (!is.null(data_for_univariate)) {
+        # Refit model with data_for_univariate
+        idx_multi <- complete.cases(data_for_univariate[, c(y, xs), drop = FALSE])
+        df_multi <- data_for_univariate[idx_multi, ]
+        id_var <- all.vars(geeglm.obj$call$id)[1]
+        id_multi <- df_multi[[id_var]]
+        
+        refitted_model <- geepack::geeglm(formula(geeglm.obj), 
+                                          data = df_multi, 
+                                          family = geeglm.obj$family[[1]], 
+                                          id = id_multi, 
+                                          corstr = geeglm.obj$corstr)
+        gee.multi <- summary(refitted_model)$coefficients[-1, -3]
+        final_model <- refitted_model  # Update final_model
+      } else {
+        gee.multi <- summary(geeglm.obj)$coefficients[-1, -3]
+      }
       gee.na <- gee.multi
     }else{
       significant_vars <- rownames(gee.uni)[as.numeric(gee.uni[, 3]) < pcut.univariate]
 
       
-      if (length(geeglm.obj$xlevels) != 0){
+      if (!is.null(xs.factor) && length(xs.factor) > 0){
         factor_vars_list <- lapply(xs.factor, function(factor_var) {
           factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
           factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
@@ -185,7 +207,30 @@ geeglm.display <- function(geeglm.obj, decimal = 2, pcut.univariate=NULL, data_f
       }
       
       selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + ")))
-      selected_model <- geepack::geeglm(selected_formula, data = geeglm.obj$data, family = family.gee, id=geeglm.obj$id , corstr = corstr.gee) 
+      
+      # Use data_for_univariate if provided, otherwise use geeglm.obj$data
+      if (!is.null(data_for_univariate)) {
+        # Filter for complete cases of selected variables
+        idx_multi <- complete.cases(data_for_univariate[, c(y, significant_vars), drop = FALSE])
+        df_multi <- data_for_univariate[idx_multi, ]
+        id_var <- all.vars(geeglm.obj$call$id)[1]
+        id_multi <- df_multi[[id_var]]
+        
+        selected_model <- geepack::geeglm(selected_formula, 
+                                          data = df_multi, 
+                                          family = family.gee, 
+                                          id = id_multi, 
+                                          corstr = corstr.gee)
+        final_model <- selected_model  # Update final_model
+      } else {
+        selected_model <- geepack::geeglm(selected_formula, 
+                                          data = geeglm.obj$data, 
+                                          family = family.gee, 
+                                          id = geeglm.obj$id, 
+                                          corstr = corstr.gee)
+        final_model <- selected_model  # Update final_model
+      }
+      
       gee.multi <- summary(selected_model)$coefficients[-1, -3]
       
       
@@ -237,7 +282,8 @@ geeglm.display <- function(geeglm.obj, decimal = 2, pcut.univariate=NULL, data_f
   }
 
   ## Metric
-  info.gee <- as.character(c(NA, round(as.numeric(summary(geeglm.obj)$corr[1]), decimal + 1), length(unique(geeglm.obj$id)), length(geeglm.obj$y)))
+  # final_model is already set to the appropriate model
+  info.gee <- as.character(c(NA, round(as.numeric(summary(final_model)$corr[1]), decimal + 1), length(unique(final_model$id)), length(final_model$y)))
   info.df <- cbind(info.gee, matrix(NA, 4, ncol(gee.res) - 1))
   colnames(info.df) <- colnames(out)
   # lapply(seq(2, ncol(gee.res), by =2), function(x){info.df[, x] <<- as.numeric(info.df[, x])})

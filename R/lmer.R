@@ -28,7 +28,7 @@ lmerExp <- function(lmer.coef, family = "binomial", dec) {
     result <- cbind(RR, pv)
   }
   rownames(result) <- rownames(lmer.coef) 
-  return(result[ , , drop = FALSE]) 
+  return(result[ , , drop = F]) 
 }
 
 
@@ -80,14 +80,14 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
     else {
       random_part <- if (length(xr) > 0) paste(xr, collapse = "+") else ""
       unis <- lapply(xf, function(v) {
-        keep <- complete.cases(data_for_univariate[, c(y ,v), drop = FALSE]) 
+        keep <- complete.cases(data_for_univariate[, c(y ,v), drop = F]) 
         if (!any(keep)) {
           coef_ncol <- ncol(fixef)  
           return(matrix(nrow = 0, ncol = coef_ncol))
         } 
         terms <- if (length(xr) > 0) c(v, xr) else xr
         f_uni <- stats::reformulate(termlabels = terms, response = y)
-        uni_mod <- update(lmerMod.obj, f_uni, data = data_for_univariate[keep, , drop = FALSE])
+        uni_mod <- update(lmerMod.obj, f_uni, data = data_for_univariate[keep, , drop = F])
         
         summary(uni_mod)$coefficients
       })
@@ -96,13 +96,13 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
       unis2 <- Reduce(rbind, unis)
     }
   adj.res <- sl$coefficients
-  adj.res <- adj.res[rownames(adj.res) != "(Intercept)", , drop = FALSE]
+  adj.res <- adj.res[rownames(adj.res) != "(Intercept)", , drop = F]
   uni.res <- matrix(nrow = dim(adj.res)[1], ncol = dim(adj.res)[2])
   rownames(uni.res) <- rownames(adj.res)
   colnames(uni.res) <- colnames(adj.res)
   for (i in 1:nrow(adj.res)) {
     try(uni.res[rownames(adj.res)[i], ] <- unis2[rownames(adj.res)[i], ],
-        silent = TRUE)
+        silent = T)
   }
   
   
@@ -130,7 +130,7 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
           factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
           
           
-          matches <- grep(paste0("^", factor_var_escaped), rownames(uni.val), value = TRUE)
+          matches <- grep(paste0("^", factor_var_escaped), rownames(uni.val), value = T)
           return(matches)
         })
         names(factor_vars_list) <- categorical_vars
@@ -140,7 +140,7 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
           
           p_values <- uni.val[variables, 2]
           
-          if (any(p_values < pcut.univariate, na.rm = TRUE)) {
+          if (any(p_values < pcut.univariate, na.rm = T)) {
             significant_vars <- setdiff(significant_vars, variables)
             
             significant_vars <- unique(c(significant_vars, key))
@@ -161,9 +161,19 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
       }else{
         
         selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + "),"+", paste(xr,collapse = "+")))
-        selected_model <- lme4 :: lmer(selected_formula, data = mdata) 
+        
+        # Use data_for_univariate if provided, otherwise use mdata
+        if (!is.null(data_for_univariate)) {
+          # Filter for complete cases of selected variables
+          idx_multi <- complete.cases(data_for_univariate[, c(y, significant_vars), drop = F])
+          df_multi <- data_for_univariate[idx_multi, ]
+          selected_model <- lme4::lmer(selected_formula, data = df_multi)
+        } else {
+          selected_model <- lme4::lmer(selected_formula, data = mdata)
+        }
+        
         selected_summary <- summary(selected_model)
-        mul<-selected_summary$coefficients[-1,,drop = FALSE]
+        mul<-selected_summary$coefficients[-1,,drop = F]
         mulexp<-lmerExp(mul, family = family.lmer, dec = dec)
         
         mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = 2)
@@ -171,7 +181,7 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
         #colnames(mul.res) <- c("coef","exp.coef.","se.coef.","robust.se" ,"z", "Pr...z..")
         #colnames(mul.res) <- colnames(data.frame(coefNA(model)))
         if (!is.null(mulexp)) {
-          mul_no_intercept <- mulexp[!grepl("Intercept", rownames(mul)), , drop = FALSE]
+          mul_no_intercept <- mulexp[!grepl("Intercept", rownames(mul)), , drop = F]
           
           
           for (var in rownames(mul_no_intercept)) { 
@@ -266,10 +276,19 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
   
   
   ## metric
-  no.grp <- sl$ngrps
-  no.obs <- nrow(mdata)
-  ll <- round(sl$logLik[[1]], dec)
-  aic <- round(sl$AICtab, dec)[1]
+  # Use selected_model's metrics if pcut was applied, otherwise use original model
+  if (!is.null(pcut.univariate) && exists("selected_model")) {
+    selected_summary <- summary(selected_model)
+    no.grp <- selected_summary$ngrps
+    no.obs <- nrow(selected_model@frame)
+    ll <- round(selected_summary$logLik[[1]], dec)
+    aic <- round(selected_summary$AICtab, dec)[1]
+  } else {
+    no.grp <- sl$ngrps
+    no.obs <- nrow(mdata)
+    ll <- round(sl$logLik[[1]], dec)
+    aic <- round(sl$AICtab, dec)[1]
+  }
   met <- c(NA, no.grp, no.obs, ll, aic)
   met.mat <- cbind(met, matrix(NA, length(met), ncol(fix.all) - 1))
   rownames(met.mat) <- c("Metrics", paste("No. of groups (", rownames(met.mat)[2:(length(no.grp) + 1)], ")", sep = ""), "No. of observations", "Log-likelihood", "AIC value")

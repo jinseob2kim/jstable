@@ -8,6 +8,8 @@
 * Fix: `glmshow.display` now properly handles interaction terms with `pcut.univariate` option
 * Fix: `glmshow.display` correctly maintains variable order when selecting significant variables with interaction terms
 * Fix: `glmshow.display` now displays proper reference levels for interaction terms with multi-level factors (e.g., "wt:cyl: ref.=4")
+* Fix: `geeglm.display` now correctly uses `data_for_univariate` with `pcut.univariate` to refit model with selected variables only, updating N accordingly
+* Fix: `lmer.display` now correctly uses `data_for_univariate` with `pcut.univariate` to refit model with selected variables only, updating N and other metrics accordingly
 * Update: `LabeljsTable` now supports interaction terms, applying labels to both main effects and interaction coefficients
 
 # jstable 1.3.16
