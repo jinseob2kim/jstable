@@ -1,3 +1,6 @@
+# jstable 1.3.18
+* Fix: `TableSubgroupMultiCox` now correctly extracts p-values from survey Cox models (svycoxph) by using the last column index instead of hardcoded column 5
+
 # jstable 1.3.17
 * Fix: `cox2.display` now properly handles variables with no variation in complete cases during univariate analysis
 * Fix: `cox2.display` correctly filters out NA p-values when using `pcut.univariate` option

@@ -490,7 +490,9 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             lapply(function(x) {
               tryCatch(
                 {
-                  round(summary(x)$coefficients[1:ncoef, 5], decimal.pvalue)
+                  # P-value is always in the last column
+                  coef_matrix <- summary(x)$coefficients
+                  round(coef_matrix[1:ncoef, ncol(coef_matrix)], decimal.pvalue)
                 },
                 error = function(e) {
                   return(rep(NA, length(xlev[[1]]) - 1))
