@@ -18,8 +18,11 @@
 #' @export
 #' @importFrom survival coxph cluster frailty Surv
 #' @importFrom data.table is.data.table as.data.table .SD
-#' @importFrom stats formula update AIC na.omit
+#' @importFrom stats formula update AIC na.omit setNames
 #'
+#'
+
+
 cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate = NULL, data_for_univariate = NULL) {
   if (!is.null(data_for_univariate) && !data.table::is.data.table(data_for_univariate)) {
     data_for_univariate <- data.table::as.data.table(data_for_univariate)
@@ -36,7 +39,6 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
   x.weight <- model$call$weight
   mtype <- "normal"
   x.id <- model$call$id
-  
   
   if (length(grep("strata", xf)) > 0) {
     xf <- xf[-grep("strata", xf)]
@@ -179,6 +181,40 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
     if (!is.null(x.id)){
       names(mdata2)[names(mdata2)== "(id)"] <- as.character(x.id)
     }
+    
+    if (length(grep("strata", xf.old)) > 0){
+      if (grepl(",", grep("strata", xf.old, value = T))){
+        strata_v <- grep("strata", xf.old, value = T)
+        lab <- mdata2[[strata_v]]
+        s <- as.character(lab)
+        parts <- strsplit(s, ",\\s*")              # 각 행을 "inst=3","sex=1"로 쪼개기
+        # 모든 key 모으기
+        keys <- unique(unlist(lapply(parts, function(v) sub("=.*", "", v))))
+        out_v <- stats::setNames(as.data.frame(matrix(NA_character_, nrow=length(s), ncol=length(keys))), keys)
+        # 값 채우기
+        for (i in seq_along(parts)) {
+          for (kv in parts[[i]]) {
+            kv2 <- strsplit(kv, "=")[[1]]
+            out_v[i, kv2[1]] <- kv2[2]
+          }
+        }
+
+        mdata2 <- cbind(mdata2, out_v)
+        
+      } else {
+        strata_v <- grep("strata", xf.old, value = T)
+        strata_vars <- sub(".*\\(([^)]+)\\).*", "\\1", strata_v)
+        levs <- sub(paste0("^", strata_vars, "="), "", mdata2[[strata_v]])
+        if (all(grepl("^-?[0-9.]+$", levs))) {
+          mdata2[[strata_vars]] <- as.numeric(levs)
+        } else {
+          mdata2[[strata_vars]] <- levs
+        }
+      }
+    }
+   
+      
+    
     
     if (!is.null(msm)) {
       if (is.null(data_for_univariate)) {
@@ -548,6 +584,9 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, msm = NULL, pcut.univariate
     }
   }
   ## rownames
+  
+  xf_keep <- xf_keep[!grepl("^strata\\(", xf_keep)]
+  
   fix.all.list <- lapply(seq_along(xf_keep), function(x) {
     fix.all[rownames(fix.all) %in% rn.uni[[x]], ]
   })
