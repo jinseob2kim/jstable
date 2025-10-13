@@ -2,7 +2,7 @@
 #' @description Table for coxph.object with model option: TRUE - allow "frailty" or "cluster" model
 #' @param cox.obj.withmodel coxph.object with model option: TRUE
 #' @param dec Decimal point, Default: 2
-#' @param event_msm Character or numeric vector of destination states to keep 
+#' @param event_msm Character or numeric vector of destination states to keep (multi-state models only)
 #' @param pcut.univariate pcut.univariate, Default: NULL
 #' @param data_for_univariate data for univariate model, Default: NULL
 #' @return Table, cluster/frailty info, metrics, caption
@@ -31,19 +31,22 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
   if (!any(class(model) == "coxph")) {
     stop("Model not from Cox model")
   }
-  
   model_states <- model$states
   if (!is.null(model_states)) {
     model_states <- as.character(model_states)
+    allowed_idx    <- which(model_states != "(s0)")
+    allowed_labels <- model_states[allowed_idx]
+  } else {
+    allowed_idx <- integer()
+    allowed_labels <- character()
   }
+  
   if (is.null(model_states) && !is.null(event_msm)) {
     stop("'event_msm' can only be used when the model includes multi-state information")
   }
-  
   filtered_state_labels <- NULL
   rn.uni_filtered <- NULL
   use_event_filter <- FALSE
-  
   xf <- attr(model$terms, "term.labels") # Independent vars
   xf_keep <- xf
   xf.old <- xf
@@ -211,7 +214,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
             out_v[i, kv2[1]] <- kv2[2]
           }
         }
-
+        
         mdata2 <- cbind(mdata2, out_v)
         
       } else {
@@ -225,8 +228,8 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
         }
       }
     }
-   
-      
+    
+    
     
     
     if (!is.null(model_states)) {
@@ -379,6 +382,9 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
         
       }
       
+      
+      # ==============================================================
+      
       target_state_idx <- integer()
       target_state_labels <- character()
       if (!is.null(event_msm)) {
@@ -386,61 +392,117 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
         if (length(msm_values) == 0 || all(is.na(msm_values))) {
           stop("event_msm must contain at least one non-missing value.")
         }
+        
+        if (length(allowed_idx) == 0) {
+          stop("The model does not contain any destination states beyond the origin state '(s0)'.")
+        }
+        available_states <- paste(sprintf("%d: %s", allowed_idx, allowed_labels), collapse = ", ")
+        
         resolve_state <- function(val) {
           if (is.na(val)) return(NA_integer_)
           if (is.numeric(val)) {
             if (!is.finite(val)) return(NA_integer_)
             if (!isTRUE(all.equal(val, as.integer(val)))) return(NA_integer_)
             idx <- as.integer(val)
-            if (idx >= 1L && idx <= length(model_states)) return(idx)
+            if (idx %in% allowed_idx) return(idx)
+            return(NA_integer_)
           }
-          val_chr <- as.character(val)
-          if (val_chr == "") return(NA_integer_)
+          val_chr <- trimws(as.character(val))
+          if (identical(val_chr, "") || identical(val_chr, "(s0)")) return(NA_integer_)
           match_idx <- match(val_chr, model_states)
-          if (!is.na(match_idx)) return(match_idx)
-          suppressWarnings({
-            idx_chr <- as.integer(val_chr)
-          })
-          if (!is.na(idx_chr) && idx_chr >= 1L && idx_chr <= length(model_states)) return(idx_chr)
+          if (!is.na(match_idx) && match_idx %in% allowed_idx) return(match_idx)
+          suppressWarnings(idx_chr <- as.integer(val_chr))
+          if (!is.na(idx_chr) && idx_chr %in% allowed_idx) return(idx_chr)
           NA_integer_
         }
-        state_idx <- unique(vapply(msm_values, resolve_state, integer(1), USE.NAMES = FALSE))
-        state_idx <- state_idx[!is.na(state_idx)]
-        if (length(state_idx) == 0) {
-          available_states <- paste(sprintf("%d: %s", seq_along(model_states), model_states), collapse = ", ")
+        
+        state_idx_all <- vapply(msm_values, resolve_state, integer(1), USE.NAMES = FALSE)
+        if (anyNA(state_idx_all)) {
+          bad_vals <- unique(as.character(msm_values[is.na(state_idx_all)]))
           stop(sprintf("No valid states matched 'event_msm'. Available states: %s", available_states))
         }
+        state_idx <- unique(state_idx_all)
+        
         target_state_idx <- state_idx
         target_state_labels <- model_states[state_idx]
       }
       use_event_filter <- length(target_state_idx) > 0
       
-      uni.res <- uni.res[rownames(uni.res) %in% rownames(mul.res), ]
-      colnames(mul.res)[ncol(mul.res)] <- "p"
-      
-      # Determine the correct SE column from the multivariate model results
-      se_col_name <- if ("robust.se" %in% colnames(mul.res)) {
-        "robust.se"
-      } else if ("se.coef." %in% colnames(mul.res)) {
-        "se.coef."
+      if (!use_event_filter) {
+        
+        uni.res <- uni.res[rownames(uni.res) %in% rownames(mul.res), ]
+        colnames(mul.res)[ncol(mul.res)] <- "p"
+        
+        # Determine the correct SE column from the multivariate model results
+        se_col_name <- if ("robust.se" %in% colnames(mul.res)) {
+          "robust.se"
+        } else if ("se.coef." %in% colnames(mul.res)) {
+          "se.coef."
+        } else {
+          "se(coef)"
+        }
+        se_col_idx   <- which(colnames(mul.res) == se_col_name)
+        
+        # Create mul_for_exp with the correct columns for coxExp: coef, se, p
+        p_col_idx    <- which(colnames(mul.res) == "p")
+        coef_col_idx <- which(colnames(mul.res) == "coef")
+        
+        # Ensure mul_for_exp has columns in the order coxExp expects: coef, se, p
+        mul_for_exp <- mul.res[rownames(uni.res), c(coef_col_idx, se_col_idx, p_col_idx), drop = FALSE]
+        
+        fix.all <- cbind(
+          coxExp(uni.res,    dec = dec),
+          coxExp(mul_for_exp, dec = dec)
+        )
+        colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
+        rownames(fix.all) <- rownames(uni.res)
+        
       } else {
-        "se(coef)"
+        
+        pattern <- paste(paste0(":", target_state_idx, "$"), collapse = "|")
+        row_keep <- grepl(pattern, rownames(uni.res))
+        kept_row_names <- rownames(uni.res)[row_keep]
+        
+        if (length(kept_row_names) == 0) {
+          available_states <- paste(sprintf("%d: %s", seq_along(model_states), model_states), collapse = ", ")
+          stop(sprintf("No rows matched the supplied event_msm values. Available states: %s", available_states))
+        }
+        
+        uni.res <- uni.res[kept_row_names, , drop = FALSE]
+        mul.res <- mul.res[kept_row_names, , drop = FALSE]
+        colnames(mul.res)[ncol(mul.res)] <- "p"
+        
+        rownames(uni.res) <- kept_row_names
+        rownames(mul.res) <- kept_row_names
+        
+        
+        se_col_name <- if ("robust.se" %in% colnames(mul.res)) {
+          "robust.se"
+        } else if ("se.coef." %in% colnames(mul.res)) {
+          "se.coef."
+        } else {
+          "se(coef)"
+        }
+        
+        mul_for_exp <- mul.res[rownames(uni.res), c("coef", se_col_name, "p"), drop = FALSE]
+        
+        fix.all <- cbind(
+          coxExp(uni.res,    dec = dec),
+          coxExp(mul_for_exp, dec = dec)
+        )
+        colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
+        rownames(fix.all) <- rownames(uni.res)
+        
+        rn.uni   <- lapply(rn.uni, function(r) r[r %in% kept_row_names])
+        keep_var <- lengths(rn.uni) > 0
+        rn.uni   <- rn.uni[keep_var]
+        xf_keep  <- xf_keep[keep_var]
+        filtered_state_labels <- target_state_labels
+        rn.uni_filtered <- rn.uni
+        rownames(fix.all) <- kept_row_names
       }
-      se_col_idx <- which(colnames(mul.res) == se_col_name)
       
-      # Create mul_for_exp with the correct columns for coxExp: coef, se, p
-      p_col_idx <- which(colnames(mul.res) == "p")
-      coef_col_idx <- which(colnames(mul.res) == "coef")
-      
-      # Ensure mul_for_exp has columns in the order coxExp expects: coef, se, p
-      mul_for_exp <- mul.res[rownames(uni.res), c(coef_col_idx, se_col_idx, p_col_idx), drop = FALSE]
-      
-      fix.all <- cbind(
-        coxExp(uni.res,    dec = dec),
-        coxExp(mul_for_exp, dec = dec)
-      )      
-      colnames(fix.all) <- c("crude HR(95%CI)", "crude P value", "adj. HR(95%CI)", "adj. P value")
-      rownames(fix.all) <- rownames(uni.res)
+
     } else {
       if (is.null(data_for_univariate)) {
         basemodel <- update(model, stats::formula(paste(c(". ~ .", xf), collapse = " - ")), data = mdata2)
@@ -672,12 +734,14 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
       }
     })
   }
-  
   if (class(fix.all.unlist)[1] == "character") {
     fix.all.unlist <- t(data.frame(fix.all.unlist))
   }
-  if (is.null(model_states)) {
-    rownames(fix.all.unlist) <- unlist(rn.list)
+  rn_vector <- unlist(rn.list)
+  if (length(rn_vector) == nrow(fix.all.unlist)) {
+    rownames(fix.all.unlist) <- rn_vector
+  } else if (is.null(model_states)) {
+    rownames(fix.all.unlist) <- rn_vector
   }
   
   pv.colnum <- which(colnames(fix.all.unlist) %in% c("P value", "crude P value", "adj. P value"))
@@ -734,7 +798,6 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
   } else if (mtype == "frailty") {
     intro <- paste("Frailty", intro, "- Group", cvname)
   }
-  
   if (!is.null(model_states)) {
     states <- paste(sapply(seq_along(model_states), function(i) paste(i, model_states[i], sep = ": ")), collapse = ", ")
     intro[2] <- paste("states", states)
