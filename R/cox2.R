@@ -463,6 +463,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
         row_keep <- grepl(pattern, rownames(uni.res))
         kept_row_names <- rownames(uni.res)[row_keep]
         
+        
         if (length(kept_row_names) == 0) {
           available_states <- paste(sprintf("%d: %s", seq_along(model_states), model_states), collapse = ", ")
           stop(sprintf("No rows matched the supplied event_msm values. Available states: %s", available_states))
@@ -498,8 +499,24 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
         rn.uni   <- rn.uni[keep_var]
         xf_keep  <- xf_keep[keep_var]
         filtered_state_labels <- target_state_labels
-        rn.uni_filtered <- rn.uni
-        rownames(fix.all) <- kept_row_names
+        
+        
+        # rn.uni_filtered <- rn.uni
+        # rownames(fix.all) <- kept_row_names
+        if (length(target_state_idx) == 1) {
+            suffix_pattern <- paste0(":", target_state_idx, "$")
+            row_map <- setNames(sub(suffix_pattern, "", kept_row_names), kept_row_names)
+
+            rownames(fix.all) <- row_map[rownames(fix.all)]
+            rn.uni <- lapply(rn.uni, function(r) {
+              mapped <- row_map[r]
+              mapped <- mapped[!is.na(mapped)]
+              mapped
+            })
+          } else {
+            rownames(fix.all) <- kept_row_names
+          }
+          rn.uni_filtered <- rn.uni
       }
       
 
@@ -706,9 +723,35 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
   })
   fix.all.unlist <- Reduce(rbind, fix.all.list)
   
-  if (!is.null(model_states) && use_event_filter && !is.null(rn.uni_filtered)) {
-    rn.list <- rn.uni_filtered
-  } else {
+  # if (!is.null(model_states) && use_event_filter && !is.null(rn.uni_filtered)) {
+  #   rn.list <- rn.uni_filtered
+  # } else {
+  #   rn.list <- lapply(seq_along(xf_keep), function(x) {
+  #     rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]
+  #   })
+  #   varnum.2fac <- which(lapply(xf, function(x) {
+  #     length(sapply(mdata, levels)[[x]])
+  #   }) == 2)
+  #   lapply(varnum.2fac, function(x) {
+  #     rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep = "")
+  #   })
+  #   lapply(varnum.mfac, function(x) {
+  #     if (grepl(":", xf[x])) {
+  #       a <- unlist(strsplit(xf[x], ":"))[1]
+  #       b <- unlist(strsplit(xf[x], ":"))[2]
+  # 
+  #       if (a %in% xf && b %in% xf) {
+  #         ref <- paste0(a, levels(mdata[, a])[1], ":", b, levels(mdata[, b])[1])
+  #         rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+  #       } else {
+  #         rn.list[[x]] <<- c(paste(xf[x], ": ref.=NA", model$xlevels[[xf[x]]][1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+  #       }
+  #     } else {
+  #       rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+  #     }
+  #   })
+  # }
+  
     rn.list <- lapply(seq_along(xf_keep), function(x) {
       rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]
     })
@@ -733,7 +776,16 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
         rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
       }
     })
-  }
+    
+    # if (!is.null(model_states) && use_event_filter && !is.null(rn.uni_filtered)) {
+    #   rn.list <- rn.uni_filtered
+    
+    if(!is.null(model_states) && length(event_msm) == length(model_states)-1 ){
+      rownames(fix.all.unlist) <- unlist(rn.list)
+    }
+  
+  
+  
   if (class(fix.all.unlist)[1] == "character") {
     fix.all.unlist <- t(data.frame(fix.all.unlist))
   }
