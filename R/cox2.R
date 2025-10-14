@@ -392,12 +392,12 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
         if (length(msm_values) == 0 || all(is.na(msm_values))) {
           stop("event_msm must contain at least one non-missing value.")
         }
-        
+
         if (length(allowed_idx) == 0) {
           stop("The model does not contain any destination states beyond the origin state '(s0)'.")
         }
         available_states <- paste(sprintf("%d: %s", allowed_idx, allowed_labels), collapse = ", ")
-        
+
         resolve_state <- function(val) {
           if (is.na(val)) return(NA_integer_)
           if (is.numeric(val)) {
@@ -415,18 +415,41 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
           if (!is.na(idx_chr) && idx_chr %in% allowed_idx) return(idx_chr)
           NA_integer_
         }
-        
-        state_idx_all <- vapply(msm_values, resolve_state, integer(1), USE.NAMES = FALSE)
-        if (anyNA(state_idx_all)) {
-          bad_vals <- unique(as.character(msm_values[is.na(state_idx_all)]))
-          stop(sprintf("No valid states matched 'event_msm'. Available states: %s", available_states))
+
+        single_destination <- length(allowed_idx) == 1
+        if (single_destination) {
+          allowed_label <- allowed_labels[1]
+          valid_tokens  <- unique(c(allowed_label, as.character(allowed_idx)))
+
+          if (length(msm_values) > 1) {
+            stop(sprintf("Only one destination state ('%s') is available; event_msm cannot contain multiple values.",
+                         allowed_label))
+          }
+
+          if (!all(msm_values %in% valid_tokens)) {
+            baseline_label <- model_states[1]
+            stop(sprintf(
+              "event_msm must match the available destination state '%s'. Baseline states such as '%s' are not allowed.",
+              allowed_label, baseline_label))
+          }
+
+          target_state_idx    <- allowed_idx
+          target_state_labels <- allowed_label
+        } else {
+          state_idx_all <- vapply(msm_values, resolve_state, integer(1), USE.NAMES = FALSE)
+          if (anyNA(state_idx_all)) {
+            bad_vals <- unique(as.character(msm_values[is.na(state_idx_all)]))
+            stop(sprintf(
+              "No valid states matched 'event_msm'. event_msm must refer to destination states reported by model$states (excluding '%s'). Available states: %s",
+              model_states[1], available_states))
+          }
+          state_idx <- unique(state_idx_all)
+          
+          target_state_idx <- state_idx
+          target_state_labels <- model_states[state_idx]
         }
-        state_idx <- unique(state_idx_all)
-        
-        target_state_idx <- state_idx
-        target_state_labels <- model_states[state_idx]
       }
-      use_event_filter <- length(target_state_idx) > 0
+      use_event_filter <- length(target_state_idx) > 0 && length(allowed_idx) > 1
       
       if (!use_event_filter) {
         
