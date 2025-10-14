@@ -505,7 +505,10 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
         # rownames(fix.all) <- kept_row_names
         if (length(target_state_idx) == 1) {
             suffix_pattern <- paste0(":", target_state_idx, "$")
-            row_map <- setNames(sub(suffix_pattern, "", kept_row_names), kept_row_names)
+            row_map_vals <- sub(suffix_pattern, "", kept_row_names)
+            idx_simple <- !grepl(":", row_map_vals)
+            row_map_vals[idx_simple] <- sub("_[0-9]+$", "", row_map_vals[idx_simple])
+            row_map <- setNames(row_map_vals, kept_row_names)
 
             rownames(fix.all) <- row_map[rownames(fix.all)]
             rn.uni <- lapply(rn.uni, function(r) {
@@ -780,9 +783,9 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
     # if (!is.null(model_states) && use_event_filter && !is.null(rn.uni_filtered)) {
     #   rn.list <- rn.uni_filtered
     
-    if(!is.null(model_states) && length(event_msm) == length(model_states)-1 ){
-      rownames(fix.all.unlist) <- unlist(rn.list)
-    }
+    # if(!is.null(model_states) && length(event_msm) == length(model_states)-1 ){
+    #   rownames(fix.all.unlist) <- unlist(rn.list)
+    # }
   
   
   
