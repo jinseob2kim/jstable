@@ -7,7 +7,7 @@
 cox2.display(
   cox.obj.withmodel,
   dec = 2,
-  msm = NULL,
+  event_msm = NULL,
   pcut.univariate = NULL,
   data_for_univariate = NULL
 )
@@ -17,7 +17,7 @@ cox2.display(
 
 \item{dec}{Decimal point, Default: 2}
 
-\item{msm}{Multi state model, Default: NULL}
+\item{event_msm}{Character or numeric vector of destination states to keep (multi-state models only)}
 
 \item{pcut.univariate}{pcut.univariate, Default: NULL}
 

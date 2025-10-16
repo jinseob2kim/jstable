@@ -1,3 +1,7 @@
+# jstable 1.3.19
+* Fix: `cox2.display` now properly handles multi-state models automatically without the `msm` parameter.
+* Fix: When `event_msm` is applied,`cox2.display` only returns the output with the selected variables.
+
 # jstable 1.3.18
 * Fix: `TableSubgroupMultiCox` now correctly extracts p-values from survey Cox models (svycoxph) by using the last column index instead of hardcoded column 5
 * Fix: `cox2.display` now correctly handles `strata()` terms in `coxph` models
