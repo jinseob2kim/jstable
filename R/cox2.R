@@ -158,6 +158,79 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
   #  mdata = data.frame(data)
   # }
   
+  target_state_idx <- integer()
+  target_state_labels <- character()
+
+  if (!is.null(model_states)) {
+    if (!is.null(event_msm)) {
+      msm_values <- as.vector(event_msm)
+      if (length(msm_values) == 0 || all(is.na(msm_values))) {
+        stop("event_msm must contain at least one non-missing value.")
+      }
+
+      if (length(allowed_idx) == 0) {
+        stop("The model does not contain any destination states beyond the origin state '(s0)'.")
+      }
+
+      available_states <- paste(sprintf("%d: %s", allowed_idx, allowed_labels), collapse = ", ")
+
+      resolve_state <- function(val) {
+        if (is.na(val)) return(NA_integer_)
+        if (is.numeric(val)) {
+          if (!is.finite(val)) return(NA_integer_)
+          if (!isTRUE(all.equal(val, as.integer(val)))) return(NA_integer_)
+          idx <- as.integer(val)
+          if (idx %in% allowed_idx) return(idx)
+          return(NA_integer_)
+        }
+        val_chr <- trimws(as.character(val))
+        if (identical(val_chr, "") || identical(val_chr, "(s0)")) return(NA_integer_)
+        match_idx <- match(val_chr, model_states)
+        if (!is.na(match_idx) && match_idx %in% allowed_idx) return(match_idx)
+        suppressWarnings(idx_chr <- as.integer(val_chr))
+        if (!is.na(idx_chr) && idx_chr %in% allowed_idx) return(idx_chr)
+        NA_integer_
+      }
+
+      single_destination <- length(allowed_idx) == 1
+      if (single_destination) {
+        allowed_label <- allowed_labels[1]
+        valid_tokens  <- unique(c(allowed_label, as.character(allowed_idx)))
+
+        if (length(msm_values) > 1) {
+          stop(sprintf("Only one destination state ('%s') is available; event_msm cannot contain multiple values.",
+                       allowed_label))
+        }
+
+        if (!all(msm_values %in% valid_tokens)) {
+          baseline_label <- model_states[1]
+          stop(sprintf(
+            "event_msm must match the available destination state '%s'. Baseline states such as '%s' are not allowed.",
+            allowed_label, baseline_label))
+        }
+
+        target_state_idx    <- allowed_idx
+        target_state_labels <- allowed_label
+      } else {
+        state_idx_all <- vapply(msm_values, resolve_state, integer(1), USE.NAMES = FALSE)
+        if (anyNA(state_idx_all)) {
+          bad_vals <- unique(as.character(msm_values[is.na(state_idx_all)]))
+          stop(sprintf(
+            "No valid states matched 'event_msm'. event_msm must refer to destination states reported by model$states (excluding '%s'). Available states: %s",
+            model_states[1], available_states))
+        }
+        state_idx <- unique(state_idx_all)
+
+        target_state_idx    <- state_idx
+        target_state_labels <- model_states[state_idx]
+      }
+    }
+  } else if (!is.null(event_msm)) {
+    stop("'event_msm' can only be used when the model includes multi-state information")
+  }
+
+  use_event_filter <- length(target_state_idx) > 0 && length(allowed_idx) > 1
+
   if (length(xf) == 1) {
     uni.res <- data.frame(summary(model)$coefficients)
     # uni.res <- data.frame(summary(coxph(as.formula(paste("mdata[, 1]", "~", xf, formula.ranef, sep="")), data = mdata))$coefficients)
@@ -176,12 +249,31 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
     }
     fix.all <- coxExp(uni.res2, dec = dec)
     colnames(fix.all) <- c("HR(95%CI)", "P value")
-    
+
     if (mtype == "frailty") {
       # rownames(fix.all) <- c(names(model$coefficients), "frailty")
       rownames(fix.all) <- names(model$coefficients)
     } else {
       rownames(fix.all) <- names(model$coefficients)
+    }
+
+    if (use_event_filter) {
+      pattern <- paste(paste0(":", target_state_idx, "$"), collapse = "|")
+      row_keep <- grepl(pattern, rownames(fix.all))
+      kept_row_names <- rownames(fix.all)[row_keep]
+
+      if (length(kept_row_names) == 0) {
+        available_states <- paste(sprintf("%d: %s", seq_along(model_states), model_states), collapse = ", ")
+        stop(sprintf("No rows matched the supplied event_msm values. Available states: %s", available_states))
+      }
+
+      fix.all <- fix.all[kept_row_names, , drop = FALSE]
+      uni.res <- uni.res[kept_row_names, , drop = FALSE]
+      rn.uni  <- lapply(rn.uni, function(r) r[r %in% kept_row_names])
+      keep_var <- lengths(rn.uni) > 0
+      rn.uni   <- rn.uni[keep_var]
+      xf_keep  <- xf_keep[keep_var]
+      filtered_state_labels <- target_state_labels
     }
   } else {
     countings <- length(unlist(attr(mdata[[1]], "dimnames")[2]))
@@ -384,72 +476,6 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
       
       
       # ==============================================================
-      
-      target_state_idx <- integer()
-      target_state_labels <- character()
-      if (!is.null(event_msm)) {
-        msm_values <- as.vector(event_msm)
-        if (length(msm_values) == 0 || all(is.na(msm_values))) {
-          stop("event_msm must contain at least one non-missing value.")
-        }
-
-        if (length(allowed_idx) == 0) {
-          stop("The model does not contain any destination states beyond the origin state '(s0)'.")
-        }
-        available_states <- paste(sprintf("%d: %s", allowed_idx, allowed_labels), collapse = ", ")
-
-        resolve_state <- function(val) {
-          if (is.na(val)) return(NA_integer_)
-          if (is.numeric(val)) {
-            if (!is.finite(val)) return(NA_integer_)
-            if (!isTRUE(all.equal(val, as.integer(val)))) return(NA_integer_)
-            idx <- as.integer(val)
-            if (idx %in% allowed_idx) return(idx)
-            return(NA_integer_)
-          }
-          val_chr <- trimws(as.character(val))
-          if (identical(val_chr, "") || identical(val_chr, "(s0)")) return(NA_integer_)
-          match_idx <- match(val_chr, model_states)
-          if (!is.na(match_idx) && match_idx %in% allowed_idx) return(match_idx)
-          suppressWarnings(idx_chr <- as.integer(val_chr))
-          if (!is.na(idx_chr) && idx_chr %in% allowed_idx) return(idx_chr)
-          NA_integer_
-        }
-
-        single_destination <- length(allowed_idx) == 1
-        if (single_destination) {
-          allowed_label <- allowed_labels[1]
-          valid_tokens  <- unique(c(allowed_label, as.character(allowed_idx)))
-
-          if (length(msm_values) > 1) {
-            stop(sprintf("Only one destination state ('%s') is available; event_msm cannot contain multiple values.",
-                         allowed_label))
-          }
-
-          if (!all(msm_values %in% valid_tokens)) {
-            baseline_label <- model_states[1]
-            stop(sprintf(
-              "event_msm must match the available destination state '%s'. Baseline states such as '%s' are not allowed.",
-              allowed_label, baseline_label))
-          }
-
-          target_state_idx    <- allowed_idx
-          target_state_labels <- allowed_label
-        } else {
-          state_idx_all <- vapply(msm_values, resolve_state, integer(1), USE.NAMES = FALSE)
-          if (anyNA(state_idx_all)) {
-            bad_vals <- unique(as.character(msm_values[is.na(state_idx_all)]))
-            stop(sprintf(
-              "No valid states matched 'event_msm'. event_msm must refer to destination states reported by model$states (excluding '%s'). Available states: %s",
-              model_states[1], available_states))
-          }
-          state_idx <- unique(state_idx_all)
-          
-          target_state_idx <- state_idx
-          target_state_labels <- model_states[state_idx]
-        }
-      }
-      use_event_filter <- length(target_state_idx) > 0 && length(allowed_idx) > 1
       
       if (!use_event_filter) {
         
@@ -743,7 +769,9 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
   fix.all.list <- lapply(seq_along(xf_keep), function(x) {
     fix.all[rownames(fix.all) %in% rn.uni[[x]], ]
   })
-  varnum.mfac <- which(lapply(fix.all.list, length) > ncol(fix.all))
+  varnum.mfac_candidates <- which(lapply(fix.all.list, length) > ncol(fix.all))
+  categorical_vars_keep <- intersect(xf_keep, categorical_vars)
+  varnum.mfac <- varnum.mfac_candidates[xf_keep[varnum.mfac_candidates] %in% categorical_vars_keep]
   lapply(varnum.mfac, function(x) {
     fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])
   })
@@ -791,15 +819,15 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
       if (grepl(":", xf[x])) {
         a <- unlist(strsplit(xf[x], ":"))[1]
         b <- unlist(strsplit(xf[x], ":"))[2]
-        
+
         if (a %in% xf && b %in% xf) {
           ref <- paste0(a, levels(mdata[, a])[1], ":", b, levels(mdata[, b])[1])
-          rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+          rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), rn.list[[x]])
         } else {
-          rn.list[[x]] <<- c(paste(xf[x], ": ref.=NA", model$xlevels[[xf[x]]][1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+          rn.list[[x]] <<- c(paste(xf[x], ": ref.=NA", model$xlevels[[xf[x]]][1], sep = ""), rn.list[[x]])
         }
       } else {
-        rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+        rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), rn.list[[x]])
       }
     })
     
