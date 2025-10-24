@@ -9,7 +9,9 @@ count_event_by(
   data,
   count_by_var = NULL,
   var_subgroup = NULL,
-  decimal.percent = 1
+  decimal.percent = 1,
+  data_original = NULL,
+  formula_original = NULL
 )
 }
 \arguments{
@@ -22,6 +24,10 @@ count_event_by(
 \item{var_subgroup}{1 sub-group variable for analysis,}
 
 \item{decimal.percent}{decimals to show percent of, Default: 1}
+
+\item{data_original}{Original data for competing risk analysis (before finegray transformation), Default: NULL}
+
+\item{formula_original}{Original formula for competing risk analysis (before finegray transformation), Default: NULL}
 }
 \value{
 Table with event, subgroup number
@@ -30,7 +36,7 @@ Table with event, subgroup number
 Function to count event, subgroup number
 }
 \details{
-This function is used inside TableSubgroupCox, TableSubgroupMultiCox for calculation
+This function is used inside TableSubgroupCox, TableSubgroupMultiCox for calculation. When data_original and formula_original are provided, counts and percentages are calculated from the original data instead of the finegray-transformed data, ensuring accurate event counts in competing risk analysis.
 }
 \examples{
 \dontrun{

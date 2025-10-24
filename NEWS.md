@@ -1,3 +1,14 @@
+# jstable 1.3.21
+* Fix: `TableSubgroupCox` and `TableSubgroupMultiCox` now correctly maintain Count and Percent from original data in competing risk analysis
+* When `data_original` is provided, Count and Percent are calculated from the original data instead of finegray-transformed data
+* This ensures accurate sample sizes and percentages while cumulative incidence is still calculated using competing risk methods
+
+# jstable 1.3.20
+* Update: `TableSubgroupCox` and `TableSubgroupMultiCox` now support competing risk analysis with proper cumulative incidence calculation
+* Add `data_original` and `formula_original` parameters to `TableSubgroupCox` and `TableSubgroupMultiCox` for competing risk analysis
+* When using finegray-transformed data, users can now provide the original data and formula to calculate true cumulative incidence instead of Kaplan-Meier based event rates
+* Cumulative incidence is calculated using `survfit()` with factor event variable on the original data
+
 # jstable 1.3.19
 * Fix: `cox2.display` now properly handles multi-state models automatically without the `msm` parameter.
 * Fix: When `event_msm` is applied,`cox2.display` only returns the output with the selected variables.

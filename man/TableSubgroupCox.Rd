@@ -18,7 +18,9 @@ TableSubgroupCox(
   weights = NULL,
   event = FALSE,
   count_by = NULL,
-  labeldata = NULL
+  labeldata = NULL,
+  data_original = NULL,
+  formula_original = NULL
 )
 }
 \arguments{
@@ -49,6 +51,10 @@ TableSubgroupCox(
 \item{count_by}{Select variables to count by subgroup, Default: NULL}
 
 \item{labeldata}{Label info, made by `mk.lev` function, Default: NULL}
+
+\item{data_original}{Original data for competing risk analysis (before finegray transformation), Default: NULL}
+
+\item{formula_original}{Original formula for competing risk analysis (before finegray transformation), Default: NULL}
 }
 \value{
 Sub-group analysis table.

@@ -14,6 +14,8 @@
 #' @param labeldata Label info, made by `mk.lev` function, Default: NULL
 #' @param count_by Select variables to count by subgroup, Default: NULL
 #' @param event Show number and rates of event in survival analysis default:F
+#' @param data_original Original data for competing risk analysis (before finegray transformation), Default: NULL
+#' @param formula_original Original formula for competing risk analysis (before finegray transformation), Default: NULL
 #' @return Sub-group analysis table.
 #' @details This result is used to make forestplot.
 #' @examples
@@ -57,9 +59,75 @@
 #' @importFrom coxme coxme
 #' @importFrom car Anova
 
-TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, cluster = NULL, strata = NULL, weights = NULL, event = FALSE, count_by = NULL, labeldata = NULL) {
+TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, cluster = NULL, strata = NULL, weights = NULL, event = FALSE, count_by = NULL, labeldata = NULL, data_original = NULL, formula_original = NULL) {
   . <- variable <- val_label <- NULL
   is_mixed_effect <- grepl("\\|", deparse(formula))
+
+  # Helper function: Detect finegray data
+  is_finegray_data <- function(data) {
+    all(c("fgstart", "fgstop", "fgstatus", "fgwt") %in% names(data))
+  }
+
+  # Helper function: Calculate cumulative incidence for competing risk
+  calc_competing_risk_ci <- function(data_orig, formula_orig, time_point, decimal.percent, xlabel, model_xlevels, target_event = NULL) {
+    tryCatch({
+      # Extract time and event variables from Surv() formula
+      surv_call <- formula_orig[[2]]
+      if (length(surv_call) == 3) {
+        # Surv(time, event)
+        time_var <- as.character(surv_call[[2]])
+        event_var <- as.character(surv_call[[3]])
+      } else if (length(surv_call) == 4) {
+        # Surv(time, time2, event) or Surv(start, stop, event)
+        time_var <- as.character(surv_call[[2]])
+        event_var <- as.character(surv_call[[4]])
+      } else {
+        warning("Could not parse Surv() formula")
+        return(NULL)
+      }
+
+      # Handle get() wrapper if present
+      time_var <- gsub("get\\(|\\)|['\"]", "", time_var)
+      event_var <- gsub("get\\(|\\)|['\"]", "", event_var)
+
+      # Check if event is factor (multi-state)
+      if (!is.factor(data_orig[[event_var]])) {
+        return(NULL)
+      }
+
+      # Get target event from finegray attribute or use first non-zero level
+      if (is.null(target_event)) {
+        target_event <- attr(data, "event")
+      }
+      if (is.null(target_event)) {
+        event_levels <- levels(data_orig[[event_var]])
+        target_event <- event_levels[event_levels != "0"][1]
+      }
+
+      # Build formula for survfit: Surv(time, event) ~ xlabel
+      formula_for_survfit <- as.formula(paste0("Surv(", time_var, ", ", event_var, ") ~ ", xlabel))
+
+      # Use survfit with factor event to get cumulative incidence
+      sf <- survival::survfit(formula_for_survfit, data = data_orig)
+      sf_summary <- summary(sf, times = time_point, extend = TRUE)
+
+      # Find the state index for target event
+      state_idx <- which(sf$states == target_event)
+      if (length(state_idx) == 0) {
+        warning("Target event '", target_event, "' not found in survival states")
+        return(NULL)
+      }
+
+      # Extract cumulative incidence (pstate)
+      ci_values <- round(100 * sf_summary$pstate[, state_idx], decimal.percent)
+      names(ci_values) <- paste0(xlabel, "=", model_xlevels)
+
+      return(ci_values)
+    }, error = function(e) {
+      warning("Failed to calculate cumulative incidence: ", e$message)
+      return(NULL)
+    })
+  }
   if (is.null(count_by) && !(event)) {
     ### var_subgroup이 categorical variable이 아닌 경우 중단 ###
     if (any(class(data) == "survey.design" & !is.null(var_subgroup))) {
@@ -148,14 +216,27 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           }
           # if (!is.null(model$xlevels) & length(model$xlevels[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
           
-          # KM 구하기(categorical인 경우)
+          # KM 구하기(categorical인 경우) 또는 Competing risk의 cumulative incidence
           if (is.numeric(data[[xlabel]])) {
             prop <- NULL
           } else {
-            res.kap <- survival::survfit(formula.km, data = data)
-            res.kap.times <- summary(res.kap, times = time_eventrate, extend = T)
-            prop <- round(100 * (1 - res.kap.times[["surv"]]), decimal.percent)
-            names(prop) <- paste0(xlabel, "=", model$xlevels[[1]])
+            # Calculate cumulative incidence for competing risk if both data_original and formula_original provided
+            if (is_finegray_data(data) && !is.null(data_original) && !is.null(formula_original)) {
+              prop <- calc_competing_risk_ci(data_original, formula_original, time_eventrate, decimal.percent, xlabel, model$xlevels[[1]])
+              if (is.null(prop)) {
+                # Fallback to standard calculation if cumulative incidence calculation fails
+                res.kap <- survival::survfit(formula.km, data = data)
+                res.kap.times <- summary(res.kap, times = time_eventrate, extend = T)
+                prop <- round(100 * (1 - res.kap.times[["surv"]]), decimal.percent)
+                names(prop) <- paste0(xlabel, "=", model$xlevels[[1]])
+              }
+            } else {
+              # Standard KM calculation (default behavior)
+              res.kap <- survival::survfit(formula.km, data = data)
+              res.kap.times <- summary(res.kap, times = time_eventrate, extend = T)
+              prop <- round(100 * (1 - res.kap.times[["surv"]]), decimal.percent)
+              names(prop) <- paste0(xlabel, "=", model$xlevels[[1]])
+            }
           }
           # out.kap <- paste(res.kap.times[["n.event"]], " (", round(100 * (1 - res.kap.times[["surv"]]), decimal.percent), ")", sep = "")
         }
@@ -195,14 +276,19 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
       
       # output 만들기
-      count_val <- if (is_mixed_effect) model$n[2] else model$n
+      # Use original data count if competing risk
+      if (!is_mixed_effect && is_finegray_data(data) && !is.null(data_original)) {
+        count_val <- nrow(data_original)
+      } else {
+        count_val <- if (is_mixed_effect) model$n[2] else model$n
+      }
       xlev <-if (is_mixed_effect) xlev else model$xlevels[[1]]
       if (ncoef < 2) {
         out <- data.frame(Variable = "Overall", Count = count_val, Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2], check.names = F) %>%
           mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
         
         if (!is.null(names(prop))) {
-          out <- data.frame(Variable = "Overall", Count = model$n, Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2], check.names = F) %>%
+          out <- data.frame(Variable = "Overall", Count = count_val, Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2], check.names = F) %>%
             cbind(t(prop)) %>%
             mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA)
         }
@@ -376,45 +462,102 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           }
           
           
-          # KM 구하기(categorical인 경우만)
+          # KM 구하기(categorical인 경우만) 또는 Competing risk cumulative incidence
           if (!is.numeric(data[[xlabel]])) {
             prop <- NULL
-            try({
-              res.kap.times <- data %>%
-                filter(!is.na(get(var_subgroup))) %>%
-                split(.[[var_subgroup]]) %>%
-                purrr::map(~ survival::survfit(formula.km, data = .)) %>%
-                purrr::map(~ summary(., times = time_eventrate, extend = T))
-              
-              prop <- matrix(nrow = length(res.kap.times), ncol = length(xlev[[1]]))
-              colnames(prop) <- paste0(xlabel, "=", xlev[[1]])
-              rownames(prop) <- names(res.kap.times)
-              
-              sub_xlev <- data %>%
-                filter(!is.na(get(var_subgroup))) %>%
-                split(.[[var_subgroup]]) %>%
-                lapply(function(x) {
-                  sort(setdiff(unique(x[[xlabel]]), NA))
-                })
-              
-              for (i in rownames(prop)) {
-                if (length(sub_xlev[[i]]) == 1) {
-                  # prop[i, paste0(xlabel, "=", sub_xlev[[i]])] <- res.kap.times[["0"]][["surv"]]
-                  prop[i, ] <- res.kap.times[["0"]][["surv"]]
-                } else if (length(sub_xlev[[i]]) > 1) {
-                  surv.df <- data.frame(res.kap.times[[i]][c("strata", "surv")])
-                  for (j in colnames(prop)) {
-                    tryCatch(prop[i, j] <- surv.df[surv.df$strata == j, "surv"],
-                             error = function(e) {
-                               prop[i, j] <- NA
-                             }
-                    )
+
+            # Calculate competing risk CI for subgroups if both data_original and formula_original provided
+            if (is_finegray_data(data) && !is.null(data_original) && !is.null(formula_original)) {
+              try({
+                # Extract time and event variables from formula_original
+                surv_call <- formula_original[[2]]
+                if (length(surv_call) == 3) {
+                  time_var <- as.character(surv_call[[2]])
+                  event_var <- as.character(surv_call[[3]])
+                } else if (length(surv_call) == 4) {
+                  time_var <- as.character(surv_call[[2]])
+                  event_var <- as.character(surv_call[[4]])
+                } else {
+                  stop("Could not parse Surv() formula")
+                }
+
+                # Handle get() wrapper
+                time_var <- gsub("get\\(|\\)|['\"]", "", time_var)
+                event_var <- gsub("get\\(|\\)|['\"]", "", event_var)
+
+                # Get target event
+                target_event <- attr(data, "event")
+                if (is.null(target_event)) {
+                  event_levels <- levels(data_original[[event_var]])
+                  target_event <- event_levels[event_levels != "0"][1]
+                }
+
+                # Split by subgroup and calculate CI
+                subgroup_levels <- data_original %>%
+                  filter(!is.na(get(var_subgroup))) %>%
+                  .[[var_subgroup]] %>%
+                  unique() %>%
+                  as.character()
+
+                prop <- matrix(nrow = length(subgroup_levels), ncol = length(xlev[[1]]))
+                colnames(prop) <- paste0(xlabel, "=", xlev[[1]])
+                rownames(prop) <- subgroup_levels
+
+                for (sg_level in subgroup_levels) {
+                  data_sub <- data_original %>% filter(get(var_subgroup) == sg_level)
+                  formula_sub <- as.formula(paste0("Surv(", time_var, ", ", event_var, ") ~ ", xlabel))
+
+                  sf_sub <- survival::survfit(formula_sub, data = data_sub)
+                  sf_sub_summary <- summary(sf_sub, times = time_eventrate, extend = TRUE)
+
+                  state_idx <- which(sf_sub$states == target_event)
+                  if (length(state_idx) > 0) {
+                    ci_sub <- round(100 * sf_sub_summary$pstate[, state_idx], decimal.percent)
+                    prop[sg_level, ] <- ci_sub
                   }
                 }
-              }
-              
-              prop <- round(100 * (1 - prop), decimal.percent)
-            }, silent = )
+              }, silent = FALSE)
+            }
+
+            # Fallback to standard KM if competing risk CI not calculated
+            if (is.null(prop)) {
+              try({
+                res.kap.times <- data %>%
+                  filter(!is.na(get(var_subgroup))) %>%
+                  split(.[[var_subgroup]]) %>%
+                  purrr::map(~ survival::survfit(formula.km, data = .)) %>%
+                  purrr::map(~ summary(., times = time_eventrate, extend = T))
+
+                prop <- matrix(nrow = length(res.kap.times), ncol = length(xlev[[1]]))
+                colnames(prop) <- paste0(xlabel, "=", xlev[[1]])
+                rownames(prop) <- names(res.kap.times)
+
+                sub_xlev <- data %>%
+                  filter(!is.na(get(var_subgroup))) %>%
+                  split(.[[var_subgroup]]) %>%
+                  lapply(function(x) {
+                    sort(setdiff(unique(x[[xlabel]]), NA))
+                  })
+
+                for (i in rownames(prop)) {
+                  if (length(sub_xlev[[i]]) == 1) {
+                    # prop[i, paste0(xlabel, "=", sub_xlev[[i]])] <- res.kap.times[["0"]][["surv"]]
+                    prop[i, ] <- res.kap.times[["0"]][["surv"]]
+                  } else if (length(sub_xlev[[i]]) > 1) {
+                    surv.df <- data.frame(res.kap.times[[i]][c("strata", "surv")])
+                    for (j in colnames(prop)) {
+                      tryCatch(prop[i, j] <- surv.df[surv.df$strata == j, "surv"],
+                               error = function(e) {
+                                 prop[i, j] <- NA
+                               }
+                      )
+                    }
+                  }
+                }
+
+                prop <- round(100 * (1 - prop), decimal.percent)
+              }, silent = )
+            }
           } else {
             prop <- NULL
           }
@@ -438,9 +581,16 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             pv_int <- tryCatch(round(pv_anova[nrow(pv_anova), 4], decimal.pvalue), error = function(e) NA)
           }
         }
-        
+
         # Count, PE, CI, PV 계산
-        model %>% purrr::map_dbl("n", .default = NA) -> Count
+        # Use original data for counting if competing risk (finegray data)
+        if (is_finegray_data(data) && !is.null(data_original)) {
+          # Count from original data by subgroup
+          data_original[[var_subgroup]] <- factor(data_original[[var_subgroup]])
+          Count <- as.vector(table(data_original[[var_subgroup]]))
+        } else {
+          model %>% purrr::map_dbl("n", .default = NA) -> Count
+        }
         
         if (ncoef < 2) {
           model %>%
@@ -541,7 +691,12 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         } else {
           ncoef <- length(xlev)
         }
-        Count <- as.vector(table(data[[var_subgroup]]))
+        # Use original data for counting if competing risk
+        if (is_finegray_data(data) && !is.null(data_original)) {
+          Count <- as.vector(table(data_original[[var_subgroup]]))
+        } else {
+          Count <- as.vector(table(data[[var_subgroup]]))
+        }
         total_count <- sum(Count)
         interaction_formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
         model_int <- coxme::coxme(interaction_formula, data = data)
@@ -629,8 +784,8 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   }
   ## add event, count_by options
   if ((event) && is.null(count_by)) {
-    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = FALSE, count_by = count_by, labeldata = labeldata)
-    count_output <- count_event_by(formula = formula, data = data, count_by_var = count_by, var_subgroup = var_subgroup, decimal.percent = 1)
+    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = FALSE, count_by = count_by, labeldata = labeldata, data_original = data_original, formula_original = formula_original)
+    count_output <- count_event_by(formula = formula, data = data, count_by_var = count_by, var_subgroup = var_subgroup, decimal.percent = 1, data_original = data_original, formula_original = formula_original)
     if (!is.null(var_subgroup)) {
       for (i in 1:nrow(original_output)) {
         clean_variable <- trimws(original_output$Variable[i])
@@ -648,8 +803,8 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
     }
   }
   if ((event) && !is.null(count_by)) {
-    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = FALSE, count_by = NULL, labeldata = labeldata)
-    count_output <- count_event_by(formula = formula, data = data, count_by_var = count_by, var_subgroup = var_subgroup, decimal.percent = 1)
+    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = FALSE, count_by = NULL, labeldata = labeldata, data_original = data_original, formula_original = formula_original)
+    count_output <- count_event_by(formula = formula, data = data, count_by_var = count_by, var_subgroup = var_subgroup, decimal.percent = 1, data_original = data_original, formula_original = formula_original)
     if (inherits(data, "survey.design")) {
       data <- data$variables
     } else {
@@ -703,7 +858,9 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       count_output_sub <- count_event_by(formula = formula, data = data,
                                          count_by_var = NULL,
                                          var_subgroup = var_subgroup,
-                                         decimal.percent = decimal.percent)
+                                         decimal.percent = decimal.percent,
+                                         data_original = data_original,
+                                         formula_original = formula_original)
       if (!is.null(labeldata)) {
         count_output_sub[[var_subgroup]] <- sapply(
           count_output_sub[[var_subgroup]],
@@ -733,14 +890,14 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         
         original_output[[event_rate_col]][trimws(original_output[["Variable"]]) == "Overall"] <- value_to_insert[1]
       }
-      count_output <- count_event_by(formula = formula, data = data, count_by_var = NULL, var_subgroup = var_subgroup, decimal.percent = 1)
+      count_output <- count_event_by(formula = formula, data = data, count_by_var = NULL, var_subgroup = var_subgroup, decimal.percent = 1, data_original = data_original, formula_original = formula_original)
       original_output$Count[1] <- count_output$Event_Rate[1]
       return(collapse_counts(original_output, count_by))
     }
   }
   if (!(event) && !is.null(count_by)) {
-    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = NULL, labeldata = labeldata)
-    count_output <- count_event_by(formula = formula, data = data, count_by_var = count_by, var_subgroup = var_subgroup, decimal.percent = 1)
+    original_output <- TableSubgroupCox(formula = formula, var_subgroup = var_subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = NULL, labeldata = labeldata, data_original = data_original, formula_original = formula_original)
+    count_output <- count_event_by(formula = formula, data = data, count_by_var = count_by, var_subgroup = var_subgroup, decimal.percent = 1, data_original = data_original, formula_original = formula_original)
     
     if (inherits(data, "survey.design")) {
       data <- data$variables
@@ -820,6 +977,8 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 #' @param labeldata Label info, made by `mk.lev` function, Default: NULL
 #' @param count_by Select variables to count by subgroup, Default: NULL
 #' @param event Show number and rates of event in survival analysis default:F
+#' @param data_original Original data for competing risk analysis (before finegray transformation), Default: NULL
+#' @param formula_original Original formula for competing risk analysis (before finegray transformation), Default: NULL
 #' @return Multiple sub-group analysis table.
 #' @details This result is used to make forestplot.
 #' @examples
@@ -853,18 +1012,18 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
 #' @importFrom magrittr %>%
 #' @importFrom dplyr bind_rows
 
-TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, line = F, cluster = NULL, strata = NULL, weights = NULL, event = FALSE, count_by = NULL, labeldata = NULL) {
+TableSubgroupMultiCox <- function(formula, var_subgroups = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, line = F, cluster = NULL, strata = NULL, weights = NULL, event = FALSE, count_by = NULL, labeldata = NULL, data_original = NULL, formula_original = NULL) {
   . <- NULL
   xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
-  
-  out.all <- TableSubgroupCox(formula, var_subgroup = NULL, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = count_by, labeldata = labeldata)
+
+  out.all <- TableSubgroupCox(formula, var_subgroup = NULL, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = count_by, labeldata = labeldata, data_original = data_original, formula_original = formula_original)
   out.all <- dplyr::mutate_all(out.all, as.character)
   
   if (is.null(var_subgroups)) {
     return(out.all)
   } else {
     out.list <- lapply(var_subgroups, function(subgroup) {
-      TableSubgroupCox(formula, var_subgroup = subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = count_by, labeldata = labeldata)
+      TableSubgroupCox(formula, var_subgroup = subgroup, var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, strata = strata, weights = weights, event = event, count_by = count_by, labeldata = labeldata, data_original = data_original, formula_original = formula_original)
     })
     
     # out.list <- purrr::map(var_subgroups, ~ TableSubgroupCox(formula, var_subgroup = ., var_cov = var_cov, data = data, time_eventrate = time_eventrate, decimal.hr = decimal.hr, decimal.percent = decimal.percent, decimal.pvalue = decimal.pvalue, cluster = cluster, weights = weights_vec))

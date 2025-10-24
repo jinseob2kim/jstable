@@ -5,8 +5,10 @@
 #' @param count_by_var variables to count subgroup for
 #' @param var_subgroup 1 sub-group variable for analysis,
 #' @param decimal.percent decimals to show percent of, Default: 1
+#' @param data_original Original data for competing risk analysis (before finegray transformation), Default: NULL
+#' @param formula_original Original formula for competing risk analysis (before finegray transformation), Default: NULL
 #' @return Table with event, subgroup number
-#' @details This function is used inside TableSubgroupCox, TableSubgroupMultiCox for calculation
+#' @details This function is used inside TableSubgroupCox, TableSubgroupMultiCox for calculation. When data_original and formula_original are provided, counts and percentages are calculated from the original data instead of the finegray-transformed data, ensuring accurate event counts in competing risk analysis.
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
@@ -20,44 +22,56 @@
 #' @importFrom dplyr group_by summarize mutate bind_rows arrange
 #' @importFrom rlang sym
 #'
-count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NULL, decimal.percent = 1) {
-  if (inherits(data, "survey.design")) {
-    data <- data$variables
+count_event_by <- function(formula, data, count_by_var = NULL, var_subgroup = NULL, decimal.percent = 1, data_original = NULL, formula_original = NULL) {
+  # Use original data for counting if provided (for competing risk analysis)
+  if (!is.null(data_original) && !is.null(formula_original)) {
+    data_for_count <- data_original
+    event_col <- as.character(formula_original[[2]][[3]])
+    if (length(formula_original[[2]]) == 4) {
+      # Surv(time, time2, event) format
+      event_col <- as.character(formula_original[[2]][[4]])
+    }
+    # Handle get() wrapper if present
+    event_col <- gsub("get\\(|\\)|['\"]", "", event_col)
   } else {
-    data <- data
+    if (inherits(data, "survey.design")) {
+      data_for_count <- data$variables
+    } else {
+      data_for_count <- data
+    }
+    event_col <- as.character(formula[[2]][[3]])
   }
   Count <- Event_Count <- NULL
-  event_col <- as.character(formula[[2]][[3]])
-  total_count <- nrow(data)
-  total_event_count <- sum(data[[event_col]] == 1, na.rm = TRUE)
+  total_count <- nrow(data_for_count)
+  total_event_count <- sum(data_for_count[[event_col]] == 1, na.rm = TRUE)
   total_event_rate <- paste0(total_event_count, "/", total_count, " (", round(total_event_count / total_count * 100, decimal.percent), "%)")
-  
+
   if (!is.null(count_by_var) && !is.null(var_subgroup)) {
-    counts <- data %>%
+    counts <- data_for_count %>%
       dplyr::filter(!is.na(!!rlang::sym(var_subgroup))) %>%
       dplyr::group_by(!!rlang::sym(count_by_var), !!rlang::sym(var_subgroup)) %>%
       dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
       dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
-    
-    overall_counts <- data %>%
+
+    overall_counts <- data_for_count %>%
       dplyr::group_by(!!rlang::sym(count_by_var)) %>%
       dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
       dplyr::mutate(
         Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"),
         !!rlang::sym(var_subgroup) := "Overall"
       )
-    
+
     counts <- counts %>%
       dplyr::bind_rows(overall_counts) %>%
       dplyr::arrange(!!rlang::sym(count_by_var), !!rlang::sym(var_subgroup))
   } else if (is.null(count_by_var) && !is.null(var_subgroup)) {
-    counts <- data %>%
+    counts <- data_for_count %>%
       dplyr::filter(!is.na(!!rlang::sym(var_subgroup))) %>%
       dplyr::group_by(!!rlang::sym(var_subgroup)) %>%
       dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
       dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
   } else if (!is.null(count_by_var) && is.null(var_subgroup)) {
-    counts <- data %>%
+    counts <- data_for_count %>%
       dplyr::group_by(!!rlang::sym(count_by_var)) %>%
       dplyr::summarize(Count = dplyr::n(), Event_Count = sum(!!rlang::sym(event_col) == 1, na.rm = TRUE), .groups = "drop") %>%
       dplyr::mutate(Event_Rate = paste0(Event_Count, "/", Count, " (", round(Event_Count / Count * 100, decimal.percent), "%)"))
