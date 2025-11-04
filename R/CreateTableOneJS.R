@@ -130,7 +130,11 @@ CreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, test 
   # cap.tb1 = paste("Table 1: Stratified by ", strata, sep="")
   
   if (Labels & !is.null(labeldata)) {
-    colname.group_var <- unlist(labeldata[.(strata, names(res$CatTable)), val_label])
+    strata_levels <- names(res$CatTable)
+    if (is.null(strata_levels)) {
+      strata_levels <- names(res$ContTable)
+    }
+    colname.group_var <- unlist(labeldata[.(strata, strata_levels), val_label])
     if (is.na(colname.group_var[1]) & addOverall) {
       colname.group_var[1] <- "Overall"
     }

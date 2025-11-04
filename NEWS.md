@@ -1,3 +1,6 @@
+# jstable 1.3.22
+* Fix: `CreateTableOneJS` and `CreateTableOne2` now have correct headers for overall and strata columns.
+
 # jstable 1.3.21
 * Fix: `TableSubgroupCox` and `TableSubgroupMultiCox` now correctly maintain Count and Percent from original data in competing risk analysis
 * When `data_original` is provided, Count and Percent are calculated from the original data instead of finegray-transformed data
