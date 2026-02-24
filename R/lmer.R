@@ -51,7 +51,7 @@ lmerExp <- function(lmer.coef, family = "binomial", dec) {
 #' @rdname lmer.display
 #' @export
 #' @importFrom lme4 lmer glmer confint.merMod
-#' @importFrom stats update formula reformulate
+#' @importFrom stats update formula reformulate terms getCall
 
 lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = NULL, data_for_univariate = NULL) {
   xvar <- NULL
@@ -63,13 +63,38 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
   y <- forms[2]
   xfr <- strsplit(forms[3], " \\+ ")[[1]]
   xr <- xfr[grepl("\\|", xfr)]
-  xf <- xfr[!grepl("\\|", xfr)]
+  terms_obj <- stats::terms(lmerMod.obj)
+  xf <- attr(terms_obj, "term.labels")
+  offset_idx <- attr(terms_obj, "specials")$offset
+  offset_terms <- if (!is.null(offset_idx) && length(offset_idx) > 0) {
+    xf[offset_idx]
+  } else {
+    character(0)
+  }
+  if (length(offset_terms) == 0) {
+    offset_terms <- xf[grepl("^offset\\(", xf)]
+  }
+  xf <- setdiff(xf, offset_terms)
   family.lmer <- ifelse(is.null(sl$family), "gaussian", sl$family)
   uni.res <- ""
+  current_offset <- stats::getCall(lmerMod.obj)$offset
   
-  categorical_vars <- xf[sapply(mdata[xf], is.factor)]
+  base_vars <- xf[!grepl(":", xf) & xf %in% names(mdata)]
+  if (length(base_vars) > 0) {
+    categorical_vars <- base_vars[sapply(mdata[, base_vars, drop = FALSE], is.factor)]
+  } else {
+    categorical_vars <- character(0)
+  }
   if (is.null(data_for_univariate)) {
-    basemodel <- update(lmerMod.obj, stats::formula(paste(c(". ~ .", xf), collapse = " - ")), data = mdata)
+    update_args <- list(
+      object = lmerMod.obj,
+      formula = stats::formula(paste(c(". ~ .", xf), collapse = " - ")),
+      data = mdata
+    )
+    if (!is.null(current_offset)) {
+      update_args$offset <- current_offset
+    }
+    basemodel <- do.call(stats::update, update_args)
     unis <- lapply(xf, function(x) {
       summary(stats::update(basemodel, stats::formula(paste0(". ~ . +", x)), data = mdata))$coefficients
     })
@@ -80,14 +105,22 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
     else {
       random_part <- if (length(xr) > 0) paste(xr, collapse = "+") else ""
       unis <- lapply(xf, function(v) {
-        keep <- complete.cases(data_for_univariate[, c(y ,v), drop = F]) 
+        terms <- if (length(xr) > 0) c(v, xr) else xr
+        if (length(offset_terms) > 0) {
+          terms <- c(terms, offset_terms)
+        }
+        f_uni <- stats::reformulate(termlabels = terms, response = y)
+        needed_vars <- all.vars(f_uni)
+        keep <- complete.cases(data_for_univariate[, needed_vars, drop = F]) 
         if (!any(keep)) {
           coef_ncol <- ncol(fixef)  
           return(matrix(nrow = 0, ncol = coef_ncol))
         } 
-        terms <- if (length(xr) > 0) c(v, xr) else xr
-        f_uni <- stats::reformulate(termlabels = terms, response = y)
-        uni_mod <- update(lmerMod.obj, f_uni, data = data_for_univariate[keep, , drop = F])
+        update_args <- list(object = lmerMod.obj, formula = f_uni, data = data_for_univariate[keep, , drop = F])
+        if (!is.null(current_offset)) {
+          update_args$offset <- current_offset
+        }
+        uni_mod <- do.call(stats::update, update_args)
         
         summary(uni_mod)$coefficients
       })
@@ -121,8 +154,8 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
       
     }else{
       uni.val <- lmerExp(uni.res, family = family.lmer, dec = dec)
-      significant_vars <- rownames(uni.val)[as.numeric(uni.val[, 2]) < pcut.univariate]
-      
+      significant_coefs <- rownames(uni.val)[as.numeric(uni.val[, 2]) < pcut.univariate]
+      terms_to_include <- character(0)
       
       if (length(categorical_vars) != 0){
         factor_vars_list <- lapply(categorical_vars, function(factor_var) {
@@ -141,12 +174,41 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
           p_values <- uni.val[variables, 2]
           
           if (any(p_values < pcut.univariate, na.rm = T)) {
-            significant_vars <- setdiff(significant_vars, variables)
-            
-            significant_vars <- unique(c(significant_vars, key))
+            terms_to_include <- unique(c(terms_to_include, key))
           }
         }
       }
+      
+      for (term in xf) {
+        if (grepl(":", term)) {
+          interaction_parts <- strsplit(term, ":")[[1]]
+          interaction_coefs <- rownames(uni.val)[grepl(term, rownames(uni.val), fixed = TRUE)]
+          
+          if (length(interaction_coefs) == 0) {
+            interaction_mask <- rep(TRUE, nrow(uni.val))
+            for (part in interaction_parts) {
+              interaction_mask <- interaction_mask & grepl(part, rownames(uni.val), fixed = TRUE)
+            }
+            interaction_mask <- interaction_mask & grepl(":", rownames(uni.val), fixed = TRUE)
+            interaction_coefs <- rownames(uni.val)[interaction_mask]
+          }
+          
+          if (length(interaction_coefs) > 0) {
+            p_values <- uni.val[interaction_coefs, 2]
+            
+            if (any(as.numeric(p_values) < pcut.univariate, na.rm = TRUE)) {
+              main_effects <- strsplit(term, ":")[[1]]
+              terms_to_include <- unique(c(terms_to_include, main_effects, term))
+            }
+          }
+        } else if (!(term %in% categorical_vars)) {
+          if (term %in% significant_coefs) {
+            terms_to_include <- unique(c(terms_to_include, term))
+          }
+        }
+      }
+      
+      significant_vars <- xf[xf %in% terms_to_include]
       
       if (length(significant_vars) == 0 ){
         
@@ -160,17 +222,26 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
         
       }else{
         
-        selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + "),"+", paste(xr,collapse = "+")))
+        selected_rhs <- c(significant_vars, xr)
+        if (length(offset_terms) > 0) {
+          selected_rhs <- c(selected_rhs, offset_terms)
+        }
+        selected_formula <- as.formula(paste(y, "~", paste(selected_rhs, collapse = " + ")))
         
         # Use data_for_univariate if provided, otherwise use mdata
         if (!is.null(data_for_univariate)) {
           # Filter for complete cases of selected variables
-          idx_multi <- complete.cases(data_for_univariate[, c(y, significant_vars), drop = F])
+          needed_vars <- all.vars(selected_formula)
+          idx_multi <- complete.cases(data_for_univariate[, needed_vars, drop = F])
           df_multi <- data_for_univariate[idx_multi, ]
-          selected_model <- lme4::lmer(selected_formula, data = df_multi)
+          update_args <- list(object = lmerMod.obj, formula = selected_formula, data = df_multi)
         } else {
-          selected_model <- lme4::lmer(selected_formula, data = mdata)
+          update_args <- list(object = lmerMod.obj, formula = selected_formula, data = mdata)
         }
+        if (!is.null(current_offset)) {
+          update_args$offset <- current_offset
+        }
+        selected_model <- do.call(stats::update, update_args)
         
         selected_summary <- summary(selected_model)
         mul<-selected_summary$coefficients[-1,,drop = F]
@@ -246,27 +317,46 @@ lmer.display <- function(lmerMod.obj, dec = 2, ci.ranef = F, pcut.univariate = N
     }
     # rownames(fix.all)[grepl(x, rownames(fix.all))]
   })
-  varnum.2fac <- which(lapply(xf, function(x) {
-    length(sapply(mdata, levels)[[x]])
-  }) == 2)
+  varnum.2fac <- which(vapply(xf, function(x) {
+    !grepl(":", x) && x %in% names(mdata) && !is.null(levels(mdata[, x])) && length(levels(mdata[, x])) == 2
+  }, logical(1)))
   lapply(varnum.2fac, function(x) {
     rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep = "")
   })
   lapply(varnum.mfac, function(x) {
-    if (grepl(":", xf[x])) {
-      a <- unlist(strsplit(xf[x], ":"))[1]
-      b <- unlist(strsplit(xf[x], ":"))[2]
+    var_name <- xf[x]
+    if (grepl(":", var_name)) {
+      components <- unlist(strsplit(var_name, ":"))
+      comp_is_factor <- sapply(components, function(comp) {
+        comp %in% names(mdata) && is.factor(mdata[, comp])
+      })
+      are_all_factors <- all(comp_is_factor)
       
-      if (a %in% xf && b %in% xf) {
-        ref <- paste0(a, levels(mdata[, a])[1], ":", b, levels(mdata[, b])[1])
-        rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+      if (are_all_factors) {
+        ref <- paste(sapply(components, function(comp) levels(mdata[, comp])[1]), collapse = ":")
+        rn.list[[x]] <<- c(paste(var_name, ": ref.=", ref, sep = ""), gsub(var_name, "   ", rn.list[[x]]))
       } else {
-        rn.list[[x]] <<- c(paste(xf[x], ": ref.=NA", sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+        factor_comp <- components[comp_is_factor]
+        if (length(factor_comp) > 0) {
+          multi_level_factors <- factor_comp[sapply(factor_comp, function(f) length(levels(mdata[, f])) > 2)]
+          if (length(multi_level_factors) > 0) {
+            ref_levels <- sapply(multi_level_factors, function(f) levels(mdata[, f])[1])
+            ref_string <- paste(ref_levels, collapse = ",")
+            rn.list[[x]] <<- c(paste(var_name, ": ref.=", ref_string, sep = ""), gsub(var_name, "   ", rn.list[[x]]))
+          } else {
+            rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+          }
+        } else {
+          rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+        }
       }
     } else {
-      rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+      if (var_name %in% names(mdata) && is.factor(mdata[, var_name])) {
+        rn.list[[x]] <<- c(paste(var_name, ": ref.=", levels(mdata[, var_name])[1], sep = ""), gsub(var_name, "   ", rn.list[[x]]))
+      } else {
+        rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+      }
     }
-    # rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
   })
   if (class(fix.all.unlist)[1] == "character") {
     fix.all.unlist <- t(data.frame(fix.all.unlist))

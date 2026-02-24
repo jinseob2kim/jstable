@@ -488,7 +488,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           error = function(e) NA
         )
         # Calculate pv_int
-        if (is.na(model.int) || !inherits(model.int, "merMod")) { # Check if model is invalid or not an S4 object
+        if (!inherits(model.int, "merMod")) { # Check if model is invalid or not an S4 object
           pv_int <- NA
         } else {
           coef_names <- names(lme4::fixef(model.int))

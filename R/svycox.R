@@ -44,7 +44,12 @@ svycox.display <- function(svycoxph.obj, decimal = 2, pcut.univariate = NULL) {
   design.model <- model$survey.design
 
   model_data <- stats::model.frame(model)
-  categorical_vars <- xf[sapply(model_data[xf], function(x) is.factor(x) | is.character(x))]
+  base_vars <- xf[!grepl(":", xf) & xf %in% names(model_data)]
+  if (length(base_vars) > 0) {
+    categorical_vars <- base_vars[sapply(model_data[, base_vars, drop = FALSE], function(x) is.factor(x) | is.character(x))]
+  } else {
+    categorical_vars <- character(0)
+  }
   
   if (length(xf) == 1) {
     uni.res <- data.frame(summary(model)$coefficients)
@@ -97,7 +102,8 @@ svycox.display <- function(svycoxph.obj, decimal = 2, pcut.univariate = NULL) {
       colnames(mul.res)[ncol(mul.res)] <- "p"
       
     }else{
-      significant_vars <- rownames(uni.res)[as.numeric(uni.res[, 4]) < pcut.univariate]
+      significant_coefs <- rownames(uni.res)[as.numeric(uni.res[, 4]) < pcut.univariate]
+      terms_to_include <- character(0)
       if (length(categorical_vars) != 0){
         factor_vars_list <- lapply(categorical_vars, function(factor_var) {
           factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
@@ -115,12 +121,41 @@ svycox.display <- function(svycoxph.obj, decimal = 2, pcut.univariate = NULL) {
           p_values <- uni.res[variables, 4]
           
           if (any(p_values < pcut.univariate, na.rm = TRUE)) {
-            significant_vars <- setdiff(significant_vars, variables)
-            
-            significant_vars <- unique(c(significant_vars, key))
+            terms_to_include <- unique(c(terms_to_include, key))
           }
         }
       }
+      
+      for (term in xf) {
+        if (grepl(":", term)) {
+          interaction_parts <- strsplit(term, ":")[[1]]
+          interaction_coefs <- rownames(uni.res)[grepl(term, rownames(uni.res), fixed = TRUE)]
+          
+          if (length(interaction_coefs) == 0) {
+            interaction_mask <- rep(TRUE, nrow(uni.res))
+            for (part in interaction_parts) {
+              interaction_mask <- interaction_mask & grepl(part, rownames(uni.res), fixed = TRUE)
+            }
+            interaction_mask <- interaction_mask & grepl(":", rownames(uni.res), fixed = TRUE)
+            interaction_coefs <- rownames(uni.res)[interaction_mask]
+          }
+          
+          if (length(interaction_coefs) > 0) {
+            p_values <- uni.res[interaction_coefs, 4]
+            
+            if (any(as.numeric(p_values) < pcut.univariate, na.rm = TRUE)) {
+              main_effects <- strsplit(term, ":")[[1]]
+              terms_to_include <- unique(c(terms_to_include, main_effects, term))
+            }
+          }
+        } else if (!(term %in% categorical_vars)) {
+          if (term %in% significant_coefs) {
+            terms_to_include <- unique(c(terms_to_include, term))
+          }
+        }
+      }
+      
+      significant_vars <- xf[xf %in% terms_to_include]
       if (length(significant_vars) == 0 ){
         
         mul.res <- matrix(NA, nrow = nrow(uni.res), ncol = ncol(uni.res))
@@ -190,18 +225,35 @@ svycox.display <- function(svycoxph.obj, decimal = 2, pcut.univariate = NULL) {
     rn.list[[x]] <<- paste(xf[x], ": ", model$xlevels[[xf[x]]][2], " vs ", model$xlevels[[xf[x]]][1], sep = "")
   })
   lapply(varnum.mfac, function(x) {
-    if (grepl(":", xf[x])) {
-      a <- unlist(strsplit(xf[x], ":"))[1]
-      b <- unlist(strsplit(xf[x], ":"))[2]
-
-      if (a %in% xf && b %in% xf) {
-        ref <- paste0(a, model$xlevels[[a]][1], ":", b, model$xlevels[[b]][1])
-        rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+    var_name <- xf[x]
+    if (grepl(":", var_name)) {
+      components <- unlist(strsplit(var_name, ":"))
+      are_all_factors <- all(sapply(components, function(comp) comp %in% names(model$xlevels)))
+      
+      if (are_all_factors) {
+        ref <- paste(sapply(components, function(comp) model$xlevels[[comp]][1]), collapse = ":")
+        rn.list[[x]] <<- c(paste(var_name, ": ref.=", ref, sep = ""), gsub(var_name, "   ", rn.list[[x]]))
       } else {
-        rn.list[[x]] <<- c(paste(xf[x], ": ref.=NA", sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+        factor_comp <- components[components %in% names(model$xlevels)]
+        if (length(factor_comp) > 0) {
+          multi_level_factors <- factor_comp[sapply(factor_comp, function(f) length(model$xlevels[[f]]) > 2)]
+          if (length(multi_level_factors) > 0) {
+            ref_levels <- sapply(multi_level_factors, function(f) model$xlevels[[f]][1])
+            ref_string <- paste(ref_levels, collapse = ",")
+            rn.list[[x]] <<- c(paste(var_name, ": ref.=", ref_string, sep = ""), gsub(var_name, "   ", rn.list[[x]]))
+          } else {
+            rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+          }
+        } else {
+          rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+        }
       }
     } else {
-      rn.list[[x]] <<- c(paste(xf[x], ": ref.=", model$xlevels[[xf[x]]][1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
+      if (var_name %in% names(model$xlevels)) {
+        rn.list[[x]] <<- c(paste(var_name, ": ref.=", model$xlevels[[var_name]][1], sep = ""), gsub(var_name, "   ", rn.list[[x]]))
+      } else {
+        rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+      }
     }
   })
   if (class(fix.all.unlist)[1] == "character") {

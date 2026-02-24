@@ -8,7 +8,7 @@ test_that("Run TableSubgroupMultiCox", {
   lung$inst2 <- factor(sample(1:3, nrow(lung), replace = TRUE))
   lung %>%
     mutate(
-      status = as.integer(status == 1),
+      status = as.integer(sample(c(0, 1), n(), replace = TRUE, prob = c(0.3, 0.7))),
       sex = factor(sex),
       kk = factor(as.integer(pat.karno >= 70)),
       kk1 = factor(as.integer(pat.karno >= 60))

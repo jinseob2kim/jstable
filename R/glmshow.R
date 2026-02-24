@@ -40,11 +40,23 @@ glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
     stop("Model not from  GLM")
   }
 
-  xs <- attr(model$terms, "term.labels")
+  terms_obj <- stats::terms(model)
+  xs <- attr(terms_obj, "term.labels")
+  offset_idx <- attr(terms_obj, "specials")$offset
+  offset_terms <- if (!is.null(offset_idx) && length(offset_idx) > 0) {
+    xs[offset_idx]
+  } else {
+    character(0)
+  }
+  if (length(offset_terms) == 0) {
+    offset_terms <- xs[grepl("^offset\\(", xs)]
+  }
+  xs <- setdiff(xs, offset_terms)
   y <- names(model$model)[1]
   model_family <- family(model)$family
   family <- ifelse(grepl("gaussian", model_family), 1, 
-                   ifelse(grepl("binomial", model_family), 2, 3))
+                   ifelse(grepl("binomial", model_family), 2, 
+                          ifelse(grepl("poisson", model_family), 3, 3)))
   
   data <- model$data
   xs.factor <- if (length(model$xlevels) != 0) {
@@ -74,7 +86,15 @@ glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
     rownames(uni.res) <- rownames(uni)
     res <- uni.res
   } else {
-    basemodel <- stats::update(model, formula(paste(c(". ~ .", xs), collapse = " - ")), data = data)
+    model_call <- stats::getCall(model)
+    current_offset <- model_call$offset
+    update_args <- list(object = model,
+                        formula = formula(paste(c(". ~ .", xs), collapse = " - ")),
+                        data = data)
+    if (!is.null(current_offset)) {
+      update_args$offset <- current_offset
+    }
+    basemodel <- do.call(stats::update, update_args)
 
     # Create a list of univariate model results, one for each variable in xs.
     # We remove the intercept from each.
@@ -195,8 +215,16 @@ glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
           colnames(mul.res) <- c("adj. coeff. (95%CI)", "adj. P value")
           
         }else{
-          selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + ")))
-          selected_model <- stats::glm(selected_formula, data = data, family = model$family) 
+          selected_rhs <- significant_vars
+          if (length(offset_terms) > 0) {
+            selected_rhs <- c(selected_rhs, offset_terms)
+          }
+          selected_formula <- as.formula(paste(y, "~", paste(selected_rhs, collapse = " + ")))
+          glm_args <- list(formula = selected_formula, data = data, family = model$family)
+          if (!is.null(current_offset)) {
+            glm_args$offset <- current_offset
+          }
+          selected_model <- do.call(stats::glm, glm_args)
           mul <- coefNA(selected_model)
           mul.res <- matrix(NA, nrow = nrow(uni.res_no_intercept), ncol = 2)
           rownames(mul.res) <- rownames(uni.res_no_intercept)
@@ -240,8 +268,16 @@ glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
           colnames(mul.res) <- c("adj. coeff. (95%CI)", "adj. P value")
           
         }else{
-          selected_formula <- as.formula(paste(y, "~", paste(significant_vars, collapse = " + ")))
-          selected_model <- stats::glm(selected_formula, data = data, family = model$family) 
+          selected_rhs <- significant_vars
+          if (length(offset_terms) > 0) {
+            selected_rhs <- c(selected_rhs, offset_terms)
+          }
+          selected_formula <- as.formula(paste(y, "~", paste(selected_rhs, collapse = " + ")))
+          glm_args <- list(formula = selected_formula, data = data, family = model$family)
+          if (!is.null(current_offset)) {
+            glm_args$offset <- current_offset
+          }
+          selected_model <- do.call(stats::glm, glm_args)
           mul <- coefNA(selected_model)
           mul.res <- matrix(NA, nrow = nrow(uni.res_no_intercept), ncol = 2)
           rownames(mul.res) <- rownames(uni.res_no_intercept)
@@ -402,4 +438,3 @@ glmshow.display <- function(glm.object, decimal = 2, pcut.univariate=NULL) {
 #' }
 #' @details DETAILS
 "mort"
-

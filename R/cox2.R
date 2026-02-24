@@ -55,6 +55,25 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
   x.weight <- model$call$weight
   mtype <- "normal"
   x.id <- model$call$id
+
+  get_term_vars <- function(term) {
+    all.vars(stats::as.formula(paste0("~", term)))
+  }
+
+  has_variation <- function(df, vars) {
+    if (nrow(df) == 0) return(FALSE)
+    for (v in vars) {
+      if (!v %in% names(df)) return(FALSE)
+      vals <- df[[v]]
+      if (is.factor(vals)) {
+        if (length(unique(vals)) <= 1) return(FALSE)
+      } else {
+        vals2 <- vals[!is.na(vals)]
+        if (length(unique(vals2)) <= 1) return(FALSE)
+      }
+    }
+    TRUE
+  }
   
   if (length(grep("strata", xf)) > 0) {
     xf <- xf[-grep("strata", xf)]
@@ -149,8 +168,7 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
   } else {
     names(mdata)[names(mdata) == xc] <- xc.vn
   }
-  #categorical_vars <- attr(terms(model), "term.labels")[sapply(mdata[attr(terms(model), "term.labels")], is.factor)]
-  categorical_vars <- xf[sapply(mdata[xf], is.factor)]
+  categorical_vars <- names(model$xlevels)
   
   # if (is.null(data)){
   #  mdata = data.frame(get(as.character(model$call)[3]))
@@ -371,16 +389,13 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
         needed   <- all.vars(model$call$formula[[2]])
         if (randTerm!="") needed <- c(needed, xc.vn)
         # Handle both data.frame and data.table
-        cols_to_check <- c(needed, x)
+        x_vars <- get_term_vars(x)
+        cols_to_check <- unique(c(needed, x_vars))
         subset_data <- data_for_univariate[, .SD, .SDcols = cols_to_check]
         df_uni <- data_for_univariate[complete.cases(subset_data), ]
         
-        # Check if variable has variation
-        if (is.factor(df_uni[[x]])) {
-          if (length(unique(df_uni[[x]])) <= 1) {
-            return(NULL)  # Skip variables with no variation
-          }
-        }
+        # Check if variables have variation
+        if (!has_variation(df_uni, x_vars)) return(NULL)
         
         tryCatch({
           fit_uni <- survival::coxph(uni_fmla, data = df_uni, model = T, na.action = na.omit)
@@ -625,16 +640,13 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
           needed   <- all.vars(model$call$formula[[2]])
           if (randTerm!="") needed <- c(needed, xc.vn)
           # Handle both data.frame and data.table
-          cols_to_check <- c(needed, x)
+          x_vars <- get_term_vars(x)
+          cols_to_check <- unique(c(needed, x_vars))
           subset_data <- data_for_univariate[, .SD, .SDcols = cols_to_check]
           df_uni <- data_for_univariate[complete.cases(subset_data), ]
           
-          # Check if variable has variation
-          if (is.factor(df_uni[[x]])) {
-            if (length(unique(df_uni[[x]])) <= 1) {
-              return(NULL)  # Skip variables with no variation
-            }
-          }
+          # Check if variables have variation
+          if (!has_variation(df_uni, x_vars)) return(NULL)
           
           tryCatch({
             fit_uni  <- survival::coxph(uni_fmla,
@@ -671,11 +683,14 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
         p_values <- as.numeric(uni.res[, 4])
         significant_vars <- rownames(uni.res)[!is.na(p_values) & p_values < pcut.univariate]
         
+        # Collect terms that should be included
+        terms_to_include <- character(0)
+        
+        # Process factor variables
         if (length(categorical_vars) != 0){
           factor_vars_list <- lapply(categorical_vars, function(factor_var) {
             factor_var_escaped <- gsub("\\(", "\\\\(", factor_var)  # "(" → "\\("
             factor_var_escaped <- gsub("\\)", "\\\\)", factor_var_escaped)  # ")" → "\\)"
-            
             
             matches <- grep(paste0("^", factor_var_escaped), rownames(coefNA(model)), value = TRUE)
             return(matches)
@@ -692,13 +707,62 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
               p_values <- uni.res[variables_in_uni, 4]
               
               if (any(p_values < pcut.univariate, na.rm = TRUE)) {
-                significant_vars <- setdiff(significant_vars, variables_in_uni)
-                
-                significant_vars <- unique(c(significant_vars, key))
+                terms_to_include <- unique(c(terms_to_include, key))
               }
             }
           }
         }
+        
+        # Process continuous variables and interaction terms
+        for (term in xf) {
+          if (grepl(":", term)) {
+            # This is an interaction term - treat like a factor variable
+            # Find all coefficients related to this interaction term
+            # Find all coefficients that match this interaction pattern
+            interaction_parts <- strsplit(term, ":")[[1]]
+            interaction_coefs <- rownames(uni.res)[grepl(term, rownames(uni.res), fixed = TRUE)]
+            
+            # If standard match fails, require all parts and ":" to appear
+            if (length(interaction_coefs) == 0) {
+              interaction_mask <- rep(TRUE, nrow(uni.res))
+              for (part in interaction_parts) {
+                interaction_mask <- interaction_mask & grepl(part, rownames(uni.res), fixed = TRUE)
+              }
+              interaction_mask <- interaction_mask & grepl(":", rownames(uni.res), fixed = TRUE)
+              interaction_coefs <- rownames(uni.res)[interaction_mask]
+            }
+
+            if (length(interaction_coefs) > 0) {
+              # Get p-values for all interaction coefficients
+              p_values <- uni.res[interaction_coefs, 4]
+              
+              # If ANY coefficient is significant, include the interaction term and main effects
+              if (any(as.numeric(p_values) < pcut.univariate, na.rm = TRUE)) {
+                main_effects <- strsplit(term, ":")[[1]]
+                terms_to_include <- unique(c(terms_to_include, main_effects, term))
+              }
+            }
+          } else if (!(term %in% categorical_vars)) {
+            # This is a continuous variable
+            # Check if it is significant in univariate
+             # Need to find the row corresponding to this continuous variable
+             # Usually the row name is just the variable name
+             target_row <- term
+             if (target_row %in% rownames(uni.res)) {
+                 if (as.numeric(uni.res[target_row, 4]) < pcut.univariate) {
+                     terms_to_include <- unique(c(terms_to_include, term))
+                 }
+             }
+          }
+        }
+        
+        # Add significant_vars that were identified by simple p-value check but not covered by above logic
+        # (e.g. if some factor logic missed)
+        # However, the above logic is more comprehensive.
+        # Let's merge terms_to_include
+        
+        significant_vars <- xf[xf %in% terms_to_include]
+
         
         # Store selected_model for metrics if pcut.univariate is used
         selected_model <- NULL
@@ -769,67 +833,65 @@ cox2.display <- function(cox.obj.withmodel, dec = 2, event_msm = NULL, pcut.univ
   fix.all.list <- lapply(seq_along(xf_keep), function(x) {
     fix.all[rownames(fix.all) %in% rn.uni[[x]], ]
   })
-  varnum.mfac_candidates <- which(lapply(fix.all.list, length) > ncol(fix.all))
-  categorical_vars_keep <- intersect(xf_keep, categorical_vars)
-  varnum.mfac <- varnum.mfac_candidates[xf_keep[varnum.mfac_candidates] %in% categorical_vars_keep]
+  varnum.mfac <- which(lapply(fix.all.list, length) > ncol(fix.all))
   lapply(varnum.mfac, function(x) {
     fix.all.list[[x]] <<- rbind(rep(NA, ncol(fix.all)), fix.all.list[[x]])
   })
   fix.all.unlist <- Reduce(rbind, fix.all.list)
   
-  # if (!is.null(model_states) && use_event_filter && !is.null(rn.uni_filtered)) {
-  #   rn.list <- rn.uni_filtered
-  # } else {
-  #   rn.list <- lapply(seq_along(xf_keep), function(x) {
-  #     rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]
-  #   })
-  #   varnum.2fac <- which(lapply(xf, function(x) {
-  #     length(sapply(mdata, levels)[[x]])
-  #   }) == 2)
-  #   lapply(varnum.2fac, function(x) {
-  #     rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep = "")
-  #   })
-  #   lapply(varnum.mfac, function(x) {
-  #     if (grepl(":", xf[x])) {
-  #       a <- unlist(strsplit(xf[x], ":"))[1]
-  #       b <- unlist(strsplit(xf[x], ":"))[2]
-  # 
-  #       if (a %in% xf && b %in% xf) {
-  #         ref <- paste0(a, levels(mdata[, a])[1], ":", b, levels(mdata[, b])[1])
-  #         rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
-  #       } else {
-  #         rn.list[[x]] <<- c(paste(xf[x], ": ref.=NA", model$xlevels[[xf[x]]][1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
-  #       }
-  #     } else {
-  #       rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), gsub(xf[x], "   ", rn.list[[x]]))
-  #     }
-  #   })
-  # }
+  rn.list <- lapply(seq_along(xf_keep), function(x) {
+    rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]
+  })
   
-    rn.list <- lapply(seq_along(xf_keep), function(x) {
-      rownames(fix.all)[rownames(fix.all) %in% rn.uni[[x]]]
-    })
-    varnum.2fac <- which(lapply(xf, function(x) {
-      length(sapply(mdata, levels)[[x]])
-    }) == 2)
-    lapply(varnum.2fac, function(x) {
-      rn.list[[x]] <<- paste(xf[x], ": ", levels(mdata[, xf[x]])[2], " vs ", levels(mdata[, xf[x]])[1], sep = "")
-    })
-    lapply(varnum.mfac, function(x) {
-      if (grepl(":", xf[x])) {
-        a <- unlist(strsplit(xf[x], ":"))[1]
-        b <- unlist(strsplit(xf[x], ":"))[2]
+  # 1. Two-level factors
+  varnum.2fac <- which(xf_keep %in% names(model$xlevels)[lapply(model$xlevels, length) == 2])
+  lapply(varnum.2fac, function(x) {
+    rn.list[[x]] <<- paste(xf_keep[x], ": ", model$xlevels[[xf_keep[x]]][2], " vs ", model$xlevels[[xf_keep[x]]][1], sep = "")
+  })
+  
+  # 2. Multi-level factors and Interactions
+  lapply(varnum.mfac, function(x) {
+    var_name <- xf_keep[x]
+    if (grepl(":", var_name)) {
+      components <- unlist(strsplit(var_name, ":"))
+      are_all_factors <- all(sapply(components, function(comp) comp %in% names(model$xlevels)))
 
-        if (a %in% xf && b %in% xf) {
-          ref <- paste0(a, levels(mdata[, a])[1], ":", b, levels(mdata[, b])[1])
-          rn.list[[x]] <<- c(paste(xf[x], ": ref.=", ref, sep = ""), rn.list[[x]])
-        } else {
-          rn.list[[x]] <<- c(paste(xf[x], ": ref.=NA", model$xlevels[[xf[x]]][1], sep = ""), rn.list[[x]])
-        }
+      if (are_all_factors) {
+        ref <- paste(sapply(components, function(comp) model$xlevels[[comp]][1]), collapse = ":")
+        rn.list[[x]] <<- c(paste(var_name, ": ref.=", ref, sep = ""), gsub(var_name, "   ", rn.list[[x]]))
       } else {
-        rn.list[[x]] <<- c(paste(xf[x], ": ref.=", levels(mdata[, xf[x]])[1], sep = ""), rn.list[[x]])
+        # Interaction with at least one continuous variable
+        # Check if any component is a factor with more than 2 levels
+        factor_comp <- components[components %in% names(model$xlevels)]
+        if (length(factor_comp) > 0) {
+          # Check if any factor has more than 2 levels
+          multi_level_factors <- factor_comp[sapply(factor_comp, function(f) length(model$xlevels[[f]]) > 2)]
+          if (length(multi_level_factors) > 0) {
+            # Create ref string for the multi-level factor
+            ref_levels <- sapply(multi_level_factors, function(f) model$xlevels[[f]][1])
+            ref_string <- paste(ref_levels, collapse = ",")
+            rn.list[[x]] <<- c(paste(var_name, ": ref.=", ref_string, sep = ""), gsub(var_name, "   ", rn.list[[x]]))
+          } else {
+            # All factors have only 2 levels or less
+            rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+          }
+        } else {
+          # No factor component
+          rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+        }
       }
-    })
+    } else {
+      # Not an interaction term
+      if (var_name %in% names(model$xlevels)) {
+        # It's a factor variable
+        rn.list[[x]] <<- c(paste(var_name, ": ref.=", model$xlevels[[var_name]][1], sep = ""), gsub(var_name, "   ", rn.list[[x]]))
+      } else {
+        # It's not a factor, but has multiple rows (e.g., splines).
+        # Just add header.
+        rn.list[[x]] <<- c(var_name, gsub(var_name, "   ", rn.list[[x]]))
+      }
+    }
+  })
     
     # if (!is.null(model_states) && use_event_filter && !is.null(rn.uni_filtered)) {
     #   rn.list <- rn.uni_filtered

@@ -33,6 +33,15 @@ test_that("Run cox2.display", {
   expect_is(cox2.display(fit1.all0), "list")
   expect_is(cox2.display(fit2.all0), "list")
 
+  # interaction tests (with data_for_univariate)
+  lung$sex_factor <- factor(lung$sex, labels = c("Male", "Female"))
+  lung$ecog_factor <- factor(lung$ph.ecog)
+  fit_int_cat_cont <- coxph(Surv(time, status) ~ sex_factor * age, data = lung, model = TRUE)
+  fit_int_cat_cat <- coxph(Surv(time, status) ~ sex_factor * ecog_factor, data = lung, model = TRUE)
+  expect_is(cox2.display(fit_int_cat_cont, data_for_univariate = lung), "list")
+  expect_is(cox2.display(fit_int_cat_cont, data_for_univariate = lung, pcut.univariate = 0.2), "list")
+  expect_is(cox2.display(fit_int_cat_cat, data_for_univariate = lung), "list")
+
   # table structure test
   res00 <- cox2.display(fit00)
   res00.all0 <- cox2.display(fit00.all0)
@@ -104,6 +113,9 @@ test_that("Run geeglm.display", {
   expect_is(geeglm.display(geeglm(Weight_cat ~ Time + Cu, id = Pig, data = dietox, family = binomial, corstr = "ex")), "list")
   expect_is(geeglm.display(geeglm(Weight ~ Time + Cu, id = Pig, data = dietox, family = gaussian, corstr = "ex"),pcut.univariate =0.05), "list")
   expect_is(geeglm.display(geeglm(Weight_cat ~ Time + Cu, id = Pig, data = dietox, family = binomial, corstr = "ex"),pcut.univariate = 0.05), "list")
+  
+  # Interaction test
+  expect_is(geeglm.display(geeglm(Weight ~ Time * Cu, id = Pig, data = dietox, family = gaussian, corstr = "ex")), "list")
 })
 
 

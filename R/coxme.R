@@ -126,7 +126,7 @@ coxme.display <- function(coxme.obj, dec = 2, pcut.univariate = NULL) {
     unis <- lapply(xf, function(x) {
       forms <- paste0(formula.surv, "~", x, " + ", formula.ranef)
       if (length(xstrata) > 0) {
-        forms <- paste0(forms, " + ", xstrata)
+        forms <- paste0(forms, " + ", paste(xstrata, collapse = " + "))
       }
       return(coxmeTable(coxme(as.formula(forms), data = mdata)))
     })
