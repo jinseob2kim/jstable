@@ -80,16 +80,24 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
                     ifelse(length(levels(data[[xlabel]])) <= 2, 1, length(levels(data[[xlabel]])) - 1)
     )
     var_cov <- setdiff(var_cov, c(as.character(formula[[3]]), var_subgroup))
-    is_mixed_effect <- grepl("\\|", deparse(formula))
+    is_mixed_effect <- grepl("\\|", deparse1(formula))
     family.svyglm <- gaussian()
-    if (family == "binomial") family.svyglm <- quasibinomial()
+    if (family %in% c("binomial", "quasibinomial")) family.svyglm <- quasibinomial()
     if (family == "poisson") family.svyglm <- poisson()
     if (family == "quasipoisson") family.svyglm <- quasipoisson()
+
+    # Convert factor outcome to numeric for survey (svyglm doesn't auto-convert unlike glm)
+    if (any(class(data) == "survey.design") && family %in% c("binomial", "quasibinomial")) {
+      response_var <- all.vars(formula)[1]
+      if (is.factor(data$variables[[response_var]])) {
+        data$variables[[response_var]] <- as.integer(as.character(data$variables[[response_var]]))
+      }
+    }
     ### subgroup 지정 안 한 경우 ###
     if (is.null(var_subgroup)) {
       # 공변량 있는 경우 formula 변경
       if (!is.null(var_cov)) {
-        formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
+        formula <- as.formula(paste0(deparse1(formula), " + ", paste(var_cov, collapse = "+")))
       }
       if (is_mixed_effect) {
         if (family == "gaussian") {
@@ -111,7 +119,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         cc <- summary(model)$coefficients
         mo_sum <- summary(model)
         ncoef <- nrow(cc) - 1
-        Point.Estimate <- if (family %in% c("binomial", "poisson", "quasipoisson")) {
+        Point.Estimate <- if (family %in% c("binomial", "quasibinomial", "poisson", "quasipoisson")) {
           round(exp(lme4::fixef(model)), decimal.estimate)[2:(1 + ncoef)]
         } else {
           round(lme4::fixef(model), decimal.estimate)[2:(1 + ncoef)]
@@ -120,7 +128,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         CI <- tryCatch(
           {
             ci_bounds <- confint(model, parm = "beta_", level = 0.95)
-            if (family %in% c("binomial", "poisson", "quasipoisson")) {
+            if (family %in% c("binomial", "quasibinomial", "poisson", "quasipoisson")) {
               round(exp(ci_bounds), decimal.estimate)[-1, ]
             } else {
               round(ci_bounds, decimal.estimate)[-1, ]
@@ -137,7 +145,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
               dimnames = list(rownames(cc)[2:(1 + ncoef)], c("2.5 %", "97.5 %"))
             ) %>%
               {
-                if (family %in% c("binomial", "poisson", "quasipoisson")) round(exp(.), decimal.estimate) else round(., decimal.estimate)
+                if (family %in% c("binomial", "quasibinomial", "poisson", "quasipoisson")) round(exp(.), decimal.estimate) else round(., decimal.estimate)
               }
           }
         )
@@ -183,7 +191,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
                            dimnames = list(paste0(xlabel, xlev[-1]), c("2.5 %", "97.5 %"))
         ), decimal.estimate)
         
-        if (family %in% c("binomial", "poisson", "quasipoisson")) {
+        if (family %in% c("binomial", "quasibinomial", "poisson", "quasipoisson")) {
           Point.Estimate <- round(exp(stats::coef(model)), decimal.estimate)[2:(1 + ncoef)]
           CI <- round(exp(matrix(c(cc[2:(1 + ncoef), 1] - qnorm(0.975) * cc[2:(1 + ncoef), 2], cc[2:(1 + ncoef), 1] + qnorm(0.975) * cc[2:(1 + ncoef), 2]),
                                  ncol = 2,
@@ -204,7 +212,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         data.frame(Variable = "Overall", Count = length(model$y), Percent = 100, `Point Estimate` = Point.Estimate, Lower = CI[1], Upper = CI[2]) %>%
           dplyr::mutate(`P value` = ifelse(pv >= 0.001, pv, "<0.001"), `P for interaction` = NA) -> out
         
-        if (family == "binomial") {
+        if (family %in% c("binomial", "quasibinomial")) {
           names(out)[4] <- "OR"
         }
         if (family %in% c("poisson", "quasipoisson")) {
@@ -217,7 +225,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         ) %>%
           dplyr::mutate(`P value` = c("", ifelse(pv >= 0.001, pv, "<0.001")), `P for interaction` = NA) -> out
         
-        if (family == "binomial") {
+        if (family %in% c("binomial", "quasibinomial")) {
           names(out)[5] <- "OR"
         }
         if (family %in% c("poisson", "quasipoisson")) {
@@ -241,7 +249,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       
       # 공변량 있는 경우 formula 변경
       if (!is.null(var_cov)) {
-        formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
+        formula <- as.formula(paste0(deparse1(formula), " + ", paste(var_cov, collapse = "+")))
       }
       
       if (!is_mixed_effect) {
@@ -261,7 +269,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           # pv_int 구하기
           # pv_int <- tryCatch(
           #   {
-          #     pvs_int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data, family = family.svyglm) %>%
+          #     pvs_int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula))), design = data, family = family.svyglm) %>%
           #       summary() %>%
           #       coefficients()
           #     pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
@@ -274,17 +282,17 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
           
           data.design <- data
-          if (family == "binomial") {
-            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = quasibinomial())
+          if (family %in% c("binomial", "quasibinomial")) {
+            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula))), design = data.design, family = quasibinomial())
           } else if (family == "gaussian") {
-            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = gaussian())
+            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula))), design = data.design, family = gaussian())
           } else if (family == "poisson") {
-            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = poisson())
+            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula))), design = data.design, family = poisson())
           } else {
-            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), design = data.design, family = quasipoisson())
+            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula))), design = data.design, family = quasipoisson())
           }
           
-          model.int$call[[2]] <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula)))
+          model.int$call[[2]] <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula)))
           model.int$call[[3]] <- data.design
           #model.int$call[[4]] <- gaussian()
           model.int$call[[4]] <- family.svyglm
@@ -332,7 +340,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           if (length(stats::glm(formula, data = data, family = family)$xlevels[[xlabel]]) > 0) {
             xlev <- stats::glm(formula, data = data, family = family)$xlevels[[xlabel]]
           }
-          model.int <- possible_glm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse(formula))), data = data, family = family)
+          model.int <- possible_glm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula))), data = data, family = family)
           
           # pv_int 구하기
           if (any(is.na(model.int))) {
@@ -352,7 +360,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         }
         
         # PE, CI, PV 구하기
-        if (family %in% c("binomial", "poisson", "quasipoisson")) {
+        if (family %in% c("binomial", "quasibinomial", "poisson", "quasipoisson")) {
           Point.Estimate <- model %>%
             purrr::map("coefficients", default = NA) %>%
             lapply(function(x) {
@@ -474,11 +482,11 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         model.int <- tryCatch(
           if (length(xlev) > 1) {
             if (family == "gaussian") {
-              possible_lmertest(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))),
+              possible_lmertest(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula))),
                                 data = data, REML = FALSE
               )
             } else {
-              possible_glmer(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))),
+              possible_glmer(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula))),
                              data = data, family = family
               )
             }
@@ -500,14 +508,14 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           } else {
             pvs_int <- summary(model.int)$coefficients # Access coefficients table
             pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue) # Extract p-value for interaction
-            formula_string <- deparse(formula(model.int)) # Extract the formula of the model
+            formula_string <- deparse1(formula(model.int)) # Extract the formula of the model
           }
         }
         # Calculate Count (subgroup sizes)
         Count <- as.vector(table(complete_data[[var_subgroup]]))
         
         # Calculate Point Estimate (PE), Confidence Interval (CI), and P-value (PV)
-        if (family %in% c("binomial", "poisson", "quasipoisson")) {
+        if (family %in% c("binomial", "quasibinomial", "poisson", "quasipoisson")) {
           # For binomial/Poisson families
           Point.Estimate <- model %>%
             purrr::map(~ tryCatch(
@@ -603,7 +611,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           }))
         }
         
-        if (family == "binomial") {
+        if (family %in% c("binomial", "quasibinomial")) {
           names(out)[4] <- "OR"
         }
         if (family %in% c("poisson", "quasipoisson")) {
@@ -615,7 +623,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           Levels = rep(paste0(xlabel, "=", xlev), length(label_val)), `Point Estimate` = unlist(lapply(Point.Estimate, function(x) c("Reference", x))), Lower = unlist(lapply(CI, function(x) c("", x[, 1]))), Upper = unlist(lapply(CI, function(x) c("", x[, 2])))
         ) %>%
           dplyr::mutate(`P value` = unlist(lapply(pv, function(x) c("", ifelse(x >= 0.001, x, "<0.001")))), `P for interaction` = NA) -> out
-        if (family == "binomial") {
+        if (family %in% c("binomial", "quasibinomial")) {
           names(out)[5] <- "OR"
         }
         if (family %in% c("poisson", "quasipoisson")) {

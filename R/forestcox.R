@@ -61,7 +61,7 @@
 
 TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data, time_eventrate = 3 * 365, decimal.hr = 2, decimal.percent = 1, decimal.pvalue = 3, cluster = NULL, strata = NULL, weights = NULL, event = FALSE, count_by = NULL, labeldata = NULL, data_original = NULL, formula_original = NULL) {
   . <- variable <- val_label <- NULL
-  is_mixed_effect <- grepl("\\|", deparse(formula))
+  is_mixed_effect <- grepl("\\|", deparse1(formula))
 
   # Helper function: Detect finegray data
   is_finegray_data <- function(data) {
@@ -168,12 +168,12 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       ### subgroup 지정 안 한 경우 ###
       # 공변량 있는 경우 formula 변경
       if (!is.null(var_cov)) {
-        formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
+        formula <- as.formula(paste0(deparse1(formula), " + ", paste(var_cov, collapse = "+")))
       }
       if(!is_mixed_effect){
         # Strata !is.null인 경우 formula 변경
         if (!is.null(strata)) {
-          formula <- as.formula(paste0(deparse(formula), " + ", paste0("strata(", strata, ")")))
+          formula <- as.formula(paste0(deparse1(formula), " + ", paste0("strata(", strata, ")")))
         }
         
         if (any(class(data) == "survey.design")) {
@@ -200,7 +200,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           }
           if (!is.null(cluster)) {
             formula.1 <- as.formula(
-              paste0(deparse(formula), " + ", "cluster(", cluster, ")")
+              paste0(deparse1(formula), " + ", "cluster(", cluster, ")")
             )
             cc <- substitute(
               survival::coxph(formula.1, data = data, x = T, weights = .weights),
@@ -323,12 +323,12 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       ### subgroup 지정 한 경우 ###
       # 공변량 있는 경우 formula 변경
       if (!is.null(var_cov)) {
-        formula <- as.formula(paste0(deparse(formula), " + ", paste(var_cov, collapse = "+")))
+        formula <- as.formula(paste0(deparse1(formula), " + ", paste(var_cov, collapse = "+")))
       }
       if (!is_mixed_effect){
         # Strata !is.null인 경우 formula 변경
         if (!is.null(strata)) {
-          formula <- as.formula(paste0(deparse(formula), " + ", paste0("strata(", strata, ")")))
+          formula <- as.formula(paste0(deparse1(formula), " + ", paste0("strata(", strata, ")")))
         }
         
         if (any(class(data) == "survey.design")) {
@@ -343,7 +343,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           # pv_int 구하기
           pv_int <- tryCatch(
             {
-              pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data) %>%
+              pvs_int <- possible_svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula))), design = data) %>%
                 summary() %>%
                 coefficients()
               pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
@@ -355,11 +355,11 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           )
           
           ## interaction 여러개인 경우 pv_int 구하기
-          model.int <- possible_svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), design = data)
+          model.int <- possible_svycoxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula))), design = data)
           
           if (any(is.na(model.int))) {
           } else if (sum(grepl(":", names(coef(model.int)))) > 1) {
-            model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
+            model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula)))
             pv_anova <- survey::regTermTest(model.int, as.formula(paste0("~", xlabel, ":", var_subgroup)))
             pv_int <- round(pv_anova$p[1], decimal.pvalue)
           }
@@ -422,7 +422,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
               })
             })
           } else {
-            formula <- as.formula(paste0(deparse(formula), " + ", "cluster(", cluster, ")"))
+            formula <- as.formula(paste0(deparse1(formula), " + ", "cluster(", cluster, ")"))
             
             model <- sapply(var_subgroup, function(var) {
               if (is.factor(data[[var]])) {
@@ -451,13 +451,13 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           
           # strata만 공식에 추가하는 경우 P for interaction에서 <NA>가 나타나는 문제가 있어 수정
           if (is.null(cluster) & is.null(weights) & !is.null(strata)) {
-            model.int <- possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data)
+            model.int <- possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula))), data = data)
           } else {
-            model.int <- tryCatch(eval(substitute(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights))), error = function(e) NA)
+            model.int <- tryCatch(eval(substitute(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula))), data = data, weights = .weights), list(.weights = weights))), error = function(e) NA)
             # if (!is.null(cluster)) {
-            #   model.int <- eval(substitute(possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights)))
+            #   model.int <- eval(substitute(possible_coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula))), data = data, weights = .weights), list(.weights = weights)))
             # } else {
-            #   model.int <- tryCatch(eval(substitute(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula))), data = data, weights = .weights), list(.weights = weights))), error = function(e) NA)
+            #   model.int <- tryCatch(eval(substitute(coxph(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula))), data = data, weights = .weights), list(.weights = weights))), error = function(e) NA)
             # }
           }
           
@@ -572,7 +572,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue)
             # if (!is.null(xlev) & length(xlev[[1]]) != 2) stop("Categorical independent variable must have 2 levels.")
           } else {
-            model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
+            model.int$call$formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula)))
             model.int$call$data <- as.name("data")
             pv_anova <- tryCatch(anova(model.int), error = function(e) NA)
             if (is.logical(pv_anova) & !is.null(cluster)) {
@@ -698,7 +698,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           Count <- as.vector(table(data[[var_subgroup]]))
         }
         total_count <- sum(Count)
-        interaction_formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse(formula)))
+        interaction_formula <- as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula)))
         model_int <- coxme::coxme(interaction_formula, data = data)
         anova_res <- car::Anova(model_int)
         inter_row <- grep(":", rownames(anova_res), value = TRUE)

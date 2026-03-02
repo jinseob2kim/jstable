@@ -1,3 +1,12 @@
+# jstable 1.3.25
+* **Fix:** `svyCreateTableOneJS` / `svyCreateTableOne2` now display integer counts (no `.0` suffix) when `n_original = TRUE`. Previously, categorical variable frequencies and the n row were formatted as floats (e.g., `12345.0`) even after replacing weighted counts with original data.
+* **Fix:** `svyCreateTableOne2` now correctly labels the "Overall" column when using `addOverall = TRUE` with `Labels = TRUE`. Previously, the "Overall" header was missing, causing column name misalignment.
+* **Fix:** `TableSubgroupGLM` / `TableSubgroupMultiGLM` now fully support `family = "quasibinomial"` for survey-weighted logistic regression. Previously, `"quasibinomial"` was not mapped to `quasibinomial()` for `svyglm`, exp() was not applied to coefficients, and the column was not named "OR".
+* **Fix:** `TableSubgroupGLM` / `TableSubgroupMultiGLM` now automatically convert factor outcomes to numeric (0/1) for survey data with binomial/quasibinomial family. Previously, factor outcomes caused `"'-' not meaningful for factors"` error with `svyglm`.
+* **Fix:** `count_event_by_glm` now handles `data.table` input correctly by converting to `data.frame` before column subsetting. Previously, `data.table` objects from `survey.design$variables` caused `"column name 'required_vars' is not found"` error.
+* **Fix:** Replaced all `deparse(formula)` with `deparse1(formula)` in `TableSubgroupGLM`, `TableSubgroupMultiGLM`, `TableSubgroupCox`, and `TableSubgroupMultiCox` to suppress `"Using formula(x) is deprecated when x is a character vector of length > 1"` warnings with long formulas.
+* **Fix:** `svyCreateTableOneJS` / `svyCreateTableOne2` now display actual sample sizes in the `n` row instead of weighted totals when `n_original = TRUE`. Previously, the `n` row showed the sum of survey weights (e.g., 181,174,390) instead of the original sample count (e.g., 23,641). Supports no-strata, single-strata, and compound-strata cases.
+
 # jstable 1.3.24
 * **Fix:** `.display` functions (`cox2.display`, `svycox.display`, `svyregress.display`, `geeglm.display`, `lmer.display`) now correctly handle models with interaction terms (e.g., `a*b` or `a:b`). This prevents dimension dropping or row matching errors during formatting.
 * **New:** `glmshow.display` now correctly preserves the `offset` term (e.g., `offset(log(n))`) when calculating crude estimates. This ensures statistically accurate univariate results for Poisson and other GLM models by maintaining the same exposure baseline.

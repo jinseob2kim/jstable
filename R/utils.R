@@ -166,14 +166,15 @@ count_event_by_glm <- function(
     decimal.percent = 1,
     family          = "binomial"
 ) {
-  # raw data
+  # raw data (convert to data.frame for consistent subsetting)
   df_raw <- if (inherits(data, "survey.design")) data$variables else data
-  
+  df_raw <- as.data.frame(df_raw)
+
   # determine needed variables (includes random-effect groups)
   required_vars <- all.vars(formula)
   if (!is.null(count_by_var))   required_vars <- c(required_vars, count_by_var)
   if (!is.null(var_subgroup))   required_vars <- c(required_vars, var_subgroup)
-  
+
   # subset to complete cases
   df <- df_raw[stats::complete.cases(df_raw[, required_vars, drop = FALSE]), , drop = FALSE]
   
@@ -181,7 +182,7 @@ count_event_by_glm <- function(
   response_col <- as.character(formula[[2]])
   
   # metric function by family
-  if (family == "binomial") {
+  if (family %in% c("binomial", "quasibinomial")) {
     metric_fn <- function(x) {
       n <- length(x)
       e <- sum(x == 1, na.rm = TRUE)

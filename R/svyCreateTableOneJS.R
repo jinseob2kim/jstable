@@ -54,6 +54,49 @@ ChangeSvyTable <- function(svy, ori){
   return(res)
 }
 
+# Helper: remove .0 from integer counts when n_original replaces weighted with original
+.fix_integer_counts <- function(ptb1) {
+  ptb1[] <- gsub("(\\d)\\.0 \\(", "\\1 (", ptb1)
+  ptb1[] <- gsub("^(\\s*)(\\d+)\\.0(\\s*)$", "\\1\\2\\3", ptb1)
+  ptb1
+}
+
+# Helper: replace weighted n row with original sample sizes
+.fix_n_row <- function(ptb1, data, strata = NULL, addOverall = FALSE) {
+  if (!("n" %in% rownames(ptb1))) return(ptb1)
+  n_idx <- which(rownames(ptb1) == "n")
+  total_n <- nrow(data$variables)
+
+  if (is.null(strata)) {
+    # No strata: single Overall column
+    n_vals <- ptb1[n_idx, ]
+    numeric_cols <- which(grepl("^\\s*[0-9]", n_vals))
+    if (length(numeric_cols) > 0) {
+      ptb1[n_idx, numeric_cols[1]] <- as.character(total_n)
+    }
+    return(ptb1)
+  }
+
+  # With strata (single or compound)
+  if (length(strata) == 1) {
+    group_counts <- table(data$variables[[strata]])
+  } else {
+    strata_cols <- lapply(strata, function(s) data$variables[[s]])
+    group_counts <- table(interaction(strata_cols, sep = ":"))
+  }
+  group_n <- as.character(group_counts)
+
+  n_vals <- ptb1[n_idx, ]
+  numeric_cols <- which(grepl("^\\s*[0-9]", n_vals))
+  if (addOverall && length(numeric_cols) >= length(group_n) + 1) {
+    ptb1[n_idx, numeric_cols[1]] <- as.character(total_n)
+    ptb1[n_idx, numeric_cols[-1]] <- group_n
+  } else if (length(numeric_cols) == length(group_n)) {
+    ptb1[n_idx, numeric_cols] <- group_n
+  }
+  ptb1
+}
+
 ## svyCreate Table1 : include 2 strata
 
 #' @title svyCreateTableOne2: Modified svyCreateTableOne function in tableone package
@@ -160,19 +203,19 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
     ptb1.rn <- gsub("(mean (SD))", "", ptb1.rn, fixed = T)
   }
   
-  #문제
   ptb1 <- print(res,
                 showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, smd = smd, varLabels = Labels, nonnormal = nonnormal,
                 catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax
   )
-  
-  
-  
+
+  if (n_original) ptb1 <- .fix_integer_counts(ptb1)
+  if (n_original) ptb1 <- .fix_n_row(ptb1, data, strata, addOverall)
+
   if (showpm) {
     ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
     ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
   }
-  
+
   rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed = T)
   if (Labels & !is.null(labeldata)) {
     rownames(ptb1) <- ptb1.rn
@@ -182,11 +225,10 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
   
   if (Labels & !is.null(labeldata)) {
     colname.group_var <- unlist(labeldata[get("variable") == strata & get("level") %in% unique(data$variables[[strata]]), "val_label"])
-    if (length(colname.group_var) == 0 & addOverall) {
-      colname.group_var <- c("Overall")
+    if (addOverall) {
+      colname.group_var <- c("Overall", colname.group_var)
     }
     if (showAllLevels == T) {
-      # colname.group_var <- unlist(labeldata[get("variable") == strata, "val_label"])
       colnames(ptb1)[1:(length(colname.group_var) + 1)] <- unlist(c(labeldata[get("variable") == strata, "var_label"][1], colname.group_var))
     } else {
       colnames(ptb1)[1:length(colname.group_var)] <- colname.group_var
@@ -393,14 +435,17 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
                   showAllLevels = showAllLevels, printToggle = printToggle, quote = quote, varLabels = Labels, nonnormal = nonnormal,
                   catDigits = catDigits, contDigits = contDigits, minMax = minMax
     )
-    
+
+    if (n_original) ptb1 <- .fix_integer_counts(ptb1)
+    if (n_original) ptb1 <- .fix_n_row(ptb1, data)
+
     if (showpm) {
       ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
       ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
     }
-    
+
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed = T)
-    
+
     cap.tb1 <- "Total - weighted data"
     # if (Labels & !is.null(labeldata)){
     #  ptb1[,1] <- vals.tb1
@@ -550,12 +595,15 @@ svyCreateTableOneJS <- function(vars, strata = NULL, strata2 = NULL, data, facto
                   printToggle = F, quote = F, smd = smd, varLabels = T, nonnormal = nonnormal,
                   catDigits = catDigits, contDigits = contDigits, pDigits = pDigits, minMax = minMax
     )
-    
+
+    if (n_original) ptb1 <- .fix_integer_counts(ptb1)
+    if (n_original) ptb1 <- .fix_n_row(ptb1, data, c(strata2, strata), addOverall)
+
     if (showpm) {
       ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\(", "\u00B1 ", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
       ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ] <- gsub("\\)", "", ptb1[grepl("\\(mean \\(SD\\)\\)", rownames(ptb1)), ])
     }
-    
+
     rownames(ptb1) <- gsub("(mean (SD))", "", rownames(ptb1), fixed = T)
     if (Labels & !is.null(labeldata)) {
       rownames(ptb1) <- ptb1.rn
