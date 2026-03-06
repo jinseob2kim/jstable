@@ -317,7 +317,7 @@ TableSubgroupCox <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
       
       return(out)
-    } else if (length(var_subgroup) > 1 | any(grepl(var_subgroup, formula))) {
+    } else if (length(var_subgroup) > 1 | any(var_subgroup %in% all.vars(formula))) {
       stop("Please input correct subgroup variable.")
     } else {
       ### subgroup 지정 한 경우 ###
