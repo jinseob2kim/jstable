@@ -147,10 +147,13 @@ LabelepiDisplay <- function(epiDisplay.obj, label = F, ref) {
   p.colnum <- which(colnames(out) %in% c("P value", "adj. P value", "P(t-test)", "P(Wald's test)"))
   p.colnum <- p.colnum[length(p.colnum)]
 
-  pn <- gsub("< ", "", out[, p.colnum])
+  pn <- trimws(as.character(out[, p.colnum]))
+  pn[pn %in% c("", "NA")] <- NA_character_
+  pn <- sub("^<[[:space:]]*", "", pn)
+  pn <- suppressWarnings(as.numeric(pn))
 
   colnames(out)[p.colnum] <- ifelse(colnames(out)[p.colnum] == "P value", "P value", "adj. P value")
-  sig <- ifelse(as.numeric(pn) <= 0.05, "**", "")
+  sig <- ifelse(!is.na(pn) & pn <= 0.05, "**", "")
   return(cbind(out, sig))
 }
 

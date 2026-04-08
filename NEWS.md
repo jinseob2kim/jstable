@@ -1,3 +1,9 @@
+# jstable 1.3.26
+* **Fix:** `TableSubgroupGLM` / `TableSubgroupMultiGLM` now preserve `offset()` terms when estimating subgroup effects and interaction P values. Previously, Poisson-type subgroup tables could show `NA` estimates and incorrect interaction P values.
+* **Fix:** `TableSubgroupGLM` mixed Gaussian models now fall back safely when `lmerTest` fails under incompatible `lmerTest` / `lme4` combinations, and mixed-model P values are still extracted when the coefficient table has no `Pr` column.
+* **Fix:** `CreateTableOneJS` / `svyCreateTableOneJS` no longer emit coercion warnings while building significance markers from blank or formatted P values.
+* **Fix:** `coxme.display` now collapses multiple random-effect terms before rebuilding univariate formulas, preventing deprecated `formula(x)` warnings with more than one random effect.
+
 # jstable 1.3.25
 * **Fix:** `svyCreateTableOneJS` / `svyCreateTableOne2` now display integer counts (no `.0` suffix) when `n_original = TRUE`. Previously, categorical variable frequencies and the n row were formatted as floats (e.g., `12345.0`) even after replacing weighted counts with original data.
 * **Fix:** `svyCreateTableOne2` now correctly labels the "Overall" column when using `addOverall = TRUE` with `Labels = TRUE`. Previously, the "Overall" header was missing, causing column name misalignment.

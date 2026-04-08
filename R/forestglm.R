@@ -1,3 +1,49 @@
+forestglm_fixed_terms <- function(formula) {
+  fixed_terms <- attr(stats::terms(formula), "term.labels")
+  Filter(function(term) {
+    !grepl("\\|", term)
+  }, fixed_terms)
+}
+
+
+forestglm_interaction_formula <- function(formula, xlabel, var_subgroup) {
+  stats::update(
+    formula,
+    stats::as.formula(
+      paste(". ~ . +", var_subgroup, "+", paste0(xlabel, ":", var_subgroup))
+    )
+  )
+}
+
+
+forestglm_lmer <- function(formula, data, REML = TRUE, ...) {
+  tryCatch(
+    lmerTest::lmer(formula, data = data, REML = REML, ...),
+    error = function(e) {
+      if (grepl("forceNewMerMod", conditionMessage(e), fixed = TRUE)) {
+        lme4::lmer(formula, data = data, REML = REML, ...)
+      } else {
+        stop(e)
+      }
+    }
+  )
+}
+
+
+forestglm_coef_pvalues <- function(coef_mat) {
+  if (is.null(dim(coef_mat))) {
+    return(NA_real_)
+  }
+  pr_col <- grep("Pr", colnames(coef_mat), value = TRUE)
+  if (length(pr_col) > 0) {
+    return(stats::setNames(as.numeric(coef_mat[, pr_col[1]]), rownames(coef_mat)))
+  }
+  if (ncol(coef_mat) >= 3) {
+    return(stats::setNames(2 * stats::pnorm(abs(as.numeric(coef_mat[, ncol(coef_mat)])), lower.tail = FALSE), rownames(coef_mat)))
+  }
+  stats::setNames(rep(NA_real_, nrow(coef_mat)), rownames(coef_mat))
+}
+
 #' @title TableSubgroupGLM: Sub-group analysis table for GLM and GLMM(lme4 package).
 #' @description Sub-group analysis table for GLM.
 #' @param formula formula with survival analysis.
@@ -49,10 +95,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
   . <- variable <- var_label <- val_label <- level <- NULL
   ### 경고문 ###
   if (is.null(count_by) && !(event)){
-    fixed_effects <- attr(terms(as.formula(formula)), "term.labels")
-    fixed_effects <- Filter(function(term) {
-      !grepl("\\|", term)
-    }, fixed_effects)
+    fixed_effects <- forestglm_fixed_terms(formula)
     if (length(fixed_effects) > 1) stop("Formula must contain only 1 independent variable")
     if (any(class(data) == "survey.design" & !is.null(var_subgroup))) {
       if (is.numeric(data$variables[[var_subgroup]])) stop("var_subgroup must categorical.")
@@ -74,12 +117,12 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       purrr::map_dbl(x, .[["y"]], 1)
     }, NA)
     possible_glmer <- purrr::possibly(lme4::glmer, NA)
-    possible_lmertest <- purrr::possibly(lmerTest::lmer, NA)
-    xlabel <- setdiff(as.character(formula)[[3]], "+")[1]
+    possible_lmertest <- purrr::possibly(forestglm_lmer, NA)
+    xlabel <- fixed_effects[1]
     ncoef <- ifelse(any(class(data) == "survey.design"), ifelse(length(levels(data$variables[[xlabel]])) <= 2, 1, length(levels(data$variables[[xlabel]])) - 1),
                     ifelse(length(levels(data[[xlabel]])) <= 2, 1, length(levels(data[[xlabel]])) - 1)
     )
-    var_cov <- setdiff(var_cov, c(as.character(formula[[3]]), var_subgroup))
+    var_cov <- setdiff(var_cov, c(xlabel, var_subgroup))
     is_mixed_effect <- grepl("\\|", deparse1(formula))
     family.svyglm <- gaussian()
     if (family %in% c("binomial", "quasibinomial")) family.svyglm <- quasibinomial()
@@ -101,7 +144,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
       }
       if (is_mixed_effect) {
         if (family == "gaussian") {
-          model <- lmerTest::lmer(formula, data = data)
+          model <- forestglm_lmer(formula, data = data)
         } else {
           model <- lme4::glmer(formula, data = data, family = family)
         }
@@ -153,7 +196,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         # P-value 계산
         pv <- tryCatch(
           {
-            round(cc[2:(1 + ncoef), grep("Pr", colnames(cc), value = TRUE)], decimal.pvalue)
+            round(forestglm_coef_pvalues(cc[2:(1 + ncoef), , drop = FALSE]), decimal.pvalue)
           },
           error = function(e) {
             warning("P-value computation failed. Returning NA.")
@@ -265,6 +308,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           if (length(survey::svyglm(formula, design = data)$xlevels[[xlabel]]) > 0) {
             xlev <- survey::svyglm(formula, design = data)$xlevels[[xlabel]]
           }
+          interaction_formula <- forestglm_interaction_formula(formula, xlabel, var_subgroup)
           
           # pv_int 구하기
           # pv_int <- tryCatch(
@@ -283,19 +327,21 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           
           data.design <- data
           if (family %in% c("binomial", "quasibinomial")) {
-            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula))), design = data.design, family = quasibinomial())
+            model.int <- possible_svyglm(interaction_formula, design = data.design, family = quasibinomial())
           } else if (family == "gaussian") {
-            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula))), design = data.design, family = gaussian())
+            model.int <- possible_svyglm(interaction_formula, design = data.design, family = gaussian())
           } else if (family == "poisson") {
-            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula))), design = data.design, family = poisson())
+            model.int <- possible_svyglm(interaction_formula, design = data.design, family = poisson())
           } else {
-            model.int <- possible_svyglm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula))), design = data.design, family = quasipoisson())
+            model.int <- possible_svyglm(interaction_formula, design = data.design, family = quasipoisson())
           }
           
-          model.int$call[[2]] <- as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula)))
-          model.int$call[[3]] <- data.design
-          #model.int$call[[4]] <- gaussian()
-          model.int$call[[4]] <- family.svyglm
+          if (!is.logical(model.int)) {
+            model.int$call[[2]] <- interaction_formula
+            model.int$call[[3]] <- data.design
+            #model.int$call[[4]] <- gaussian()
+            model.int$call[[4]] <- family.svyglm
+          }
           # print(model.int$call)
           # print(family)
           # print(family.svyglm)
@@ -340,7 +386,8 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
           if (length(stats::glm(formula, data = data, family = family)$xlevels[[xlabel]]) > 0) {
             xlev <- stats::glm(formula, data = data, family = family)$xlevels[[xlabel]]
           }
-          model.int <- possible_glm(as.formula(gsub(xlabel, paste(xlabel, "*", var_subgroup, sep = ""), deparse1(formula))), data = data, family = family)
+          interaction_formula <- forestglm_interaction_formula(formula, xlabel, var_subgroup)
+          model.int <- possible_glm(interaction_formula, data = data, family = family)
           
           # pv_int 구하기
           if (any(is.na(model.int))) {
@@ -481,12 +528,13 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
         # Interaction model for overall interaction p-value
         model.int <- tryCatch(
           if (length(xlev) > 1) {
+            interaction_formula <- forestglm_interaction_formula(formula, xlabel, var_subgroup)
             if (family == "gaussian") {
-              possible_lmertest(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula))),
+              possible_lmertest(interaction_formula,
                                 data = data, REML = FALSE
               )
             } else {
-              possible_glmer(as.formula(gsub(xlabel, paste0(xlabel, "*", var_subgroup), deparse1(formula))),
+              possible_glmer(interaction_formula,
                              data = data, family = family
               )
             }
@@ -507,7 +555,7 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             pv_int <- round(pv_anova[interaction_row, pr_row], decimal.pvalue)
           } else {
             pvs_int <- summary(model.int)$coefficients # Access coefficients table
-            pv_int <- round(pvs_int[nrow(pvs_int), ncol(pvs_int)], decimal.pvalue) # Extract p-value for interaction
+            pv_int <- round(utils::tail(forestglm_coef_pvalues(pvs_int), 1), decimal.pvalue) # Extract p-value for interaction
             formula_string <- deparse1(formula(model.int)) # Extract the formula of the model
           }
         }
@@ -590,12 +638,9 @@ TableSubgroupGLM <- function(formula, var_subgroup = NULL, var_cov = NULL, data,
             cc0 <- tryCatch(summary(model)$coefficients, error = function(e) NA)
             pvl <- rep(NA, max(length(xlev) - 1, 1))
             names(pvl) <- paste0(xlabel, xlev[-1])
-            p_col <- grep("Pr", colnames(cc0), value = TRUE)
-            if (length(p_col) == 0) {
-              return(round(pvl, decimal.pvalue))
-            }
+            p_values <- tryCatch(forestglm_coef_pvalues(cc0), error = function(e) NA)
             for (i in names(pvl)) {
-              pvl[i] <- tryCatch(cc0[i, p_col], error = function(e) NA)
+              pvl[i] <- tryCatch(p_values[i], error = function(e) NA)
             }
             round(pvl, decimal.pvalue)
           })

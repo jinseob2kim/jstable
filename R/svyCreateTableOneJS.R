@@ -334,9 +334,11 @@ svyCreateTableOne2 <- function(data, strata, vars, factorVars, includeNA = F, te
       ptb1 <- ptb1[, -cols_to_remove]
     }
   }
-  sig <- ifelse(ptb1[, "p"] == "<0.001", "0", ptb1[, "p"])
-  sig <- as.numeric(as.vector(sig))
-  sig <- ifelse(sig <= 0.05, "**", "")
+  sig <- trimws(as.character(ptb1[, "p"]))
+  sig[sig %in% c("", "NA")] <- NA_character_
+  sig <- sub("^<[[:space:]]*", "", sig)
+  sig <- suppressWarnings(as.numeric(sig))
+  sig <- ifelse(!is.na(sig) & sig <= 0.05, "**", "")
   ptb1 <- cbind(ptb1, sig)
   return(ptb1)
 }

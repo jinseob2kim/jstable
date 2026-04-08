@@ -110,7 +110,7 @@ coxme.display <- function(coxme.obj, dec = 2, pcut.univariate = NULL) {
   }
  
   formula.surv <- as.character(model$formulaList$fixed)[2]
-  formula.ranef <- as.character(model$formulaList$random)
+  formula.ranef <- paste(as.character(model$formulaList$random), collapse = " + ")
   mdata <- data.frame(get(as.character(model$call)[3]))
 
   categorical_vars <- xf[sapply(mdata[xf], is.factor)]
